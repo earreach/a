@@ -1,0 +1,31 @@
+{template 'header'}
+<div class="m">	
+	<div class="nav">
+	<div>
+	{if $is_admin}
+	<a href="{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&job=fans&gid={$gid}" class="b">管理本圈</a>
+	{else}
+	{if $is_fans}
+	<a href="{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&job=join&action=quit&gid={$gid}" class="b" onclick="return confirm('确定要退出{$GRP[title]}{$MOD[seo_name]}吗？');">退出本圈</a>
+	{else}
+	<a href="{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&job=join&action=add&gid={$gid}" class="b">加入本圈</a>
+	{/if}
+	{/if}
+	</div>
+	<a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> <a href="{$MOD[linkurl]}{$GRP[linkurl]}">{$GRP[title]}{$MOD[seo_name]}</a> <i>&gt;</i> 成员</div>
+	<div class="b16"></div>
+</div>
+<div class="m">
+	<div class="thumb">
+		<table width="100%">
+		{loop $lists $k $v}
+		{if $k%10==0}<tr align="center">{/if}
+		<td width="10%" valign="top"><a href="{userurl($v[username], 'file=space')}" target="_blank"><img src="{useravatar($v[username], 'middle')}" width="48" height="48" alt="{$v[username]}" class="avatar"/></a>
+		<ul><li><a href="{userurl($v[username], 'file=space')}" target="_blank">{$v[passport]}</a></li></ul></td>
+		{if $k%10==9}</tr>{/if}
+		{/loop}
+		</table>
+	</div>
+	{if $pages}<div class="pages">{$pages}</div>{/if}		
+</div>
+{template 'footer'}

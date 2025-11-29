@@ -1,0 +1,6 @@
+<?php exit;?>
+bid,ID,
+moduleid,模块ID,
+itemid,信息ID,
+editor,编辑,
+edittime,修改时间,

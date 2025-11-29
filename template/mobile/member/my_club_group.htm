@@ -1,0 +1,278 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a>{if $action=='index' || !$action}<a href="javascript:Dmenu('search-{$js_pageid}');"><img src="{DM_SKIN}icon-search{$wh}.png" width="24" height="24"/></a>{/if}</div>
+<div class="head-bar-title">{if $action=='add'}创建商圈{elseif $action=='edit'}修改商圈{else}我的商圈{/if}</div>
+<div class="head-bar-right">
+{if $action=='add' || $action=='edit'}
+<a href="?mid={$mid}&job={$job}"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{else}
+<a href="?mid={$mid}&job={$job}&action=add"><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></a>
+{/if}
+<a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a>
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?mid={$mid}&job=group&action=add" data-transition="none">创建商圈</a>
+<a href="?mid={$mid}&job=group" data-transition="none">我的商圈</a>
+<a href="?mid={$mid}&action=index" data-transition="none">我的帖子</a>
+<a href="?mid={$mid}&job=reply" data-transition="none">我的回复</a>
+<a href="?mid={$mid}&job=join" data-transition="none">加入商圈</a>
+<a href="?mid={$mid}&job=fans" data-transition="none">粉丝管理</a>
+<a href="?mid={$mid}&job=manage" data-transition="none">商圈管理</a>
+<a href="?action=index" data-direction="reverse">切换频道</a>
+</div>
+</div>
+
+{if $action=='add' || $action=='edit'}
+{load('webuploader.min.js')}
+<div class="ui-form">
+<iframe src="" name="send" id="send" style="display:none;"></iframe>
+<form method="post" action="?" id="dform" target="send" data-ajax="false" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<p {if $action=='edit'} style="display:none;"{/if}>所属分类<i>*</i><b id="dcatid"></b></p>
+<div {if $action=='edit'} style="display:none;"{/if}>{ajax_category_select('post[catid]', '选择分类', $catid, $moduleid)}</div>
+<p>商圈名称<i>*</i><b id="dtitle"></b></p>
+<div><input name="post[title]" type="text" id="title" value="{$title}"/></div>
+<p>商圈图标<i>*</i><b id="dthumb"></b></p>
+<div>
+<input type="hidden" name="post[thumb]" id="thumb"/>
+<div class="ui-form-thumb-show" onclick="thumb_action();"></div>
+<div class="ui-form-thumb-upload"><div id="thumb-picker"></div></div>
+</div>
+<p>商圈简介<i>*</i><b id="dcontent"></b></p>
+<div><textarea name="post[content]" id="content" style="width:100%;height:64px;">{$content}</textarea></div>
+<p>加圈方式<i>*</i><b id="djoin_type"></b></p>
+<div>
+<label><input type="radio" name="post[join_type]" value="0" id="join_type_0" {if $join_type == 0} checked{/if}/> 自由</label><br/>
+<label><input type="radio" name="post[join_type]" value="1" id="join_type_1" {if $join_type == 1} checked{/if}/> 申请</label>
+</div>
+{if $action == 'add'}
+{if $MOD[chat]}
+<p>群聊功能<i>*</i><b id="dchat"></b></p>
+<div>
+<label><input type="radio" name="post[chat]" value="0" id="chat_0" {if $chat == 0} checked{/if}/> 关闭</label><br/>
+<label><input type="radio" name="post[chat]" value="1" id="chat_1" {if $chat == 1} checked{/if}/> 开启</label>
+</div>
+{/if}
+<p>创建理由<i>*</i><b id="dreason"></b></p>
+<div><textarea name="post[reason]" id="reason" style="width:100%;height:64px;">{$reason}</textarea></div>
+{/if}
+{if $need_question}
+<p>验证问题<i>*</i><b id="danswer"></b></p>
+<div>{template 'question', 'chip'}</div>
+{/if}
+{if $need_captcha}
+<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+<div>{template 'captcha', 'chip'}</div>
+{/if}
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="提 交" class="btn-blue"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function thumb_action() {
+	Dsheet('{$js_pageid}','<a href="javascript:thumb_delete();void(0);"><span style="color:red;">删除图片</span></a>', '取消', '确定要删除图片吗？');
+}
+function thumb_delete() {
+	$('#thumb').val('');
+	$('.ui-form-thumb-show').html('');
+	$('.ui-form-thumb-show').hide();
+	$('.ui-form-thumb-upload').show();
+}
+function thumb_show(url) {
+	$('#thumb').val(url);
+	$('.ui-form-thumb-show').html('<img src="'+url+'"/>');
+	$('.ui-form-thumb-show').show();
+	$('.ui-form-thumb-upload').hide();
+}
+var thumbu = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width={$MOD[thumb_width]}&height={$MOD[thumb_height]}',
+    pick: '#thumb-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+thumbu.on('beforeFileQueued', function(file) {
+	var exts = thumbu.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+thumbu.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+thumbu.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+thumbu.on('uploadSuccess', function(file, data) {
+    if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		thumb_show(data.url);
+	}
+});
+thumbu.on('uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+thumbu.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+{if $thumb}
+$(function(){
+	thumb_show('{$thumb}');
+});
+{/if}
+</script>
+{load('clear.js')}
+{else}
+{if $_userid}
+<script type="text/javascript">$(function(){Stabs('{$js_pageid}');});</script>
+<div class="list-menu" id="tabs-{$js_pageid}">
+	<ul>
+	<a href="?mid={$mid}&job=group&status=3"><li{if $status==3} class="on"{/if} id="s3">已开通{if !$kw} <i>{$nums[3]}</i>{/if}</li></a>
+	<a href="?mid={$mid}&job=group&status=2"><li{if $status==2} class="on"{/if} id="s2">审核中{if !$kw} <i>{$nums[2]}</i>{/if}</li></a>
+	<a href="?mid={$mid}&job=group&status=1"><li{if $status==1} class="on"{/if} id="s1">未通过{if !$kw} <i>{$nums[1]}</i>{/if}</li></a>
+	</ul>
+</div>
+{/if}
+
+<div id="search-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="?">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="status" value="{$status}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+</div>
+
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<input type="checkbox" name="itemid[]" value="{$v[itemid]}" class="dsn" id="checkbox-{$v[itemid]}"/>
+<a href="{$v[linkurl]}"><img src="{if $v[thumb]}{$v[thumb]}{else}{DM_SKIN}60x60.png{/if}" width="60" height="60" alt="" class="avatar" onerror="this.src='{DM_SKIN}60x60.png';"/></a>
+<ul>
+<li><a href="?mid={$mid}&job=group&action=edit&itemid={$v[itemid]}"><strong>{$v[title]}</strong></a></li>
+<li><em class="sheet" id="sheet-{$v[itemid]}"></em><span>主题：{$v[post]} &nbsp; 粉丝：{$v[fans]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+	<div class="list-none">{if $kw}未搜索到“{$kw}”相关结果{else}暂无记录{/if}</div>
+{/if}
+{if $group_limit}
+<div class="limit">
+总共可建 <span class="f_b f_red">{$group_limit}</span> 个&nbsp;&nbsp;&nbsp;
+当前已建 <span class="f_b">{$limit_used}</span> 个&nbsp;&nbsp;&nbsp;
+还可以建 <span class="f_b f_blue">{$limit_free}</span> 个&nbsp;&nbsp;&nbsp;
+</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<div id="foot-bar" class="dsn">
+<div class="foot-bar-fix"></div>
+<div class="foot-bar btns">
+{if $MG[delete]}<input type="submit" name="submit" value="删除选中" class="btn-red" onclick="if(confirm('确定要删除选中{$MOD[name]}吗？')){this.form.action='?mid={$mid}&status={$status}&action=delete'}else{return false;}"/>{/if}
+</div>
+</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	if($('#foot-bar input').length == 0) $('.check').hide();
+	$('.list-img em').click(function() {
+		if($(this).attr('class') == 'sheet') {
+			var id = $(this).attr('id').replace('sheet-', '');
+			Dsheet('{$js_pageid}','<a href="?mid={$mid}&job=group&action=edit&itemid='+id+'"><span>修改</span></a>', '取消');
+		} else {
+			var id = $(this).attr('id').replace('check-', '');
+			if($('#checkbox-'+id).attr('checked')) {
+				$('#checkbox-'+id).attr('checked', false);
+				$(this).attr('class', 'check');
+			} else {
+				$('#checkbox-'+id).attr('checked', true);
+				$(this).attr('class', 'checked');
+			}
+			if($('.checked').length > 0) {
+				$('#foot-bar').fadeIn(300);
+			} else {
+				$('#foot-bar').fadeOut(300);
+			}
+		}
+	});
+});
+</script>
+{/if}
+{if $action == 'add' || $action == 'edit'}
+<script type="text/javascript">
+function check() {
+	var l;
+	var f;
+	f = 'catid_1';
+	if(Dd(f).value == 0) {
+		Dmsg('请选择所属分类', 'catid', 1);
+		return false;
+	}
+	f = 'title';
+	l = Dd(f).value.length;
+	if(l < 2 || l > 15) {
+		Dmsg('商圈名称应为2-15字，当前已输入'+l+'字', f);
+		return false;
+	}
+	f = 'thumb';
+	l = Dd(f).value.length;
+	if(l < 10) {
+		Dmsg('请上传商圈图标', f);
+		return false;
+	}
+	f = 'content';
+	l = Dd(f).value.length;
+	if(l < 10 || l > 500) {
+		Dmsg('商圈简介应为10-500字，当前已输入'+l+'字', f);
+		return false;
+	}
+{if $action == 'add'}
+	f = 'reason';
+	l = Dd(f).value.length;
+	if(l < 10 || l > 500) {
+		Dmsg('创建理由应为10-500字，当前已输入'+l+'字', f);
+		return false;
+	}
+{/if}
+{if $need_question}
+	f = 'answer';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证问题', f);
+		return false;
+	}
+{/if}
+{if $need_captcha}
+	f = 'captcha';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', f);
+		return false;
+	}
+{/if}
+	return true;
+}
+</script>
+{/if}
+{template 'footer', 'member'}

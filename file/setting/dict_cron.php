@@ -1,0 +1,16 @@
+<?php exit;?>
+itemid,ID,
+title,名称,
+type,类型,
+name,文件名,
+schedule,时间表,
+n1,参数名1,
+n2,参数名2,
+n3,参数名3,
+v1,参数值1,
+v2,参数值2,
+v3,参数值3,
+lasttime,上次运行,
+nexttime,下次运行,
+status,状态,0正常 1禁用
+note,备注,

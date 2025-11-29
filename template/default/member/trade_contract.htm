@@ -1,0 +1,120 @@
+{template 'goods', 'chip'}
+{if $C}
+<div class="t2">合同详情</div>
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<table cellspacing="1" cellpadding="10" class="tb">	
+<tr>
+<td class="tl">合同编号</td>
+<td class="tr">{$C[itemid]}</td>
+</tr>
+<tr>
+<td class="tl">甲方名称</td>
+<td class="tr">{$C[buyer_company]}</td>
+</tr>
+<tr>
+<td class="tl">乙方名称</td>
+<td class="tr">{$C[seller_company]}</td>
+</tr>
+<tr>
+<td class="tl">商品名称</td>
+<td class="tr">{$C[title]}</td>
+</tr>
+<tr>
+<td class="tl">合同金额</td>
+<td class="tr">{$DT[money_sign]}{$C[amount]}</td>
+</tr>
+<tr>
+<td class="tl">下单时间</td>
+<td class="tr">{if $C[addtime]}{timetodate($C[addtime], 5)}{else}N/A{/if} &nbsp; <a href="javascript:;" class="t" onclick="$('#redo').toggle();">重签合同</a></td>
+</tr>
+<tr>
+<td class="tl">甲方签署</td>
+<td class="tr">{if $C[buyer_time]}{timetodate($C[buyer_time], 5)}{else}N/A{/if}{if $C[buyer_contract]} &nbsp; <a href="javascript:;" onclick="_preview('{$C[buyer_contract]}');" class="t">查看合同</a> &nbsp; <a href="{DT_PATH}api/attach.php?url={urlencode($C['buyer_contract'])}&name={urlencode($C['buyer_company'].'-乙方合同-'.$C['oid'].'.'.file_ext($C['buyer_contract']))}" target="_blank" class="t">下载合同</a>{/if}</td>
+</tr>
+<tr>
+<td class="tl">乙方签署</td>
+<td class="tr">{if $C[seller_time]}{timetodate($C[seller_time], 5)}{else}N/A{/if}{if $C[seller_contract]} &nbsp; <a href="javascript:;" onclick="_preview('{$C[seller_contract]}');" class="t">查看合同</a> &nbsp; <a href="{DT_PATH}api/attach.php?url={urlencode($C['seller_contract'])}&name={urlencode($C['seller_company'].'-乙方合同-'.$C['oid'].'.'.file_ext($C['seller_contract']))}" target="_blank" class="t">下载合同</a>{/if}</td>
+</tr>
+<tr>
+<td class="tl">合同状态</td>
+<td class="tr">{$cstatus[$C[status]]}</td>
+</tr>
+<tbody id="redo" class="dsn">
+<tr>
+<td class="tl"><span class="f_red">*</span> 上传合同</td>
+<td class="tr">
+<input name="fileurl" type="text" size="70" id="fileurl" value="" readonly/>
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dfile({$moduleid}, Dd('fileurl').value, 'fileurl', 'pdf|jpg|jpeg|png');"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="_preview(Dd('fileurl').value);"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('fileurl').value='';"/>
+<span id="dfileurl" class="f_red"></span>
+</td>
+</tr>
+<tr>
+<td class="tl"></td>
+<td class="tr"><input type="submit" name="submit" value=" 重新签署 " class="btn_g"/></td>
+</tr>
+</tbody>
+</table>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('fileurl').value.length < 15) {
+		Dmsg('请上传合同', 'fileurl');
+		return false;
+	}
+	return confirm('确定要重新签署吗？已上传的甲乙合同将被删除');
+}
+</script>
+{else}
+<div class="t2">上传合同</div>
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<table cellspacing="1" cellpadding="10" class="tb">	
+<tr>
+<td class="tl">联系买家</td>
+<td class="tr">{if $DT[im_web]}{im_web($O[buyer])}&nbsp;{/if}<a href="{userurl($O[buyer], 'file=contact')}" target="_blank" class="t">{$O[buyer]}</a></td>
+</tr>	
+<tr>
+<td class="tl">下单时间</td>
+<td class="tr">{$O[adddate]}</td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 上传合同</td>
+<td class="tr">
+<input name="fileurl" type="text" size="70" id="fileurl" value="" readonly/>
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dfile({$moduleid}, Dd('fileurl').value, 'fileurl', 'pdf|jpg|jpeg|png');"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="_preview(Dd('fileurl').value);"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('fileurl').value='';"/>
+</span>
+<span id="dfileurl" class="f_red"></span>
+</td>
+</tr>
+<tr>
+<td class="tl"> </td>
+<td class="tr">
+<input type="submit" name="submit" value=" 确 定 " class="btn_g"/>&nbsp;&nbsp;<input type="button" value=" 返 回 " class="btn" onclick="Go('?action=update&step=detail&itemid={$itemid}');"/>
+</td>
+</tr>
+</table>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('fileurl').value.length < 15) {
+		Dmsg('请上传合同', 'fileurl');
+		return false;
+	}
+	return true;
+}
+</script>
+{/if}
+<script type="text/javascript">s('trade');m('action_contract');</script>

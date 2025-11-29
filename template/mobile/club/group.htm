@@ -1,0 +1,40 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title"><input type="search" name="kw" value="{$kw}" placeholder="帖子搜索" readonly onclick="Go('{DT_MOB}api/search.php?mid={$moduleid}');"/></div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div class="ui-filter">
+<a href="{$MOD[mobile]}search.php?elite=1&catid={$catid}&areaid={$areaid}"><i class="ui-filter-box ui-fr">精华</i></a>
+<i class="ui-filter-dsc on">综合</i>
+<a href="{$MOD[mobile]}search.php?orderby=dreply&catid={$catid}&areaid={$areaid}"><b>回复</b></a>
+<a href="{$MOD[mobile]}search.php?orderby=dhits&catid={$catid}&areaid={$areaid}"><b>浏览</b></a>
+<a href="{$MOD[mobile]}search.php?orderby=dreplytime&catid={$catid}&areaid={$areaid}"><b>回帖</b></a>
+</div>
+<div class="ui-side" id="side-{$js_pageid}"></div>
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="{$MODULE[2][mobile]}{$DT[file_my]}?mid={$moduleid}&action=add&gid={$catid}" rel="external">发表帖子</a>
+{if $MOD[chat] && $GRP[chat]}<a href="{$MOD[mobile]}{rewrite('chat.php?gid='.$gid)}">群聊</a>{/if}
+<a href="{$MOD[mobile]}{rewrite('fans.php?gid='.$gid)}">成员列表</a>
+<a href="{$MOD[mobile]}search.php">帖子搜索</a>
+<a href="{$MOD[mobile]}" data-direction="reverse">{$MOD[name]}首页</a>
+</div>
+</div>
+<style type="text/css">
+.post-ontop {background:#FFFFFF url('{DM_SKIN}post-ontop.png') no-repeat right 0;background-size:24px 24px;}
+.post-level {background:#FFFFFF url('{DM_SKIN}post-level.png') no-repeat right 0;background-size:24px 24px;}
+</style>
+{if $tags}
+<div id="list-{$js_pageid}" class="main">{template 'list-'.$module, 'tag'}</div>
+<div id="load-{$js_pageid}" class="ui-load"></div>
+{else}
+{template 'empty', 'chip'}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{template 'footer'}

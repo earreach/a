@@ -1,0 +1,402 @@
+{template 'header'}
+{if $DT_MBS=='app'}
+<script type="text/javascript">apiready = function() {Dapp('home');};</script>
+{else}
+<div id="head-bar">
+<div class="head-bar">
+{if $DT_MBS=='cms'}
+<div class="head-bar-back" onclick="api.execScript({name:'root',script:'Dexec({$_userid});'});api.closeWin({name:'destoon'});api.closeFrame({name:'destoon'});"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></div>
+{else}
+<div class="head-bar-left"><a href="{DT_MOB}channel.php"><img src="{DM_SKIN}icon-sort{$wh}.png" width="24" height="24"/></a></div>
+{/if}
+<div class="head-bar-title"><input type="search" name="kw" placeholder="{$L[kw]}" readonly onclick="Go('{DT_MOB}api/search.php');"/></div>
+<div class="head-bar-right"><a href="{DT_MOB}api/setting.php" rel="nofollow"><img src="{DM_SKIN}icon-setting{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+
+
+<style>
+	/* 弹窗样式 */
+	.modal {
+		position: fixed;
+		z-index: 9999;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0,0,0,0.5);
+		/* 使用flex实现完美居中 */
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 20px;
+		box-sizing: border-box;
+	}
+
+	.modal-content {
+		background-color: #fefefe;
+		padding: 30px 20px;
+		border-radius: 12px;
+		width: 90%;
+		max-width: 320px;
+		text-align: center;
+		box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+		animation: modalAppear 0.3s ease-out;
+		margin: 0;
+		position: relative;
+	}
+
+	.close {
+		position: absolute;
+		right: 15px;
+		top: 10px;
+		font-size: 24px;
+		font-weight: bold;
+		cursor: pointer;
+		color: #999;
+	}
+
+	.close:hover {
+		color: #333;
+	}
+
+	.modal-buttons {
+		margin-top: 20px;
+		display: flex;
+		justify-content: center;
+		gap: 10px;
+	}
+
+	.btn-login, .btn-cancel {
+		padding: 10px 20px;
+		border: none;
+		border-radius: 6px;
+		cursor: pointer;
+		font-size: 14px;
+		flex: 1;
+		max-width: 120px;
+	}
+
+	.btn-login {
+		background: rgb(215, 24, 21);
+		color: white;
+	}
+
+	.btn-cancel {
+		background: #f1f1f1;
+		color: #333;
+	}
+
+	/* 响应式调整 */
+	@media (max-width: 480px) {
+		.modal {
+			padding: 15px;
+		}
+
+		.modal-content {
+			width: 95%;
+			max-width: 280px;
+		}
+	}
+
+	@keyframes modalAppear {
+		from {
+			opacity: 0;
+			transform: scale(0.8) translateY(-20px);
+		}
+		to {
+			opacity: 1;
+			transform: scale(1) translateY(0);
+		}
+	}
+</style>
+
+
+
+
+{if $DT[city]}
+<a href="{DT_MOB}api/city.php"><div style="height:42px;line-height:42px;background:#F6F6F6 url('{DM_SKIN}ico-area.png') no-repeat 16px center;background-size:16px 16px;padding:0 0 0 36px;color:#999999;"><span class="ui-fr ui-ico-none" style="background:url('{DM_SKIN}ico-swc.png') no-repeat 0 center;background-size:16px 16px;margin:13px 6px 0 0">HUGE</span>{$city_name}</div></a>
+{/if}
+
+
+<!-- 登录提示弹窗 -->
+<div id="loginModal" class="modal" style="display:none;">
+	<div class="modal-content">
+		<span class="close" onclick="closeModal()">&times;</span>
+		<h3>メッセージ</h3>
+		<p>法人の方のみご利用いただけます</p>
+		<div class="modal-buttons">
+			<button onclick="goToLogin()" class="btn-login">ログイン</button>
+			<button onclick="closeModal()" class="btn-cancel">あとでにする</button>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+<div class="main">
+{if $ads}
+{load('slide.js')}
+	<div id="mobile-slide-{$js_pageid}">
+	{loop $ads $t}
+	<a href="{$t[url]}" target="_blank" rel="external"><img src="{$t[image_src]}" alt="{$t[image_alt]}" style="width:100%;"/></a>
+	{/loop}
+	</div>
+<script type="text/javascript">$(function(){new dslide('mobile-slide-{$js_pageid}');});</script>
+{/if}
+</div>
+
+
+
+
+
+
+<script>
+function showLoginPrompt() {
+    // 使用浏览器原生弹窗
+    if(confirm('需要登录，请先登录！')) {
+        window.location.href = '{DT_PATH}member/index.php?action=login';
+    }
+    
+    // 或者使用Destoon的dialog（如果可用）
+    /*
+    dialog({
+        title: '提示',
+        content: '需要登录后才能使用此功能',
+        ok: function() {
+            window.location.href = '{DT_PATH}member/index.php?action=login';
+            return true;
+        },
+        cancel: true
+    });
+    */
+}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <div class="gird-5" style="padding:24px 0 0 0;">
+	<ul>
+		{loop $MOD_MY $i $m}
+		{if $i < 9}<li><a href="{$m[mobile]}"><img src="{if $m[icon]}{$m[icon]}{else}{DM_SKIN}mod-{$m[module]}.png{/if}" width="24" height="24"/><span>{$m[name]}</span></a></li>{/if}
+		{if $i == 8}<li><a href="{DT_MOB}channel.php"><img src="{DM_SKIN}mod-more.png" width="24" height="24"/><span>more</span></a></li>{/if}
+		{/loop}
+	</ul>
+</div> -->
+
+	<div class="in_bt">
+		<a href="https://baidu.com"  class="bt_a">
+			<p>かんたん３ステップ</p>
+			<p><span>修理料金シミュレーション<i></i></span></p>
+			<p>こちらから</p>
+		</a>
+	</div>
+
+
+{if isset($MODULE[21])}
+<div>
+	<div class="ser_9">
+	<p class="ser ">サービス</p>
+	<p class="ser_0 "></p>
+	<div class="ser_tm" >
+
+		<img src="{DT_STATIC}skin/mobile/185.png" alt="">
+		<div class="text">
+			<h4>基板修理専門</h4>
+			<div class="ser_w">弊社は大阪にある専門の基板修理センターです。基板修理に対応していない修理店様や、通常業務で手が回らない多忙な店舗様に向けて、修理サービスを提供しております。Apple製品、Android端末、Nintendo Switch、ノートパソコンなど、幅広い機種の修理に対応可能です。基板修理以外でも、その他様々な修理を受付けております。</div>
+		</div>
+	</div>
+	</div>
+
+
+
+
+
+
+	<div class="ser_9">
+		<p class="ser ">会社情報</p>
+		<p class="ser_0 "></p>
+		<div class="ser_tm" >
+
+
+
+
+			<table class="responsive-table">
+				<tbody class="">
+				<tr>
+					<th>会社名</th>
+					<td>瑞興株式会社</td>
+				</tr>
+				<tr>
+					<th>所在地</th>
+					<td class="">〒540-0017 大阪府大阪市中央区松屋町住吉６−26<br>TEL：06-7222-9216<br>営業時間：10：00～19：00　水曜定休日</td>
+				</tr>
+				<tr>
+					<th>事業内容</th>
+					<td>基板修理専門 / 代行修理</td>
+				</tr>
+				<tr>
+					<th>事業内容</th>
+					<td>2019年6月</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+
+
+	<div class="ser_9">
+		<p class="ser ">価格表</p>
+		<p class="ser_0 "></p>
+		<p class="ser_1 ">法人の方のみご利用いただけます</p>
+		<p class="ser_2 ">万が一、ホームページの料金と実際のご案内に差異がある場合は、ホームページの料金を正しいものとさせていただきます。</p>
+		<div class="pri" >
+
+
+
+
+
+			{loop $target_downloads $c}
+
+				    {if $_userid}
+				        <!-- 已登录：直接下载链接 -->
+				        <a class="item" href="{$c[download_url]}" 
+				           download="{$c[title]}" 
+				           class="download-link" rel="external">
+				            {$c[title]} -  {$c[filesize]}MB
+				        </a>
+				    {else}
+				        <!-- 未登录：触发弹窗 -->
+				        <a class="item" href="javascript:void(0);" 
+				           onclick="showLoginModal('{$c[download_url]}', '{$c[title]}')" 
+				           class="download-link need-login">
+				            {$c[title]} - {$c[filesize]}MB
+				        </a>
+				    {/if}
+
+			{/loop}
+
+
+
+<!-- 
+			{loop $target_downloads $i $c}
+				<a class="item" href="javascript:void(0);" onclick="checkLogin()" >{$c[title]}-{$c[filesize]}MB</a>
+			{/loop}
+ -->
+		</div>
+	</div>
+
+
+
+
+
+	
+
+
+	<div class="ser_9">
+		<p class="ser ">アクセス</p>
+		<p class="ser_0 "></p>
+		<div class="ser_tm" >
+			<iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d205.0697338129231!2d135.5111636815972!3d34.677028233360055!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6000e73b88f0b47b%3A0x70d175ad3c2404d!2z44CSNTQwLTAwMTcg5aSn6Ziq5bqc5aSn6Ziq5biC5Lit5aSu5Yy65p2-5bGL55S65L2P5ZCJ77yW4oiS77yS77yW!5e0!3m2!1sja!2sjp!4v1762305594193!5m2!1sja!2sjp" width=100% height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+		</div>
+	</div>
+	<div class="dibu">
+		<h2>瑞興株式会社</h2>
+		<p>〒540-0017 大阪府大阪市中央区松屋町住吉６−26			</p>
+		<p>TEL：06-7222-9216			</p>
+		<p>営業時間：10：00～19：00　水曜定休日</p>
+	</div>
+
+</div>
+	
+
+
+
+
+
+
+
+{/if}
+{if isset($MODULE[16])}
+<div class="ui-head" style="background:#FFFFFF;"><a href="{$MODULE[16][mobile]}"><span>更多</span></a><i></i><b>商品推荐</b></div>
+<div class="ui-main">
+	<div class="blank-10"></div>
+	<!--{tag("moduleid=16&condition=status=3 and level>0&areaid=$cityid&order=addtime desc&pagesize=10&template=list-mall")}-->
+</div>
+<div style="padding:32px;"><a href="{$MODULE[16][mobile]}"><div class="btn">更多推荐</div></a></div>
+{elseif isset($MODULE[5])}
+<div class="ui-head"><a href="{$MODULE[5][mobile]}"><span>更多</span></a><i></i><b>产品推荐</b></div>
+<div class="ui-main">
+	<!--{tag("moduleid=5&condition=status=3 and level>0 and thumb<>''&areaid=$cityid&order=addtime desc&pagesize=10&template=list-sell")}-->
+</div>
+<div style="padding:32px;"><a href="{$MODULE[5][mobile]}"><div class="btn">更多推荐</div></a></div>
+{/if}
+{/if}
+
+
+<!--<script>-->
+<!--function showLoginModal(fileUrl, fileName) {-->
+<!--    // 保存文件信息-->
+<!--    window.pendingDownload = {url: fileUrl, name: fileName};-->
+<!--    document.getElementById('loginModal').style.display = 'block';-->
+<!--}-->
+
+<!--function goToLogin() {-->
+<!--    // 跳转到登录页，携带回调信息-->
+<!--    const returnUrl = encodeURIComponent(window.location.href);-->
+<!--    if (window.pendingDownload) {-->
+<!--        // 将文件信息作为参数传递-->
+<!--        const fileInfo = encodeURIComponent(JSON.stringify(window.pendingDownload));-->
+<!--        window.location.href = '{DT_PATH}member/index.php?action=login&forward=' + returnUrl + '&file=' + fileInfo;-->
+<!--    } else {-->
+<!--        window.location.href = '{DT_PATH}member/index.php?action=login&forward=' + returnUrl;-->
+<!--    }-->
+<!--}-->
+
+<!--function closeModal() {-->
+<!--    document.getElementById('loginModal').style.display = 'none';-->
+<!--    window.pendingDownload = null;-->
+<!--}-->
+<!--</script>-->
+
+<script>
+// 显示弹窗的函数
+function showLoginModal() {
+document.getElementById('loginModal').style.display = 'flex'; // 重要：使用flex
+}
+
+// 关闭弹窗的函数
+function closeModal() {
+document.getElementById('loginModal').style.display = 'none';
+}
+
+// 跳转到登录页的函数
+function goToLogin() {
+window.location.href = '{DT_PATH}member/index.php?action=login';
+}
+
+</script>
+{template 'footer'}

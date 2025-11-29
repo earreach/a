@@ -1,0 +1,27 @@
+<?php
+$names = array (
+  'ad' => '广告',
+  'album' => '产品图册',
+  'captcha' => '验证码',
+  'contact' => '联系方式收费',
+  'content' => '内容收费',
+  'empty' => '列表为空',
+  'goods' => '订单商品',
+  'goods_service' => '订单售后',
+  'guest_contact' => '游客联系方式',
+  'invite' => '邀请面试',
+  'line' => '在线状态',
+  'password' => '密码输入',
+  'paylist' => '支付方式',
+  'payword' => '支付密码',
+  'poll' => '行业票选',
+  'property_js' => '分类属性JS',
+  'question' => '验证问题',
+  'search' => '搜索',
+  'spread' => '推广',
+  'upload-album' => '上传图片',
+  'upload-video' => '上传视频',
+  'userinfo' => '会员信息',
+  'wxcode' => '微信验证码',
+);
+?>

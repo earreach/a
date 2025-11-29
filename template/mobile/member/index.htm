@@ -1,0 +1,87 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{DT_MOB}my.php" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">会员中心</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="{$DT[file_my]}" data-transition="none">信息管理</a>
+{if $MG[biz]}<a href="biz.php" data-transition="none">商户后台</a>{/if}
+</div>
+</div>
+
+<div class="gird-4">
+	<ul>
+		<li><a href="order.php" rel="external"><img src="{DM_SKIN}my-order.png" width="24" height="24"/><span>我的订单</span></a></li>
+		{loop $MODULE $m}
+		{if $m[module] == 'group'}
+		<li><a href="deal.php?mid={$m[moduleid]}" rel="external"><img src="{DM_SKIN}my-deal.png" width="24" height="24"/><span>团购订单</span></a></li>
+		{/if}
+		{/loop}
+		{if $MG[partner]}
+		<li><a href="partner.php" rel="external"><img src="{DM_SKIN}my-partner.png" width="24" height="24"/><span>代理分销</span></a></li>
+		{/if}
+		<li><a href="coupon.php" rel="external"><img src="{DM_SKIN}my-coupon.png" width="24" height="24"/><span>领券中心</span></a></li>
+		<li><a href="record.php" rel="external"><img src="{DM_SKIN}my-record.png" width="24" height="24"/><span>{$DT[money_name]}流水</span></a></li>
+		<li><a href="charge.php?action=record" rel="external"><img src="{DM_SKIN}my-charge.png" width="24" height="24"/><span>支付记录</span></a></li>
+		{if $MG[cash]}
+		<li><a href="cash.php" rel="external"><img src="{DM_SKIN}my-cash.png" width="24" height="24"/><span>{$DT[money_name]}提现</span></a></li>
+		{/if}
+		<li><a href="credit.php" rel="external"><img src="{DM_SKIN}my-credit.png" width="24" height="24"/><span>{$DT[credit_name]}管理</span></a></li>
+		<li><a href="invite.php?action=code" rel="external"><img src="{DM_SKIN}my-invite.png" width="24" height="24"/><span>邀请注册</span></a></li>
+		{if $MG[address_limit]>-1}
+		<li><a href="address.php" rel="external"><img src="{DM_SKIN}my-address.png" width="24" height="24"/><span>收货地址</span></a></li>
+		{/if}
+		{if $DT[follow]}
+		<li><a href="follow.php" rel="external"><img src="{DM_SKIN}my-follow.png" width="24" height="24"/><span>粉丝关注</span></a></li>
+		{/if}
+		{if $MG[friend_limit]>-1}
+		<li><a href="friend.php" rel="external"><img src="{DM_SKIN}my-friend.png" width="24" height="24"/><span>我的好友</span></a></li>
+		{/if}
+		{if $MG[favorite_limit]>-1}
+		<li><a href="favorite.php" rel="external"><img src="{DM_SKIN}my-favorite.png" width="24" height="24"/><span>我的收藏</span></a></li>
+		{/if}
+		{if $DT[history_module]}
+		<li><a href="history.php" rel="external"><img src="{DM_SKIN}my-history.png" width="24" height="24"/><span>浏览历史</span></a></li>
+		{/if}
+		{if $MG[comment]}
+		<li><a href="comment.php" rel="external"><img src="{DM_SKIN}my-comment.png" width="24" height="24"/><span>评论管理</span></a></li>
+		{/if}
+		{if $MOD[oauth]}
+		<li><a href="oauth.php" rel="external"><img src="{DM_SKIN}my-oauth.png" width="24" height="24"/><span>一键登录</span></a></li>
+		{/if}
+		{if $MG[vweixin] && $EXT[weixin]}
+		<li><a href="weixin.php" rel="external"><img src="{DM_SKIN}my-weixin.png" width="24" height="24"/><span>微信关注</span></a></li>
+		{/if}
+		{if $MG[ask]}
+		<li><a href="ask.php" rel="external"><img src="{DM_SKIN}my-ask.png" width="24" height="24"/><span>客服中心</span></a></li>
+		{/if}
+		<li><a href="edit.php" rel="external"><img src="{DM_SKIN}my-edit.png" width="24" height="24"/><span>修改资料</span></a></li>
+		<li><a href="validate.php" rel="external"><img src="{DM_SKIN}my-validate.png" width="24" height="24"/><span>实名认证</span></a></li>
+		<li><a href="account.php" rel="external"><img src="{DM_SKIN}my-account.png" width="24" height="24"/><span>账户详情</span></a></li>
+		<li><a href="javascript:Dsheet('{$js_pageid}','<a href=&#34;logout.php&#34; rel=&#34;external&#34;><span style=&#34;color:red&#34;>退出登录</span></a>', '取消', '确定要退出本次登录吗？');"><img src="{DM_SKIN}my-logout.png" width="24" height="24"/><span>退出登录</span></a></li>
+	</ul>
+</div>
+<div>
+	<div class="ui-head"><a href="javascript:;" onclick="Dtoast('{$js_pageid}', '便签内容已复制');" data-clipboard-action="copy" data-clipboard-target="#note"><span>复制</span></a><i></i><b>我的便签</b></div>
+	<form method="post" action="?" data-ajax="false">
+	<input type="hidden" name="action" value="note"/>
+	<div class="blank-16"></div>
+	<div class="ui-form">
+		<div><textarea name="note" id="note" {if $line} style="height:{$line}px;"{/if}>{$mynote}</textarea></div>
+		<div class="blank-16"></div>
+		<div id="save-note"><input type="submit" name="submit" value=" 保 存 " class="btn"/></div>
+		<div class="blank-32"></div>
+	</div>
+	</form>
+</div>
+{load('clipboard.min.js')}
+<script type="text/javascript">var clipboard = new Clipboard('[data-clipboard-action]');</script>
+{template 'footer', 'member'}

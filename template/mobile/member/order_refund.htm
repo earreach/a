@@ -1,0 +1,232 @@
+{load('cart.css')}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">申请退款</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=update&step=detail&itemid={$itemid}" data-transition="none">取消申请</a>
+<a href="?action=update&step=detail&itemid={$itemid}" data-transition="none">订单详情</a>
+<a href="?action=index" data-direction="reverse">订单列表</a>
+</div>
+</div>
+
+{load('webuploader.min.js')}
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div id="goods">
+{loop $lists $k $v}	
+<div class="list-goods bd-b">
+<table cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td class="c1"><section><label><input type="checkbox" name="itemids[{$v[itemid]}]" value="1" id="check_{$v[itemid]}" {if in_array($v[status], array(2, 3, 4))}checked{else}disabled{/if}/><i></i></label></section></td>
+<td class="c2"><a href="{$v[linkurl]}"><img src="{if $v[thumb]}{$v[thumb]}{else}{DM_SKIN}60x60.png{/if}" width="60" height="60" alt="" onerror="this.src='{DM_SKIN}60x60.png';"/></a></td>
+<td>
+	<p><a href="{$v[linkurl]}">{$v[title]}</a></p>
+	<b>{$v[par]}</b>
+	<div>
+	<table cellpadding="0" cellspacing="0" width="100%">
+	<tr>
+	<td><em>{$DT[money_sign]}{$v[price]}</em></td>
+	<td class="a1" onclick="alter('{$v[itemid]}', '{$v[number]}', '-');">-</td>
+	<td class="a2"><input type="tel" name="numbers[{$v[itemid]}]" value="{$v[number]}" id="number_{$v[itemid]}" {if in_array($v[status], array(2, 3, 4))}{else}disabled{/if}/></td>
+	<td class="a3" onclick="alter('{$v[itemid]}', '{$v[number]}', '+');">+</td>
+	</tr>
+	</table>
+	</div>
+</td>
+</tr>
+</table>
+</div>
+{/loop}
+</div>
+
+<div class="ui-form">
+<p>服务类型<i>*</i><b id="dtypeid"></b></p>
+<div id="typeid">
+{loop $dservice $k $v}
+<label><input type="radio" name="post[typeid]" value="{$k}" id="typeid-{$k}"{if $type==$k} checked{/if} onclick="TP({$k});"/> {$v}</label><br/>
+{/loop}
+</div>
+<p>申请原因<i>*</i><b id="dreason"></b></p>
+<div>
+	<select name="post[reason][0]" class="dsn" id="reason-0">
+	<option value="">请选择常见原因</option>
+	<option value="拍错/不想要了">拍错/不想要了</option>
+	<option value="发货太慢">发货太慢</option>
+	<option value="商品价格变化">商品价格变化</option>
+	<option value="商品无货">商品无货</option>
+	<option value="地址有误">地址有误</option>
+	<option value="其他">其他</option>
+	</select>
+	<select name="post[reason][1]" class="dsn" id="reason-1">
+	<option value="">请选择常见原因</option>
+	<option value="拍错/不想要了">拍错/不想要了</option>
+	<option value="少件/发错货/未收到货">少件/发错货/未收到货</option>
+	<option value="商品价格变化">商品价格变化</option>
+	<option value="商品破损/包装问题">商品破损/包装问题</option>
+	<option value="商品与页面描述不符">商品与页面描述不符</option>
+	<option value="商品质量/故障">商品质量/故障</option>
+	<option value="型号/大小/颜色等不合适">型号/大小/颜色等不合适</option>
+	<option value="其他">其他</option>
+	</select>
+	<select name="post[reason][2]" class="dsn" id="reason-2">
+	<option value="">请选择常见原因</option>
+	<option value="商品破损/包装问题">商品破损/包装问题</option>
+	<option value="商品与页面描述不符">商品与页面描述不符</option>
+	<option value="商品质量/故障">商品质量/故障</option>
+	<option value="型号/大小/颜色等不合适">型号/大小/颜色等不合适</option>
+	<option value="其他">其他</option>
+	</select>
+	<select name="post[reason][3]" class="dsn" id="reason-3">
+	<option value="">请选择常见原因</option>
+	<option value="商品质量/故障">商品质量/故障</option>
+	<option value="其他">其他</option>
+	</select>
+</div>
+<p>补充说明<b id="dcontent"></b></p>
+<div><textarea rows="8" cols="80" name="post[content]" id="content"></textarea></div>
+<s>请客观、如实填写，以便卖家更快处理 限1000字</s>
+<p>图片凭证</p>
+<div>
+<script type="text/javascript">
+var album_max = parseInt({$DT[thumb_max]});
+if(album_max < 5 || album_max > 99) album_max = 9;
+for(var i = 0;i < album_max; i++) {
+	document.write('<input type="hidden" name="post[thumbs][]" id="thumb'+i+'" autocomplete="off"/>');
+	document.write('<div class="ui-form-album-show" id="album'+i+'" onclick="album_action('+i+');"></div>');
+}
+</script>
+<div class="ui-form-album-upload"><div id="album-picker"></div></div>
+<script type="text/javascript">
+function album_action(id) {
+	Dsheet('{$js_pageid}','<a href="javascript:album_delete('+id+');void(0);"><span style="color:red;">删除图片</span></a>', '取消', '确定要删除图片吗？');
+}
+function album_delete(id) {
+	$('#thumb'+id).val('');
+	$('#album'+id).html('');
+	$('#album'+id).hide();
+	$('.ui-form-album-upload').show();	
+}
+function album_show(id, url) {
+	if($('#thumb'+id).length == 0) return false;
+	$('#thumb'+id).val(url);
+	$('#album'+id).html('<img src="'+url+'"/>');
+	$('#album'+id).show();
+}
+function album_hide() {
+	var j = 1;
+	for(var i = 0; i < album_max; i++) {
+		if($('#thumb'+i).val() == '') {
+			j = 0;
+			break;
+		}
+	}
+	if(j) $('.ui-form-album-upload').hide();
+}
+var albumu = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=album&width={$MOD[thumb_width]}&height={$MOD[thumb_height]}',
+    pick: '#album-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+albumu.on('beforeFileQueued', function(file) {
+	var exts = albumu.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+albumu.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+albumu.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+albumu.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		for(var i = 0; i < album_max; i++) {
+			if($('#thumb'+i).val() == '') {
+				album_show(i, data.url);
+				break;
+			}
+		}
+		album_hide();
+	}
+});
+albumu.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+albumu.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+{if $thumbs}
+$(function(){
+	{loop $thumbs $k $v}
+	{if $v}album_show({$k}, '{$v}');{/if}
+	{/loop}
+	album_hide();
+});
+{/if}
+</script>
+</div>
+<p>视频凭证</p>
+<div>{template 'upload-video', 'chip'}</div>
+<div class="blank-20"></div>
+<div><input type="submit" name="submit" value="申请退款" class="btn-blue"/></div>
+<div class="blank-20"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if($('#goods :checked').length < 1) {
+		alert('请至少选择一件商品');
+		return false;
+	}
+	if($('#reason-'+$('#typeid :checked').val()).val() == '') {
+		Dmsg('请选择申请原因', 'reason');
+		return false;
+	}
+	var len = $('#content').val().length;
+	if(len > 1000) {
+		Dmsg('补充说明不能多于1000个字，当前已输入'+len+'个字', 'content');
+		return false;
+	}
+	return confirm('您确认您提供的资料无误，并申请售后吗？');
+}
+function alter(i, m, t) {
+	if(t == '+') {
+		if(Dd('number_'+i).value >= m) return;
+		Dd('number_'+i).value =  parseInt(Dd('number_'+i).value) + 1;
+	} else {
+		if(Dd('number_'+i).value <= 1) return;
+		Dd('number_'+i).value = parseInt(Dd('number_'+i).value) - 1;
+	}
+}
+function TP(i) {
+	$('#reason-'+i).show();
+	$('#reason-'+i).siblings('select').hide();
+}
+$(function(){
+	TP({$type});
+});
+</script>

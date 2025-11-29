@@ -1,0 +1,20 @@
+{loop $tags $k $t}
+<div class="ui-list-txt">
+<a href="{$t[linkurl]}"><strong>{$t[title]}</strong></a>
+{if isset($t[parentid])}
+<div>{$CATEGORY[$t[parentid]][catname]} / {$CATEGORY[$t[catid]][catname]}</div>
+{/if}
+<p>
+	<i class="ui-ico-none ui-fr">
+	{if $t[minsalary] && $t[maxsalary]}
+		{$DT[money_sign]}{$t[minsalary]}-{$t[maxsalary]}{$DT[money_unit]}/月
+	{elseif $t[minsalary]}
+		{$DT[money_sign]}{$t[minsalary]}{$DT[money_unit]}/月以上
+	{elseif $t[maxsalary]}
+		{$DT[money_sign]}{$t[maxsalary]}{$DT[money_unit]}/月以内
+	{else}
+		面议
+	{/if}	
+	</i><i class="ui-ico-area">{area_pos($t[areaid], '')}</i></p>
+</div>
+{/loop}

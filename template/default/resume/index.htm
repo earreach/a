@@ -1,0 +1,58 @@
+{template 'header'}
+<div class="b10"></div>
+<div class="m m3">
+	<div class="m3l">
+		{if $MOD[page_ijob]}
+		<div class="head-txt"><span><a href="{$MOD[linkurl]}{rewrite('search.php?typeid=4')}">更多<i>&gt;</i></a></span><strong class="ui-icon-rec">推荐简历</strong></div>
+		<div class="resume-tb"><!--{tag("moduleid=$moduleid&condition=status=3 and level>0&showcat=1&areaid=$cityid&pagesize=".$MOD[page_ijob]."&order=".$MOD[order]."&template=table-resume")}--></div>
+		<div class="head-txt"><span><a href="{$MOD[linkurl]}{rewrite('search.php?typeid=1')}">更多<i>&gt;</i></a></span><strong class="ui-icon-new">最新简历</strong></div>
+		<div class="resume-tb"><!--{tag("moduleid=$moduleid&condition=status=3&showcat=1&areaid=$cityid&pagesize=".$MOD[page_ijob]."&order=".$MOD[order]."&template=table-resume")}--></div>
+		{/if}
+	</div>
+	<div class="m3r">
+		<div class="user-info">
+		<script type="text/javascript">
+		var destoon_uname = get_cookie('username');
+		document.write('<a href="{$MODULE[2][linkurl]}avatar.php"><img src="'+DTPath+'api/avatar/show.php?size=large&reload={DT_TIME}&username='+destoon_uname+'"/></a>');
+		document.write('<ul>');
+		if(get_cookie('auth')) {
+			document.write('<li><em><a href="{$MODULE[2][linkurl]}logout.php">退出</a></em><a href="{$MODULE[2][linkurl]}"><strong>Hi,'+destoon_uname+'</strong></a></li>');
+		} else {
+			if(destoon_uname) {
+				document.write('<li><em><a href="{$MODULE[2][linkurl]}{$DT[file_login]}">登录</a></em><a href="{$MODULE[2][linkurl]}"><strong>Hi,'+destoon_uname+'</strong></a></li>');
+			} else {
+				document.write('<li><em><a href="{$MODULE[2][linkurl]}{$DT[file_register]}">注册</a></em><a href="{$MODULE[2][linkurl]}{$DT[file_login]}"><strong>Hi,请登录</strong></a></li>');
+			}
+		}
+		document.write('<li><a href="{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&action=add" class="b">发布简历</a><i>|</i><a href="{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}" class="b">我的简历</a><i>|</i><a href="{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&action=apply" class="b">应聘职位</a></li>');
+		document.write('</ul>');
+		</script>
+		</div>
+		<div class="resume-stats">
+			<ul>
+			<li><i>{php echo $db->count($table, 'status=3', 1800);}</i>简历</li>
+			<li><div><i>{php echo $db->count($table, "status=3 and addtime>$DT_TODAY-86400", 1800);}</i>今日</div></li>
+			<li><i>{php echo $db->count($DT_PRE.'company', 'groupid=5', 1800);}</i>会员</li>
+			</ul>
+		</div>
+		<div class="head-sub"><strong class="ui-icon-sort">按行业浏览</strong></div>
+		<div class="list-cate2">
+		<ul>
+		{loop $maincat $k $v}
+		<li><a href="{$MOD[linkurl]}{$v[linkurl]}">{set_style($v[catname],$v[style])}</a><i>({$v[item]})</i></li>
+		{/loop}
+		</ul>
+		</div>
+		<div class="head-sub"><strong class="ui-icon-area">按地区浏览</strong></div>
+		<div class="list-area4">
+		{php $mainarea = get_mainarea(0)}
+		<ul>
+		{loop $mainarea $k $v}
+		<li><a href="{$MOD[linkurl]}{rewrite('search.php?areaid='.$v['areaid'])}">{$v[areaname]}</a></li>
+		{/loop}
+		</ul>
+		</div>
+		<div class="b10"></div>
+	</div>
+</div>
+{template 'footer'}

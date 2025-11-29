@@ -1,0 +1,266 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right">
+{if $action=='add' || $action=='show'}
+<a href="?action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{else}
+<a href="?action=add"><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></a>
+{/if}
+<a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a>
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=add" data-transition="none">提交问题</a>
+<a href="?action=index" data-transition="none">客服中心</a>
+{if $support}<a href="?action=support" data-transition="none">客服专员</a>{/if}
+<a href="index.php" data-direction="reverse">会员中心</a>
+</div>
+</div>
+
+{if $action=='add'}
+{load('webuploader.min.js')}
+<form method="post" action="?" id="dform" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<div class="ui-form">
+<p>分类<i>*</i><b id="dtypeid"></b></p>
+<div>{$type_select}</div>
+<p>标题<i>*</i><b id="dtitle"></b></p>
+<div><input type="text" name="title" id="title" value="{$title}"/></div>
+<p>内容<i>*</i><b id="dcontent"></b></p>
+</div>
+<input type="hidden" name="content" id="content"/>
+<ul class="ui-editor-toolbar">
+<li class="ui-editor-img"><div id="editor-picker"></div></li>
+<li class="ui-editor-bold"><input type="button" value=" " editor-action="bold"/>B</li>
+<li class="ui-editor-italic"><input type="button" value=" " editor-action="italic"/>I</li>
+<li class="ui-editor-underline"><input type="button" value=" " editor-action="underline"/>U</li>
+</ul>
+<div class="ui-editor-content" id="editor">{$content}</div>
+{load('editor.js')}
+<script type="text/javascript">
+$(function(){
+    $('#editor').DEditor({
+        editorid: 'editor',
+        textareaid: 'content',
+        server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=editor'
+    });
+});
+</script>
+<div class="ui-form">
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="提 交" class="btn-blue"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	var l;
+	if(Dd('typeid').value == 0) {
+		Dmsg('请选择分类', 'typeid');
+		return false;
+	}
+	l = Dd('title').value.length;
+	if(l < 2) {
+		Dmsg('标题最少2字，当前已输入'+len+'字', 'title');
+		return false;
+	}
+	l = EditorLen();
+	if(l < 5) {
+		Dmsg('内容最少5字，当前已输入'+l+'字', 'content');
+		return false;
+	}
+	return true;
+}
+</script>
+{elseif $action == 'show'}
+<div class="title"><h1>{$title}</h1></div>
+<div class="info">
+<i class="ui-ico-comm">{$dstatus[$status]}</i>
+<i class="ui-ico-sort">{$TYPE[$typeid][typename]}</i>
+{if $star && $status > 2}<i class="ui-ico-info"><a href="?action=add&itemid={$itemid}" class="b">继续提问</a></i>{/if}
+{if $star}<i class="ui-fr"><img src="{DM_SKIN}star{$star}.png" width="80" height="16" alt="" align="absmiddle"/></i>{/if}
+</div>
+<div class="list-user">
+<img src="{useravatar($_username)}" width="48" height="48" class="avatar"/>
+<ul>
+<li>我的提问</li>
+<li><em title="{$adddate}">{{timetoread($addtime)}</em></li>
+</ul>
+</div>
+<div class="content" data-content="{$js_pageid}">
+{$content}
+</div>
+
+{if $lists}
+{loop $lists $k $v}
+<div class="main blank-10"></div>
+<div class="list-user">
+<img src="{if $v[editor]}{DT_PATH}apple-touch-icon-precomposed.png{else}{useravatar($_username)}{/if}" width="48" height="48" class="avatar"/>
+<ul>
+{if $v[editor]}
+<li style="color:#D9251D;">客服回复</li>
+{else}
+<li>我的追问</li>
+{/if}
+<li><em title="{timetodate($v[addtime], 5)}">{timetoread($v[addtime], 5)}</em></li>
+</ul>
+</div>
+<div class="content" data-content="{$js_pageid}">
+{$v[content]}
+</div>
+{/loop}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{if $star < 1}
+{if $status > 1}
+<div class="main blank-10"></div>
+<div class="ui-form">
+	<p>问题是否解决？<b id="tips"></b></p>
+	<div>
+	<label><input type="radio" name="ask" value="1" onclick="$('#reply').hide();$('#star').show();$('#tips').html('请为此次服务打分');"/> 是&nbsp;&nbsp;&nbsp;&nbsp;</label>
+	<label><input type="radio" name="ask" value="0" onclick="$('#reply').show();$('#star').hide();$('#tips').html('请继续提问');"/> 否</label>
+	</div>
+</div>
+<section id="star" style="display:none;">
+<div class="main blank-10"></div>
+<form method="post" action="?" onsubmit="return check_star();">
+<input type="hidden" name="action" value="star"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div class="ui-form">
+	<p>我的评分<b id="dstars"></b></p>
+	<div><label><input type="radio" name="star" value="1" id="star_1"/> <img src="{DM_SKIN}star1.png" width="80" height="16"/>  {$stars[1]}</label></div>
+	<div><label><input type="radio" name="star" value="2" id="star_2"/> <img src="{DM_SKIN}star2.png" width="80" height="16"/>  {$stars[2]}</label></div>
+	<div><label><input type="radio" name="star" value="3" id="star_3"/> <img src="{DM_SKIN}star3.png" width="80" height="16"/>  {$stars[3]}</label></div>
+	<div><label><input type="radio" name="star" value="4" id="star_4"/> <img src="{DM_SKIN}star4.png" width="80" height="16"/>  {$stars[4]}</label></div>
+	<div><label><input type="radio" name="star" value="5" id="star_5"/> <img src="{DM_SKIN}star5.png" width="80" height="16"/>  {$stars[5]}</label></div>
+	<s>评分之后，此问题将结束且无法继续提问</s>
+	<div class="blank-16"></div>
+	<input type="submit" name="submit" value="评分" class="btn-green"/>
+	<div class="blank-32"></div>
+</div>
+</form>
+</section>
+{/if}
+{load('webuploader.min.js')}
+<section id="reply">
+<div class="main blank-10"></div>
+<form method="post" action="?" id="dform" onsubmit="return check();">
+<input type="hidden" name="action" value="reply"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="content" id="content"/>
+<ul class="ui-editor-toolbar">
+<li class="ui-editor-img"><div id="editor-picker"></div></li>
+<li class="ui-editor-bold"><input type="button" value=" " editor-action="bold"/>B</li>
+<li class="ui-editor-italic"><input type="button" value=" " editor-action="italic"/>I</li>
+<li class="ui-editor-underline"><input type="button" value=" " editor-action="underline"/>U</li>
+</ul>
+<div class="ui-editor-content" id="editor"></div>
+{load('editor.js')}
+<script type="text/javascript">
+$(function(){
+    $('#editor').DEditor({
+        editorid: 'editor',
+        textareaid: 'content',
+        server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=editor'
+    });
+});
+</script>
+<div class="ui-form">
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="继续提问" class="btn-green"/>
+<p><b id="dcontent"></b></p>
+<div class="blank-32"></div>
+</div>
+</form>
+</section>
+{/if}
+{load('clear.js')}
+<script type="text/javascript">
+function check_star() {
+	if(checked_count('star') < 1) {
+		Dmsg('请选择评分', 'stars');
+		return false;
+	}
+	return confirm('确定要提交选中评分吗？评分之后，此问题将结束且无法继续提问');
+}
+function check() {
+	var l = EditorLen();
+	if(l < 5) {
+		Dmsg('内容最少5字，当前已输入'+l+'字', 'content');
+		return false;
+	}
+	return true;
+}
+</script>
+{elseif $action == 'support'}
+<div class="gird-4">
+	<ul>
+		{if $DT[im_web]}
+		<li><a href="{$MODULE[2][mobile]}chat.php?touser={$user[username]}" rel="external"><img src="{DT_STATIC}image/share-chat.png" width="48" height="48"/><span>在线交谈</span></a></li>
+		{/if}
+		<li><a href="{$MODULE[2][mobile]}message.php?action=send&touser={$user[username]}" rel="external"><img src="{DT_STATIC}image/share-message.png" width="48" height="48"/><span>发送私信</span></a></li>
+		<li><a href="{$MODULE[2][mobile]}friend.php?action=add&username={$user[username]}" rel="external"><img src="{DT_STATIC}image/share-friend.png" width="48" height="48"/><span>添加好友</span></a></li>
+		{if $user[telephone]}
+		<li><a href="tel:{$user[telephone]}"><img src="{DT_STATIC}image/share-tel.png" width="48" height="48"/><span>拨打电话</span></a></li>
+		{elseif $user[mobile]}
+		<li><a href="tel:{$user[mobile]}"><img src="{DT_STATIC}image/share-tel.png" width="48" height="48"/><span>拨打电话</span></a></li>
+		{/if}
+		{if $user[mobile]}
+		<li><a href="sms:{$user[mobile]}"><img src="{DT_STATIC}image/share-sms.png" width="48" height="48"/><span>发送短信</span></a></li>
+		{/if}
+		{if $user[mail]}
+		<li><a href="mailto:{$user[mail]}"><img src="{DT_STATIC}image/share-email.png" width="48" height="48"/><span>发送邮件</span></a></li>
+		{/if}
+		{if $user[qq] && $DT[im_qq]}
+		<li><a href="http://wpa.qq.com/msgrd?v=3&uin={$user[qq]}&site=qq&menu=yes" target="_blank" rel="external"><img src="{DT_STATIC}image/share-qq.png" width="48" height="48"/><span>QQ交谈</span></a></li>
+		{/if}
+		{if $user[wx] && $DT[im_wx]}
+		<li><a href="{DT_MOB}api/wx.php?wid={$user[wx]}&username={$user[username]}" rel="external"><img src="{DT_STATIC}image/share-wx.png" width="48" height="48"/><span>微信交谈</span></a></li>
+		{/if}
+		{if $user[ali] && $DT[im_ali]}
+		<li><a href="http://amos.alicdn.com/msg.aw?v=2&uid={$user[ali]}&site=cnalichn&s=6&charset=UTF-8" target="_blank" rel="external"><img src="{DT_STATIC}image/share-ali.png" width="48" height="48"/><span>阿里旺旺</span></a></li>
+		{/if}
+		{if $user[skype] && $DT[im_skype]}
+		<li><img src="{DT_STATIC}image/share-skype.png" width="48" height="48" onclick="prompt('长按号码可以复制', '{$user[skype]}');"/><span>Skype通话</span></li>
+		{/if}
+	</ul>
+</div>
+<div class="content bd-t">
+{if $user[truename]}姓名：{$user[truename]} （{if $user[gender]==1}先生{else}女士{/if}）<br/>{/if}
+{if $user[telephone]}电话：{$user[telephone]}<br/>{/if}
+{if $user[mobile]}手机：{$user[mobile]}<br/>{/if}
+{if $user[fax]}传真：{$user[fax]}<br/>{/if}
+{if $user[mail]}邮件：{$user[mail]}<br/>{/if}
+</div>
+{else}
+<div class="ui-form-search">
+<form action="?">
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li><span class="f_r">{$v[dstatus]}</span><a href="?action=show&itemid={$v[itemid]}"><strong>{$v[title]}</strong></a></li>
+<li><span class="f_r">{$v[type]}</span><span>{$v[editdate]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无问题咨询</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{/if}
+{template 'footer', 'member'}

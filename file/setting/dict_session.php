@@ -1,0 +1,4 @@
+<?php exit;?>
+sessionid,ID,
+data,内容,
+lastvisit,上次访问,

@@ -1,0 +1,197 @@
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+{template 'goods', 'chip'}
+{if $invoice_status}
+<div class="t2">发票详情</div>
+<table cellspacing="1" cellpadding="10" class="tb">
+<tr>
+<td class="tl">发票类型</td>
+<td class="tr">{$I[type]}</td>
+</tr>
+<tr>
+<td class="tl">发票抬头</td>
+<td class="tr">{$I[company]}</td>
+</tr>
+<tr>
+<td class="tl">纳税人识别号</td>
+<td class="tr">{$I[taxid]}</td>
+</tr>
+<tr>
+<td class="tl">地址电话</td>
+<td class="tr">{$I[address]}{if $I[telephone]} {$I[telephone]}{/if}</td>
+</tr>
+<tr>
+<td class="tl">开户行及账号</td>
+<td class="tr">{$I[bank]}{if $I[account]} {$I[account]}{/if}</td>
+</tr>
+<tr>
+<td class="tl">发票金额</td>
+<td class="tr f_red">{$DT[money_sign]}{number_format($money, 2, '.', '')}</td>
+</tr>
+</table>
+{/if}
+
+<div class="t2">发票开具</div>
+<table cellspacing="1" cellpadding="10" class="tb">
+<tr>
+<td class="tl">联系卖家</td>
+<td class="tr">{if $DT[im_web]}{im_web($O[seller])}&nbsp;{/if}<a href="{userurl($O[seller], 'file=contact')}" target="_blank" class="t">{$O[seller]}</a></td>
+</tr>
+{if $invoice_status == 2}
+<tr>
+<td class="tl">申请时间</td>
+<td class="tr">{timetodate($I[addtime], 5)}</td>
+</tr>
+<tr>
+<td class="tl">开票状态</td>
+<td class="tr f_green">已开票</td>
+</tr>
+<tr>
+<td class="tl">开票时间</td>
+<td class="tr">{timetodate($I[updatetime], 5)}</td>
+</tr>
+{if $I[url]}
+<tr>
+<td class="tl">电子发票</td>
+<td class="tr"><a href="javascript:;" onclick="_preview('{$I[url]}');" class="t">查看发票</a> &nbsp; <a href="{DT_PATH}api/attach.php?url={urlencode($I['url'])}&name={urlencode($I['company'].'-'.$I['type'].'-'.$I['oid'].'.'.file_ext($I['url']))}" target="_blank" class="t">下载发票</a></td>
+</tr>
+{elseif $I[send_type]}
+<tr>
+<td class="tl">快递名称</td>
+<td class="tr">{$I[send_type]}</td>
+</tr>
+{if $I[send_no]}
+<tr>
+<td class="tl">快递单号</td>
+<td class="tr">{$I[send_no]}{if strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#copy-no" onclick="Dtoast('快递单号已复制');"/>
+<div style="z-index:1000;position:absolute;top:-10000px;"><textarea id="copy-no">{$I[send_no]}</textarea></div>
+{load('clipboard.min.js')}
+<script type="text/javascript">var clipboard = new Clipboard('[data-clipboard-action]');</script>
+{/if}
+<script type="text/javascript">
+$(function(){
+	$('#express').load(AJPath+'?action=express&moduleid=2&auth={$auth}');
+});
+</script>
+</td>
+</tr>
+<tr>
+<td class="tl">追踪结果</td>
+<td class="tr" style="line-height:200%;"><div id="express"><img src="{DT_STATIC}member/loading.gif" align="absmiddle"/> 正在查询...</div></td>
+</tr>
+{/if}
+{/if}
+{elseif $invoice_status == 1}
+<tr>
+<td class="tl">申请时间</td>
+<td class="tr">{timetodate($I[addtime], 5)}</td>
+</tr>
+<tr>
+<td class="tl">开票状态</td>
+<td class="tr f_green">已申请，商家处理中</td>
+</tr>
+{else}
+<tr>
+<td class="tl"><span class="f_red">*</span> 发票类型</td>
+<td class="tr">
+<select name="post[type]" id="type" onchange="TP();">
+<option value="">请选择</option>
+{loop $TYPES $v}<option value="{$v}"{if $type==$v} selected{/if}>{$v}</option>{/loop}
+</select> <span id="dtype" class="f_red"></span>
+</td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 发票抬头</td>
+<td class="tr"><input type="text" size="50" name="post[company]" value="{$company}" id="company"/> <span id="dcompany" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 纳税人识别号</td>
+<td class="tr"><input type="text" size="50" name="post[taxid]" value="{$taxid}" id="taxid"/> <span id="dtaxid" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="dsn" data-fd="1">*</span> 注册地址</td>
+<td class="tr"><input type="text" size="100" name="post[address]" value="{$address}" id="address"/> <span id="daddress" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="dsn" data-fd="1">*</span> 公司电话</td>
+<td class="tr"><input type="text" size="50" name="post[telephone]" value="{$telephone}" id="telephone"/> <span id="dtelephone" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="dsn" data-fd="1">*</span> 开户银行</td>
+<td class="tr"><input type="text" size="50" name="post[bank]" value="{$bank}" id="bank"/> <span id="dbank" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="dsn" data-fd="1">*</span> 银行帐号</td>
+<td class="tr"><input type="text" size="50" name="post[account]" value="{$account}" id="account"/> <span id="daccount" class="f_red"></span></td>
+</tr>	
+<tr>
+<td class="tl"> </td>
+<td class="tr">
+<input type="submit" name="submit" value=" 申请开票 " class="btn_g"/>
+&nbsp;&nbsp;<input type="button" value=" 取消申请 " class="btn" onclick="history.back(-1);"/>
+</td>
+</tr>
+{/if}
+</table>
+</form>
+<script type="text/javascript">
+function check() {
+	var f,l;
+	f = 'type';
+	l = Dd(f).value.length;
+	if(l < 4) {
+		Dmsg('请选择发票类型', f);
+		return false;
+	}
+	f = 'company';
+	l = Dd(f).value.length;
+	if(l < 2) {
+		Dmsg('请填写发票抬头', f);
+		return false;
+	}
+	f = 'taxid';
+	l = Dd(f).value.length;
+	if(l < 16) {
+		Dmsg('请填写纳税人识别号', f);
+		return false;
+	}
+	if(Dd('type').value.indexOf('专') != -1) {
+		f = 'address';
+		l = Dd(f).value.length;
+		if(l < 10) {
+			Dmsg('请填写公司注册地址', f);
+			return false;
+		}
+		f = 'telephone';
+		l = Dd(f).value.length;
+		if(l < 7) {
+			Dmsg('请填写公司电话', f);
+			return false;
+		}
+		f = 'bank';
+		l = Dd(f).value.length;
+		if(l < 4) {
+			Dmsg('请填写开户银行', f);
+			return false;
+		}
+		f = 'account';
+		l = Dd(f).value.length;
+		if(l < 10) {
+			Dmsg('请填写银行帐号', f);
+			return false;
+		}
+	}
+	return confirm('您确认以上信息核对无误，申请开票吗？');
+}
+function TP() {
+	if(Dd('type').value.indexOf('专') == -1) {
+		$('[data-fd]').attr('class', 'dsn');
+	} else {
+		$('[data-fd]').attr('class', 'f_red');
+	}
+}
+{if $invoice_status<1}TP();{/if}
+s('order');m('action_invoice');
+</script>

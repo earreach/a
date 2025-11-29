@@ -1,0 +1,13 @@
+<?php exit;?>
+itemid,ID,
+username,会员名,
+id,日期,
+ip,IP,
+ip_pc,电脑IP,
+ip_mb,手机IP,
+pv,PV,
+pv_pc,电脑PV,
+pv_mb,手机PV,
+rb,爬虫PV,
+rb_pc,电脑爬虫PV,
+rb_mb,手机爬虫PV,

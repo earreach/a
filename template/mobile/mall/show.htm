@@ -1,0 +1,294 @@
+{template 'header'}
+<div id="head-bar-{$js_pageid}" class="dsn">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">
+	<div class="head-menu" id="head-menu-{$js_pageid}">
+	<ul>
+		<li name="top" class="on">商品</li>
+		<li name="content">详情</li>
+		<li name="comment">评价</li>
+		<li name="contact">联系</li>
+		<li name="list">推荐</li>
+	</ul>
+	</div>
+</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+</div>
+
+<div class="head-ico-left" id="ico-left-{$js_pageid}"><a href="javascript:;" onclick="if($('#back-{$js_pageid}').attr('href').indexOf('javascript:')==-1){Go($('#back-{$js_pageid}').attr('href'));}else{Dback();}" data-direction="reverse"><img src="{DM_SKIN}icon-back.png" width="16" height="16"/></a></div>
+<div class="head-ico-right" id="ico-right-{$js_pageid}"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet.png" width="16" height="16"/></a></div>
+
+<div class="ui-viewer" id="viewer-{$js_pageid}"></div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="javascript:;" onclick="BuyNow();">立即购买</a>
+<a href="{DT_MOB}api/share.php?mid={$moduleid}&itemid={$itemid}" data-transition="slideup">分享好友</a>
+<a href="{$MOD[mobile]}" data-direction="reverse">{$MOD[name]}首页</a>
+<a href="{DT_MOB}{rewrite('channel.php?mid='.$moduleid)}" data-transition="none">{$MOD[name]}分类</a>
+<a href="{DT_MOB}channel.php" data-direction="reverse">切换频道</a>
+<a href="{$MOD[mobile]}sec.php">秒杀活动</a>
+<a href="{$MODULE[2][mobile]}cart.php" data-transition="none">购物车{if $_cart}<b>{$_cart}</b>{/if}</a>
+</div>
+</div>
+
+{load('mall.css')}
+{if $thumb}{template 'album', 'chip'}{/if}
+<div class="title"><h1>{$title}</h1></div>
+{if $subtitle}
+<div class="mall-text">{$subtitle}</div>
+{/if}
+<div class="info">{if $MOD[hits]}<i class="ui-ico-hits" id="hits">{$hits}</i>{/if}<i class="ui-ico-comm" onclick="$('html, body').animate({scrollTop:$('#comment-{$js_pageid}').offset().top-48}, 200);">{$comments}</i>{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}{if $orders>0}<i class="ui-ico-info ui-fr"><b class="px14">{$orders}+</b>已售</i>{/if}</div>
+{if $sec == 2}
+<div class="mall-sec2"><b>秒杀预告</b> {timetodate($sfromtime, 'm月d日 H:i')} 秒杀价{$DT[money_sign]}{$sprice}</div>
+{/if}
+{if $sec == 1}
+<div class="mall-sec1"><b>正在秒杀</b><div>距离结束：<span id="totimer"></span></div></div>
+{/if}
+<div class="mall-info">
+<table width="100%" cellpadding="10" cellspacing="0">
+<tr id="sec0"{if $sec == 1} style="display:none;"{/if}>
+<td class="tl">价格</td>
+<td class="mall-price">{$DT[money_sign]}<span id="mall-price" data-price="{$price}">{$price}</span></td>
+</tr>
+{if $sec == 1}
+<tr id="sec1">
+<td>秒杀价</td>
+<td class="mall-price">{$DT[money_sign]}<b>{$sprice}</b></td>
+</tr>
+{/if}
+{if $fprice > 0}
+<tr>
+<td>粉丝价</td>
+<td class="mall-fprice">{$DT[money_sign]}<b>{$fprice}</b> &nbsp; <span>关注店铺，即享粉丝价</span></td>
+</tr>
+{/if}
+{if $a2}
+<tr>
+<td class="tl">混批</td>
+<td id="data-step" data-a1="{$a1}" data-a2="{$a2}" data-a3="{$a3}" data-p1="{$p1}" data-p2="{$p2}" data-p3="{$p3}">{$a1}-{$a2}{$unit} {$DT[money_sign]}{$p1}{if $a3}; {$a2+1}-{$a3}{$unit} {$DT[money_sign]}{$p2}; {$a3}{$unit}以上 {$DT[money_sign]}{$p3}{else}; {$a2+1}{$unit}以上 {$DT[money_sign]}{$p2}{/if}</td>
+</tr>
+{/if}
+{if $promos}
+<tr>
+<td class="tl">优惠</td>
+<td class="promos">
+<a href="{$MODULE[2][mobile]}coupon.php?username={$username}" target="_blank">
+{loop $promos $v}
+{if $v[cost]>0.001}
+<span>满{$v[cost]}减{$v[price]}</span>
+{else}
+<span>{$v[price]}{$DT[money_unit]}优惠券</span>
+{/if}
+{/loop}
+</a>
+</td>
+</tr>
+{/if}
+
+<tr>
+<td class="tl">发货</td>
+<td>
+{area_pos($areaid, '')}
+{if $days > 0}
+<span class="f_r f_grey px12">{if $days > 3}预售，{/if}付款后{if $days < 1}{ceil(24*$days)}小时{elseif $days==1}24小时{elseif $days==2}48小时{else}{$days}天{/if}内 &nbsp;</span>
+{/if}
+</td>
+</tr>
+
+{if $express_name_1 == '包邮'}
+<tr>
+<td class="tl">运费</td>
+<td>
+{if $fee_start_1>0}
+{if $fee_start_2>0} {$express_name_2}:{$fee_start_2}&nbsp;&nbsp;{/if}
+{if $fee_start_3>0} {$express_name_3}:{$fee_start_3}&nbsp;&nbsp;{/if}
+满{$fee_start_1}包邮
+{else}
+包邮
+{/if}
+</td>
+</tr>
+{elseif $fee_start_1>0 || $fee_start_2>0 || $fee_start_3>0}
+<tr>
+<td class="tl">运费</td>
+<td class="f_gray">
+{if $fee_start_1>0} {$express_name_1}:{$fee_start_1}&nbsp;&nbsp;{/if}
+{if $fee_start_2>0} {$express_name_2}:{$fee_start_2}&nbsp;&nbsp;{/if}
+{if $fee_start_3>0} {$express_name_3}:{$fee_start_3}&nbsp;&nbsp;{/if}
+</td>
+</tr>
+{/if}
+{if $cod}
+<tr>
+<td class="tl">到付</td>
+<td>支持货到付款</td>
+</tr>
+{/if}
+{if $RL}
+<tr>
+<td class="tl">{$relate_name}</td>
+<td>
+{loop $RL $v}
+<div class="relate_{if $itemid==$v[itemid]}2{else}1{/if}"><a href="{$MOD[mobile]}{$v[linkurl]}" rel="external"><img src="{$v[thumb]}" alt="" title="{$v[relate_title]}"/>{if $v[relate_title]}<b title="{$v[relate_title]}">{dsubstr($v[relate_title], 28)}</b>{/if}</a></div>
+{/loop}				
+</td>
+</tr>
+{/if}
+{if $P1}
+<tr>
+<td class="tl">{$n1}</td>
+<td id="p1" data-prices="{$prices}">
+<ul>
+{loop $P1 $i $v}
+<li class="nv_{if $i==0}2{else}1{/if}">{$v}</li>
+{/loop}
+</ul>
+</td>
+</tr>
+{/if}
+{if $P2}
+<tr>
+<td class="tl">{$n2}</td>
+<td id="p2">
+<ul>
+{loop $P2 $i $v}
+<li class="nv_{if $i==0}2{else}1{/if}">{$v}</li>
+{/loop}
+</ul>
+</td>
+</tr>
+{/if}
+{if $P3}
+<tr>
+<td class="tl">{$n3}</td>
+<td id="p3">
+<ul>
+{loop $P3 $i $v}
+<li class="nv_{if $i==0}2{else}1{/if}">{$v}</li>
+{/loop}
+</ul>
+</td>
+</tr>
+{/if}
+{if $amount>0}
+{if $status == 3}
+<tr>
+<td class="tl">数量</td>
+<td><div class="mall-alter"><i onclick="Malter('-', {$mina}, {$maxa});">-</i><input type="text" value="{$mina}" id="amount" onkeyup="Malter('', {$mina}, {$maxa});"/><b onclick="Malter('+', {$mina}, {$maxa});">+</b></div></td>
+</tr>
+<tr>
+<td class="tl">库存</td>
+<td><span id="mall-amount">{$amount}</span>{$unit}<span class="f_r f_grey px12">{if $minamount>0}起订{$minamount}{$unit} &nbsp; {/if}{if $maxamount>0}限购{$maxamount}{$unit}{/if}</span></td>
+</tr>
+{else}
+<tr>
+<td></td>
+<td><strong class="f_grey px16">该商品已下架</strong></td>
+</tr>				
+{/if}
+{else}
+<tr>
+<td></td>
+<td><strong class="f_grey px16">该商品库存不足</strong></td>
+</tr>
+{/if}
+</table>
+</div>
+
+<div class="ui-head" id="content-{$js_pageid}"><i></i><b>商品详情</b></div>
+<div class="content" data-content="{$js_pageid}">{$content}</div>
+
+<div class="tool">
+{if $MOD[show_like]}<div class="like" onclick="Dlike({$moduleid}, {$itemid}, 0);">点赞 <b id="like-{$moduleid}-{$itemid}-0">{$likes}</b></div>{/if}
+{if $MOD[show_hate]}<div class="hate" onclick="Dhate({$moduleid}, {$itemid}, 0);">反对 <b id="hate-{$moduleid}-{$itemid}-0">{$hates}</b></div>{/if}
+{if $MOD[show_report]}<div class="report" onclick="Dreport({$moduleid}, {$itemid}, 0);">举报</div>{/if}
+{if $MOD[show_favorite]}<div class="favorite" onclick="Dfavor({$moduleid}, {$itemid});">收藏 <b>{$favorites}</b></div>{/if}
+{if $MOD[fee_award]}<div class="award" onclick="Go('{$MODULE[2][mobile]}award.php?mid={$moduleid}&itemid={$itemid}');">打赏 <b>{$awards}</b></div>{/if}
+{if $could_comment}<div class="comment" onclick="Go('{$EXT[comment_mob]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}');">评论 <b>{$comments}</b></div>{/if}
+{if $MOD[show_share]}<div class="share" onclick="Go('{DT_MOB}api/share.php?mid={$moduleid}&itemid={$itemid}');">分享 <b>{$shares}</b></div>{/if}
+</div>
+
+<div class="ui-head" id="comment-{$js_pageid}"><i></i><b>买家评价</b></div>
+<div id="c_1" data-nocomments="暂无评价"><div class="list-empty">正在加载评价详情...</div></div>
+
+<div class="ui-head" id="contact-{$js_pageid}"><i></i><b>联系方式</b></div>
+<div class="contact" data-contact="{$js_pageid}">{template 'contact', 'chip'}</div>
+
+<div id="list-{$js_pageid}" class="ui-main">
+	<div class="blank-10"></div>
+	<!--{tag("moduleid=$moduleid&condition=status=3 and username='$username'&order=orders desc&pagesize=10&itemid=$itemid&template=list-mall")}-->
+</div>
+
+{if $status == 3 && $amount>0}
+<div class="foot-bar-fix"></div>
+<div class="foot-bar">
+	<div class="mall-foot">
+	<table cellpadding="0" cellspacing="0" width="100%">
+	<tr align="center">
+	<td width="48"><a href="{if $DT[im_web]}{$MODULE[2][mobile]}chat.php?touser={$username}&mid={$moduleid}&itemid={$itemid}{else}{userurl($username, 'file=contact')}{/if}" rel="external"><img src="{DM_SKIN}foot-message.png" style="width:20px;height:20px;"/><span>客服</span></a></td>
+	<td width="48"><a href="{userurl($username, 'file='.$MOD['moduledir'])}" rel="external"><img src="{DM_SKIN}foot-shop.png" style="width:20px;height:20px;"/><span>商铺</span></a></td>
+	<td width="48" id="destoon-cart"><a href="{$MODULE[2][mobile]}cart.php" rel="external"><img src="{DM_SKIN}foot-cart.png" style="width:20px;height:20px;"/><span>购物车</span></a>{if $_cart}<b>{$_cart}</b>{/if}</td>
+	<td width="10"></td>
+	<td><input type="button" value="加入购物车" class="btn-cart" onclick="AddCart();"/></td>
+	<td width="10"></td>			
+	<td><input type="button" value="&nbsp;立即购买&nbsp;" class="btn-buy" onclick="BuyNow();"/></td>
+	<td width="10"></td>
+	</tr>
+	</table>
+	</div>
+</div>
+{/if}
+<script type="text/javascript">
+var mallmode = {$mode};
+var mallstocks = {if $stocks}$.parseJSON('{$stocks}'){else}[]{/if};
+var mallurl = '{$MODULE[2][mobile]}';
+var mallmid = {$moduleid};
+var mallid = {$itemid};
+var n_c = {$comments};
+var c_c = Dd('c_1').innerHTML;
+var s_s = {'1':0,'2':0,'3':0};
+</script>
+{load('player.js')}
+{load('mall.js')}
+<script type="text/javascript">
+$(function(){
+	{if $P1}addE(1);{/if}
+	{if $P2}addE(2);{/if}
+	{if $P3}addE(3);{/if}
+	comment_load(1);
+	Mscroll('{$js_pageid}');
+	{if $sec == 1}	
+	var totime = new Date({$jsdate}).getTime();
+	var totimer_interval = setInterval(function() {
+		var t = new Date();
+		var s = Math.floor((totime - t.getTime())/1000);
+		var h = '';
+		var i;
+		if(s > 0) {
+			i = Math.floor(s/86400);	
+			if(i) h += '<span>'+i+'</span>天';
+			s = Math.floor(s%86400);
+			i = Math.floor(s/3600);	
+			if(i) h += '<span>'+i+'</span>小时';
+			s = Math.floor(s%3600);	
+			i = Math.floor(s/60);			
+			if(i) h += '<span>'+i+'</span>分';
+			s = Math.floor(s%60);
+			h += '<span>'+s+'</span>秒';
+		} else {
+			h = '<span>已结束</span>';
+			$('#sec0').show();
+			$('#sec1').hide();
+			clearInterval(totimer_interval);
+		}
+		$('#totimer').html(h);
+	}, 1000);
+	{/if}
+});
+</script>
+{template 'footer'}

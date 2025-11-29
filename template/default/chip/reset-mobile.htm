@@ -1,0 +1,12 @@
+<style>
+{if $css[mobile_head]}
+.head-bar{background:{$css[mobile_head]};border:none;}
+{if $css[mobile_text] == '#FFFFFF'}
+.btn-blue{background:{$css[mobile_head]};}
+.member-info{background:{$css[mobile_head]};}
+{/if}
+{/if}
+{if $css[mobile_text]}
+.head-bar,.head-bar a,.head-bar span,.head-bar div,.head-bar b,.head-menu li {color:{$css[mobile_text]};}
+{/if}
+</style>

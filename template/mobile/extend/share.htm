@@ -1,0 +1,76 @@
+{template 'header'}
+<script type="text/javascript">
+var DShare = {
+	'title':'{$title}',
+	'linkurl':'{$linkurl}',
+	'thumb':'{if $thumb}{$thumb}{else}{DT_MOB}apple-touch-icon-precomposed.png{/if}',
+	'pic':'{if $pic}{$pic}{else}{DT_MOB}apple-touch-icon-precomposed.png{/if}',
+	'introduce':'{$introduce}',
+	'pageid':'{$js_pageid}'
+};
+{if $DT_MOB=='ios' && $DT_MBS!='weixin' && $DT_MBS!='wxmini'}
+var taptip = '长按上图 添加到“照片”';
+{else}
+var taptip = '长按上图 保存图片';
+{/if}
+</script>
+<style type="text/css">
+.poster {background:#FFFFFF;text-align:center;padding:10px;display:none;-webkit-user-select:none;}
+.poster p {line-height:48px;font-size:16px;color:#666666;margin:0;}
+.share {background:#FFFFFF;text-align:center;overflow:hidden;}
+.share li {width:25%;height:80px;float:left;padding:16px 0;}
+.share img {border-radius:16px;width:60px;height:60px;}
+.share span {display:block;font-size:12px;padding-top:6px;}
+</style>
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="{$linkurl}" data-direction="reverse">取消分享</a>
+<a href="{$MODULE[$mid][mobile]}" data-direction="reverse">{$MODULE[$mid][name]}首页</a>
+<a href="{DT_MOB}{rewrite('channel.php?mid='.$mid)}" data-transition="none">{$MODULE[$mid][name]}分类</a>
+<a href="{DT_MOB}channel.php" data-direction="reverse">切换频道</a>
+</div>
+</div>
+
+<div class="poster">
+	<div id="share-code-{$js_pageid}" style="display:none;"></div>
+	<canvas id="share-post-{$js_pageid}" width="750" height="660" style="display:none;"></canvas>
+	<img id="share-img-{$js_pageid}"/>
+	<p></p>
+</div>
+<div class="share">
+	<ul>
+		<li id="share-copy" onclick="Dtoast('{$js_pageid}', '网址已复制');" data-clipboard-action="copy" data-clipboard-target="#copy-url"><img src="{DT_STATIC}image/share-copy.png"/><span>复制网址</span></li>	
+		<li id="share-wx"><a href="javascript:Dshare(taptip+'，发送给微信朋友');"><img src="{DT_STATIC}image/share-wx.png"/><span>微信好友</span></a></li>
+		<li id="share-py"><a href="javascript:Dshare(taptip+'，发到微信朋友圈');"><img src="{DT_STATIC}image/share-py.png"/><span>微信朋友圈</span></a></li>
+		<li id="share-qq"><a href="javascript:Dshare(taptip+'，发送给QQ好友');"><img src="{DT_STATIC}image/share-qq.png"/><span>QQ好友</span></a></li>
+		<li id="share-qz"><a href="javascript:Dshare(taptip+'，发到QQ空间');"><img src="{DT_STATIC}image/share-qzone.png"/><span>QQ空间</span></a></li>
+		<li id="share-sms"><a href="{$sms}" rel="external"><img src="{DT_STATIC}image/share-sms.png"/><span>发送短信</span></a></li>
+		<li id="share-email"><a href="mailto:?subject={$title}&body={$linkurl}" rel="external"><img src="{DT_STATIC}image/share-email.png"/><span>发送邮件</span></a></li>
+		{if $DT_MBS != 'wxmini'}
+		<li id="share-weibo"><a href="javascript:Dshare('https://service.weibo.com/share/share.php?title={$_title}&url={$_linkurl}&pic={urlencode($pic)}');" rel="external"><img src="{DT_STATIC}image/share-weibo.png"/><span>新浪微博</span></a></li>
+		<li id="share-facebook"><a href="javascript:Dshare('https://www.facebook.com/sharer.php?u={$_linkurl}');" rel="external"><img src="{DT_STATIC}image/share-facebook.png"/><span>Facebook</span></a></li>
+		<li id="share-twitter"><a href="javascript:Dshare('https://twitter.com/share?url={$_linkurl}&title={$_title}');" rel="external"><img src="{DT_STATIC}image/share-twitter.png"/><span>Twitter</span></a></li>
+		<li id="share-linkedin"><a href="javascript:Dshare('https://www.linkedin.com/shareArticle?mini=true&url={$_linkurl}');" rel="external"><img src="{DT_STATIC}image/share-linkedin.png"/><span>Linkedin</span></a></li>
+		<li id="share-pinterest"><a href="javascript:Dshare('https://www.pinterest.com/pin/create/button/?url={$_linkurl}');" rel="external"><img src="{DT_STATIC}image/share-pinterest.png"/><span>Pinterest</span></a></li>
+		{/if}
+	</ul>
+</div>
+<iframe src="" name="send" id="send" border="0" frameborder="0" rel="external" data-ajax="false" style="display:none;"></iframe>
+<div style="width:100%;height:100%;min-height:1000px;background:#000000;opacity:0.75;position:fixed;z-index:99;left:0;top:0;right:0;text-align:right;display:none;" onclick="Go('{$linkurl}');" id="share-tips-{$js_pageid}"><img src="{DT_STATIC}image/share-tips.png" width="165"{if $DT_MBS == 'wxmini'} style="margin-right:48px;"{/if}/></div>
+<div style="z-index:1000;position:absolute;top:-10000px;"><textarea id="copy-url">{$linkurl}</textarea></div>
+{load('qrcode.min.js')}
+{load('share.js')}
+{load('clipboard.min.js')}
+<script type="text/javascript">var clipboard = new Clipboard('[data-clipboard-action]');</script>
+{template 'footer'}

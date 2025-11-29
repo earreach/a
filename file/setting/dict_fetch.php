@@ -1,0 +1,11 @@
+<?php exit;?>
+itemid,ID,
+sitename,网站名称,
+domain,域名,
+mark,标识,
+title,标题规则,
+content,内容规则,
+setting,设置,
+encode,编码,
+editor,编辑,
+edittime,修改时间,

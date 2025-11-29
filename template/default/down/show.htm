@@ -1,0 +1,67 @@
+{template 'header'}
+<script type="text/javascript">var module_id= {$moduleid},item_id={$itemid},content_id='content',img_max_width={$MOD[max_width]};</script>
+<div class="m">	
+	<div class="nav"><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')}</div>
+</div>
+<div class="m m3">
+	<div class="m3l">
+		<h1 class="title" id="title">{$title}</h1>
+		<div class="info"><span class="f_r"><img src="{DT_PATH}file/ext/{$fileext}.gif" width="16" height="14" title="{$FILETYPE[$fileext]}" align="absmiddle" {if $pauth}title="在线预览 {$FILETYPE[$fileext]}" class="c_p" onclick="window.open('{DT_PATH}api/view.php?auth={$pauth}');"{else}title="{$FILETYPE[$fileext]}"{/if}/></span>
+		<i class="ui-ico-time">{$adddate}</i>
+		{if $MOD[hits]}<i class="ui-ico-hits"><span id="hits">{$hits}</span></i>{/if}
+		<i class="ui-ico-down"><span id="download">{$download}</span></i>
+		<i class="ui-ico-info">{$filesize}{$unit}</i>
+		{if $could_comment}<a href="{$EXT[comment_url]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}"><i class="ui-ico-comm">{$comments}</i></a>{/if}
+		{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}
+		</div>
+		{if $CP}{template 'property_show', 'chip'}{/if}
+		<div class="content" id="content">{if $content}{$content}{else}{$title}{/if}</div>
+		444444444444<div id="down">{template 'content', 'chip'}</div>55555555555
+		{if $keytags}
+		<div class="tags">
+		{loop $keytags $t}
+		<a href="{$MOD[linkurl]}{rewrite('search.php?kw='.urlencode($t))}" target="_blank">{$t}</a>
+		{/loop}
+		</div>
+		{/if}
+
+		{if $album}
+		{php $tags = albumlist($item);}
+		{if $tags[2] > 1}
+		<div class="album-list">
+			<p><span>{$tags[1]}/{$tags[2]}</span><b>专辑：{$album}</b></p>
+			<ul>
+			{loop $tags[0] $t}
+			<a href="{$MOD[linkurl]}{$t[linkurl]}"><li{if $t[itemid]==$itemid} class="on"{/if}>{if $t[itemid]!=$itemid}<i>{$t[filesize]}{$t[unit]}</i>{/if}{$t[title]}</li></a>
+			{/loop}
+			</ul>
+		</div>
+		{/if}
+		{/if}
+
+		<div class="tool">
+		{if $MOD[show_like]}<i class="like" onclick="Dlike({$moduleid}, {$itemid}, 0);">点赞 <b id="like-{$moduleid}-{$itemid}-0">{$likes}</b></i>{/if}
+		{if $MOD[show_hate]}<i class="hate" onclick="Dhate({$moduleid}, {$itemid}, 0);">反对 <b id="hate-{$moduleid}-{$itemid}-0">{$hates}</b></i>{/if}
+		{if $MOD[show_report]}<i class="report" onclick="Dreport({$moduleid}, {$itemid}, 0);">举报</i>{/if}
+		{if $MOD[show_favorite]}<i class="favorite" onclick="Dfavor({$moduleid}, {$itemid});">收藏 <b>{$favorites}</b></i>{/if}
+		{if $MOD[fee_award]}<a href="{$MODULE[2][linkurl]}award.php?mid={$moduleid}&itemid={$itemid}" target="_blank"><i class="award">打赏 <b>{$awards}</b></i></a>{/if}
+		{if $could_comment}<a href="{$EXT[comment_url]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}" target="_blank"><i class="comment">评论 <b>{$comments}</b></i></a>{/if}
+		{if $MOD[show_share]}<a href="{DT_PATH}api/share.php?mid={$moduleid}&itemid={$itemid}" target="_blank"><i class="share">分享 <b>{$shares}</b></i></a>{/if}
+		</div>
+	</div>
+	<div class="m3r">
+		{if $MOD[show_user] && $username}{template 'userinfo', 'chip'}{/if}
+		{if $album}
+		<div class="head-sub"><strong>相关{$MOD[name]}</strong></div>
+		<div class="down-list"><!--{tag("moduleid=$moduleid&condition=status=3 and album='$album' and username='$username'&areaid=$cityid&itemid=$itemid&pagesize=10&order=addtime desc&template=list-down")}--></div>
+		{/if}
+		<div class="head-sub"><strong>本类推荐</strong></div>
+		<div class="down-list"><!--{tag("moduleid=$moduleid&condition=status=3 and level>0&catid=$catid&areaid=$cityid&itemid=$itemid&pagesize=10&order=addtime desc&template=list-down")}--></div>
+		<div class="head-sub"><strong>下载排行</strong></div>
+		<div class="list-rank"><!--{tag("moduleid=$moduleid&condition=status=3&catid=$catid&areaid=$cityid&order=download desc&key=download&pagesize=9&template=list-rank")}--></div>
+	</div>
+	<div class="b10 c_b"></div>
+</div>
+6666666666
+{if $content}{load('content.js')}{/if}
+{template 'footer'}

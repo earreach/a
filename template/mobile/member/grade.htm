@@ -1,0 +1,42 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=index" data-transition="none">会员组</a>
+<a href="?action=credit" data-transition="none">{$DT[credit_name]}组</a>
+<a href="account.php?action=upgrade" data-transition="none">升级记录</a>
+<a href="account.php?action=index" data-transition="none">我的账户</a>
+<a href="index.php" data-direction="reverse">会员中心</a>
+</div>
+</div>
+
+<div class="blank-36 main"></div>
+{if $action == 'credit'}
+<div class="list-set">
+<ul>
+{loop $GRADE $k $v}
+<li><div><span>{$v[credit]}{$DT[credit_name]}</span><img src="{DT_STATIC}image/grade-{$k}.png" width="24" alt=""/> &nbsp; {$v[name]}</div></li>
+{/loop}
+</ul>
+</div>
+{else}
+<div class="list-set">
+<ul>
+{loop $GROUPS $k $v}{if $k > 4}
+<li><div><a href="{if isset($UP[$k])}account.php?action=grade&groupid={$v[groupid]}{else}javascript:Dtoast('{$js_pageid}','不支持升级该组');{/if}"><span>{if $v[fee]}{$DT[money_sign]}{$v[fee]}{$DT[money_unit]}/年{else}免费{/if}</span>{$v[groupname]}</a></div></li>
+{/if}{/loop}
+</ul>
+</div>
+{/if}
+<div class="blank-600 main"></div>
+{template 'footer', 'member'}

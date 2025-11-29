@@ -1,0 +1,142 @@
+{template 'header'}
+<div class="m">
+  <div class="quote-login">
+    <h1>用邮箱验证码登录，查看我的报价</h1>
+
+    <form id="quote-login-form" onsubmit="return false;">
+      <p>
+        邮箱：
+        <input type="text" name="email" id="ql-email" style="width:260px;" />
+      </p>
+      <p>
+        验证码：
+        <input type="text" name="email_code" id="ql-code" size="6" maxlength="6" />
+        <input type="button" id="ql-send-btn" value="获取验证码" />
+      </p>
+      <p>
+        <input type="button" id="ql-login-btn" value="登录并查看我的报价" />
+      </p>
+      <p id="ql-msg" style="color:#c00;"></p>
+    </form>
+  </div>
+</div>
+
+<script type="text/javascript">
+(function() {
+  var sendBtn  = document.getElementById('ql-send-btn');
+  var loginBtn = document.getElementById('ql-login-btn');
+  var emailInp = document.getElementById('ql-email');
+  var codeInp  = document.getElementById('ql-code');
+  var msgBox   = document.getElementById('ql-msg');
+
+  function setMsg(text) {
+    msgBox.innerHTML = text ? text : '';
+  }
+
+  function post(url, data, cb) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', url, true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        var res = null;
+        try {
+          res = JSON.parse(xhr.responseText);
+        } catch(e) {}
+        cb && cb(res, xhr);
+      }
+    };
+    xhr.send(data);
+  }
+
+  // 简单邮箱校验
+  function isEmail(str) {
+    return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(str);
+  }
+
+  // 发送验证码
+  sendBtn.onclick = function() {
+    var email = emailInp.value.replace(/^\s+|\s+$/g, '');
+    if (!email) {
+      setMsg('请先填写邮箱地址');
+      emailInp.focus();
+      return;
+    }
+    if (!isEmail(email)) {
+      setMsg('邮箱格式不正确');
+      emailInp.focus();
+      return;
+    }
+
+    setMsg('正在发送验证码...');
+    sendBtn.disabled = true;
+
+    post('/api/quote_send_email_code.php', 'email=' + encodeURIComponent(email), function(res) {
+      if (!res) {
+        setMsg('服务器返回异常');
+        sendBtn.disabled = false;
+        return;
+      }
+      setMsg(res.message || '');
+      if (!res.success) {
+        sendBtn.disabled = false;
+        return;
+      }
+
+      // 简单 60 秒倒计时
+      var seconds = 60;
+      sendBtn.value = '重新获取(' + seconds + ')';
+      var timer = setInterval(function() {
+        seconds--;
+        if (seconds <= 0) {
+          clearInterval(timer);
+          sendBtn.disabled = false;
+          sendBtn.value = '获取验证码';
+        } else {
+          sendBtn.value = '重新获取(' + seconds + ')';
+        }
+      }, 1000);
+    });
+  };
+
+  // 登录并查看我的报价
+  loginBtn.onclick = function() {
+    var email = emailInp.value.replace(/^\s+|\s+$/g, '');
+    var code  = codeInp.value.replace(/^\s+|\s+$/g, '');
+
+    if (!email) {
+      setMsg('请先填写邮箱地址');
+      emailInp.focus();
+      return;
+    }
+    if (!code) {
+      setMsg('请填写邮箱验证码');
+      codeInp.focus();
+      return;
+    }
+
+    setMsg('正在登录，请稍候...');
+    loginBtn.disabled = true;
+
+    post('/api/quote_login_email_code.php',
+         'email=' + encodeURIComponent(email) + '&email_code=' + encodeURIComponent(code),
+         function(res) {
+      loginBtn.disabled = false;
+
+      if (!res) {
+        setMsg('服务器返回异常');
+        return;
+      }
+      if (!res.success) {
+        setMsg(res.message || '登录失败');
+        return;
+      }
+
+      setMsg('登录成功，正在跳转到“我的报价”...');
+      // 跳到我们之前做好的“我的报价列表”
+      window.location.href = '{$MOD[linkurl]}quote_my.php';
+    });
+  };
+})();
+</script>
+{template 'footer'}

@@ -1,0 +1,8 @@
+{loop $FD $v}
+{if $v[search]}
+<div class="sf">
+	<div class="sf-k">{$v[title]}</div>
+	<div class="sf-v">{fields_search_htm($v)}</div>
+</div>
+{/if}
+{/loop}

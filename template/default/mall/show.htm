@@ -1,0 +1,288 @@
+{template 'header'}
+{load('album.js')}
+<script type="text/javascript">var module_id= {$moduleid},item_id={$itemid},content_id='content',img_max_width={$MOD[max_width]};</script>
+<div class="m">	
+	<div class="nav">{if $MOD[ip]}<div><b class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</b></div>{/if}<a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')}</div>
+</div>
+<div class="m">
+	<table width="100%" cellpadding="0" cellspacing="0">
+	<tr>
+	<td width="16">&nbsp;</td>
+	<td valign="top">
+		<div class="b16">&nbsp;</div>
+		<table width="100%" cellpadding="0" cellspacing="0">
+		<tr>
+		<td width="416" valign="top">
+			<div id="mid_div" onmouseover="SAlbum();" onmouseout="HAlbum();" onclick="VAlbum();"><img src="{str_replace('.thumb.', '.middle.', $albums[0])}" width="400" height="300" id="mid_pic"/><span id="zoomer"></span><span class="ab_zoom"></span></div>
+			{if $video}<div class="ab_play" onclick="APlay('{$video}');"></div><div id="ab-video" class="ab_video"></div><div class="ab_hide" onclick="AHide();"></div>{/if}
+			<div class="tbs">
+				<div class="tbsl"><img src="{DT_SKIN}ab-prev-0.png" width="20" height="56" id="tbsp" onclick="PAlbum();"/></div>
+				<div class="tbsm">
+					<div id="thumbs" style="width:{$pics_width}px;height:56px;">{loop $albums $k $v}<img src="{$v}" onmouseover="if(this.src.indexOf('nopic.thumb.png')==-1)Album({$k});" class="{if $k}ab_im{else}ab_on{/if}" id="tbs_{$k}"/>{/loop}</div>
+				</div>
+				<div class="tbsr"><img src="{DT_SKIN}ab-next-{if $pics>5}1{else}0{/if}.png" width="20" height="56" id="tbsn" onclick="NAlbum();"/></div>
+			</div>			
+		</td>
+		<td valign="top">
+			<div id="big_div" style="display:none;"><img src="{DT_SKIN}loading.gif" id="big_pic"/></div>
+			<h1 class="mall-title" id="title">{$title}</h1>
+			{if $subtitle}
+			<div class="mall-text">{$subtitle}</div>
+			{/if}
+			{if $sec == 2}
+			<div class="mall-sec2"><b>秒杀预告</b> {timetodate($sfromtime, 'm月d日 H:i')} 秒杀价{$DT[money_sign]}{$sprice}</div>
+			{/if}
+			{if $sec == 1}
+			<div class="mall-sec1"><b>正在秒杀</b><div>距离结束：<span id="totimer"></span></div></div>
+			{/if}
+			<table width="100%" cellpadding="6" cellspacing="6">
+			<tr id="sec0"{if $sec == 1} style="display:none;"{/if}>
+			<td>价格</td>
+			<td class="mall-price">{$DT[money_sign]}<b id="mall-price" data-price="{$price}">{$price}</b><i onclick="Go('{$MOD[linkurl]}{rewrite('compare.php?itemid='.$itemid)}');" title="对比商品">对比</i></td>
+			</tr>
+			{if $sec == 1}
+			<tr id="sec1">
+			<td>秒杀价</td>
+			<td class="mall-price">{$DT[money_sign]}<b>{$sprice}</b></td>
+			</tr>
+			{/if}
+			{if $fprice > 0}
+			<tr>
+			<td>粉丝价</td>
+			<td class="mall-fprice">{$DT[money_sign]}<b>{$fprice}</b> &nbsp; <span>关注店铺，即享粉丝价</span></td>
+			</tr>
+			{/if}
+			{if $a2}
+			<tr>
+			<td>混批</td>
+			<td id="data-step" data-a1="{$a1}" data-a2="{$a2}" data-a3="{$a3}" data-p1="{$p1}" data-p2="{$p2}" data-p3="{$p3}">{$a1}-{$a2}{$unit} {$DT[money_sign]}{$p1}{if $a3}; {$a2+1}-{$a3}{$unit} {$DT[money_sign]}{$p2}; {$a3}{$unit}以上 {$DT[money_sign]}{$p3}{else}; {$a2+1}{$unit}以上 {$DT[money_sign]}{$p2}{/if}</td>
+			</tr>
+			{/if}
+			{if $promos}
+			<tr>
+			<td>优惠</td>
+			<td class="promos">
+			<a href="{$MODULE[2][linkurl]}coupon.php?username={$username}" target="_blank">
+			{loop $promos $v}
+			{if $v[cost]>0.001}
+			<span>满{$v[cost]}减{$v[price]}</span>
+			{else}
+			<span>{$v[price]}{$DT[money_unit]}优惠券</span>
+			{/if}
+			{/loop}
+			</a>
+			</td>
+			</tr>
+			{/if}
+			<tr>
+			<td width="60">发货</td>
+			<td>
+			{area_pos($areaid, '')}
+			{if $days > 0}
+			<span class="f_r f_grey">{if $days > 3}预售，{/if}付款后{if $days < 1}{ceil(24*$days)}小时{elseif $days==1}24小时{elseif $days==2}48小时{else}{$days}天{/if}内</span>
+			{/if}
+			</td>
+			</tr>
+			{if $express_name_1 == '包邮'}
+			<tr>
+			<td>运费</td>
+			<td>
+			{if $fee_start_1>0}
+			{if $fee_start_2>0} {$express_name_2}:{$fee_start_2}&nbsp;&nbsp;{/if}
+			{if $fee_start_3>0} {$express_name_3}:{$fee_start_3}&nbsp;&nbsp;{/if}
+			满{$fee_start_1}包邮
+			{else}
+			包邮
+			{/if}
+			</td>
+			</tr>
+			{elseif $fee_start_1>0 || $fee_start_2>0 || $fee_start_3>0}
+			<tr>
+			<td>运费</td>
+			<td class="f_gray">
+			{if $fee_start_1>0} {$express_name_1}:{$fee_start_1}&nbsp;&nbsp;{/if}
+			{if $fee_start_2>0} {$express_name_2}:{$fee_start_2}&nbsp;&nbsp;{/if}
+			{if $fee_start_3>0} {$express_name_3}:{$fee_start_3}&nbsp;&nbsp;{/if}
+			</td>
+			</tr>
+			{/if}
+			{if $cod}
+			<tr>
+			<td>到付</td>
+			<td>支持货到付款</td>
+			</tr>
+			{/if}
+			<tr>
+			<td>销量</td>
+			<td>{if $orders>0}<span class="px16">{$orders}+</span>{else}<span class="f_grey">暂无</span>{/if}</td>
+			</tr>
+			<tr>
+			<td>评价</td>
+			<td><a href="#comment" onclick="Mshow('comment');">已有 <span class="f_orange">{$comments}</span> 条评价</a></td>
+			</tr>
+			{if $MOD[hits]}
+			<tr>
+			<td>人气</td>
+			<td>已有 <span class="f_orange"><span id="hits">{$hits}</span></span> 人关注</td>
+			</tr>
+			{/if}
+			{if $RL}
+			<tr>
+			<td>{$relate_name}</td>
+			<td>
+			{loop $RL $v}
+			<div class="relate_{if $itemid==$v[itemid]}2{else}1{/if}"><a href="{$MOD[linkurl]}{$v[linkurl]}"><img src="{$v[thumb]}" alt="" title="{$v[relate_title]}"/>{if $v[relate_title]}<b title="{$v[relate_title]}">{dsubstr($v[relate_title], 50)}</b>{/if}</a></div>
+			{/loop}				
+			</td>
+			</tr>
+			{/if}
+			{if $P1}
+			<tr>
+			<td>{$n1}</td>
+			<td id="p1" data-prices="{$prices}">
+			<ul>
+			{loop $P1 $i $v}
+			<li class="nv_{if $i==0}2{else}1{/if}">{$v}</li>
+			{/loop}
+			</ul>
+			</td>
+			</tr>
+			{/if}
+			{if $P2}
+			<tr>
+			<td>{$n2}</td>
+			<td id="p2">
+			<ul>
+			{loop $P2 $i $v}
+			<li class="nv_{if $i==0}2{else}1{/if}">{$v}</li>
+			{/loop}
+			</ul>
+			</td>
+			</tr>
+			{/if}
+			{if $P3}
+			<tr>
+			<td>{$n3}</td>
+			<td id="p3">
+			<ul>
+			{loop $P3 $i $v}
+			<li class="nv_{if $i==0}2{else}1{/if}">{$v}</li>
+			{/loop}
+			</ul>
+			</td>
+			</tr>
+			{/if}
+			{if $amount>0}
+			{if $status == 3}
+			<tr>
+			<td>数量</td>
+			<td><div class="mall-alter"><input type="text" value="{$mina}" id="amount" onkeyup="Malter('', {$mina}, {$maxa});"/><b onclick="Malter('+', {$mina}, {$maxa});">+</b><i onclick="Malter('-', {$mina}, {$maxa});">-</i></div><div class="mall-amount">库存<span id="mall-amount">{$amount}</span>{$unit}{if $minamount>0} &nbsp; 起订{$minamount}{$unit}{/if}{if $maxamount>0} &nbsp; 限购{$maxamount}{$unit}{/if}</div></td>
+			</tr>
+			<tr>
+			<td></td>
+			<td>
+			<input type="button" value="立即购买" class="btn-buy" onclick="BuyNow();"/>
+			<input type="button" value="加入购物车" class="btn-cart" onclick="AddCart();"/>
+			</td>
+			</tr>
+			{else}
+			<tr>
+			<td></td>
+			<td><strong class="f_grey px16">该商品已下架</strong></td>
+			</tr>				
+			{/if}
+			{else}
+			<tr>
+			<td></td>
+			<td><strong class="f_grey px16">该商品库存不足</strong></td>
+			</tr>
+			{/if}
+			</table>
+		</td>
+		</tr>
+	</table>
+	</td>
+	<td width="16">&nbsp;</td>
+	<td valign="top" class="contact-td">
+		<div class="contact-body" id="contact">{template 'contact', 'chip'}</div>
+	</td>
+	</tr>
+	</table>
+</div>
+<div class="m">
+	<div class="mall_tab">
+		<ul>
+		<li class="mall_tab_2" id="t_detail"><a href="#detail" onclick="Mshow('detail');">商品详情</a></li>
+		<li class="mall_tab_1" id="t_comment"><a href="#comment" onclick="Mshow('comment');">评价详情({$comments})</a></li>
+		</ul>
+	</div>
+	<div class="mall_c" style="display:;" id="c_detail">
+		{if $CP}{template 'property_show', 'chip'}{/if}
+		<div class="content c_b" id="content">{$content}</div>
+
+	<div class="tool">
+	{if $MOD[show_like]}<i class="like" onclick="Dlike({$moduleid}, {$itemid}, 0);">点赞 <b id="like-{$moduleid}-{$itemid}-0">{$likes}</b></i>{/if}
+	{if $MOD[show_hate]}<i class="hate" onclick="Dhate({$moduleid}, {$itemid}, 0);">反对 <b id="hate-{$moduleid}-{$itemid}-0">{$hates}</b></i>{/if}
+	{if $MOD[show_report]}<i class="report" onclick="Dreport({$moduleid}, {$itemid}, 0);">举报</i>{/if}
+	{if $MOD[show_favorite]}<i class="favorite" onclick="Dfavor({$moduleid}, {$itemid});">收藏 <b>{$favorites}</b></i>{/if}
+	{if $MOD[fee_award]}<a href="{$MODULE[2][linkurl]}award.php?mid={$moduleid}&itemid={$itemid}" target="_blank"><i class="award">打赏 <b>{$awards}</b></i></a>{/if}
+	{if $could_comment}<a href="{$EXT[comment_url]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}" target="_blank"><i class="comment">评论 <b>{$comments}</b></i></a>{/if}
+	{if $MOD[show_share]}<a href="{DT_PATH}api/share.php?mid={$moduleid}&itemid={$itemid}" target="_blank"><i class="share">分享 <b>{$shares}</b></i></a>{/if}
+	</div>
+	</div>
+	<div class="mall_c" style="display:none;" id="c_comment" data-nocomments="暂无评价">
+		<center>正在载入评价详细...</center>
+	</div>
+</div>
+{load('player.js')}
+{if $content}{load('content.js')}{/if}
+<script type="text/javascript">
+var mallmode = {$mode};
+var mallstocks = {if $stocks}$.parseJSON('{$stocks}'){else}[]{/if};
+var mallurl = '{$MODULE[2][linkurl]}';
+var mallmid = {$moduleid};
+var mallid = {$itemid};
+var n_c = {$comments};
+var c_c = Dd('c_comment').innerHTML;
+var s_s = {'1':0,'2':0,'3':0};
+</script>
+{load('mall.js')}
+<script type="text/javascript">
+$(function(){
+	{if $P1}addE(1);{/if}
+	{if $P2}addE(2);{/if}
+	{if $P3}addE(3);{/if}
+	if(window.location.href.indexOf('#') != -1) {
+		var t = window.location.href.split('#');
+		try {Mshow(t[1]);} catch(e) {}
+	}
+	{if $sec == 1}	
+	var totime = new Date({$jsdate}).getTime();
+	var totimer_interval = setInterval(function() {
+		var t = new Date();
+		var s = Math.floor((totime - t.getTime())/1000);
+		var h = '';
+		var i;
+		if(s > 0) {
+			i = Math.floor(s/86400);	
+			if(i) h += '<span>'+i+'</span>天';
+			s = Math.floor(s%86400);
+			i = Math.floor(s/3600);	
+			if(i) h += '<span>'+i+'</span>小时';
+			s = Math.floor(s%3600);	
+			i = Math.floor(s/60);			
+			if(i) h += '<span>'+i+'</span>分';
+			s = Math.floor(s%60);
+			h += '<span>'+s+'</span>秒';
+		} else {
+			h = '<span>已结束</span>';
+			$('#sec0').show();
+			$('#sec1').hide();
+			clearInterval(totimer_interval);
+		}
+		$('#totimer').html(h);
+	}, 1000);
+	{/if}
+});
+</script>
+{template 'footer'}

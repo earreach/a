@@ -1,0 +1,884 @@
+{template 'header'}
+<!--<script type="text/javascript">var module_id= {$moduleid},item_id={$itemid},content_id='content',img_max_width={$MOD[max_width]};</script>-->
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}css/base.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<!--<link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">-->
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}css/list26.css"/>
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}css/bootstrap.min.css"/>
+<!--<link rel="stylesheet" type="text/css" href="{DT_SKIN}css/bootstrap.min.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>-->
+<link href="http://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+<!--<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+
+
+<style>
+	.nav1{display: block}
+	.tab .nav1-tabs{
+		padding-left: 15px;
+		border-bottom: 4px solid #0e84b5;
+	}
+	.tab .nav1-tabs li a{
+		color: #fff;
+		padding: 10px 20px;
+		margin-right: 10px;
+		background: #0e84b5;
+		text-shadow: 1px 1px 2px #000;
+		border: none;
+		border-radius: 0;
+		opacity: 0.5;
+		position: relative;
+		transition: all 0.3s ease 0s;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.tabb{
+		border-bottom:1px solid #0e84b5;;
+	}
+	.tab .nav1-tabs li a:hover{
+		background: #0e84b5;
+		opacity: 0.8;
+	}
+	.tab .nav1-tabs li.active a{
+		opacity: 1;
+	}
+	.tab .nav1-tabs li.active a,
+	.tab .nav1-tabs li.active a:hover,
+	.tab .nav1-tabs li.active a:focus{
+		color: #fff;
+		background: #0e84b5;
+		border: none;
+		border-radius: 0;
+
+	}
+	.tab .nav1-tabs li a:before,
+	.tab .nav1-tabs li a:after{
+		content: "";
+		border-top: 42px solid transparent;
+		position: absolute;
+		top: -2px;
+	}
+	.tab .nav1-tabs li a:before{
+		border-right: 15px solid #0e84b5;
+		left: -15px;
+	}
+	.tab .nav1-tabs li a:after{
+		border-left: 15px solid #0e84b5;
+		right: -15px;
+	}
+	.tab .nav1-tabs li a i,
+	.tab .nav1-tabs li.active a i{
+		display: inline-block;
+		padding-right: 5px;
+		font-size: 15px;
+		text-shadow: none;
+	}
+	.tab .nav1-tabs li a span{
+		display: inline-block;
+		font-size: 14px;
+		letter-spacing: -9px;
+		opacity: 0;
+		transition: all 0.3s ease 0s;
+	}
+	.tab .nav1-tabs li a:hover span,
+	.tab .nav1-tabs li.active a span{
+		letter-spacing: 1px;
+		opacity: 1;
+		transition: all 0.3s ease 0s;
+	}
+	.tab .tab-content{
+		/*padding: 30px;*/
+		background: #fff;
+		font-size: 16px;
+		color: #6c6c6c;
+		line-height: 25px;
+	}
+	.tab .tab-content h3{
+		font-size: 24px;
+		margin-top: 0;
+	}
+	@media only screen and (max-width: 479px){
+		.tab .nav1-tabs li{
+			width: 100%;
+			margin-bottom: 5px;
+			text-align: center;
+		}
+		.tab .nav1-tabs li a span{
+			letter-spacing: 1px;
+			opacity: 1;
+		}
+	}
+
+
+
+</style>
+
+<!--<div class="w-160 h-300 fb-apple">-->
+
+</div>
+
+
+<div class="m">
+	<div class="nav"><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')}</div>
+</div>
+
+
+<div class="m m1 ">
+	<div class="m1l bghui0">
+		{if $FD || $CP}
+		<form action="{$MOD[linkurl]}search.php" id="search">
+			<input type="hidden" name="catid" value="{$catid}"/>
+			<div class="sort-f">
+				{if $FD}{template 'fields_search', 'chip'}{/if}
+				{if $CP}{template 'property_search', 'chip'}{/if}
+			</div>
+		</form>
+		<script type="text/javascript">$(function(){if($('.sort-f').html().indexOf('sort')==-1){$('.sort-f').hide();}});</script>
+		{/if}
+
+		<!-- <div class="catlist">
+			{php $cols = 5;}
+			{if $page == 1}{ad($moduleid,$catid,'',6)}{/if}
+			{if $tags}{template 'list-'.$module, 'tag'}{/if}
+		</div> -->
+
+		<div class="p20 bgbai ml-10">
+
+			<div class="title-middle">
+				<h1>{$seo_title}</h1>
+				<div class="m-20 bb2"></div>
+			</div>
+
+			<div id="content" >{template 'content', 'chip'}</div>
+
+
+			<img src="{DT_SKIN}article/13.png" class="w100" alt="ご希望の機種項目をタップすると料金表が切替ります">
+			<p class="fw-600 mt-30 m-20">▼ご希望の機種項目をタップすると料金表が切替ります。</p>
+
+
+
+
+			<div class="">
+
+				<div class="tabb">
+					<div class="tab ">
+						<!-- nav1 tabs -->
+						<ul class="nav1 nav1-tabs" role="tabpanel">
+							<li class="active "><a  href="javascript:void(0);" aria-controls="home" role="tablist" data-toggle="tab"><i style="" class="fb fb-apple"  ></i><span>iPhone</span></a></li>
+							<li ><a  href="javascript:void(0);" aria-controls="profile" role="tablist" data-toggle="tab"><i class="fb fb-ipad"></i><span>ipad</span></a></li>
+							<li><a  href="javascript:void(0);" aria-controls="profile" role="tablist" data-toggle="tab"><i class="fb fb-watch"></i><span>watch</span></a></li>
+							<li><a  href="javascript:void(0);" aria-controls="messages" role="tablist" data-toggle="tab"><i class="fc fb-Xperia"></i><span>Xperia</span></a></li>
+							<li><a   href="javascript:void(0);" aria-controls="messages" role="tablist" data-toggle="tab"><i class="fc fb-sx"></i><span>Galaxy</span></a></li>
+							<li><a  href="javascript:void(0);" aria-controls="messages" role="tablist" data-toggle="tab"><i class="fb fb-huawei"></i><span>Huawei</span></a></li>
+							<li><a   href="javascript:void(0);" aria-controls="messages" role="tablist" data-toggle="tab"><i class="fb fb-gg"></i><span>Google </span></a></li>
+
+
+						</ul>
+						<!-- Tab panes -->
+						<div class="tab-content tabs ovfh">
+							<div class="rel h-800 ofya" role="tabpanel" id="section0">
+								<div class="fenbiao  ">
+									<table id="tableid0" class="w100 t0 ">
+										<thead>
+										<tr class="bgblue8 white">
+											<th>機種名</th>
+											<th>通常料金（税込）</th>
+											<th>WEB料金（税込）</th>
+										</tr>
+										</thead>
+										<!-- 	<tr>
+												<td class="bghui2">1</td>
+												<td colspan="4">3</td>
+
+											</tr> -->
+										<!-- 	<tr>
+												<td class="bghui2">1</td>
+												<td colspan="4">3</td>
+											</tr> -->
+										<!-- 		<tr>
+                                                    <td rowspan="8" class="bghui2">1</td>
+                                                    <td>iPhone5系互換性パネル</td>
+                                                    <td>1</td>
+                                                    <td>2</td>
+
+
+                                                </tr> -->
+										<tr><th>iPhone15 Pro</th><td>16,180</td><td>13,980</td></tr>
+										<tr><th>iPhone15 Plus</th><td>16,180</td><td>13,980</td></tr>
+										<tr><th>iPhone15</th><td>16,180</td><td>13,980</td></tr>
+										<tr><th>iPhone14 Pro Max</th><td>14,180</td><td>11,980</td></tr>
+										<tr><th>iPhone14 Pro</th><td>14,180</td><td>11,980</td></tr>
+										<tr><th>iPhone14 Plus</th><td>14,180</td><td>11,980</td></tr>
+										<tr><th>iPhone14</th><td>12,180</td><td>9,980</td></tr>
+										<tr><th>iPhoneSE（第3世代）</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>iPhone13 Pro Max</th><td>14,180</td><td>11,980</td></tr>
+										<tr><th>iPhone13 Pro</th><td>12,180</td><td>9,980</td></tr>
+										<tr><th>iPhone13 mini</th><td>12,180</td><td>9,980</td></tr>
+										<tr><th>iPhone13</th><td>12,180</td><td>9,980</td></tr>
+										<tr><th>iPhone12 Pro Max</th><td>12,180</td><td>9,980</td></tr>
+										<tr><th>iPhone12 Pro</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>iPhone12 mini</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>iPhone12</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>iPhoneSE（第2世代）</th><td>7,180</td><td>4,980</td></tr>
+										<tr><th>iPhone11 Pro Max</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>iPhone11 Pro</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>iPhone11</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>iPhoneXR</th><td>8,180</td><td>5,980</td></tr>
+										<tr><th>iPhoneXS Max</th><td>8,180</td><td>5,980</td></tr>
+										<tr><th>iPhoneXS</th><td>8,180</td><td>5,980</td></tr>
+										<tr><th>iPhoneX</th><td>8,180</td><td>5,980</td></tr>
+										<tr><th>iPhone8 Plus</th><td>7,180</td><td>4,980</td></tr>
+										<tr><th>iPhone8</th><td>7,180</td><td>4,980</td></tr>
+										<tr><th>iPhone7 Plus</th><td>6,180</td><td>3,980</td></tr>
+										<tr><th>iPhone7</th><td>6,180</td><td>3,980</td></tr>
+										<tr><th>iPhoneSE（第1世代）</th><td>5,180</td><td>2,980</td></tr>
+										<tr><th>iPhone6s Plus</th><td>6,180</td><td>3,980</td></tr>
+										<tr><th>iPhone6s</th><td>6,180</td><td>3,980</td></tr>
+										<tr><th>iPhone6 Plus</th><td>5,180</td><td>2,980</td></tr>
+										<tr><th>iPhone6</th><td>5,180</td><td>2,980</td></tr>
+										<tr><th>iPhone5系</th><td>4,180</td><td>1,980</td></tr>
+
+
+
+
+
+									</table>
+								</div>
+							</div>
+							<div class="dn rel h-800 ofya" role="tabpanel" id="section1">
+								<div class="fenbiao  ">
+									<table id="tableid1" class="w100 t0 ">
+										<thead>
+										<tr class="bgblue8 white">
+
+											<th>機種名</th>
+											<th>通常料金（税込）</th>
+											<th>WEB料金（税込）</th>
+
+										</tr>
+										</thead>
+
+
+
+										<tr><th>iPad (第2世代)</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>iPad（第3世代)</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>iPad（第4世代）</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>iPad（第5世代）</th><td>14,180</td><td>11,980</td></tr>
+										<tr><th>iPad（第6世代）</th><td>14,180</td><td>11,980</td></tr>
+										<tr><th>iPad（第7世代）</th><td>14,180</td><td>11,980</td></tr>
+										<tr><th>iPad（第8世代）</th><td>14,180</td><td>11,980</td></tr>
+										<tr><th>iPad（第9世代）</th><td>14,180</td><td>11,980</td></tr>
+										<tr><th>iPad（第10世代）</th><td>21,180</td><td>18,980</td></tr>
+										<tr><th>iPad mini（第1世代）</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>iPad mini（第2世代）</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>iPad mini（第3世代）</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>iPad mini（第4世代）</th><td>13,180</td><td>10,980</td></tr>
+										<tr><th>iPad mini（第5世代）</th><td>15,180</td><td>12,980</td></tr>
+										<tr><th>iPad mini（第6世代）</th><td>15,180</td><td>12,980</td></tr>
+										<tr><th>iPad Air（第1世代）</th><td>14,180</td><td>11,980</td></tr>
+										<tr><th>iPad Air（第2世代）</th><td>14,180</td><td>11,980</td></tr>
+										<tr><th>iPad Air（第3世代）</th><td>14,180</td><td>11,980</td></tr>
+										<tr><th>iPad Air（第4世代）</th><td>21,180</td><td>18,980</td></tr>
+										<tr><th>iPad Air（第5世代）</th><td>21,180</td><td>18,980</td></tr>
+										<tr><th>iPad 10.2インチ（第7世代）</th><td>要確認</td><td>要確認</td></tr>
+										<tr><th>iPad 10.2インチ（第8世代）</th><td>要確認</td><td>要確認</td></tr>
+										<tr><th>iPad 10.2インチ（第9世代）</th><td>要確認</td><td>要確認</td></tr>
+										<tr><th>iPad 10.9インチ（第10世代）</th><td>要確認</td><td>要確認</td></tr>
+										<tr><th>iPad Pro 9.7インチ</th><td>17,180</td><td>14,980</td></tr>
+										<tr><th>iPad Pro 10.5インチ</th><td>17,180</td><td>14,980</td></tr>
+										<tr><th>iPad Pro 11インチ（第1世代）</th><td>17,180</td><td>14,980</td></tr>
+										<tr><th>iPad Pro 11インチ（第2世代）</th><td>21,180</td><td>18,980</td></tr>
+										<tr><th>iPad Pro 11インチ（第3世代）</th><td>21,180</td><td>18,980</td></tr>
+										<tr><th>iPad Pro 11インチ（第4世代）</th><td>21,180</td><td>18,980</td></tr>
+										<tr><th>iPad Pro 12.9インチ（第1世代）</th><td>17,180</td><td>14,980</td></tr>
+										<tr><th>iPad Pro 12.9インチ（第2世代）</th><td>17,180</td><td>14,980</td></tr>
+										<tr><th>iPad Pro 12.9インチ（第3世代）</th><td>21,180</td><td>18,980</td></tr>
+										<tr><th>iPad Pro 12.9インチ（第4世代）</th><td>21,180</td><td>18,980</td></tr>
+										<tr><th>iPad Pro 12.9インチ（第5世代）</th><td>21,180</td><td>18,980</td></tr>
+										<tr><th>iPad Pro 12.9インチ（第6世代）</th><td>21,180</td><td>18,980</td></tr>
+
+
+
+
+
+									</table>
+								</div>
+							</div>
+							<div class="dn rel h-800 ofya" role="tabpanel" id="section2">
+								<div class="fenbiao  ">
+									<table id="tableid2" class="w100 t0 ">
+										<thead>
+										<tr class="bgblue8 white">
+
+											<th>機種名</th>
+											<th>通常料金（税込）</th>
+											<th>WEB料金（税込）</th>
+
+										</tr>
+										</thead>
+
+
+
+										<tr><th>Apple Watch Series 1 (42mm)</th><td>6,180</td><td>3,980</td></tr>
+										<tr><th>Apple Watch Series 2 (38mm)</th><td>6,180</td><td>3,980</td></tr>
+										<tr><th>Apple Watch Series 2 (42mm)</th><td>6,180</td><td>3,980</td></tr>
+										<tr><th>Apple Watch Series 3 (38mm)</th><td>8,180</td><td>5,980</td></tr>
+										<tr><th>Apple Watch Series 3 (42mm)</th><td>8,180</td><td>5,980</td></tr>
+										<tr><th>Apple Watch Series 4 (40mm)</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Apple Watch Series 4 (44mm)</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Apple Watch Series 5 (40mm)</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Apple Watch Series 5 (44mm)</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Apple Watch SE (40mm)</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Apple Watch SE (44mm)</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Apple Watch Series 6 (40mm)</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Apple Watch Series 6 (44mm)</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Apple Watch Series 7 (41mm)</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Apple Watch Series 7 (45mm)</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Apple Watch SE 第2世代 (40mm)</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Apple Watch SE 第2世代 (44mm)</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Apple Watch Ultra (49mm)</th><td>13,180</td><td>10,980</td></tr>
+										<tr><th>Apple Watch Series 8 (41mm)</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Apple Watch Series 8 (45mm)</th><td>11,180</td><td>8,980</td></tr>
+
+
+
+
+
+									</table>
+								</div>
+							</div>
+							<div class=" dn rel h-800 ofya" role="tabpanel" id="section3">
+								<div class="fenbiao  ">
+									<table id="tableid3" class="w100 t0 ">
+										<thead>
+										<tr class="bgblue8 white">
+
+											<th>機種名</th>
+											<th>通常料金（税込）</th>
+											<th>WEB料金（税込）</th>
+										</tr>
+										</thead>
+										<tr><td colspan="3" class="bghui">Xperiaタブレット</td></tr>
+										<tr><th>Xperia Z2 Tablet</th><td>要確認</td><td>要確認</td></tr>
+										<tr><th>Xperia Z3 Compact</th><td>要確認</td><td>要確認</td></tr>
+										<tr><th>Xperia Z3系</th><td>要確認</td><td>要確認</td></tr>
+										<tr><th>Xperia Z4 Tablet</th><td>要確認</td><td>要確認</td></tr>
+										<tr><th>Xperia Z4/Z3 Plus</th><td>要確認</td><td>要確認</td></tr>
+										<tr><th>Xperia Z5系</th><td>要確認</td><td>要確認</td></tr>
+										<tr><td colspan="3" class="bghui">Xperia smart phone</td></tr>
+										<tr><th>Xperia1</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Xperia1 II</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Xperia5</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Xperia5 II</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Xperia8</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Xperia10</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Xperia10 II</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Xperia10 III</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Xperia10 IV</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Xperia X Perfomance</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Xperia X Compact</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Xperia XA1</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Xperia XA1 Ultra</th><td>10,180</td><td>7,980</td></tr>
+										<tr><th>Xperia XA2</th><td>10,180</td><td>7,980</td></tr>
+										<tr><th>Xperia XZ</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Xperia XZ Premium</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Xperia XZ1</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Xperia XZ2</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Xperia XZ2 Compact</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Xperia XZ2 Premium</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Xperia XZ3</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Xperia XZs</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Xperia ACE</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Xperia ACE II</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Xperia Z3系</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Xperia Z4/Z3 Plus</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Xperia Z5系</th><td>9,180</td><td>6,980</td></tr>
+
+
+									</table>
+								</div>
+							</div>
+							<div class=" dn rel h-800 ofya" role="tabpanel" id="section4">
+								<div class="fenbiao">
+									<table id="tableid4" class="w100 t0 ">
+										<thead>
+										<tr class="bgblue8 white">
+
+											<th>機種名</th>
+											<th>通常料金（税込）</th>
+											<th>WEB料金（税込）</th>
+										</tr>
+										</thead>
+
+
+										<tr><th>Galaxy A7</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Galaxy A20</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Galaxy A20e</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Galaxy A22</th><td>要確認</td><td>要確認</td></tr>
+										<tr><th>Galaxy A30</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Galaxy A32</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Galaxy S7 Edge</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Galaxy S8</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Galaxy S8+</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Galaxy S9</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Galaxy S9+</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Galaxy S10</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Galaxy S10+</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Galaxy S20</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Galaxy S20+</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Galaxy S21 5G</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Galaxy S21+ 5G</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Galaxy S21 Ultra 5G</th><td>14,180</td><td>11,980</td></tr>
+										<tr><th>Galaxy Note8</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Galaxy Note9</th><td>12,180</td><td>9,980</td></tr>
+										<tr><th>Galaxy Note10</th><td>要確認</td><td>要確認</td></tr>
+										<tr><th>Galaxy Note10+</th><td>要確認</td><td>要確認</td></tr>
+
+
+									</table>
+								</div>
+							</div>
+							<div class=" dn rel h-800 ofya" role="tabpanel" id="section5">
+								<div class="fenbiao">
+									<table id="tableid5" class="w100 t0 ">
+										<thead>
+										<tr class="bgblue8 white">
+
+											<th>機種名</th>
+											<th>通常料金（税込）</th>
+											<th>WEB料金（税込）</th>
+										</tr>
+										</thead>
+
+
+										<tr><td colspan="3" class="bghui">Huaweiタブレットパネル</td></tr>
+										<tr><th>Huawei Qua tab 02    </th><td>要確認</td><td>要確認</td></tr>
+										<tr><th>Huawei MediaPad M3<br>8.4インチ</th><td>13,180</td><td>10,980</td></tr>
+										<tr><th>Huawei MediaPad<br>M3 Lite 8.0インチ</th><td>13,180</td><td>10,980</td></tr>
+										<tr><td colspan="3" class="bghui">Huawei Smart Phone</td></tr>
+										<tr><th>Huawei P9</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Huawei P9 lite</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Huawei P10</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Huawei P10 lite</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Huawei P10 Plus</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Huawei P20</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Huawei P20 lite</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Huawei P20 Pro</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Huawei P30</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Huawei P30 lite</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Huawei P30 Pro</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Huawei Honor 8</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Huawei nova lite</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Huawei nova lite 2</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Huawei nova 3</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Huawei nova lite 3</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Huawei nova 5T</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Huawei Mate 10 Pro</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Huawei Mate 10 lite</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Huawei Mate 20 lite</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Huawei Mate 20 X</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Huawei Mate 20 Pro</th><td>11,180</td><td>8,980</td></tr>
+
+
+
+									</table>
+								</div>
+							</div>
+							<div class=" dn rel h-800 ofya" role="tabpanel" id="section6">
+								<div class="fenbiao">
+									<table id="tableid6" class="w100 t0 ">
+										<thead>
+										<tr class="bgblue8 white">
+
+											<th>機種名</th>
+											<th>通常料金（税込）</th>
+											<th>WEB料金（税込）</th>
+										</tr>
+										</thead>
+
+										<tr><th>Pixel 3</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Pixel 3 XL</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Pixel 3a</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Pixel 3a XL</th><td>9,180</td><td>6,980</td></tr>
+										<tr><th>Pixel 4</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Pixel 4 XL</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Pixel 4a</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Pixel 4a (5G)</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Pixel 5</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Pixel 5a (5G)</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Pixel 6</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Pixel 6 Pro</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Pixel 6a</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Pixel 7</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Pixel 7 Pro</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Pixel 7a</th><td>11,180</td><td>8,980</td></tr>
+										<tr><th>Pixel 8</th><td>要確認</td><td>要確認</td></tr>
+										<tr><th>Pixel 8 Pro</th><td>要確認</td><td>要確認</td></tr>
+										<tr><th>Pixel 8a</th><td>要確認</td><td>要確認</td></tr>
+
+
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="table m0a pt-20 ">
+				<p class="fs14 fw-800 red2 ">※事前WEB予約をされてご来店された後、お会計時にアンケート回答をして頂きますと通常料金から2,200円引きさせていただきます。
+				<p class="fs14 fw-800 red2  ">※各種割引をご希望のお客様は、受付時に店舗スタッフまでお伝え下さい。</p>
+				<p class="fs14 fw-800 red2  ">※表示料金は税込表示です。</p>
+				<p class="fs14 fw-800 red2  ">※修理不可の場合は、修理費用の発生は致しませんのでご安心下さいませ。</p>
+				<p class="fs14 fw-800 red2 ">※別途作業料金などの追加料金は頂きません。</p>
+
+				<p class="fs14 fw-800 red2">※実際の修理内容によっては修理料金が変動する可能性があるので詳細の修理料金は各店舗までお問い合わせ下さい</p>
+			</div>
+
+
+			<p class=" mt-30 mb-30">iPhoneを長く使っていると、徐々にバッテリーの寿命が気になるようになります。特に、「（スマホ/スマートフォン）iPhoneバッテリー交換」は多くのユーザーが直面する課題です。iPhoneのバッテリーは消耗品であり、時間とともに充電の持ちが悪くなります。その結果、バッテリーの交換を検討することが重要になります。</p>
+			<p class=" mb-30">「（スマホ/スマートフォン）iPhoneバッテリー交換」を考える際、まず知っておくべきは、バッテリーの健康状態を確認する方法です。iPhoneには、バッテリーの状態を確認できる機能が搭載されています。設定アプリからバッテリーのセクションに進み、「バッテリーの状態」をチェックすることで、現在の最大容量とピーク性能能力に関する情報を確認できます。この情報は「（スマホ/スマートフォン）iPhoneバッテリー交換」のタイミングを判断する上で重要です。</p>
+			<p class="mb-30">次に、「（スマホ/スマートフォン）iPhoneバッテリー交換」の方法についてです。基本的には、Apple正規サービスプロバイダか、信頼できる修理業者に依頼することをお勧めします。無認可の店での交換は、保証の失効やさらなる故障のリスクを伴うためです。正規の「iPhoneバッテリー交換」サービスを利用することで、品質の高い部品が使われ、専門的な技術で交換が行われます。</p>
+			<p class="mb-30">また、「（スマホ/スマートフォン）iPhoneバッテリー交換」のコストも重要な検討事項です。Appleの保証、AppleCare+に加入している場合、バッテリー交換は無料または割引料金で提供されることがあります。保証期間外やAppleCare+未加入の場合でも、Appleは比較的手頃な料金で交換サービスを提供しています。/p>
+			<p class="mb-30">「（スマホ/スマートフォン）iPhoneバッテリー交換」をすることで得られるメリットは大きいです。新しいバッテリーに交換することで、iPhoneの性能が改善され、快適に使用できるようになります。また、バッテリーの急速な消耗や突然のシャットダウンを避けることができ、日常生活でのストレスが軽減されます。
+		</p>
+			<p class="mb-30">最後に、自分で「（スマホ/スマートフォン）iPhoneバッテリー交換」を行うDIYキットも市販されていますが、これは推奨される方法ではありません。専門的な知識と技術が必要であり、誤った手順による損傷のリスクがあります。安全性と保証を考慮して、プロフェッショナルに依頼することが最善です。</p>
+			<p class="mb-30">まとめると、「（スマホ/スマートフォン）iPhoneバッテリー交換」はiPhoneユーザーにとって重要なメンテナンスです。バッテリーの状態を定期的にチェックし、必要に応じて適切な方法で交換を行うことで、iPhoneを最適な状態で長く使い続けることができます。</p>
+
+
+
+			<div class="blue8 line1 mt-60 "></div>
+
+			<h3 class="tac">（スマホ/スマートフォン）iPhoneバッテリーの主な故障の症状例</h3>
+			<ul class="fs18 mt-30 ti-1">
+				<li class="lh-40>">➤バッテリー（電池）の持ちが悪い</li>
+				<li class="lh-40">➤急に電d源が落ちる</li>
+				<li class="lh-40">➤突然、電源が入らない</li>
+				<li class="lh-40">➤バッテリーが膨張している</li>
+			</ul>
+
+
+
+			<div class="blue8 line1 mt-60 "></div>
+			<h3 class="tac">（スマホ/スマートフォン）iPhoneバッテリー交換の要因トップ4</h3>
+			<ul class="fs18 mt-30 ti-1">
+				<li class="lh-40>">➤寿命による劣化（一日一回充電するなら約１年～２年）</li>
+				<li class="lh-40">➤水没/湿気によるバッテリーの腐食</li>
+				<li class="lh-40">➤季節の高温差による劣化・膨張</li>
+				<li class="lh-40">➤物理的な衝撃による不具合</li>
+			</ul>
+			<p class="mb-30 mt-30 fs16">（スマホ/スマートフォン）iPhone(アイフォン)のバッテリーはあくまでも消耗品です。
+				なので、使用にともない畜電量は落ち、いつかは交換を行う必要があります。
+				基本的には1年～2年ほどがバッテリーの寿命と言われており、2年程度で購入当時の70％ほどしか充電できなくなる場合が多いようです。
+				充電回数が多いiPhoneだと早い場合で、数ヶ月から1年程度の使用でバッテリーが寿命になっている方も多くいらっしゃいます。</p>
+
+			<p class="mb-30 fs16">また、水に落とした等の水没の場合は、ほぼバッテリー交換が必須の場合が多いです。
+				水没や寿命を超えたiPhone(アイフォン)のバッテリーをそのまま使い続けると、下記の画像のように膨張してしまう恐れがあり、大変危険です。</p>
+			<img src="{DT_SKIN}31/02.png" class="w100" alt="ご希望の機種項目をタップすると料金表が切替ります">
+
+
+
+
+
+			<!--				<div class="blue8 line1 mt-20 mb-20"></div>-->
+
+
+
+
+
+			<div class="blue8 line1 mt-60 "></div>
+			<h3 class="tac">当店が取り扱う（スマホ/スマートフォン）iPhoneバッテリーについて</h3>
+			<!--				<div class="blue8 line1 mt-20 mb-20"></div>	-->
+			<p class="mb-30 fs16 mt-30">品質は、リサイクルバッテリーと比べて非常に良質で、純正バッテリーとほとんど変わりません。 純正品とほとんど変わらない品質のため、iOSのアップデート後等のトラブルもなく安心してご利用いただける製品となっております。
+				本来iPhoneバッテリーは特定電気用品ではないため、第三者機関による適合性検査は必要ないのですが、お客様にご安心いただくため、海外の機関で適合性検査を実施し検査レポート及び証書を取っています。</p>
+			<p class="mb-30 fs16 mt-30">交換部品に関しては<span class="fw-800 blue8">3ヵ月間の無償保証付</span>ですので、安心してご利用いただけます。</p>
+
+
+
+
+
+			<div class="blue8 line1 mt-60 "></div>
+			<h2 class="tac">互換品バッテリーとリサイクルバッテリーの違い</h2>
+			<!--				<div class="blue8 line1 mt-20 mb-20"></div>-->
+			<div class="mt-40">
+				<h3 class="tac">リサ`イクルバッテリー`</h3>
+				<p class="m-20">格安の部品は、廃バッテリーから基盤をリサイクルしたものを使用してコストダウンしている物か、検品で基準値を満たしていない物のどちらかになります。
+					分解しない限りは見た目に見分けが付きません。リサイクル基盤の中には水没した基盤も含まれています。</p>
+				<h3 class="tac">当店が取り扱う互換品</h3>
+				<p class="m-20">バッテリーの本体から基盤、ケーブルまで全て互換品として生産されている物です。
+					当店が取り扱っているのは、信頼出来る国内商社の自社製品のみを使用しております。
+					自らが検品することで安定供給に繋がり、エンドユーザーにご安心してご使用を頂ける品質となります。</p>
+
+			</div>
+
+
+			<div class="blue8 line1 mt-60 "></div>
+			<h4 class="tac">iPhoneバッテリー交換、修理サービスをご利用いただいた</h4>
+			<h2 class="tac blue8">[お客様の声]</h2>
+			<!--				<div class="blue8 line1 mt-20 mb-20"></div>-->
+			<p class="pt-20 pb-20 fs16 lh-30 gray2 tac">道内シェアNo.1のスマートクリアグループは様々な端末の修理を承っております。</p>
+			<p class="pt-20 pb-20 fs16 lh-30 gray2 tac">バッテリー修理を実際に当店でサービスを体験していただいた「お客様の声」をご紹介します。</p>
+
+			<div class="">
+				{php $cols = 3;}
+				{if $page == 1}{ad($moduleid,$catid,'',6)}{/if}
+				{if $tags }<?$tags=array_slice($tags,0,3);?>{/if}
+				{if $tags }{template 'list-'.$module.'01', 'tag'}{/if}
+
+
+			</div>
+
+
+			<div class="blue8 line1 mt-60 "></div>
+			<h2 class="tac">スマートクリアが皆様に選ばれる６つの理由</h2>
+
+			<div class="mt-40">
+				<p class="w-300  h-50 m0a br br-50 tac lh-50 bgblue8 white fs20">1.バックアップ不要</p>
+				<p class="m-20 tac fw-800">データそのままで修理が出来るので、手間のかかるバックアップが要らない！</p>
+				<p class="w-300  h-50 m0a br br-50 tac lh-50 bgblue8 white fs20">２、スピード快適修理！</p>
+				<p class="m-20 tac fw-800">iPhone（アイフォン）が使えないと不安・不便だからこそ、スピード修理でそんな不安を解消します！</p>
+				<p class="w-300  h-50 m0a br br-50 tac lh-50 bgblue8 white fs20">３、無料診断実施中！</p>
+				<p class="m-20 tac fw-800">まずは相談したい！そんなお客様もお気軽にいつでも無料でご相談していただけます。</p>
+				<p class="w-300  h-50 m0a br br-50 tac lh-50 bgblue8 white fs20">４、修理不可は費用無料</p>
+				<p class="m-20 tac fw-800">万が一、部品交換しても改善が出来なかった場合は、費用は頂いておりません。</p>
+				<p class="w-300  h-50 m0a br br-50 tac lh-50 bgblue8 white fs20">５、安心の３か月保証</p>
+				<p class="m-20 tac fw-800">交換部品のトラブルは無料で交換できるので安心。</p>
+				<p class="w-300  h-50 m0a br br-50 tac lh-50 bgblue8 white fs20">６、信用・信頼・高技術Ｎo.1</p>
+				<p class="m-20 tac fw-800">お陰様で、たくさんの方にご利用・ご紹介して頂いた結果、道内最大級店舗数を出店させて頂いております。</p>
+			</div>
+
+
+
+			<div class="catlist">
+				{php $cols = 5;}
+				{if $page == 1}{ad($moduleid,$catid,'',6)}{/if}
+				{if $tags}{template 'list-'.$module, 'tag'}{/if}
+			</div>
+
+		</div>
+	</div>
+
+
+
+
+	<!--	<div class="content" id="article">{$content}</div>-->
+
+	<!--	<?php echo $content;?>-->
+
+
+
+	<div class="m1r  pd10  bsb">
+		<div class="h-50">
+			<p class="sb df">
+				<input type="text" placeholder="サイ卜内を検索" class="h100 bsb ">
+				<input type="button" value="搜索" class="fg1">
+			</p>
+		</div>
+
+		<div>
+			<p class="fs25 fw-800 blue9 tac side_on">症状別で探す</p>
+			<p class="fs16 fw-400 blue8 ">Smart Phone修理</p>
+
+			<ul class="bt ">
+				{loop $maincat $k $v}
+				<li class="{if $v[catid]==$catid}side_on fs16 {else}side_li fs16 {/if} mt-5"><a href="{$MOD[linkurl]}{$v[linkurl]}">{set_style($v[catname],$v[style])}{if !$cityid} <em>({$v[item]})</em>{/if}</a></li>
+				{/loop}
+			</ul>
+		</div>
+
+		<div>
+			<p class="br-5 h-100 ovfh  "  ><a href=""><img src="{DT_SKIN}article/a.png"   class="w100 h100 ofo"  alt=""></a></p>
+			<p class="br-5 h-100 ovfh  "  ><a href=""><img src="{DT_SKIN}article/b.png"  class=" w100 h100" alt=""></a></p>
+			<p class="br-5 h-100 ovfh  "  ><a href=""><img src="{DT_SKIN}article/c.png"  class=" w100 h100" alt=""></a></p>
+			<p class="br-5 h-100 ovfh  "  ><a href=""><img src="{DT_SKIN}article/d.png"  class=" w100 h100" alt=""></a></p>
+
+		</div>
+		<div>
+			<p class="fs16 fw-400 blue8 ">その他 修理</p>
+			<ul class="bt ">
+				{loop $maincat $k $v}
+				<li class="{if $v[catid]==$catid}side_on fs16 {else}side_li fs16 {/if} mt-5"><a href="{$MOD[linkurl]}{$v[linkurl]}">{set_style($v[catname],$v[style])}{if !$cityid} <em>({$v[item]})</em>{/if}</a></li>
+				{/loop}
+			</ul>
+		</div>
+		<div>
+			<div class="fs16 fw-400 blue8 ">
+				<p class="h-20"><span class="sb dib ">iPhone/iPad修理</span></p>
+				<p class="br-5 h-100 ovfh  "  ><a href=""><img src="{DT_SKIN}article/e.png"  class=" w100 h100" alt="iPhone/iPad修理"></a></p>
+			</div>
+			<div class="fs16 fw-400 blue8 ">
+				<p class="h-20"><span class="sb dib ">XPERIA/その他</span></p>
+				<p class="br-5 h-100 ovfh  "  ><a href=""><img src="{DT_SKIN}article/f.png"  class=" w100 h100" alt="XPERIA/その他"></a></p>
+			</div>
+			<div class="fs16 fw-400 blue8 ">
+				<p class="h-20"><span class="sb dib ">Switch/プレステ</span></p>
+				<p class="br-5 h-100 ovfh  "  ><a href=""><img src="{DT_SKIN}article/g.png"  class=" w100 h100" alt="Switch/プレステ"></a></p>
+			</div>
+			<div class="fs16 fw-400 blue8 ">
+				<p class="h-20"><span class="sb dib ">Switch/プレステ</span></p>
+				<p class="br-5 h-100 ovfh  "  ><a href=""><img src="{DT_SKIN}article/h.png"  class=" w100 h100" alt="Switch/プレステ"></a></p>
+			</div>
+
+		</div>
+		<div class="mt-20 blue8 fs16">
+			<p class="h-20"><span class="sb dib">1 - 8 of 20 件の口コミ</span></p>
+			<div class="bt pt-20">
+				<div class="sb  bb1 ">
+					<p class=" df">
+						<span class="dib w-50 h-50 br50 brhui2 ovfh "><img src="{DT_SKIN}article/3.png" class="w100 w100" ></span><span	 class=" dib h-50 ml-5 lh-50 w-160 wsn ovfh">yirdsafdddsfao obayash</span>
+					</p>
+					<p class="h-15 stars5 w-75" ></p>
+					<p class="ovfh gray fs14">2024年12月25日 16:14</p>
+					<p class="ovfh gray2 fs14 h-40">	丁寧でとても良かったです。また壊れたらお願いしたいです。</p>
+					<p class="ovfh gray fs12 df"> <span class=" fg1">(Googleのクチコミから引用)</span> <span class="w-30  ti-20 message">1</span>	</p>
+				</div>
+				<div class="sb  bb1">
+					<p class=" df">
+						<span class="dib w-50 h-50 br50 brhui2 ovfh "><img src="{DT_SKIN}article/3.png" class="w100 w100" ></span><span	 class=" dib h-50 ml-5 lh-50 w-160 wsn ovfh">yirdsafdddsfao obayash</span>
+					</p>
+					<p class="h-15 stars5 w-75" ></p>
+					<p class="ovfh gray fs14">2024年12月25日 16:14</p>
+					<p class="ovfh gray2 fs14 h-40">	丁寧でとても良かったです。また壊れたらお願いしたいです。</p>
+					<p class="ovfh gray fs12 df"> <span class=" fg1">(Googleのクチコミから引用)</span> <span class="w-30  ti-20 message">1</span>	</p>
+				</div>
+				<div class="sb  bb1">
+					<p class=" df">
+						<span class="dib w-50 h-50 br50 brhui2 ovfh "><img src="{DT_SKIN}article/3.png" class="w100 w100" ></span><span	 class=" dib h-50 ml-5 lh-50 w-160 wsn ovfh">yirdsafdddsfao obayash</span>
+					</p>
+					<p class="h-15 stars5 w-75" ></p>
+					<p class="ovfh gray fs14">2024年12月25日 16:14</p>
+					<p class="ovfh gray2 fs14 h-40">	丁寧でとても良かったです。また壊れたらお願いしたいです。</p>
+					<p class="ovfh gray fs12 df"> <span class=" fg1">(Googleのクチコミから引用)</span> <span class="w-30  ti-20 message">1</span>	</p>
+				</div>
+				<div class="sb  bb1">
+					<p class=" df">
+						<span class="dib w-50 h-50 br50 brhui2 ovfh "><img src="{DT_SKIN}article/3.png" class="w100 w100" ></span><span	 class=" dib h-50 ml-5 lh-50 w-160 wsn ovfh">yirdsafdddsfao obayash</span>
+					</p>
+					<p class="h-15 stars5 w-75" ></p>
+					<p class="ovfh gray fs14">2024年12月25日 16:14</p>
+					<p class="ovfh gray2 fs14 h-40">	丁寧でとても良かったです。また壊れたらお願いしたいです。</p>
+					<p class="ovfh gray fs12 df"> <span class=" fg1">(Googleのクチコミから引用)</span> <span class="w-30  ti-20 message">1</span>	</p>
+				</div>
+				<div class="sb  bb1">
+					<p class=" df">
+						<span class="dib w-50 h-50 br50 brhui2 ovfh "><img src="{DT_SKIN}article/3.png" class="w100 w100" ></span><span	 class=" dib h-50 ml-5 lh-50 w-160 wsn ovfh">yirdsafdddsfao obayash</span>
+					</p>
+					<p class="h-15 stars5 w-75" ></p>
+					<p class="ovfh gray fs14">2024年12月25日 16:14</p>
+					<p class="ovfh gray2 fs14 h-40">	丁寧でとても良かったです。また壊れたらお願いしたいです。</p>
+					<p class="ovfh gray fs12 df"> <span class=" fg1">(Googleのクチコミから引用)</span> <span class="w-30  ti-20 message">1</span>	</p>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+
+
+	<div class="b10 c_b b1">555</div>
+
+</div>
+
+
+
+<script>
+	// 滑动滚动条
+	// $(function (){
+	// 	$("[href='#Section3']").click(function (){
+	// 		tableHeader()
+	// 		console.log(5555555)
+	// 	})
+	// })
+
+	//
+
+	$(function (){
+		tableHeader(0)
+		arrs=$(".nav1-tabs li")
+		arrs.each(function (i){
+			$(this).click(function (){
+				if($(this).index()==i){
+					// mie()
+					arrs.removeClass("active")
+					$(this).addClass("active")
+					// if ($(".fenbiao #tableid_").length>=2){$(".fenbiao #tableid_").first().html('');console.log("删除tableid_")}
+					tableHeader(i)
+					$("#section"+i).siblings().addClass("dn")
+					$("#section"+i).removeClass("dn")
+					// mie()
+				}
+			})
+		})
+	})
+
+	function tabcreate(j){
+		// $("#tableid_").html('')
+		// console.log(5555)
+
+		$("#tableid"+j).parent().prepend(
+				'<table id="tableid_'+j+'" border="0" cellspacing="0" cellpadding="0"><thead>' + $("#tableid"+j+" thead").html() + '</thead></table>'
+		).parent().css({
+			// 'overflow-y':'auto'
+		})
+		$("#tableid"+j).parent().parent().removeClass("dn")
+		$("#tableid_"+j).find('th').each(function(i) {
+			$(this).css('width', $('#tableid'+j).find('th:eq( '+i+')').width());
+		});
+		$("#tableid_"+j).css({
+			// 'position': 'absolute',
+			'position': 'absolute',
+			'top': '0',
+			'left': 0,
+			'z-index': 1
+		})
+		$("#tableid"+j).css({
+			'position': 'absolute',
+			'top': 0,
+			'left': 0
+		})
+	}
+
+
+
+
+
+
+	function tabcl(k){
+		if ($(".fenbiao #tableid_"+k).length>1){$(".fenbiao #tableid_"+k).each(function (l){
+			if (l>=1){$(this).html('')}
+		})}
+
+
+		// console.log("第"+i+"次点击")
+		// i++
+		// if ($(".fenbiao #tableid_").length>=2){$(".fenbiao #tableid_").last().html('');console.log("删除tableid_")}
+		// console.log(8555555555)
+
+
+
+	}
+
+	function tableHeader(j) {
+
+		tabcreate(j);
+		$("#section"+j).scroll(function() {
+
+			// if ($("#tableid_"+j).length>=2){$("#tableid_"+j).last().html('')}
+			// $("#tableid_").first().html('')
+			if ($('#section'+j).scrollTop() >= 0) {
+				tabcl(j)
+				$("#tableid_"+j).css('top', $('#section'+j).scrollTop());
+			} else {
+				$("#tableid_"+j).css('top', 0);
+			}
+		});
+	}
+
+
+
+
+</script>
+
+
+
+
+{if $content}{load('content.js')}{/if}
+{template 'footer'}

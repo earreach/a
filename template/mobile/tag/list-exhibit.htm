@@ -1,0 +1,6 @@
+{loop $tags $k $t}
+<div class="ui-list-txt">
+<a href="{$t[linkurl]}"><strong>{$t[title]}</strong></a>
+<p><i class="ui-ico-area ui-fr">{$t[city]}</i><i class="ui-ico-time">{timetodate($t[fromtime], 3)} 至 {timetodate($t[totime], 3)}</i></p>
+</div>
+{/loop}

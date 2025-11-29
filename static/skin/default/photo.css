@@ -1,0 +1,35 @@
+/*
+	DESTOON Copyright (C)2008-2099 www.destoon.com
+	This is NOT a freeware,Use is subject to license.txt
+*/
+.photo_info {color:#F1F1F1;padding:0 24px;background:#666666;}
+.photo_info h1 {text-align:left;margin:0;}
+.photo_info_r {float:right;padding:24px 6px 0 0;}
+.photo_info_i {clear:both;padding:0 8px 24px 16px;}
+.photo_intro {color:#FFFFFF;padding:16px;line-height:150%;text-indent:2em;}
+.photo_l {background:#333333;}
+.photo_r {background:#000000;width:140px;text-align:center;}
+.photo_f {position:absolute;z-index:900;width:460px;height:260px;background:#000000;margin:200px 0 0 300px;color:#FAFAFA;text-align:center;border:#FAFAFA 1px solid;border-radius:24px;opacity:0.8;filter:alpha(opacity=80);display:none;}
+.photo_f p {margin:44px 0;font-size:30px;}
+.photo_f div {width:100px;height:32px;line-height:32px;margin:20px auto 0 auto;border:#FAFAFA 1px solid;border-radius:6px;font-size:14px;cursor:pointer;}
+.photo_f div:hover {border:#FF6600 1px solid;color:#FF6600;}
+.thumb_a {border:#666666 1px solid;padding:2px;margin-top:10px;}
+.thumb_a:hover,.thumb_b {border:#FF6600 1px solid;padding:2px;margin-top:10px;}
+.count_a {font-size:20px;color:#FF6600;}
+.count_b {font-size:20px;}
+.photo_all {padding:10px;}
+.photo_all div {color:#F1F1F1;padding:6px 20px 20px 20px;text-align:left;}
+.album-list {overflow:hidden;padding:0 0 16px 0;border-bottom:#EEEEEE 1px solid;}
+.album-list p {margin:0;border-bottom:#EEEEEE 1px solid;line-height:48px;padding:0 16px;}
+.album-list p b {font-size:18px;}
+.album-list p span {float:right;color:#999999;}
+.album-list li {width:362px;height:36px;line-height:36px;overflow:hidden;float:left;padding:0 12px;background:#F6F6F6;margin:16px 0 0 16px;font-size:14px;border-radius:6px;}
+.album-list li:hover {background:#EEEEEE;color:#333333;}
+.album-list li i {float:right;font-size:12px;color:#999999;font-style:normal;}
+.album-list .on {background:#F6F6F6 url('../../image/yes.png') no-repeat 356px center;width:342px;padding:0 32px 0 12px;}
+.book-nav {color:#FFFFFF;padding:0 10px 16px 12px;}
+.book-nav a {color:#FFFFFF;text-decoration:none;}
+.book-nav i {font-style:normal;font-weight:bold;padding:0 6px;font-family:simsun;}
+.book-nav img {float:right;}
+#cursor_a {position:absolute;z-index:100;width:510px;height:510px;cursor:url('prev.cur'),default;}
+#cursor_b {position:absolute;z-index:100;width:510px;height:510px;cursor:url('next.cur'),default;margin-left:510px;}

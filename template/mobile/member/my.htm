@@ -1,0 +1,105 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $action=='spread'}?action=index{else}{DT_MOB}my.php{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right">{if $action=='spread'}<a href="?action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>{else}<a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a>{/if}</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="index.php" data-transition="none">会员中心</a>
+{if $MG[biz]}<a href="biz.php" data-transition="none">商户后台</a>{/if}
+</div>
+</div>
+
+{if $action=='spread'}
+{if $sid}
+	{if $pid || $rid}	
+	<div class="ui-form">
+	<p>推广方式<i>*</i></p>
+	<div id="type">
+		{if $rid}
+		<label><input type="radio" name="typeid" value="1" id="typeid-1" onclick="tp(1);"/> 搜索竞价</label>
+		<div style="padding:6px 24px 24px 24px;color:#666666;font-size:12px;">指定关键词，同一个月出价越高排名越靠前</div>
+		{/if}
+		{if $pid}
+		<label><input type="radio" name="typeid" value="2" id="typeid-2" onclick="tp(2);"/> 排名广告</label>
+		<div style="padding:6px 24px;color:#666666;font-size:12px;">指定关键词或分类，在搜索结果或列表页置顶</div>
+		{/if}	
+	</div>
+	<p>关键词<i id="star">*</i><b id="dkw"></b></p>
+	<div><input type="text" name="kw" style="width:50%;" id="kw"/></div>
+	<div class="blank-20"></div>
+	<div><input type="button" value="下一步" class="btn-green" onclick="tp(0);"/></div>
+	<div class="blank-20"></div>
+	</div>
+	<script type="text/javascript">
+	function tp(i) {
+		if(i == 1) {
+			$('#star').show();
+		} else if(i == 2) {
+			$('#star').hide();
+		} else {
+			var id = $('#type input:checked').val();
+			if(id == 1) {
+				if(Dd('kw').value.length < 2) {
+					Dmsg('请填写关键词', 'kw');
+					return false;
+				}
+				Go('spread.php?action=add&mid={$sid}&itemid={$itemid}&kw='+encodeURIComponent(Dd('kw').value));
+			} else {
+				Go('ad.php?action=add&pid={$pid}&itemid={$itemid}&kw='+encodeURIComponent(Dd('kw').value));
+			}
+		}
+	}
+	$(function(){
+		$('#type input:first').attr('checked', 'checked');
+		tp($('#type input:first').val());
+	});
+	</script>
+	{else}
+	<div class="ui-form">
+	<p>提示信息</p>
+	<div class="f_red"><a href="{$MODULE[$sid][linkurl]}" rel="external" class="b">{$MODULE[$sid][name]}</a> 暂无相应的推广位</div>
+	<div class="blank-20"></div>
+	<div><input type="button" value="重新选择" class="btn-green" onclick="Go('?action={$action}');"/></div>
+	<div class="blank-20"></div>
+	</div>
+	{/if}
+
+{else}
+	<form action="?" data-ajax="false">
+	<input type="hidden" name="action" value="{$action}"/>	
+	<div class="ui-form">
+	<p>选择模型<i>*</i><b id="dsid"></b></p>
+	<div>
+	<select name="sid">
+	<option value="4">{$MODULE[4][name]}</option>
+	{loop $MYMODS $v}
+	<option value="{$v}">{$MODULE[$v][name]}</option>
+	{/loop}
+	</select>
+	</div>
+	<div class="blank-20"></div>
+	<div><input type="submit" value="下一步" class="btn-green"/></div>
+	<div class="blank-20"></div>
+	</div>
+	</form>
+{/if}
+
+{else}
+<div class="gird-4">
+<ul>
+{loop $MYMODS $k $v}
+<li><a href="?mid={$v}" rel="external"><img src="{if $MODULE[$v][icon]}{$MODULE[$v][icon]}{else}{DM_SKIN}mod-{$MODULE[$v][module]}.png{/if}" width="24" height="24"/><span>{$MODULE[$v][name]}管理</span></a></li>
+{/loop}
+{if $spread}<li><a href="?action=spread" rel="external"><img src="{DM_SKIN}more-spread.png" width="24" height="24"/><span>信息推广</span></a></li>{/if}
+</ul>
+</div>
+{/if}
+{template 'footer'}

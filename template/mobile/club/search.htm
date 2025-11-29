@@ -1,0 +1,80 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title"><input type="search" name="kw" value="{$kw}" placeholder="搜索{if $action == 'group'}{$MOD[name]}{elseif $action == 'reply'}回复{else}帖子{/if}" readonly onclick="Go('{DT_MOB}api/search.php?mid={$moduleid}&action={$action}');"/></div>
+<div class="head-bar-right"><a href="{DT_MOB}api/search.php?mid={$moduleid}&catid={$catid}&areaid={$areaid}&action={$action}" data-direction="reverse"><img src="{DM_SKIN}icon-filter{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<form action="{$MOD[mobile]}search.php" id="filter-{$js_pageid}" data-ajax="false">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="kw" value="{$kw}"/>
+<input type="hidden" name="catid" value="{$catid}"/>
+<input type="hidden" name="areaid" value="{$areaid}"/>
+<input type="hidden" name="orderby" value="{$orderby}"/>
+<input type="hidden" name="elite" value="{$elite}"/>
+<input type="hidden" name="typeid" value="{$typeid}"/>
+</form>
+{if $action == 'group'}
+<div class="ui-filter">
+<i class="ui-filter-{if $elite}ckd{else}box{/if} ui-fr" onclick="Dfilter('elite', '{if $elite}0{else}1{/if}');">推荐</i>
+<i {if $orderby == ''}class="ui-filter-dsc on"{else}class="ui-filter-ord" onclick="Dfilter('orderby', '');"{/if}>综合</i>
+<b {if $orderby == 'dpost'}class="on"{else}onclick="Dfilter('orderby', 'dpost');"{/if}>主题</b>
+<b {if $orderby == 'dreply'}class="on"{else}onclick="Dfilter('orderby', 'dreply');"{/if}>回复</b>
+<b {if $orderby == 'dfans'}class="on"{else}onclick="Dfilter('orderby', 'dfans');"{/if}>粉丝</b>
+</div>
+{if $catid || $areaid}
+<div class="ui-filter-key">
+{if $catid}<i onclick="Dfilter('catid', '0');">{$CAT[catname]}</i>{/if}
+{if $areaid}<i onclick="Dfilter('areaid', '0');">{$ARE[areaname]}</i>{/if}
+</div>
+{/if}
+{elseif $action == 'reply'}
+{else}
+<div class="ui-filter">
+<i class="ui-filter-{if $elite}ckd{else}box{/if} ui-fr" onclick="Dfilter('elite', '{if $elite}0{else}1{/if}');">精华</i>
+<i {if $orderby == ''}class="ui-filter-dsc on"{else}class="ui-filter-ord" onclick="Dfilter('orderby', '');"{/if}>综合</i>
+<b {if $orderby == 'dreply'}class="on"{else}onclick="Dfilter('orderby', 'dreply');"{/if}>回复</b>
+<b {if $orderby == 'dhits'}class="on"{else}onclick="Dfilter('orderby', 'dhits');"{/if}>浏览</b>
+<b {if $orderby == 'dreplytime'}class="on"{else}onclick="Dfilter('orderby', 'dreplytime');"{/if}>回帖</b>
+</div>
+{/if}
+
+{if $action == 'group'}
+	<div id="list-{$js_pageid}" class="ui-main">
+	{if $tags}
+	{template 'list-club-group', 'tag'}
+	{else}
+	{template 'empty', 'chip'}
+	{/if}
+	</div>
+{elseif $action == 'reply'}
+	<div id="list-{$js_pageid}" class="main">
+	{if $tags}
+	{template 'list-club-reply', 'tag'}
+	{else}
+	{template 'empty', 'chip'}
+	{/if}
+	</div>
+{else}
+	<style type="text/css">
+	.post-ontop {background:#FFFFFF url('{DM_SKIN}post-ontop.png') no-repeat right 0;background-size:24px 24px;}
+	.post-level {background:#FFFFFF url('{DM_SKIN}post-level.png') no-repeat right 0;background-size:24px 24px;}
+	</style>
+	<div id="list-{$js_pageid}" class="main">
+	{if $page==1 && $kw}
+	{ad($moduleid,$catid,$kw,6)}
+	{load('m'.$moduleid.'_k'.urlencode($kw).'.htm')}
+	{/if}
+	{if $tags}
+	{template 'list-'.$module, 'tag'}
+	{else}
+	{template 'empty', 'chip'}
+	{/if}
+	</div>
+{/if}
+<div id="load-{$js_pageid}" class="ui-load"></div>
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{template 'footer'}

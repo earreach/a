@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="{DT_CHARSET}"/>
+<title>{$DT[sitename]}桌面版</title>
+<link rel="shortcut icon" type="image/x-icon" href="{DT_PATH}favicon.ico"/>
+<link rel="bookmark" type="image/x-icon" href="{DT_PATH}favicon.ico"/>
+<style>
+body {background:#EEF5F9;-webkit-user-select:none;}
+.icon {margin:128px auto;text-align:center;overflow:hidden;cursor:pointer;}
+.icon img {width:96px;height:96px;border-radius:16px;}
+.icon p {margin:16px auto;font-size:14px;color:#666666;}
+.btns {margin:0 auto;text-align:center;overflow:hidden;}
+.btnm,.btnc {color:#FFFFFF;font-size:16px;width:188px;line-height:42px;border:none;border-radius:6px;text-align:center;-webkit-appearance:none;margin:0 auto 32px auto;cursor:pointer;}
+.btnm {background:{$DT[color_pc]};}
+.btnm:hover {box-shadow:0 0 10px {$DT[color_pc]};}
+.btnc {background:#FFFFFF;border:#E4E4E4 1px solid;color:#666666;}
+.btnc:hover {box-shadow:0 0 10px #DDDDDD;}
+</style>
+</head>
+<body ondblclick="window.location.reload();">
+<div class="icon" onclick="window.location='?action=home';"><img src="{DT_PATH}apple-touch-icon-precomposed.png"/><p>{$DT[sitename]}</p></div>
+<div class="btns">
+	{if $_userid}
+	{if $MG[biz]}
+	<div class="btnm" onclick="window.location='?action=biz';">商户后台</div>
+	{else}
+	<div class="btnm" onclick="window.location='?action=member';">会员中心</div>
+	{/if}
+	<div class="btnc" onclick="window.location='?action=home';">网站首页</div>
+	{else}
+	<div class="btnm" onclick="window.location='?action=login';">会员登录</div>
+	<div class="btnc" onclick="window.location='?action=register';">立即注册</div>
+	{/if}
+</div>
+</body>
+</html>

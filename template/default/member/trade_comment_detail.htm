@@ -1,0 +1,165 @@
+{load('mall.css')}
+{load('mall.js')}
+{load('player.js')}
+{template 'goods', 'chip'}
+<div style="display:none;" id="explain">
+<div class="t2">我的解释</div>
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="oid" value="0" id="oid"/>
+<table cellspacing="1" cellpadding="10" class="tb">
+<tr>
+<td class="tl" id="E0"></td>
+<td class="tr" id="E1"></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span>我的解释</td>
+<td class="tr f_gray">
+<textarea onkeyup="S();" name="content" id="content" style="width:300px;height:60px;margin:0 0 6px 0;"></textarea><br/>
+请您对此次评价做出客观、合理的解释<br/>
+(内容限2至500字) 当前已经输入 <span style="color:red;" id="chars">0</span> 字
+</td>
+</tr>
+<tr>
+<td class="tl"> </td>
+<td class="tr">
+<input type="submit" name="submit" value=" 确 定 " class="btn_g"/>&nbsp;&nbsp;<input type="button" value=" 取 消 " class="btn" onclick="$('#explain').slideUp(300);"/>
+</td>
+</tr>
+</table>
+</form>
+</div>
+<div class="t2">买家评价</div>
+<table cellspacing="1" cellpadding="10" class="tb">
+{loop $lists $k $v}
+<tr>
+<td class="tl">商品名称</td>
+<td class="tr"><a href="{$v[linkurl]}" target="_blank" class="t">{$v[title]}</a></td>
+</tr>
+{if $comments[$k][buyer_star]}
+<tr>
+<td class="tl">商品评分</td>
+<td class="tr"><img src="{DT_STATIC}image/star{$comments[$k][buyer_star]}.gif" alt="" align="absmiddle"/> {$STARS[$comments[$k][buyer_star]]}
+{if !$comments[$k][buyer_reply]}
+&nbsp;&nbsp;<a href="javascript:;" onclick="E({$v[itemid]});" class="t">[解释]</a>
+{/if}
+</td>
+</tr>	
+<tr>
+<td class="tl">物流服务</td>
+<td class="tr"><img src="{DT_STATIC}image/star{$comments[$k][buyer_star_express]}.gif" alt="" align="absmiddle"/> {$STARS[$comments[$k][buyer_star_express]]}</td>
+</tr>
+<tr>
+<td class="tl">商家态度</td>
+<td class="tr"><img src="{DT_STATIC}image/star{$comments[$k][buyer_star_service]}.gif" alt="" align="absmiddle"/> {$STARS[$comments[$k][buyer_star_service]]}</td>
+</tr>
+<tr>
+<td class="tl" id="E0_{$v[itemid]}">买家评价</td>
+<td class="tr" id="E1_{$v[itemid]}">
+<div class="comment-r" style="width:auto;">
+	<div class="comment-content">{nl2br($comments[$k][buyer_comment])}</div>
+	{if $comments[$k][buyer_thumbs] || $comments[$k][buyer_video]}
+	<ul id="thumbs-{$v[itemid]}">
+	{if $comments[$k][buyer_video]}<li><img src="{DT_STATIC}image/play.gif" onclick="comment_thumb_show({$v[itemid]}, this);" data-video="{$comments[$k][buyer_video]}"/></li>{/if}
+	{loop $comments[$k][buyer_thumbs] $t}
+	{if $t}<li><img src="{$t}" onclick="comment_thumb_show({$v[itemid]}, this);"/></li>{/if}
+	{/loop}
+	</ul>
+	<p id="thumbshow-{$v[itemid]}" onclick="comment_thumb_next({$v[itemid]});"></p>
+	{/if}
+</div>
+
+</td>
+</tr>
+<tr>
+<td class="tl">评价时间</td>
+<td class="tr">{timetodate($comments[$k][buyer_ctime], 6)}</td>
+</tr>
+{if $comments[$k][buyer_reply]}
+<tr>
+<td class="tl">卖家解释</td>
+<td class="tr" style="color:#D9251D;">{nl2br($comments[$k][buyer_reply])}</td>
+</tr>
+<tr>
+<td class="tl">解释时间</td>
+<td class="tr">{timetodate($comments[$k][buyer_rtime], 6)}</td>
+</tr>
+{/if}
+{else}
+<tr>
+<td class="tl">买家评价</td>
+<td class="tr">暂未评价</td>
+</tr>
+{/if}
+{/loop}
+</table>
+<div class="t2">我的评价</div>
+<table cellspacing="1" cellpadding="10" class="tb">
+{loop $lists $k $v}
+<tr>
+<td class="tl">商品名称</td>
+<td class="tr"><a href="{$v[linkurl]}" target="_blank" class="t">{$v[title]}</a></td>
+</tr>
+{if $comments[$k][buyer_star]}
+<tr>
+<td class="tl">卖家评分</td>
+<td class="tr"><img src="{DT_STATIC}image/star{$comments[$k][buyer_star]}.gif" alt="" align="absmiddle"/> {$STARS[$comments[$k][buyer_star]]}</td>
+</tr>
+<tr>
+<td class="tl">卖家评价</td>
+<td class="tr">{nl2br($comments[$k][buyer_comment])}</td>
+</tr>
+<tr>
+<td class="tl">评价时间</td>
+<td class="tr">{timetodate($comments[$k][buyer_ctime], 6)}</td>
+</tr>
+{if $comments[$k][buyer_reply]}
+<tr>
+<td class="tl">买家解释</td>
+<td class="tr" style="color:#D9251D;">{nl2br($comments[$k][buyer_reply])}</td>
+</tr>
+<tr>
+<td class="tl">解释时间</td>
+<td class="tr">{timetodate($comments[$k][buyer_rtime], 6)}</td>
+</tr>
+{/if}
+{else}
+<tr>
+<td class="tl">卖家评价</td>
+<td class="tr">暂未评价</td>
+</tr>
+{/if}
+{/loop}
+<tr>
+<td class="tl"></td>
+<td class="tr"><input type="button" value=" 返 回 " class="btn" onclick="Go('?action=update&step=detail&itemid={$itemid}');"/></td>
+</tr>
+</table>
+<script type="text/javascript">
+function check() {
+	if(Dd('content').value.length < 2) {
+		alert('解释内容不能少于2字');
+		return false;
+	}
+	if(Dd('content').value.length > 500) {
+		alert('解释内容不能超过500字');
+		return false;
+	}
+	return confirm('您确认提交此解释吗？提交后解释内容将不可更改');
+}
+function S() {
+	Inner('chars', Dd('content').value.length);
+}
+function E(oid) {
+	$('#explain').hide();
+	$("html, body").animate({scrollTop:$('#explain').offset().top}, 200);
+	$('#E0').html($('#E0_'+oid).html());
+	$('#E1').html($('#E1_'+oid).html());
+	$('#oid').val(oid);
+	$('#explain').slideDown(300);
+}
+</script>
+<script type="text/javascript">s('trade');m('action');</script>

@@ -1,0 +1,204 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">报价详情</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+{if $could_add}<a href="javascript:Dmenu('price-{$js_pageid}');">我要报价</a>{/if}
+<a href="{$MOD[mobile]}" data-direction="reverse">{$MOD[name]}首页</a>
+<a href="{DT_MOB}{rewrite('channel.php?mid='.$moduleid)}" data-transition="none">{$MOD[name]}分类</a>
+<a href="{DT_MOB}channel.php" data-direction="reverse">切换频道</a>
+</div>
+</div>
+
+{if $could_add}
+<div id="price-{$js_pageid}" style="display:none;">
+<div class="ui-form">
+<iframe src="" name="send" id="send" style="display:none;"></iframe>
+<form method="post" action="{$MOD[mobile]}price.php" id="dform" target="send" onsubmit="return check();">
+<input type="hidden" name="itemid" value="{$itemid}"/>
+{if $MARKET}
+<p>市场</p>
+<div>
+<select name="post[market]">
+{loop $MARKET $k $v}
+<option value="{$k}"{if $k==$market} selected{/if}>{$v}</option>
+{/loop}
+</select>
+</div>
+{/if}
+<p>价格<i>*</i><b id="dtitle"></b></p>
+<div><input type="text" name="post[price]" id="price" style="width:50%;"/> / {$P[unit]}</div>
+<p>地区<i>*</i><b id="dareaid"></b></p>
+<div>{ajax_area_select('post[areaid]', '请选择', $areaid)}</div>
+{if !$_userid}
+<p>公司<i>*</i><b id="dcompany"></b></p>
+<div><input type="text" name="post[company]" id="company"/></div>
+<p>电话</p>
+<div><input type="tel" name="post[telephone]" id="telephone" style="width:50%;"/></div>
+{if $DT[im_qq]}
+<p>QQ</p>
+<div><input type="tel" name="post[qq]" id="qq" style="width:50%;"/></div>
+{/if}
+{if $DT[im_wx]}
+<p>微信</p>
+<div><input type="tel" name="post[wx]" id="wx" style="width:50%;"/></div>
+{/if}
+{/if}
+<p>备注</p>
+<div><input type="text" name="post[note]" id="note"/></div>
+{if $need_captcha}
+<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+<div>{template 'captcha', 'chip'}</div>
+{/if}
+<div class="blank-16"></div>
+<input type="submit" name="submit" class="btn-green" value="立即报价"/>
+<div class="blank-16"></div>
+<input type="button" class="btn" value="取消报价" onclick="Dmenu('price-{$js_pageid}');"/>
+<div class="blank-32"></div>
+</form>
+</div>
+</div>
+{load('guest.js')}
+<script type="text/javascript">
+function check() {
+	var l;
+	var f;
+	f = 'price';
+	l = parseFloat(Dd(f).value);
+	if(isNaN(l)) {
+		alert('请填写价格');
+		Dd(f).focus();
+		return false;
+	}
+{if $P[minprice]}
+	if(l < {$P[minprice]}) {
+		alert('报价不能低于{$P[minprice]}');
+		Dd(f).focus();
+		return false;
+	}
+{/if}
+{if $P[maxprice]}
+	if(l > {$P[maxprice]}) {
+		alert('报价不能高于{$P[maxprice]}');
+		Dd(f).focus();
+		return false;
+	}
+{/if}
+	f = 'areaid_1';
+	if(Dd(f).value == 0) {
+		alert('请选择所在地区');
+		return false;
+	}
+{if !$_userid}
+	f = 'company';
+	l = Dd(f).value.length;
+	if(l < 2) {
+		alert('请填写公司名称');
+		Dd(f).focus();
+		return false;
+	}
+{/if}
+	f = 'note';
+	l = Dd(f).value.length;
+	if(l > 20) {
+		alert('备注不能超过20个字');
+		Dd(f).focus();
+		return false;
+	}
+{if $need_captcha}
+	f = 'captcha';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		alert('请填写正确的验证码');
+		Dd(f).focus();
+		return false;
+	}
+{/if}
+	return true;
+}
+</script>
+{/if}
+<div class="title"><h1>{$P[title]}</h1></div>
+<div class="info"><i class="ui-ico-time">{timetodate($P[edittime], 5)}</i><i class="ui-ico-pics ui-fr" onclick="$('html, body').animate({scrollTop:$('#search').offset().top - 60}, 500);">{$P[item]}报价</i><i class="ui-ico-hits ui-fr" id="hits">{$P[hits]}</i></div>
+<div class="content">
+单位：{$P[unit]}<br/>
+{if $P[n1] && $P[v1]}{$P[n1]}：{$P[v1]}<br/>{/if}
+{if $P[n2] && $P[v2]}{$P[n2]}：{$P[v2]}<br/>{/if}
+{if $P[n3] && $P[v3]}{$P[n3]}：{$P[v3]}<br/>{/if}
+{if $P[content]}{$P[content]}{/if}
+</div>
+{if $sd}
+{load('echarts.min.js')}
+<script type="text/javascript">
+document.write('<div id="chart" style="width:'+window.screen.width+'px;height:500px;margin:16px 0;"></div>');
+var chart = echarts.init(Dd('chart'));
+var option = {
+	title: {
+		text: '',
+		subtext: '单位({$DT[money_unit]})'
+	},
+	tooltip: {
+		trigger: 'axis'
+	},
+	legend: {
+		data: [{$ld}]
+	},
+	grid: {
+		left: '3%',
+		right: '4%',
+		bottom: '3%',
+		containLabel: true
+	},
+	toolbox: {
+		feature: {
+			saveAsImage: {}
+		}
+	},
+	xAxis: {
+		type: 'category',
+		boundaryGap: false,
+		data: [{$xd}]
+	},
+	yAxis: {
+		type: 'value'
+	},
+	series: [{$sd}]
+};
+chart.setOption(option);
+</script>
+{/if}
+<div class="ui-form-search">
+<form action="price.php" data-ajax="false" id="search">
+<input type="hidden" name="page" value="1"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+<div class="ui-filter">
+<i {if $order == 0}class="ui-filter-dsc on"{else}class="ui-filter-ord"{/if} onclick="Dq('order', 0);">综合</i>
+<i {if $order == 1}class="ui-filter-dsc on" onclick="Dq('order', 2);"{elseif $order == 2}class="ui-filter-asc on" onclick="Dq('order', 1);"{else}class="ui-filter-ord" onclick="Dq('order', 1);"{/if}>价格</i>
+<i {if $order == 3}class="ui-filter-dsc on" onclick="Dq('order', 4);"{elseif $order == 4}class="ui-filter-asc on" onclick="Dq('order', 3);"{else}class="ui-filter-ord" onclick="Dq('order', 3);"{/if}>时间</i>
+</div>
+{if $tags}
+<div id="list-{$js_pageid}" class="main">{template 'list-quote-price', 'tag'}</div>
+<div id="load-{$js_pageid}" class="ui-load"></div>
+{else}
+{template 'empty', 'chip'}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<script type="text/javascript">
+$(function(){
+	if(window.location.href.indexOf('page') != -1) {
+		$('html, body').animate({scrollTop:$('#search').offset().top - 60}, 100);
+	}
+});
+</script>
+{template 'footer'}

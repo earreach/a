@@ -1,0 +1,18 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{DT_MOB}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">数据库错误</div>
+<div class="head-bar-right"><a href="{DT_MOB}"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div class="content">
+<div class="blank-16"></div>
+<strong>数据库连接失败(Can not connect to MySQL server)</strong><br/><br/>
+系统无法连接到MySQL服务器。<a href="https://m.destoon.com/doc/skill/61.html" rel="external">点此查看此问题的解决方案</a><br/><br/>
+<a href="{DT_MOB}">{$DT[sitename]}</a><br/><br/>
+</div>
+{php $foot='';}
+{template 'footer'}

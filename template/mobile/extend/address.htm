@@ -1,0 +1,13 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="javascript:Dback('{$back_link}');" id="back"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right">{if $DT_MBS == 'app' || $DT_MBS == 'cms' || $DT_MBS == 'web'}<span onclick="App_Jump($('#mapurl').attr('href'))"><img src="{DM_SKIN}icon-full{$wh}.png" width="24" height="24"/></span><a href="{$mapurl}" id="mapurl" data-transition="external" class="dsn"></a>{else}<a href="{$mapurl}" id="mapurl" data-transition="external" target="_blank"><span><img src="{DM_SKIN}icon-full{$wh}.png" width="24" height="24"/></span></a>{/if}</div>
+</div>
+<div class="head-bar-fix" id="load-fix" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix"></div>
+</div>
+<div id="dmap" style="width:100%;height:300px;"></div>
+{php include load('api/map/'.$map.'/show.inc');}
+{template 'footer'}

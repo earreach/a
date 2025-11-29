@@ -1,0 +1,124 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{if $typeid}{$TYPE[$typeid][typename]}{else}行业票选{/if}</div>
+<div class="head-bar-right"><a href="javascript:Dmenu('{$ext}-{$js_pageid}');"><img src="{DM_SKIN}icon-action{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div id="{$ext}-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="{$mob}index.php">
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+<div class="list-set">
+<ul>
+{loop $_TP[0] $v0}
+<li{if $typeid==$v0[typeid]} style="background:#F6F6F6;"{/if}><div><a href="{$mob}{list_url($v0[typeid])}">{$v0[typename]}</a></div></li>
+{if isset($_TP[1][$v0[typeid]])}
+{loop $_TP[1][$v0[typeid]] $v1}
+<li{if $typeid==$v1[typeid]} style="background:#F6F6F6;"{/if}><div><a href="{$mob}{list_url($v1[typeid])}">&nbsp;&nbsp;&nbsp;&nbsp;{$v1[typename]}</a></div></li>
+{/loop}
+{/if}
+{/loop}
+</ul>
+</div>
+<div class="blank-36 bd-b"></div>
+</div>
+{if $itemid}
+<div class="title"><h1>{$title}</h1></div>
+<div class="info"><i class="ui-ico-time">{$adddate}&nbsp;&nbsp;有效期：{$fromdate} 至 {$todate}</i><i class="ui-ico-hits ui-fr">{$hits}</i></div>
+<div class="content" data-content="{$js_pageid}">{$content}</div>
+<div id="poll_list">{template $template_poll, 'chip'}</div>
+{if $verify}
+<div id="poll_verify" style="display:none;">
+	<div class="ui-form">
+	{if $verify == 1}
+	<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+	<div>{template 'captcha', 'chip'}</div>
+	{/if}
+	{if $verify == 2}
+	<p>验证问题<i>*</i><b id="danswer"></b></p>
+	<div>{template 'question', 'chip'}</div>
+	{/if}
+	<div class="blank-16"></div>
+	<input type="button" class="btn-green" value="投 票" onclick="P();"/>
+	<div class="blank-16"></div>
+	<input type="button" class="btn" value="取 消" onclick="C();"/>
+	<div class="blank-32"></div>
+	</div>
+</div>
+{/if}
+<script style="text/javascript">
+var id = 0;
+function Poll(i) {
+	id = i;
+	var par = '{$mob}index.php?action=ajax&itemid='+i;
+	{if $verify == 1}
+		if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+			S();Dmsg('请填写验证码', 'captcha');
+			return;
+		}
+		par += '&captcha='+Dd('captcha').value;
+	{/if}
+	{if $verify == 2}
+		if($('#canswer').html().indexOf('ok.png') == -1) {
+			S();Dmsg('请回答验证问题', 'answer');
+			return;
+		}
+		par += '&answer='+Dd('answer').value;
+	{/if}
+	$.get(par,
+		function(data, status) {
+			if(data == 'ok') {
+				Dtoast('{$js_pageid}','投票成功，感谢参与');
+				setTimeout(function() {
+					window.location.reload();
+				}, 1000);
+			} else if(data) {
+				Dtoast('{$js_pageid}',data);
+				if(data.indexOf('验证码') != -1) {
+					reloadcaptcha();
+				} else if(data.indexOf('验证问题') != -1) {
+					reloadquestion();
+				} else {
+					C();
+				}
+			}
+		}
+	);
+}
+function P() {
+	Poll(id);
+}
+function S() {
+	$('#poll_verify').fadeIn('slow');
+	$('#poll_list').hide();
+}
+function C() {
+	$('#poll_verify').hide();
+	$('#poll_list').fadeIn('fast');
+	{if $verify == 1}Dd('captcha').value='';{/if}
+	{if $verify == 2}Dd('answer').value='';{/if}
+}
+</script>
+{else}
+{if $lists}
+<div id="list-{$js_pageid}" class="main">
+{loop $lists $v}
+<div class="ui-list-txt">
+<a href="{str_replace($url, $mob, $v[linkurl])}"><strong>{$v[title]}</strong></a>
+<p><i class="ui-ico-hits ui-fr">{$v[hits]}</i><i class="ui-ico-time">{$v[adddate]}</i></p>
+</div>
+{/loop}
+</div>
+<div id="load-{$js_pageid}" class="ui-load"></div>
+{else}
+{template 'empty', 'chip'}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{/if}
+{template 'footer'}

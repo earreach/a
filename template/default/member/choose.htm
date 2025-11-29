@@ -1,0 +1,522 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="{DT_CHARSET}"/>
+<meta name="robots" content="noindex,nofollow"/>
+<title>{$head_title}{$DT[seo_delimiter]}{$DT[sitename]}</title>
+<meta http-equiv="x-ua-compatible" content="IE=8"/>
+<link rel="stylesheet" type="text/css" href="{DT_STATIC}admin/style.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<link rel="stylesheet" type="text/css" href="{DT_PATH}file/style/admin.reset.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<script type="text/javascript" src="{DT_PATH}lang/{DT_LANG}/lang.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_PATH}file/script/config.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{if strpos($DT_MBS, 'IE') === false}
+<script type="text/javascript" src="{DT_STATIC}script/jquery-3.6.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{else}
+<script type="text/javascript" src="{DT_STATIC}script/jquery-1.12.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{/if}
+<script type="text/javascript" src="{DT_STATIC}script/common.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_STATIC}script/panel.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_STATIC}script/member.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+</head>
+<body>
+{if $job == 'item'}
+<div class="sbox">
+<form action="?" id="search">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="from" value="{$from}"/>
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="username" value="{$username}"/>
+<input type="text" size="40" name="kw" id="kw" value="{$kw}" placeholder="关键词" title="请输入关键词"/>&nbsp;
+<input type="text" size="10" name="itemid" value="{$itemid}" placeholder="{$MODULE[$mid][name]}ID" title="{$MODULE[$mid][name]}ID">&nbsp;
+<input type="submit" value="搜 索" class="btn-g"/>&nbsp;
+<input type="button" value="重 置" class="btn" onclick="Go('?action={$action}&job={$job}&mid={$mid}&from={$from}&username={$username}');"/>
+</form>
+</div>
+<table cellspacing="0" class="tb ls">
+<tr>
+<th width="60">图片</th>
+<th width="16"></th>
+{if $mid == 4}
+<th>公司</th>
+{else}
+<th>标题</th>
+<th width="120">添加时间</th>
+{/if}
+<th width="60">详情</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><a href="javascript:_preview('{$v[thumb]}');"><img src="{if $v[thumb]}{$v[thumb]}{else}{DT_STATIC}image/nopic50.png{/if}" width="48" onerror="this.src='{DT_STATIC}image/nopic50.png';"/></a></td>
+<td>{if $v[level]}<img src="{DT_STATIC}admin/level_{$v[level]}.gif" title="{$v[level]}级" alt=""/>{/if}</td>
+<td align="left"><span onclick="S('{$v[itemid]}','{$v[alt]}','{$v[linkurl]}','{$v[thumb]}','{$v[level]}','{$v[style]}');" class="c_p" title="点击选择">{$v[title]}</span></td>
+{if $mid > 4}
+<td>{$v[adddate]}</td>
+{/if}
+<td><a href="{$v[linkurl]}" target="_blank" class="t">详情</a>
+<div class="dsn">
+<div id="introduce_{$v[itemid]}">{$v[introduce]}</div>
+</div>
+</td>
+</tr>
+{/loop}
+</table>
+<div class="pages">{$pages}</div>
+<script type="text/javascript">
+function S(itemid, title, linkurl, thumb, introduce, level, style) {
+	try {
+		{if $from == 'special'}
+		parent.Dd('tid').value=itemid;
+		parent.Dd('mid').value={$mid};
+		parent.Dd('title').value=title;
+		parent.Dd('linkurl').value=linkurl;
+		parent.Dd('thumb').value=thumb;
+		parent.Dd('introduce').value=Dd('introduce_'+itemid).innerHTML;
+		parent.color_select(style);
+		parent.$('#level').val(level);
+		{elseif $from == 'relate'}
+		parent.Dd('id').value=itemid;
+		parent.Dd('dform_add').submit();
+		{elseif $from == 'promo'}
+		var ids = parent.Dd('itemids').value;
+		if(ids) {
+			if(ids.indexOf(',') == -1) {
+				parent.Dd('itemids').value=ids+','+itemid;
+			} else {
+				if((','+ids+',').indexOf(','+itemid+',') == -1) parent.Dd('itemids').value=ids+','+itemid;
+			}
+		} else {
+			parent.Dd('itemids').value=itemid;
+		}
+		{else}
+		parent.Dd('key_id').value=itemid;
+		{/if}
+	} catch(e) {}
+	try {parent.cDialog();} catch(e) {}
+}
+Dd('kw').focus();
+</script>
+<br/>
+{elseif $job == 'stock'}
+<div class="sbox">
+<form action="?" id="search">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="from" value="{$from}"/>
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="key" value="{$key}"/>
+<span class="f_r"><input type="button" value="库存管理" class="btn-b" onclick="window.open('{$MODULE[2][linkurl]}stock.php');"/></span>
+<input type="text" size="50" name="kw" id="kw" value="{$kw}" placeholder="关键词" title="请输入关键词"/>&nbsp;
+<input type="text" size="30" name="skuid" value="{$skuid}" placeholder="条形编码" title="条形编码"/>&nbsp;
+<input type="submit" value="搜 索" class="btn-g"/>&nbsp;
+<input type="button" value="重 置" class="btn" onclick="Go('?action={$action}&job={$job}&mid={$mid}&from={$from}&key={$key}');"/>
+</form>
+</div>
+<table cellspacing="0" class="tb ls">
+<tr>
+<th width="90">图片</th>
+<th>商品</th>
+<th>价格</th>
+<th>单位</th>
+<th>库存</th>
+<th>品牌</th>
+<th>条形编码</th>
+<th>仓储货位</th>
+<th width="60">选择</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center" onclick="S('{$v[itemid]}','{$v[alt]}','{$v[thumb]}','{$v[price]}','{$v[unit]}','{$v[amount]}','{$v[skuid]}','{$v[brand]}');" class="c_p" title="点击选择">
+<td><img src="{if $v[thumb]}{$v[thumb]}{else}{DT_STATIC}image/nopic60.png{/if}" width="60" class="thumb"/></td>
+<td align="left">&nbsp;<span title="更新时间:{$v[editdate]}&#10;添加时间:{$v[adddate]}">{$v[title]}</span></td>
+<td title="进价: {$v[cost]}&#10;利润: {$v[profit]}">{$DT[money_sign]}{$v[price]}</td>
+<td>{$v[unit]}</td>
+<td>{$v[amount]}</td>
+<td>{$v[brand]}</td>
+<td>{$v[skuid]}</td>
+<td>{$v[location]}</td>
+<td class="jt">选择</td>
+</tr>
+{/loop}
+</table>
+<div class="pages">{$pages}</div>
+<script type="text/javascript">
+function S(itemid,title,thumb, price, unit, amount, skuid, brand) {
+	try {
+		{if $key == 'skuid'}
+		parent.Dd('skuid').value=skuid;
+		parent.addAlbum(thumb, parent.album_max);
+		if(parent.Dd('amount').value.length<1) parent.Dd('amount').value=amount;
+		if(parent.Dd('unit').value.length<1) parent.Dd('unit').value=unit;
+		if(parent.Dd('price').value.length<1) parent.Dd('price').value=price;
+		if(parent.Dd('p1').value.length<1) parent.Dd('p1').value=price;
+		if(parent.Dd('title').value.length<1) parent.Dd('title').value=title;
+		if(parent.Dd('brand').value.length<1) parent.Dd('brand').value=brand;
+		if(parent.EditorLen() < 5) parent.stock_content(itemid);
+		{else}
+		parent.Dd('stockid-{$key}').value=itemid;
+		parent.Dd('thumb-{$key}').src=thumb;
+		parent.Dd('price-{$key}').innerHTML='{$DT[money_sign]}'+price;
+		parent.Dd('amount-{$key}').innerHTML=amount;
+		parent.Dd('skuid-{$key}').innerHTML=skuid;
+		{if $key == '0-0-0'}
+			parent.Dd('amount').value=amount;
+			parent.Dd('unit').value=unit;
+			parent.Dd('price').value=price;
+			parent.Dd('p1').value=price;
+			if(parent.Dd('title').value.length<1) parent.Dd('title').value=title;
+			if(parent.Dd('brand').value.length<1) parent.Dd('brand').value=brand;
+			if(parent.EditorLen() < 5) parent.stock_content(itemid);
+		{/if}
+		{/if}
+	} catch(e) {}
+	try {parent.cDialog();} catch(e) {}
+}
+</script>
+{elseif $job == 'topic'}
+<div class="sbox">
+<form action="?" id="search">
+<input type="hidden" name="moduleid" value="{$moduleid}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="from" value="{$from}"/>
+<input type="hidden" name="fid" value="{$fid}"/>
+{$fields_select}&nbsp;
+<input type="text" size="50" name="kw" id="kw" value="{$kw}" placeholder="关键词" title="请输入关键词"/>&nbsp;
+<input type="submit" value="搜 索" class="btn-g"/>&nbsp;
+<input type="button" value="重 搜" class="btn" onclick="Go('?moduleid={$moduleid}&action={$action}&job={$job}&from={$from}&fid={$fid}');"/>
+</form>
+</div>
+<table cellspacing="0" class="tb ls">
+<tr>
+<th>话题</th>
+<th width="120">讨论</th>
+<th width="120">浏览</th>
+<th width="60">详情</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td align="left"> &nbsp; <a href="javascript:;" class="t" onclick="S('{$v[alt]}');">#{$v[title]}#</a></td>
+<td>{$v[item]}</td>
+<td>{$v[hits]}</td>
+<td><a href="{$v[linkurl]}" target="_blank" class="t">详情</a></td>
+</tr>
+{/loop}
+</table>
+<div class="pages">{$pages}</div>
+<script type="text/javascript">
+function S(title) {
+	try {
+		parent.Dd('{$fid}').value=title;
+		parent.me_into(title, '{$fid}');
+		parent.cDialog();
+	} catch(e) {}
+}
+</script>
+{elseif $job == 'friend'}
+{if $DT[follow]}
+<div class="menu">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="tab{if $tabid==0}_on{/if}"><a href="?action={$action}&job={$job}&moduleid={$moduleid}&from={$from}&fid={$fid}&key={$key}&tabid=0">我的好友</a></td>
+<td class="tab{if $tabid==1}_on{/if}"><a href="?action={$action}&job={$job}&moduleid={$moduleid}&from={$from}&fid={$fid}&key={$key}&tabid=1">我的关注</a></td>
+<td class="tab{if $tabid==2}_on{/if}"><a href="?action={$action}&job={$job}&moduleid={$moduleid}&from={$from}&fid={$fid}&key={$key}&tabid=2">我的粉丝</a></td>
+</tr>
+</table>
+</div>
+<div class="menu-fix">&nbsp;</div>
+{/if}
+<div class="sbox">
+<form action="?" id="search">
+<input type="hidden" name="moduleid" value="{$moduleid}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="from" value="{$from}"/>
+<input type="hidden" name="fid" value="{$fid}"/>
+<input type="hidden" name="key" value="{$key}"/>
+<input type="hidden" name="tabid" value="{$tabid}"/>
+{$fields_select}&nbsp;
+<input type="text" size="40" name="kw" value="{$kw}" title="关键词" placeholder="关键词"/>&nbsp;
+{$type_select}&nbsp;
+<input type="submit" value="搜 索" class="btn"/>&nbsp;
+<input type="button" value="重 搜" class="btn" onclick="Go('?moduleid={$moduleid}&action={$action}&job={$job}&from={$from}&fid={$fid}&key={$key}&tabid={$tabid}');"/>
+</form>
+</div>
+{if $lists}
+<div class="ls">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="20">选</th>
+<th width="32">头像</th>
+<th>昵称</th>
+{if $tabid == 0}
+<th>别名</th>
+<th>姓名</th>
+{/if}
+<th>{if $from=='sms'}手机{else}会员{/if}</th>
+<th>分类</th>
+{if $DT[im_web]}<th width="40">交谈</th>{/if}
+<th width="130">备注</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><input type="checkbox" id="c_{$v[itemid]}" onclick="_send({$v[itemid]});"/></td>
+<td><a href="{userurl($v[fusername], 'file=space')}" target="_blank" class="t"><img src="{useravatar($v[fusername], 'small')}" width="32" height="32" class="avatar"/></a></td>
+<td><label for="c_{$v[itemid]}" class="jt">{$v[fpassport]}</label></td>
+{if $tabid == 0}
+<td>{$v[alias]}</td>
+<td>{$v[truename]}</td>
+{/if}
+<td>{$v[fusername]}</td>
+<td><a href="javascript:;" onclick="Dq('typeid', {$v[typeid]});">{$v[type]}</a></td>
+{if $DT[im_web]}<td>{im_web($v[fusername])}</td>{/if}
+<td title="{$v[note]}">
+<input type="text" style="width:120px;" value="{$v[note]}"/>
+<input type="hidden" id="v_{$v[itemid]}" value="{if $key=='passport'}{$v[fpassport]}{else}{$v[fusername]}{/if}"/>
+</td>
+</tr>
+{/loop}
+</table>
+</div>
+{if $pages}<div class="pages">{$pages}</div>{/if}
+<div class="btns">
+<label><input type="checkbox" id="c_0" onclick="_check();"/></label>
+<input type="button" value="确 定" class="btn-g" onclick="{if $from=='moment'}parent.me_into(parent.Dd('{$fid}').value, '{$fid}');{/if}parent.cDialog();"/> &nbsp; &nbsp; &nbsp; &nbsp;
+<input type="button" value="关 闭" class="btn" onclick="parent.cDialog();"/>
+</div>
+<script type="text/javascript">
+var itemids = [{loop $lists $i $t}{if $i},{/if}'{$t[itemid]}'{/loop}];
+var max = {$MOD[maxtouser]};
+function _send(id) {
+	var v = Dd('v_'+id).value;
+	if(parent.Dd('{$fid}').value && parent.Dd('{$fid}').value.indexOf(' ') == -1) parent.Dd('{$fid}').value = parent.Dd('{$fid}').value+' ';
+	if(Dd('c_'+id).checked) {
+		if(max && substr_count(parent.Dd('{$fid}').value, ' ') >= max) {
+			Dd('c_'+id).checked = false;
+			return alert('最多可以选择'+max+'人');
+		}
+		if(parent.Dd('{$fid}').value.indexOf(v) == -1) parent.Dd('{$fid}').value = parent.Dd('{$fid}').value+v+' ';
+	} else {
+		if(parent.Dd('{$fid}').value.indexOf(v) != -1) parent.Dd('{$fid}').value = parent.Dd('{$fid}').value.replace(v+' ', '');
+	}
+}
+function _check() {
+	for(var i = 0; i < itemids.length; i++) {
+		itemid = itemids[i];
+		if(Dd('c_0').checked) {
+			if(max && substr_count(parent.Dd('{$fid}').value, ' ') >= max) {
+				break;
+			} else {
+				Dd('c_'+itemid).checked = true;
+				_send(itemid);
+			}
+		} else {
+			Dd('c_'+itemid).checked = false;
+			_send(itemid);
+		}
+	}
+}
+if(parent.Dd('{$fid}').value) {
+	s = parent.Dd('{$fid}').value+' ';
+	for(var i = 0; i < itemids.length; i++) {
+		itemid = itemids[i];
+		f = Dd('v_'+itemid).value+' ';
+		if(s.indexOf(f) != -1) Dd('c_'+itemid).checked = true;
+	}
+}
+</script>
+{else}
+<div style="padding:128px 0;text-align:center;color:#999999;">{if $kw}未搜索到{$name}{else}暂无{$name}{/if}</div>
+{/if}
+{else}
+<style style="text/css">
+.photo {width:108px;height:130px;overflow:hidden;float:left;text-align:center;padding:16px 0 0 16px;}
+.photo div {width:100px;height:100px;overflow:hidden;padding:3px;margin:0 auto 8px auto;background:#FFFFFF;border:#CCCCCC 1px solid;cursor:pointer;}
+.photo div:hover {border:#FF6600 1px solid;}
+.photo p {color:#999999;margin:0;text-align:center;}
+</style>
+{if $photo}
+	<div class="sbox">
+	<form action="?" id="search">
+	<span class="f_r"><input type="button" value="上传图片" class="btn-g" onclick="window.open('{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$mid}&action=add');"/></span>
+	<input type="hidden" name="action" value="{$action}"/>
+	<input type="hidden" name="moduleid" value="{$moduleid}"/>
+	<input type="hidden" name="from" value="{$from}"/>
+	<input type="hidden" name="fid" value="{$fid}"/>
+	<input type="text" size="60" name="kw" id="kw" value="{$kw}" placeholder="关键词"/>&nbsp;
+	<input type="submit" value="搜 索" class="btn"/>&nbsp;
+	<input type="button" value="{if $itemid}返 回{else}重 置{/if}" class="btn" onclick="Go('?action={$action}&moduleid={$moduleid}&from={$from}&fid={$fid}');"/>
+	</form>
+	</div>
+	{if $itemid}
+		{if $lists}
+		{loop $lists $k $v}
+		<div class="photo" title="{$v[introduce]}">
+			<div><img src="{$v[thumb]}" width="100" onclick="S('{$v[large]}');"/></div>
+			<a href="{$v[large]}" target="_blank"><p>{$v[introduce]}</p></a>
+		</div>
+		{/loop}
+		<div class="c_b"></div>
+		{else}
+		<br/><br/><br/><center class="f_b px16">抱歉，您还没有上传过任何图片！</center><br/><br/><br/>
+		{/if}
+	{else}
+		{if $tags}
+		{loop $tags $k $v}
+		<div class="photo" title="{$v[title]} / {$v[items]}图">
+			<div><a href="?action={$action}&moduleid={$moduleid}&from={$from}&fid={$fid}&itemid={$v[itemid]}"><img src="{$v[thumb]}" width="100"/></a></div>
+			<p>{$v[items]}图 / {$v[title]}</p>
+		</div>
+		{/loop}
+		<div class="c_b"></div>
+		{else}
+		<br/><br/><br/><center class="f_b px16">您还没有创建{$MODULE[$mid][name]}，<a href="{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$mid}&action=add" target="_blank" class="t">点击这里立即创建</a></center><br/><br/><br/>
+		{/if}
+	{/if}
+	{if $pages}<div class="pages">{$pages}</div>{/if}
+{else}
+	<div class="sbox">
+	<form action="?" id="search">
+	<span class="f_r"><input type="button" value="手机传图" class="btn-g" onclick="qrshow();"/></span>
+	<input type="hidden" name="action" value="{$action}"/>
+	<input type="hidden" name="moduleid" value="{$moduleid}"/>
+	<input type="hidden" name="from" value="{$from}"/>
+	<input type="hidden" name="fid" value="{$fid}"/>
+	{dcalendar('fromdate', $fromdate, '-', 1)} 至 {dcalendar('todate', $todate, '-', 1)}&nbsp;
+	{$module_select}&nbsp;
+	<input type="submit" value="搜 索" class="btn"/>&nbsp;
+	<input type="button" value="{if $itemid}返 回{else}重 置{/if}" class="btn" onclick="Go('?action={$action}&moduleid={$moduleid}&from={$from}&fid={$fid}');"/>
+	</form>
+	</div>
+	<div id="qr" style="display:none;">
+	<table cellpadding="10" cellspacing="1" class="tb">
+	<tr>
+	<td class="tl" align="center">
+	<img src="" id="qrlogin" style="width:148px;padding:6px 6px 6px 0;"/>
+	</td>
+	<td class="tr">
+	<div style="line-height:36px;padding:0 24px;">
+	<b style="font-size:16px;">扫一扫，直接上传手机上的图片</b><br/>
+	<span class="f_gray">推荐{if $EXT[mobile_ios] || $EXT[mobile_adr]}<a href="{DT_PATH}api/mobile.php" target="blank" class="b">手机APP</a>、{/if}微信、QQ扫一扫等扫码工具<span id="tips">，<span id="second" class="f_orange"></span>秒内有效</span></span><br/>
+	<span class="f_gray">电脑和手机必须在同一局域网（例如连接相同的WiFi）</span><br/>
+	<span class="f_gray" id="save">手机临时上传的图片必须在信息中使用后方可长久保存</span>
+	<span class="f_red dsn" id="code">二维码已失效，请 <span class="jt" onclick="qrload(1);">刷新</span> 二维码</span>
+	</div>
+	</td>
+	</tr>
+	</table>
+	</div>
+
+	{if $lists}
+	<div id="photos">
+	{loop $lists $k $v}
+	<div class="photo">
+		<div><img src="{$v[thumb]}" width="100" title="{$v[introduce]}" onclick="S('{$v[large]}');"/></div>
+		<a href="{$v[large]}" target="_blank"><p>{$v[width]}px * {$v[height]}px</p></a>
+	</div>
+	{/loop}
+	<div class="c_b"></div>
+	</div>
+	{else}
+	<br/><br/><br/><center class="f_b px16">抱歉，您还没有上传过任何图片！</center><br/><br/><br/>
+	{/if}
+	{if $pages}<div class="pages">{$pages}</div>{/if}
+{/if}
+<script type="text/javascript">
+var showqr = 0;
+var qrdate = '{timetodate(DT_TIME, 6)}';
+var qrtemp = '';
+var intv1, intv2;
+function qrshow() {
+	if(showqr) {
+		showqr = 0;
+		$('#qr').hide();
+		clearInterval(intv1);
+		clearInterval(intv2);
+	} else {
+		showqr = 1;
+		$('#qr').show();
+		qrload(1);
+		intv2 = window.setInterval(
+			function() {
+				qrajax();
+			}, 
+		3000);
+	}
+}
+function qrload(f) {
+	var i = 180;
+	Dd('second').innerHTML=i;
+	if(f) {
+		$('#qrlogin').attr('src', '{$MODULE[2][linkurl]}account.php?action=qrcode&job=album{$moduleid}&reload='+RandStr());
+		$('#qrlogin').css('opacity', '1');
+		$('#tips').show();
+		$('#save').show();
+		$('#code').hide();
+	}
+	intv1 = window.setInterval(
+		function() {
+			if(i < 1) {
+				$('#qrlogin').css('opacity', '0.05');
+				$('#tips').hide();
+				$('#save').hide();
+				$('#code').show();
+				clearInterval(intv1);
+			} else {
+				Dd('second').innerHTML=i;
+				i--;
+			}
+		}, 
+	1000);
+}
+function qrajax() {
+	if(showqr) {
+		$.get('?action={$action}&moduleid={$moduleid}&from={$from}&fid={$fid}&ajax=1&fromdate='+qrdate, function(data) {
+			if(data) {
+				for(var i=0;i<data.length;i++) {
+					if(qrtemp.indexOf(data[i].large) == -1) {
+						qrtemp += ','+data[i].large;
+						$('#photos').prepend('<div class="photo"><div><img src="'+data[i].thumb+'" width="100" title="'+data[i].introduce+'" onclick="S(\''+data[i].large+'\');"/></div><a href="'+data[i].large+'" target="_blank"><p>'+data[i].width+'px * '+data[i].height+'px</p></a></div>');
+					}
+				}
+			}
+		}, 'json');
+	}
+}
+function S(l) {
+	try {
+		{if strpos($from, 'editor') !== false}
+		$.post(UPPath, 'moduleid={$moduleid}&action=webuploader&from=editor&remote='+l, function(data) {
+			if(data.url) {
+			{if $from == 'ueditor'}
+				window.opener.document.getElementById('url').value=data.url;
+				window.opener.document.getElementById('preview').innerHTML = '<img src="'+data.url+'" onload="document.getElementById(\'width\').value=this.width;document.getElementById(\'height\').value=this.height;if(this.width>260) this.width=260;"/>';
+			{elseif $from == 'umeditor'}
+				window.opener.document.getElementById('url').value=data.url;
+				window.opener.document.getElementById('urladd').click();
+			{elseif $from == 'kindeditor'}
+				window.opener.document.getElementById('remoteUrl').value=data.url;
+			{elseif $from == 'fckeditor'}
+				window.opener.SetUrl(data.url);
+				window.opener.GetE('frmUpload').reset();
+				window.opener.parent.Ok();
+			{/if}
+			window.close();
+			} else {
+				alert(data.error);
+			}
+		}, 'json');
+		{else}
+			window.opener.document.getElementById('remote').value=l;window.opener.document.getElementById('upform').submit();
+			window.close();
+		{/if}
+	} catch(e) {}
+}
+var intv0=window.setInterval(
+	function() {
+		if(!window.opener) window.close();
+	}, 
+1000);
+</script>
+{/if}
+</body>
+</html>

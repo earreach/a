@@ -1,0 +1,158 @@
+{template 'header', $template}
+{if $itemid}
+<div id="head-bar-{$js_pageid}"{if $thumb} class="dsn"{/if}>
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<form action="{$MODULE[4][mobile]}index.php" id="filter-{$js_pageid}" data-ajax="false">
+<input type="hidden" name="homepage" value="{$username}"/>
+<input type="hidden" name="file" value="{$file}"/>
+<input type="hidden" name="orderby" value="{$orderby}"/>
+<input type="hidden" name="elite" value="{$elite}"/>
+<div class="head-bar-title"><input type="search" name="kw" value="{$kw}" placeholder="{$MOD[name]}搜索"/></div>
+</form>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+{if !$thumb}<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>{/if}
+</div>
+
+<div class="head-ico-left" id="ico-left-{$js_pageid}"><a href="javascript:;" onclick="if($('#back-{$js_pageid}').attr('href').indexOf('javascript:')==-1){Go($('#back-{$js_pageid}').attr('href'));}else{Dback();}" data-direction="reverse"><img src="{DM_SKIN}icon-back.png" width="16" height="16"/></a></div>
+<div class="head-ico-right" id="ico-right-{$js_pageid}"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet.png" width="16" height="16"/></a></div>
+
+<div class="ui-viewer" id="viewer-{$js_pageid}"></div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="{DT_MOB}api/share.php?mid={$moduleid}&itemid={$itemid}" data-transition="slideup" rel="external">分享好友</a>
+<a href="{$MENU[$menuid][linkurl]}" data-direction="reverse">{$MENU[$menuid][name]}</a>
+<a href="{userurl($username, 'file=channel', $domain)}" data-direction="reverse">切换频道</a>
+<a href="{$COM[linkurl]}" data-direction="reverse">{$home_name}</a>
+</div>
+</div>
+
+{if $pass}
+	<div class="ui-album" id="albums-{$js_pageid}">
+		<em id="album-no-{$js_pageid}">{$page}/{$items}</em>
+		<div id="album-{$js_pageid}"></div>	
+		<strong id="album-text-{$js_pageid}">{$P[introduce]}</strong>
+		<span id="album-item-{$js_pageid}">
+		{loop $T $i $p}
+		<img src="{$p[middle]}" alt="{$p[introduce]}"/>
+		{/loop}
+		</span>
+	</div>
+
+	<div class="title"><h1>{$title}</h1></div>
+	<div class="info"><i class="ui-ico-time">{$editdate}</i>{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}{if $MOD[hits]}<i class="ui-ico-hits" id="hits">{$hits}</i>{/if}<i class="ui-ico-pics ui-fr">{$items}图片</i></div>
+	{if $content}<div class="content" data-content="{$js_pageid}">{$content}</div>{/if}
+
+	{if $album}
+	{php $tags = albumlist($item);}
+	{if $tags[2] > 1}
+	<div class="album-list">
+		<p><span>{$tags[1]}/{$tags[2]}</span><b>专辑：{$album}</b></p>
+		<div>
+		<ul>
+		{loop $tags[0] $t}
+		<a href="{userurl($username, 'file='.$MOD['moduledir'].'&itemid='.$t[itemid], $domain)}" data-transition="none"><li{if $t[itemid]==$itemid} class="on"{/if}><i>{$t[items]}图</i>{$t[title]}</li></a>
+		{/loop}
+		</ul>
+		</div>
+	</div>
+	{/if}
+	{/if}
+
+	<div class="tool">
+	{if $MOD[show_like]}<div class="like" onclick="Dlike({$moduleid}, {$itemid}, 0);">点赞 <b id="like-{$moduleid}-{$itemid}-0">{$likes}</b></div>{/if}
+	{if $MOD[show_hate]}<div class="hate" onclick="Dhate({$moduleid}, {$itemid}, 0);">反对 <b id="hate-{$moduleid}-{$itemid}-0">{$hates}</b></div>{/if}
+	{if $MOD[show_report]}<div class="report" onclick="Dreport({$moduleid}, {$itemid}, 0);">举报</div>{/if}
+	{if $MOD[show_favorite]}<div class="favorite" onclick="Dfavor({$moduleid}, {$itemid});">收藏 <b>{$favorites}</b></div>{/if}
+	{if $MOD[fee_award]}<div class="award" onclick="Go('{$MODULE[2][mobile]}award.php?mid={$moduleid}&itemid={$itemid}');">打赏 <b>{$awards}</b></div>{/if}
+	{if $could_comment}<div class="comment" onclick="Go('{$EXT[comment_mob]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}');">评论 <b>{$comments}</b></div>{/if}
+	{if $MOD[show_share]}<div class="share" onclick="Go('{DT_MOB}api/share.php?mid={$moduleid}&itemid={$itemid}');">分享 <b>{$shares}</b></div>{/if}
+	</div>
+	<div id="list-{$js_pageid}" class="ui-main">
+	<div class="blank-10"></div>
+	{if $username}
+	<!--{tag("moduleid=$moduleid&condition=status=3 and username='$username'&order=addtime desc&pagesize=10&itemid=$itemid&template=list-photo")}-->
+	{else}
+	<!--{tag("moduleid=$moduleid&condition=status=3&catid=$catid&areaid=$cityid&order=hits desc&pagesize=10&itemid=$itemid&template=list-photo")}-->
+	{/if}
+	</div>
+	{if $thumb}
+	<script type="text/javascript">
+	$(function(){
+		$(document).on('scroll.{$js_pageid}', function(e) {
+			if($(document).scrollTop() > 96) {
+				$('#head-bar-{$js_pageid}').fadeIn(300);
+			} else {
+				$('#head-bar-{$js_pageid}').fadeOut(0);
+			}
+		});
+	});
+	</script>
+	{/if}
+{else}
+	<div class="content">
+	此{$MOD[name]}需要验证，{if $open == 2}请输入访问密码{elseif $open == 1}请回答{$question}{/if}
+	<form id="photo-form">
+	<input type="hidden" name="itemid" value="{$itemid}"/>
+	<input type="hidden" name="action" value="verify"/>
+	<div style="border:#D8D8D8 1px solid;margin:10px 0;padding:2px 6px;border-radius:4px;"><input type="text" name="key" id="key" style="width:100%;height:28px;line-height:28px;border:none;font-size:14px;padding:0;" onblur="window.scrollTo(0,0);"/></div>
+	<div class="btn-green" onclick="Dphoto();">立即验证</div>
+	</form>
+	</div>
+	<script type="text/javascript">
+	function Dphoto() {
+		if($('#key').val().length < 1) {
+			Dtoast('{$js_pageid}','请填写验证信息');
+			return false;
+		}
+		$.post('{$MOD[mobile]}show.php', $('#photo-form').serialize(), function(data) {
+			if(data == 'ok') {
+				Dtoast('{$js_pageid}','验证成功');
+				setTimeout(function() {
+					window.location.reload();
+				}, 1000);
+			} else {
+				Dtoast('{$js_pageid}','验证失败，请重试');
+			}
+		});
+	}
+	</script>
+{/if}
+{else}
+	<div id="head-bar">
+	<div class="head-bar">
+	<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+	<form action="{$MODULE[4][mobile]}index.php" id="filter-{$js_pageid}" data-ajax="false">
+	<input type="hidden" name="homepage" value="{$username}"/>
+	<input type="hidden" name="file" value="{$file}"/>
+	<input type="hidden" name="orderby" value="{$orderby}"/>
+	<input type="hidden" name="elite" value="{$elite}"/>
+	<div class="head-bar-title"><input type="search" name="kw" value="{$kw}" placeholder="{$MOD[name]}搜索"/></div>
+	</form>
+	<div class="head-bar-right"><a href="{userurl($username, 'file=channel', $domain)}"><img src="{DM_SKIN}icon-gird{$wh}.png" width="24" height="24"/></a></div>
+	</div>
+	<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+	<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+	</div>
+
+	<div class="ui-filter">
+	<i class="ui-filter-{if $elite}ckd{else}box{/if} ui-fr" onclick="Dfilter('elite', '{if $elite}0{else}1{/if}');">推荐</i>
+	<i {if $orderby == ''}class="ui-filter-dsc on"{else}class="ui-filter-ord" onclick="Dfilter('orderby', '');"{/if}>综合</i>
+	<b {if $orderby == 'dhits'}class="on"{else}onclick="Dfilter('orderby', 'dhits');"{/if}>浏览</b>
+	<b {if $orderby == 'dcomments'}class="on"{else}onclick="Dfilter('orderby', 'dcomments');"{/if}>评论</b>
+	<b {if $orderby == 'ditems'}class="on"{else}onclick="Dfilter('orderby', 'ditems');"{/if}>图片</b>
+	</div>
+
+	{if $tags}
+	<div id="list-{$js_pageid}" class="ui-main">{template 'list-'.$module, 'tag'}</div>
+	<div id="load-{$js_pageid}" class="ui-load"></div>
+	{else}
+	{template 'empty', 'chip'}
+	{/if}
+	{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{/if}
+{template 'footer', $template}

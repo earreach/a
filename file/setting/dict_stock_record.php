@@ -1,0 +1,12 @@
+<?php exit;?>
+itemid,ID,
+stockid,库存ID,
+title,商品名称,
+skuid,SKU,
+username,会员名,
+amount,数量,
+balance,剩余库存,
+addtime,添加时间,
+reason,原因,
+note,备注,
+editor,编辑,

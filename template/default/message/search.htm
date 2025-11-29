@@ -1,0 +1,13 @@
+{template 'header'}
+<div class="m">	
+	<div class="nav"><div><a href="{$MOD[linkurl]}search.php"><img src="{DT_SKIN}ico-filter.png" width="16" height="16" title="高级搜索" align="absmiddle"/></a> &nbsp; </div><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a>{if $catid} <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')}{/if} <i>&gt;</i> <a href="{$MOD[linkurl]}search.php">搜索</a>{if $DT_QST} <a href="{$MOD[linkurl]}search.php" title="重新搜索"><s></s></a>{/if}</div>
+</div>
+<div class="m">
+	<div style="height:480px;background:url('{DT_STATIC}image/msg-search.png') no-repeat right center;">
+		<div style="padding:148px 512px 0 248px;font-size:16px;">
+			<h1>关键词异常</h1>
+			<div class="f_gray">根据相关法律政策或平台规则，搜索结果不予展示</div>
+		</div>
+	</div>
+</div>
+{template 'footer'}

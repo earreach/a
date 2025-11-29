@@ -1,0 +1,10 @@
+<?php exit;?>
+itemid,ID,
+fileurl,文件地址,
+filesize,文件体积,
+fileext,文件后缀,
+toext,转码后缀,
+addtime,上传时间,
+edittime,更新时间,
+status,状态,
+username,会员名,

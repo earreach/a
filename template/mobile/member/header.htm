@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="{DT_CHARSET}"/>
+{if $sns_app}
+<title>{if $seo_title}{$seo_title}{else}{$head_title}{/if}</title>
+{else}
+<title>{if $seo_title}{$seo_title}{else}{if $head_title}{$head_title}{$DT[seo_delimiter]}{/if}{if $city_sitename}{$city_sitename}{else}{$site_name}{/if}{/if}</title>
+{/if}
+{if $head_keywords}
+<meta name="keywords" content="{$head_keywords}"/>
+{/if}
+{if $head_description}
+<meta name="description" content="{$head_description}"/>
+{/if}
+<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width"/>
+<meta http-equiv="Cache-Control" content="no-siteapp"/>
+<meta name="generator" content="DESTOON - www.destoon.com"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="format-detection" content="telephone=no"/>
+<meta name="msapplication-TileImage" content="{DT_MOB}apple-touch-icon-precomposed.png"/>
+<meta name="msapplication-TileColor" content="{$DT[color_pc]}"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="{$site_name}"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="theme-color" content="{$DT[color_mb]}"/>
+<link rel="apple-touch-icon-precomposed" href="{DT_MOB}apple-touch-icon-precomposed.png"/>
+<link rel="icon" sizes="128x128" href="{DT_MOB}apple-touch-icon-precomposed.png"/>
+<link rel="shortcut icon" type="image/x-icon" href="{DT_PATH}favicon.ico"/>
+<link rel="bookmark" type="image/x-icon" href="{DT_PATH}favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="{DM_SKIN}jquery.mobile.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<link rel="stylesheet" type="text/css" href="{DM_SKIN}style.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<link rel="stylesheet" type="text/css" href="{DT_PATH}file/style/mobile.reset.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<script type="text/javascript" src="{DT_PATH}lang/{DT_LANG}/lang.mobile.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_PATH}file/script/config.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_MOB}script/jquery-2.2.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript">
+$(document).bind("mobileinit", function() {$.mobile.ajaxEnabled = false;});
+var Dbrowser = '{$DT_MBS}';
+</script>
+<script type="text/javascript" src="{DT_MOB}script/jquery.mobile.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_MOB}script/common.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{if !DT_DEBUG && !$EXT[mobile_pc] && $head_pc}<script type="text/javascript">GoPC('{$head_pc}');</script>{/if}
+{if $DT_MBS == 'app' || $DT_MBS == 'cms' || $DT_MBS == 'web'}
+<script type="text/javascript" src="{DT_MOB}script/app.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{/if}
+<script type="text/javascript" src="{DT_MOB}script/reset.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+</head>
+<body>
+<div data-role="page">
+<div class="ui-toast" id="toast-{$js_pageid}"></div><div class="ui-mask" id="mask-{$js_pageid}"></div><div class="ui-sheet" id="sheet-{$js_pageid}"></div>
+{dmsg()}

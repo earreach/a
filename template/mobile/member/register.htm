@@ -1,0 +1,422 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{if $stepid==3}注册成功{elseif $stepid==2}填写资料{else}注册验证{/if}</div>
+<div class="head-bar-right"><a href="{DT_MOB}my.php" data-direction="reverse"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+{if $action == 'success'}
+<div class="ui-ok">
+<p>恭喜您！会员注册成功</p>
+<div><span id="send" class="f_red">9</span>秒后自动登录系统...</div>
+<input type="button" value="立即登录" class="btn-green" onclick="Go('{$url}');"/>
+</div>
+<meta http-equiv="refresh" content="9;URL={$url}"/>
+<script type="text/javascript">
+var i = 9;
+var interval=window.setInterval(
+	function() {
+		if(i < 1) {
+			clearInterval(interval);
+		} else {
+			$('#send').html(i);
+			i--;
+		}
+	},
+1000);
+</script>
+{elseif $action == 'verify'}
+<form method="post" action="{$DT[file_register]}" data-ajax="false" onsubmit="return Vcheck();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="sid" value="{$_sid}"/>
+{if $MOD[captcha_register]}
+<div class="list-inp"><div>{template 'captcha', 'chip'}</div></div>
+{/if}
+{if $MOD[wxcode_register]}
+<div>{template 'wxcode', 'chip'}</div>
+{/if}
+<div class="list-inp"><div class="px12 f_gray"><label style="display:inline-block;"><input type="checkbox" name="agree" id="agree" value="1"/> 我已阅读并同意</label> <a href="{DT_MOB}about/agreement.html" class="b">用户协议</a> 和 <a href="{DT_MOB}about/privacy.html" class="b">隐私政策</a></div></div>
+<div class="blank-20"></div>
+<div class="list-btn"><input type="submit" name="submit" value="下一步" class="btn-blue"/></div>
+<div class="blank-20"></div>
+</form>
+<script type="text/javascript">
+function Vcheck() {
+{if $MOD[captcha_register]}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dtoast('{$js_pageid}', '请填写验证码');
+		return false;
+	}
+{/if}
+{if $MOD[wxcode_register]}
+	if($('#cwxcode').html().indexOf('ok.png') == -1) {
+		Dtoast('{$js_pageid}','请填写微信验证码');
+		return false;
+	}
+{/if}
+	if(!Dd('agree').checked) {
+		Dtoast('{$js_pageid}','请勾选同意协议');
+		return false;
+	}
+	return true;
+}
+{if $MOD[captcha_register]}
+$(function(){
+	$('#captcha').css({'width':'128px'});
+});
+{/if}
+</script>
+{elseif $action == 'sms'}
+<form method="post" action="{$DT[file_register]}" data-ajax="false" onsubmit="return Scheck();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="sid" value="{$_sid}"/>
+{if $MOD[checkuser] == 4}
+<div class="list-inp"><div>短信验证<span class="f_r"><a href="{$DT[file_register]}?action=mail&sid={$_sid}" class="b" data-ajax="false">切换为邮件验证</a></span></div></div>
+{/if}
+<div class="list-inp"><div><input type="tel" name="mobile" id="mobile" placeholder="手机号码" onblur="window.scrollTo(0,0);"/></div></div>
+<div class="list-inp"><div>{template 'captcha', 'chip'}</div></div>
+<div class="list-inp"><div><input type="tel" name="code" id="code" placeholder="短信验证码" onblur="window.scrollTo(0,0);" style="width:128px;"/> &nbsp; <a href="javascript:;" class="b" onclick="Ssend();" id="send">获取短信验证码</a></div></div>
+<div class="list-inp"><div class="px12 f_gray"><label style="display:inline-block;"><input type="checkbox" name="agree" id="agree" value="1"/> 我已阅读并同意</label> <a href="{DT_MOB}about/agreement.html" class="b">用户协议</a> 和 <a href="{DT_MOB}about/privacy.html" class="b">隐私政策</a></div></div>
+<div class="blank-20"></div>
+<div class="list-btn"><input type="submit" name="submit" value="下一步" class="btn-blue"/></div>
+<div class="blank-20"></div>
+</form>
+<script type="text/javascript">
+function Scheck() {
+	if(Dd('mobile').value.length < 11) {
+		Dtoast('{$js_pageid}','请输入手机号码');
+		return false;
+	}
+	if(Dd('code').value.length < 6) {
+		Dtoast('{$js_pageid}','请输入短信验证码');
+		return false;
+	}
+	if(!Dd('agree').checked) {
+		Dtoast('{$js_pageid}','请勾选同意协议');
+		return false;
+	}
+	return true;
+}
+function Sstop() {
+	var i = {$timeout};
+	var interval=window.setInterval(
+		function() {
+			if(i < 1) {
+				$('#send').html('重新获取');
+				clearInterval(interval);
+			} else {
+				$('#send').html(i+'秒后重新获取');
+				i--;
+			}
+		},
+	1000);
+}
+function Ssend() {
+	if($('#send').html().indexOf('秒') != -1) {
+		Dtoast('{$js_pageid}','请稍后重新获取');
+		return false;
+	}
+	if(Dd('mobile').value.length < 11) {
+		Dtoast('{$js_pageid}','请输入手机号码');
+		return false;
+	}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dtoast('{$js_pageid}','请填写验证码');
+		return false;
+	}
+	Dtoast('{$js_pageid}','发送中..');
+	$.post('{$DT[file_register]}', 'action=sendsms&sid={$_sid}&mobile='+Dd('mobile').value+'&captcha='+Dd('captcha').value, function(data) {
+		if(data == 'ok') {
+			Dtoast('{$js_pageid}','短信验证码发送成功');
+			Sstop();return;
+		} else if(data == 'format') {
+			Dtoast('{$js_pageid}','手机格式错误');
+		} else if(data == 'captcha') {
+			Dtoast('{$js_pageid}','验证码错误');
+		} else if(data == 'exist') {
+			Dtoast('{$js_pageid}','手机号码已经被注册');
+		} else if(data == 'max') {
+			Dtoast('{$js_pageid}','发送次数过多');
+		} else if(data == 'fast') {
+			Dtoast('{$js_pageid}','发送频率过快');
+		} else {
+			Dtoast('{$js_pageid}','发送失败'+data);
+		}
+		reloadcaptcha();
+	});
+}
+$(function(){
+	$('#captcha').css({'width':'128px'});
+});
+</script>
+{elseif $action == 'mail'}
+<form method="post" action="{$DT[file_register]}" data-ajax="false" onsubmit="return Mcheck();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="sid" value="{$_sid}"/>
+{if $MOD[checkuser] == 4}
+<div class="list-inp"><div>邮件验证<span class="f_r"><a href="?action=sms&sid={$_sid}" class="b" data-ajax="false">切换为短信验证</a></span></div></div>
+{/if}
+<div class="list-inp"><div><input type="email" name="email" id="email" placeholder="电子邮箱" onblur="window.scrollTo(0,0);"/></div></div>
+<div class="list-inp"><div>{template 'captcha', 'chip'}</div></div>
+<div class="list-inp"><div><input type="tel" name="code" id="code" placeholder="邮件验证码" onblur="window.scrollTo(0,0);" style="width:128px;"/> &nbsp; <a href="javascript:;" class="b" onclick="Msend();" id="send">获取邮件验证码</a></div></div>
+<div class="list-inp"><div class="px12 f_gray"><label style="display:inline-block;"><input type="checkbox" name="agree" id="agree" value="1"/> 我已阅读并同意</label> <a href="{DT_MOB}about/agreement.html" class="b">用户协议</a> 和 <a href="{DT_MOB}about/privacy.html" class="b">隐私政策</a></div></div>
+<div class="blank-20"></div>
+<div class="list-btn"><input type="submit" name="submit" value="下一步" class="btn-blue"/></div>
+<div class="blank-20"></div>
+</form>
+<script type="text/javascript">
+function Mcheck() {
+	if(Dd('email').value.length < 6) {
+		Dtoast('{$js_pageid}','请输入电子邮箱');
+		return false;
+	}
+	if(Dd('code').value.length < 6) {
+		Dtoast('{$js_pageid}','请输入邮件验证码');
+		return false;
+	}
+	if(!Dd('agree').checked) {
+		Dtoast('{$js_pageid}','请勾选同意协议');
+		return false;
+	}
+	return true;
+}
+function Mstop() {
+	var i = {$timeout};
+	var interval=window.setInterval(
+		function() {
+			if(i < 1) {
+				$('#send').html('重新获取');
+				clearInterval(interval);
+			} else {
+				$('#send').html(i+'秒后重新获取');
+				i--;
+			}
+		},
+	1000);
+}
+function Msend() {
+	if($('#send').html().indexOf('秒') != -1) {
+		Dtoast('{$js_pageid}','请稍后重新获取');
+		return false;
+	}
+	if(Dd('email').value.length < 6) {
+		Dtoast('{$js_pageid}','请输入电子邮箱');
+		return false;
+	}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dtoast('{$js_pageid}','请填写验证码');
+		return false;
+	}
+	Dtoast('{$js_pageid}','发送中..');
+	$.post('{$DT[file_register]}', 'action=sendmail&sid={$_sid}&email='+Dd('email').value+'&captcha='+Dd('captcha').value, function(data) {
+		if(data == 'ok') {
+			Dtoast('{$js_pageid}','邮件验证码发送成功');	
+			Mstop();return;
+		} else if(data == 'format') {
+			Dtoast('{$js_pageid}','邮箱格式错误');
+		} else if(data == 'captcha') {
+			Dtoast('{$js_pageid}','验证码错误');
+		} else if(data == 'exist') {
+			Dtoast('{$js_pageid}','电子邮箱已经被注册');
+		} else if(data == 'max') {
+			Dtoast('{$js_pageid}','发送次数过多');
+		} else if(data == 'fast') {
+			Dtoast('{$js_pageid}','发送频率过快');
+		} else {
+			Dtoast('{$js_pageid}','发送失败'+data);
+		}
+		reloadcaptcha();
+	});
+}
+$(function(){
+	$('#captcha').css({'width':'128px'});
+});
+</script>
+{else}
+<form method="post" action="{$DT[file_register]}" data-ajax="false" onsubmit="return Rcheck();">
+<input type="hidden" name="sid" value="{$_sid}"/>
+{if !$regshow}
+<input type="hidden" name="post[regid]" value="{$regid}"/>
+{/if}
+<div class="ui-form" id="reg-box">
+{if $regshow}
+<p>会员类型<i>*</i><b id="dregid"></b></p>
+<div>
+{loop $RG $k $v}
+<label><input type="radio" name="post[regid]" value="{$k}" id="g_{$k}" onclick="Dreg({if $v[type]}1{else}0{/if});"{if $regid==$k} checked{/if}/> {$v[groupname]}</label><br/>{/loop}
+</div>
+{/if}
+<section id="iscom" style="display:{if $regcom}{else}none{/if};">
+<p>公司全称<i>*</i><b id="dcompany"></b></p>
+<div><input type="text" name="post[company]" id="company" placeholder="公司全称，注册后不可更改" onblur="Dvalidator('company');"/></div>
+</section>
+
+<p>会员名称<i>*</i><b id="dusername"></b></p>
+<div><input type="text" name="post[username]" id="username" placeholder="会员名称，不支持中文" onblur="Dvalidator('username');" autocomplete="off" {if $username} value="{$username}" readonly{/if}/></div>
+<s>{$MOD[minusername]}-{$MOD[maxusername]}个字符，只能使用小写字母(a-z)、数字(0-9)、下划线(_)、中划线(-)，且以字母或数字开头和结尾</s>
+
+{if $MOD[passport] && $passport}
+<p>会员昵称<i>*</i><b id="dpassport"></b></p>
+<div><input type="text" name="post[passport]" id="passport" placeholder="会员昵称，支持中文" onblur="Dvalidator('passport');" autocomplete="off"{if $passport} value="{$passport}" readonly{/if}/></div>
+<s>支持中文名，可用于论坛等系统用户名 如果不填写，则和会员名一致</s>
+{/if}
+
+<p>登录密码<i>*</i><b id="dpassword"></b></p>
+<div><input type="password" name="post[password]" id="password" placeholder="登录密码" onblur="Dvalidator('password');" autocomplete="new-password"{if $password} value="{$password}" readonly{/if}/></div>
+<s>{$MOD[minpassword]}-{$MOD[maxpassword]}个字符，区分大小写，推荐使用数字、字母和特殊符号组合</s>
+
+<p>重复输入<i>*</i><b id="dcpassword"></b></p>
+<div><input type="password" name="post[cpassword]" id="cpassword" placeholder="再输入一遍登录密码" onblur="Dvalidator('cpassword');" autocomplete="new-password"{if $password} value="{$password}" readonly{/if}/></div>
+
+{if $MOD[truename_register]}
+<p>真实姓名{if $MOD[truename_register] == 2}<i>*</i>{/if}<b id="dtruename"></b></p>
+<div><input type="text" name="post[truename]" id="truename" placeholder="真实姓名"{if $MOD[truename_register] == 2} onblur="Dvalidator('truename');"{/if} style="width:50%;"/></div>
+{/if}
+
+{if $MOD[mobile_register]}
+<p>手机号码{if $MOD[mobile_register] == 2}<i>*</i>{/if}<b id="dmobile"></b></p>
+<div><input type="text" name="post[mobile]" id="mobile" placeholder="手机号码"{if $MOD[mobile_register] == 2} onblur="Dvalidator('mobile');"{/if}/></div>
+{/if}
+
+{if $MOD[email_register]}
+<p>电子邮箱{if $MOD[email_register] == 2}<i>*</i>{/if}<b id="demail"></b></p>
+<div><input type="text" name="post[email]" id="email" placeholder="电子邮箱"{if $MOD[email_register] == 2} onblur="Dvalidator('email');"{/if}/></div>
+{/if}
+
+{if $MOD[qq_register]}
+<p>QQ号码{if $MOD[qq_register] == 2}<i>*</i>{/if}<b id="dqq"></b></p>
+<div><input type="text" name="post[qq]" id="qq" placeholder="QQ号码"{if $MOD[qq_register] == 2} onblur="Dvalidator('qq');"{/if}/></div>
+{/if}
+
+{if $MOD[wx_register]}
+<p>微信号码{if $MOD[wx_register] == 2}<i>*</i>{/if}<b id="dwx"></b></p>
+<div><input type="text" name="post[wx]" id="wx" placeholder="微信号码"{if $MOD[wx_register] == 2} onblur="Dvalidator('wx');"{/if}/></div>
+{/if}
+
+{if $MOD[checkuser] == 1}
+<p>注册原因<i>*</i><b id="dreason"></b></p>
+<div><input type="text" name="post[reason]" id="reason" placeholder="注册原因"/></div>
+{/if}
+
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="立即注册" class="btn-blue"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+var vid = '';
+function Dtrim(id) {
+	var str = $.trim(Dd(id).value);
+	if(Dd(id).value != str) Dd(id).value = str;
+}
+function Dmsgs(str, id) {
+	Dd('d'+id).innerHTML = '<img src="{DT_STATIC}image/check-'+(str ? 'ko' : 'ok')+'.png" align="absmiddle"/> '+str;
+}
+function Dvalidator(id) {
+	vid = id;Dtrim(id);
+	if(id == 'cpassword') {
+		if(Dd('cpassword').value != Dd('password').value && Dd('password').value.length > 5) {
+			Dmsg('两次输入的密码不一致', vid);
+			return;
+		}
+	}
+	$.post(AJPath, 'moduleid={$moduleid}&action=member&job='+id+'&value='+Dd(id).value, function(data) {		
+		Dmsgs(data, vid);
+	});
+}
+function Dreg(type) {
+	if(type) {
+		Ds('iscom');
+	} else {
+		Dh('iscom');
+		$('#dcompany').html('');
+	}
+}
+function Rcheck() {
+	if($('#reg-box').html().indexOf('check-ko.png') != -1) {
+		Dtoast('{$js_pageid}', '资料存在填写错误，请检查');
+		return false;
+	}
+	var f;
+	if(Dd('iscom').style.display != 'none') {
+		f = 'company';
+		if(Dd(f).value.length < 3) {
+			Dmsg('请填写公司名称', f);
+			return false;
+		}
+	}
+	f = 'username';
+	if(Dd(f).value.length < 3) {
+		Dmsg('请填写会员名称', f);
+		return false;
+	}
+	f = 'password';
+	if(Dd(f).value.length < 6) {
+		Dmsg('请填写登录密码', f);
+		return false;
+	}
+	f = 'cpassword';
+	if(Dd(f).value.length < 6) {
+		Dmsg('请重复输入密码', f);
+		return false;
+	}
+	if(Dd('password').value != Dd(f).value) {
+		Dmsg('两次输入的密码不一致', f);
+		return false;
+	}
+	{if $MOD[truename_register] == 2}
+	f = 'truename';
+	if(Dd(f).value.length < 2) {
+		Dmsg('请填写真实姓名', f);
+		return false;
+	}
+	{/if}
+	{if $MOD[mobile_register] == 2}
+	f = 'mobile';
+	if(Dd(f).value.length != 11) {
+		Dmsg('请填写手机号码', f);
+		return false;
+	}
+	{/if}
+	{if $MOD[email_register] == 2}
+	f = 'email';
+	if(Dd(f).value.length < 6) {
+		Dmsg('请填写电子邮箱', f);
+		return false;
+	}
+	{/if}
+	{if $MOD[qq_register] == 2}
+	f = 'qq';
+	if(Dd(f).value.length < 5) {
+		Dmsg('请填写QQ号码', f);
+		return false;
+	}
+	{/if}
+	{if $MOD[wx_register] == 2}
+	f = 'wx';
+	if(Dd(f).value.length < 3) {
+		Dmsg('请填写微信号码', f);
+		return false;
+	}
+	{/if}
+	{if $MOD[checkuser] == 1}
+	f = 'reason';
+	if(Dd(f).value.length < 3) {
+		Dmsg('请输入注册原因', f);
+		return false;
+	}
+	{/if}
+	{if $DT[md5_pass] == 2}
+	f = 'password';
+	Dd(f).value = hex_md5(Dd(f).value);
+	Dd('c'+f).value = hex_md5(Dd('c'+f).value);		
+	{/if}
+	return true;
+}
+</script>
+{/if}
+{if $DT[md5_pass]}{load('md5.js')}<script type="text/javascript">$(function(){cls_pwd();});</script>{/if}
+{template 'footer', 'member'}

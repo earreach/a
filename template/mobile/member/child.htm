@@ -1,0 +1,273 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right">
+{if $_cid}
+{else}
+{if $action=='add' || $action=='edit' || $action=='password' || $action=='home'}
+<a href="?action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{else}
+<a href="?action=add"><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></a>
+{/if}
+{/if}
+<a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a>
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+{if $_cid}
+<a href="?action=home" data-transition="none">我的账户</a>
+<a href="?action=password" data-transition="none">修改密码</a>
+<a href="javascript:Dsheet('{$js_pageid}','<a href=&#34;logout.php?forward=&#34; rel=&#34;external&#34;><span style=&#34;color:red&#34;>退出登录</span></a>', '取消', '确定要退出本次登录吗？');">退出登录</a>
+{else}
+<a href="?action=add" data-transition="none">添加账号</a>
+<a href="?action=index" data-transition="none">账号管理</a>
+<a href="biz.php" data-direction="reverse">商户后台</a>
+{/if}
+</div>
+</div>
+
+{if $action=='add' || $action=='edit'}
+<form method="post" action="?" id="dform" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<div class="ui-form">
+<p>户名<i>*</i><b id="dusername"></b></p>
+<div><input type="text" name="post[username]" id="username" value="{$username}" autocomplete="new-username"/></div>
+<p>密码<i>*</i><b id="dpassword"></b></p>
+<div><input type="password" name="post[password]" id="password" autocomplete="new-password"/></div>
+<p>昵称<b id="dnickname"></b></p>
+<div><input type="text" name="post[nickname]" id="nickname" value="{$nickname}"/></div>
+<p>角色<b id="drole"></b></p>
+<div><input type="text" name="post[role]" id="role" value="{$role}"/></div>
+<p>部门<b id="ddepartment"></b></p>
+<div><input type="text" name="post[department]" id="department" value="{$department}"/></div>
+<p>姓名<b id="dtruename"></b></p>
+<div><input type="text" name="post[truename]" id="truename" value="{$truename}" style="width:100px;"/></div>
+<p>性别<b id="dgender"></b></p>
+<div>
+<label><input type="radio" name="post[gender]" value="1"{if $gender==1} checked="checked"{/if}/> 先生</label>&nbsp;&nbsp;
+<label><input type="radio" name="post[gender]" value="2"{if $gender==2} checked="checked"{/if}/> 女士</label>
+</div>
+<p>手机<b id="dmobile"></b></p>
+<div><input type="tel" name="post[mobile]" id="mobile" value="{$mobile}" style="width:200px;"/></div>
+<p>权限<i>*</i><b id="dpermission"></b></p>
+<div class="permission">
+{loop $CHILD $k $v}
+<label><input type="checkbox" name="post[permission][]" value="{$k}" id="pm_{$k}"{if in_array($k, $permission)} checked="checked"{/if}/> {$v}</label><br/>
+{/loop}
+{loop $MENUMODS $k $v}
+<label><input type="checkbox" name="post[permission][]" value="{$v}" id="m_{$v}"{if in_array($v, $permission)} checked="checked"{/if}/> {$MODULE[$v][name]}管理</label><br/>
+{/loop}
+</div>
+<p>状态<i>*</i><b id="dstatus"></b></p>
+<div>
+<label><input type="radio" name="post[status]" value="3"{if $status==3} checked="checked"{/if}/> 启用</label>&nbsp;&nbsp;
+<label><input type="radio" name="post[status]" value="2"{if $status==2} checked="checked"{/if}/> 禁用</label>
+</div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="{if $action=='edit'}修改{else}添加{/if}" class="btn-blue"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	var l;
+	var f;
+	f = 'username';
+	l = Dd(f).value.length;
+	if(l < 2) {
+		Dmsg('请填写用户名', f);
+		return false;
+	}
+{if $action == 'add'}
+	f = 'password';
+	l = Dd(f).value.length;
+	if(l < 6) {
+		Dmsg('请填写密码', f);
+		return false;
+	}
+{/if}
+
+	f = 'password';
+	l = Dd(f).value.length;
+	if(l > 5 && l < 32) {
+		var a = Dpwd(Dd(f).value, '{$MOD[minpassword]}', '{$MOD[maxpassword]}', '{$MOD[mixpassword]}');
+		var s = '';
+		if(a[0] == 'mix') {
+			if(a[1] == '09') s = '密码必须包含数字';
+			if(a[1] == 'az') s = '密码必须包含小写字母';
+			if(a[1] == 'AZ') s = '密码必须包含大写字母';
+			if(a[1] == '..') s = '密码必须包含特殊符号';
+		} else if(a[0] == 'min') {
+			s = '密码最少'+a[1]+'字符';
+		} else if(a[0] == 'max') {
+			s = '密码最多'+a[1]+'字符';
+		}
+		if(s) {
+			Dmsg(s, f);
+			return false;
+		}
+		{if $DT[md5_pass]==2}
+		Dd(f).value = hex_md5(Dd(f).value);		
+		{/if}
+	}
+
+	l = $('.permission :checkbox:checked').length;
+	if(l < 1) {
+		Dmsg('请选择权限', 'permission');
+		return false;
+	}
+	return true;
+}
+</script>
+{if $DT[md5_pass]}{load('md5.js')}<script type="text/javascript">$(function(){cls_pwd();});</script>{/if}
+{elseif $action == 'password'}
+<form method="post" action="?" id="dform" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<div class="ui-form">
+<p>新登录密码<i>*</i><b id="dnpassword"></b></p>
+<div><input type="password" name="post[npassword]" id="npassword" autocomplete="new-npassword"/></div>
+<p>重复登录密码<i>*</i><b id="dcpassword"></b></p>
+<div><input type="password" name="post[cpassword]" id="cpassword" autocomplete="new-cpassword"/></div>
+<p>现有登录密码<i>*</i><b id="dopassword"></b></p>
+<div><input type="password" name="post[opassword]" id="opassword" autocomplete="new-opassword"/></div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="修 改" class="btn-blue"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	var l;
+	var f;
+	if(Dd('npassword').value.length < 6) {
+		Dmsg('请输入新登录密码', 'npassword');
+		return false;
+	}
+	if(Dd('npassword').value != Dd('cpassword').value) {
+		Dmsg('两次输入的密码不一致', 'cpassword');
+		return false;
+	}
+	if(Dd('opassword').value.length < 6) {
+		Dmsg('请输入现有登录密码', 'opassword');
+		return false;
+	}
+
+	f = 'npassword';
+	l = Dd(f).value.length;
+	if(l > 5 && l < 32) {
+		var a = Dpwd(Dd(f).value, '{$MOD[minpassword]}', '{$MOD[maxpassword]}', '{$MOD[mixpassword]}');
+		var s = '';
+		if(a[0] == 'mix') {
+			if(a[1] == '09') s = '密码必须包含数字';
+			if(a[1] == 'az') s = '密码必须包含小写字母';
+			if(a[1] == 'AZ') s = '密码必须包含大写字母';
+			if(a[1] == '..') s = '密码必须包含特殊符号';
+		} else if(a[0] == 'min') {
+			s = '密码最少'+a[1]+'字符';
+		} else if(a[0] == 'max') {
+			s = '密码最多'+a[1]+'字符';
+		}
+		if(s) {
+			Dmsg(s, f);
+			return false;
+		}
+		{if $DT[md5_pass]==3}
+		Dd(f).value = hex_md5(Dd(f).value);		
+		Dd('cpassword').value = hex_md5(Dd('cpassword').value);		
+		Dd('opassword').value = hex_md5(Dd('opassword').value);		
+		{/if}
+	}
+
+	return true;
+}
+</script>
+{if $DT[md5_pass]}{load('md5.js')}<script type="text/javascript">$(function(){cls_pwd();});</script>{/if}
+{elseif $action == 'home'}
+{if $job == 'my'}
+<div class="content">
+会员：{$username}<br/>
+昵称：{$nickname}<br/>
+角色：{$role}<br/>
+部门：{$department}<br/>
+姓名：{$truename}<br/>
+手机：{$mobile}<br/>
+登录：{$logintimes}次<br/>
+<div class="blank-32"></div>
+<a href="?action=password"><div class="btn">修改密码</div></a>
+<div class="blank-32"></div>
+<a href="javascript:Dsheet('{$js_pageid}','<a href=&#34;logout.php&#34; rel=&#34;external&#34;><span style=&#34;color:red&#34;>退出登录</span></a>', '取消', '确定要退出本次登录吗？');"><div class="btn">退出登录</div></a>
+<div class="blank-32"></div>
+</div>
+{else}
+<div class="gird-4">
+<ul>
+{loop $_child_menu $v}
+<li><a href="{$v[url]}" rel="external"><img src="{DM_SKIN}{if $v[mid]}mod-{$v[en]}{else}my-{$v[en]}{/if}.png" width="24" height="24"/><span>{$v[name]}{if $v[mid]}管理{/if}</span></a></li>
+{/loop}
+</ul>
+</div>
+{/if}
+{else}
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<input type="checkbox" name="itemid[]" value="{$v[itemid]}" class="dsn" id="checkbox-{$v[itemid]}"/>
+<ul>
+<li><em class="check" id="check-{$v[itemid]}"></em><a href="?action=edit&itemid={$v[itemid]}"><strong>{$v[username]} / {$v[nickname]}</strong></a></li>
+<li><em class="sheet" id="sheet-{$v[itemid]}"></em><span>{$v[truename]} {$v[role]} {$v[department]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无子账号</div>
+{/if}
+{if $MG[child_limit]}
+<div class="limit">总共可加 <span class="f_b f_red">{$MG[child_limit]}</span> 个&nbsp;&nbsp;&nbsp;当前已加 <span class="f_b">{$limit_used}</span> 个&nbsp;&nbsp;&nbsp;还可以加 <span class="f_b f_blue">{$limit_free}</span> 个</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<div id="foot-bar" class="dsn">
+<div class="foot-bar-fix"></div>
+<div class="foot-bar btns">
+<input type="submit" name="submit" value="删除选中" class="btn-red" onclick="if(confirm('确定要删除选中地址吗？')){this.form.action='?action=delete'}else{return false;}"/>
+</div>
+</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	if($('#foot-bar input').length == 0) $('.check').hide();
+	$('.list-img em').click(function() {
+		if($(this).attr('class') == 'sheet') {
+			var id = $(this).attr('id').replace('sheet-', '');
+			Dsheet('{$js_pageid}','<a href="?action=edit&itemid='+id+'"><span>修改</span></a>|<a href="?action=delete&itemid='+id+'" onclick="return _delete();"><span style="color:red;">删除</span></a>', '取消');
+		} else {
+			var id = $(this).attr('id').replace('check-', '');
+			if($('#checkbox-'+id).attr('checked')) {
+				$('#checkbox-'+id).attr('checked', false);
+				$(this).attr('class', 'check');
+			} else {
+				$('#checkbox-'+id).attr('checked', true);
+				$(this).attr('class', 'checked');
+			}
+			if($('.checked').length > 0) {
+				$('#foot-bar').fadeIn(300);
+			} else {
+				$('#foot-bar').fadeOut(300);
+			}
+		}
+	});
+});
+</script>
+{/if}
+{template 'footer', 'member'}

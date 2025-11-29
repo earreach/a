@@ -1,0 +1,89 @@
+<script type="text/javascript">
+var album_max = parseInt({$DT[thumb_max]});
+if(album_max < 5 || album_max > 99) album_max = 9;
+for(var i = 0;i < album_max; i++) {
+	document.write('<input type="hidden" name="post[thumbs][]" id="thumb'+i+'" autocomplete="off"/>');
+	document.write('<div class="ui-form-album-show" id="album'+i+'" onclick="album_action('+i+');"></div>');
+}
+</script>
+<div class="ui-form-album-upload"><div id="album-picker"></div></div>
+<script type="text/javascript">
+function album_action(id) {
+	Dsheet('{$js_pageid}','<a href="javascript:album_delete('+id+');void(0);"><span style="color:red;">删除图片</span></a>', '取消', '确定要删除图片吗？');
+}
+function album_delete(id) {
+	$('#thumb'+id).val('');
+	$('#album'+id).html('');
+	$('#album'+id).hide();
+	$('.ui-form-album-upload').show();	
+}
+function album_show(id, url) {
+	if($('#thumb'+id).length == 0) return false;
+	$('#thumb'+id).val(url);
+	$('#album'+id).html('<img src="'+url+'"/>');
+	$('#album'+id).show();
+}
+function album_hide() {
+	var j = 1;
+	for(var i = 0; i < album_max; i++) {
+		if($('#thumb'+i).val() == '') {
+			j = 0;
+			break;
+		}
+	}
+	if(j) $('.ui-form-album-upload').hide();
+}
+var albumu = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=album&width={$MOD[thumb_width]}&height={$MOD[thumb_height]}',
+    pick: '#album-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+	fileNumLimit: album_max,
+    resize: false
+});
+albumu.on('beforeFileQueued', function(file) {
+	var exts = albumu.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+albumu.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+albumu.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+albumu.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		for(var i = 0; i < album_max; i++) {
+			if($('#thumb'+i).val() == '') {
+				album_show(i, data.url);
+				break;
+			}
+		}
+		album_hide();
+	}
+});
+albumu.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+albumu.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+{if $thumbs}
+$(function(){
+	{loop $thumbs $k $v}
+	{if $v}album_show({$k}, '{$v}');{/if}
+	{/loop}
+	album_hide();
+});
+{/if}
+</script>

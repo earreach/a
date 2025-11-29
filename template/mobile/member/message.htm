@@ -1,0 +1,358 @@
+{if $job == 'ajax'}
+{if $lists}
+{loop $lists $v}
+<div class="ui-list-mix">
+{if $v[userurl]}<a href="{$v[userurl]}" rel="external">{/if}<img src="{useravatar($v[username], 'large')}" class="avatar" style="width:48px;height:48px;margin:0 16px 16px 8px;"/>{if $v[userurl]}</a>{/if}
+<a href="?action=show&itemid={$v[itemid]}&page={$page}"{if $v[feedback]}onclick="if(confirm('该信件请求发送已读回执，是否发送？')){ Go(this.href+'&feedback=1');return false;}"{/if}><strong{if !$v[isread] || $v[style]} style="{if $v[style]}color:#{$v[style]};{/if}{if !$v[isread]}font-weight:bold;{/if}"{/if}>{$v[title]}</strong></a>
+<p><i class="ui-ico-time ui-fr">{timetodate($v[addtime], 5)}</i>{if $v[user]}<i class="ui-ico-user">{$v[user]}</i>{/if}</p>
+</div>
+{/loop}
+{/if}
+{exit}
+{/if}
+{template 'header', 'member'}
+{load('chat.css')}
+<div id="head-bar">
+<div class="head-bar">
+{if $action=='send' ||  $action=='edit' ||  $action=='show'}
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+{else}
+<div class="head-bar-left"><a href="javascript:Dmenu('message-{$js_pageid}');"><img src="{DM_SKIN}icon-search{$wh}.png" width="24" height="24"/></a></div>
+{/if}
+<div class="head-bar-title">
+{if $DT[im_web]}
+<div class="head-tab">
+<div class="head-tab-on"><a href="message.php" data-transition="none"><b>消息</b></a>{if $_message}<i>{if $_message>99}99+{else}{$_message}{/if}</i>{/if}</div>
+<div class="head-tab-tb"><a href="im.php" data-transition="none"><b>聊天</b></a>{if $_chat}<i>{if $_chat>99}99+{else}{$_chat}{/if}</i>{/if}</div>
+</div>
+{else}
+{$head_title}
+{/if}
+</div>
+<div class="head-bar-right">
+{if $action == 'send'}
+<a href="?action=inbox" data-direction="reverse"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{elseif $action == 'edit'}
+<a href="?action=draft" data-direction="reverse"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{elseif $action == 'show'}
+<a href="?action=inbox" data-direction="reverse"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{else}
+<a href="?action=send"><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></a>
+{/if}
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+{if $action == 'guest'}
+<div class="im-msg">
+	您还没有登录，请先登录或注册
+	<div class="blank-32"></div>
+	<div class="blank-32"></div>
+	<a href="{$DT[file_login]}"><div class="btn-green">立即登录</div></a>
+	<div class="blank-32"></div>
+	<a href="{$DT[file_register]}"><div class="btn">注册会员</div></a>
+</div>
+{elseif $action == 'close'}
+<div class="im-msg">
+	您所在的会员组无权限
+</div>
+{elseif $action == 'send'}
+<div class="ui-widget" id="widget-{$js_pageid}"></div>
+<form method="post" action="?" id="dform" onsubmit="return check();">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/> 
+<input type="hidden" name="typeid" value="{$typeid}"/>
+{load('webuploader.min.js')}
+<div class="ui-form">
+{if $touser}
+<div>
+<div style="display:inline-block;text-align:center;padding:16px 0 0 0;"><a href="{userurl($touser, 'file=space')}" rel="external"><img src="{useravatar($touser)}" width="48" height="48" class="avatar"/><div>{$touser}</div></a></div>
+<input type="hidden" name="post[touser]" id="touser" value="{$touser}"/>
+</div>
+{else}
+<p>收件人<i>*</i><b id="dtouser"></b></p>
+<div><input name="post[touser]" type="text" id="touser" value="{$touser}"/><div class="ui-form-file-upload" style="background:#FFFFFF url('{DM_SKIN}ico-user.png') no-repeat center center;background-size:16px 16px;" onclick="Dwidget('{$js_pageid}', AJPath+'?moduleid=2&action=choose&job=friend&from=message&fid=touser', '选择好友');"></div></div>
+{/if}
+<p>标题<i>*</i><b id="dtitle"></b></p>
+<div><input name="post[title]" type="text" id="title" value="{$title}"/></div>
+<p>内容<i>*</i><b id="dcontent"></b></p>
+</div>
+<input type="hidden" name="post[content]" id="content"/>
+<ul class="ui-editor-toolbar">
+<li class="ui-editor-img"><div id="editor-picker"></div></li>
+<li class="ui-editor-bold"><input type="button" value=" " editor-action="bold"/>B</li>
+<li class="ui-editor-italic"><input type="button" value=" " editor-action="italic"/>I</li>
+<li class="ui-editor-underline"><input type="button" value=" " editor-action="underline"/>U</li>
+</ul>
+<div class="ui-editor-content" id="editor">{$content}</div>
+{load('editor.js')}
+<script type="text/javascript">
+$(function(){
+    $('#editor').DEditor({
+        editorid: 'editor',
+        textareaid: 'content',
+        server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=editor'
+    });
+});
+</script>
+<div class="ui-form">
+<div style="padding:16px 0 0 0;">
+<label><input type="checkbox" name="post[save]" id="save" value="1" onclick="if(this.checked){Dd('copy').checked=Dd('feedback').checked=false;}"/> 不发送，保存为草稿</label><br/>
+<label><input type="checkbox" name="post[copy]" id="copy" value="1" onclick="if(this.checked){Dd('save').checked=false;}"/> 保存到已发送</label><br/>
+<label><input type="checkbox" name="post[feedback]" id="feedback" value="1" onclick="if(this.checked){Dd('save').checked=false;}"/> 已读回执</label><br/>
+</div>
+{if $need_captcha}
+<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+<div>{template 'captcha', 'chip'}</div>
+{/if}
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="发 送" class="btn-blue"/>
+<div class="blank-16"></div>
+{if $MG[message_limit]}
+<div class="content">
+今日可发 <span class="f_b f_red">{$MG[message_limit]}</span> 次<br/>
+当前已发 <span class="f_b">{$limit_used}</span> 次<br/>
+还可以发 <span class="f_b f_blue">{$limit_free}</span> 次<br/>
+</div>
+{/if}
+</div>
+</form>
+{load('clear.js')}
+<script type="text/javascript">
+function check() {
+	var len;
+	if(Dd('save').checked == false) {
+		if(Dd('touser').value == '') {
+			Dmsg('请填写收件人', 'touser');
+			return false;
+		}
+		var max = {$MOD[maxtouser]};
+		if(max && substr_count(Dd('touser').value, ' ') >= max) {
+			Dmsg('最多可以选择'+max+'个收件人', 'touser');
+			return false;
+		}
+	}
+	len = Dd('title').value.length;
+	if(len < 2) {
+		Dmsg('标题不能少于2个字，当前已输入'+len+'个字', 'title');
+		return false;
+	}
+	if(len > 80) {
+		Dmsg('标题不能多于80个字，当前已输入'+len+'个字', 'title');
+		return false;
+	}
+	len = EditorLen();
+	if(len < 5) {
+		Dmsg('内容不能少于5个字，当前已输入'+len+'个字', 'content');
+		return false;
+	}
+	if(len > 5000) {
+		Dmsg('内容不能多于5000个字，当前已输入'+len+'个字', 'content');
+		return false;
+	}
+{if $need_captcha}
+	f = 'captcha';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', f);
+		return false;
+	}
+{/if}
+	return true;
+}
+</script>
+{elseif $action == 'edit'}
+<form method="post" action="?" id="dform" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/> 
+<input type="hidden" name="itemid" value="{$itemid}"/> 
+{load('webuploader.min.js')}
+<div class="ui-form">
+<p>收件人<i>*</i><b id="dtouser"></b></p>
+<div><input name="post[touser]" type="text" id="touser" value="{$touser}"/></div>
+<p>标题<i>*</i><b id="dtitle"></b></p>
+<div><input name="post[title]" type="text" id="title" value="{$title}"/></div>
+<p>内容<i>*</i><b id="dcontent"></b></p>
+</div>
+<input type="hidden" name="post[content]" id="content"/>
+<ul class="ui-editor-toolbar">
+<li class="ui-editor-img"><div id="editor-picker"></div></li>
+<li class="ui-editor-bold"><input type="button" value=" " editor-action="bold"/>B</li>
+<li class="ui-editor-italic"><input type="button" value=" " editor-action="italic"/>I</li>
+<li class="ui-editor-underline"><input type="button" value=" " editor-action="underline"/>U</li>
+</ul>
+<div class="ui-editor-content" id="editor">{$content}</div>
+{load('editor.js')}
+<script type="text/javascript">
+$(function(){
+    $('#editor').DEditor({
+        editorid: 'editor',
+        textareaid: 'content',
+        server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=editor'
+    });
+});
+</script>
+<div class="ui-form">
+<div style="padding:16px 0 0 0;">
+<label><input type="checkbox" name="post[send]" id="sendmsg" value="1" onclick="if(!this.checked){Dd('copy').checked=Dd('feedback').checked=false;}"/> 发送信件</label><br/>
+<label><input type="checkbox" name="post[copy]" id="copy" value="1" onclick="if(this.checked){Dd('sendmsg').checked=true;}"/> 保存到已发送</label><br/>
+<label><input type="checkbox" name="post[feedback]" id="feedback" value="1" onclick="if(this.checked){Dd('sendmsg').checked=true;}"/> 已读回执</label><br/>
+</div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="确 定" class="btn-blue"/>
+<div class="blank-16"></div>
+</div>
+</form>
+{load('clear.js')}
+<script type="text/javascript">
+function check() {
+	var len;
+	if(Dd('sendmsg').checked == true) {
+		if(Dd('touser').value == '') {
+			Dmsg('请填写收件人', 'touser');
+			return false;
+		}
+		var max = {$MOD[maxtouser]};
+		if(max && substr_count(Dd('touser').value, ' ') >= max) {
+			Dmsg('最多可以选择'+max+'个收件人', 'touser');
+			return false;
+		}
+	}
+	len = Dd('title').value.length;
+	if(len < 2) {
+		Dmsg('标题不能少于2个字，当前已输入'+len+'个字', 'title');
+		return false;
+	}
+	if(len > 80) {
+		Dmsg('标题不能多于80个字，当前已输入'+len+'个字', 'title');
+		return false;
+	}
+	len = EditorLen();
+	if(len < 5) {
+		Dmsg('内容不能少于5个字，当前已输入'+len+'个字', 'content');
+		return false;
+	}
+	if(len > 5000) {
+		Dmsg('内容不能多于5000个字，当前已输入'+len+'个字', 'content');
+		return false;
+	}
+	return true;
+}
+</script>
+{elseif $action == 'show'}
+<div class="title"><h1>{$title}</h1></div>
+<div class="info">
+	<i class="ui-ico-time ui-fr" title="{$adddate}">{timetoread($addtime)}</i>
+	{if $mid && $tid}<a href="{gourl('?mid='.$mid.'&itemid='.$tid)}" rel="external"><i class="ui-ico-link ui-fr">原文</i></a>{/if}
+	{if $status==4 || $status==3}
+		{if $fromuser}
+		<a href="{userurl($fromuser, 'file=space')}" rel="external"><img src="{useravatar($fromuser)}" width="24" height="24" class="avatar" align="absmiddle"/> &nbsp;<b class="f_gray">{if $fpassport}{$fpassport}{else}{$fromuser}{/if}</b></a>
+		{else}
+		<img src="{useravatar('')}" width="24" height="24" class="avatar" align="absmiddle"/> &nbsp;<b class="f_gray">系统消息</b>
+		{/if}
+	{elseif $status==2 ||  $status==1}
+		<a href="{userurl($touser, 'file=space')}" rel="external"><img src="{useravatar($touser)}" width="24" height="24" class="avatar" align="absmiddle"/> &nbsp;<b class="f_gray">{if $tpassport}{$tpassport}{else}{$touser}{/if}</b></a>
+	{elseif $groupids}
+		<img src="{useravatar('')}" width="24" height="24" class="avatar" align="absmiddle"/> &nbsp;<b>系统广播</b>
+	{/if}
+</div>
+<div class="content">{$content}</div>
+<div class="blank-16"></div>
+{if $status == 1}
+<div class="list-btn"><input type="button" value="修 改" class="btn-green" onclick="Go('?action=edit&itemid={$itemid}');"/></div>
+{elseif $status == 3 && $fromuser}
+<div class="list-btn"><input type="button" value="回 复" class="btn-green" onclick="Go('?action=send&touser={$fromuser}&title=RE:{urlencode($title)}');"/></div>
+{else}
+<div class="list-btn"><input type="button" value="确 定" class="btn-green" onclick="Go('?action={$menuid}&page={$page}');"/></div>
+{/if}
+<div class="blank-16"></div>
+<div class="list-btn"><input type="button" value="删 除" class="btn" onclick="if(confirm('确定要删除此信件吗？此操作不可撤销')) Go('?action=delete&recycle=0&itemid={$itemid}&forward={urlencode('?action=inbox')}');"/></div>
+<div class="blank-16"></div>
+{elseif $action == 'export'}
+<form method="post" action="?">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<div class="ui-form">
+<p>信件导出</p>
+<div>
+<label><input type="radio" value="3" name="post[status]" checked="checked"/> 收件箱</label>
+<label><input type="radio" value="2" name="post[status]" /> 已发送</label>
+<label><input type="radio" value="1" name="post[status]" /> 草稿箱</label>
+<label><input type="radio" value="4" name="post[status]" /> 回收站</label>
+</div>
+<p>起始时间</p>
+<div><input type="datetime-local" name="post[fromdate]" value="{str_replace(' ', 'T', $fromdate)}" id="fromdate" step="1"/></div>
+<p>截至时间</p>
+<div><input type="datetime-local" name="post[todate]" value="{str_replace(' ', 'T', $todate)}" id="todate" step="1"/></div>
+<div class="blank-16"></div>
+<div><label><input type="checkbox" value="1" name="post[isread]" /> 仅导出未读信件</label></div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="导 出" class="btn-blue"/>
+<div class="blank-16"></div>
+<input type="button" value="取 消" class="btn" onclick="Go('?action=index');"/>
+<div class="blank-16"></div>
+</div>
+</form>
+{elseif $action == 'empty'}
+<form method="post" action="?">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<div class="ui-form">
+<p>信件清理</p>
+<div>
+<label><input type="radio" value="3" name="post[status]" checked="checked"/> 收件箱</label>
+<label><input type="radio" value="2" name="post[status]" /> 已发送</label>
+<label><input type="radio" value="1" name="post[status]" /> 草稿箱</label>
+<label><input type="radio" value="4" name="post[status]" /> 回收站</label>
+</div>
+<p>起始时间</p>
+<div><input type="datetime-local" name="post[fromdate]" value="{str_replace(' ', 'T', $fromdate)}" id="fromdate" step="1"/></div>
+<p>截至时间</p>
+<div><input type="datetime-local" name="post[todate]" value="{str_replace(' ', 'T', $todate)}" id="todate" step="1"/></div>
+<div class="blank-16"></div>
+<div><label><input type="checkbox" value="1" name="post[isread]" checked/> 保留未读信件</label></div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="清 理" class="btn-red" onclick="if(!confirm('确定要清理吗？此操作将不可撤销')) return false;"/>
+<div class="blank-16"></div>
+<input type="button" value="取 消" class="btn" onclick="Go('?action=index');"/>
+<div class="blank-16"></div>
+</div>
+</form>
+{else}
+<div id="message-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+	<div class="ui-form-search">
+	<form action="?">
+	<input type="hidden" name="action" value="{$action}"/>
+	<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+	</form>
+	</div>
+</div>
+<div class="list-tab">
+	<ul>
+		<li{if $action=='inbox'} class="on"{/if}><a href="?action=inbox" data-transition="none"><span>收件箱</span></a></li>
+		<li{if $action=='outbox'} class="on"{/if}><a href="?action=outbox" data-transition="none"><span>已发送</span></a></li>
+		<li{if $action=='draft'} class="on"{/if}><a href="?action=draft" data-transition="none"><span>草稿箱</span></a></li>
+		<li{if $action=='recycle'} class="on"{/if}><a href="?action=recycle" data-transition="none"><span>回收站</span></a></li>
+	</ul>
+</div>
+{if $lists}
+<div id="list-{$js_pageid}" class="main">
+{loop $lists $v}
+<div class="ui-list-mix">
+{if $v[userurl]}<a href="{$v[userurl]}" rel="external">{/if}<img src="{useravatar($v[username], 'large')}" class="avatar" style="width:48px;height:48px;margin:0 16px 16px 8px;"/>{if $v[userurl]}</a>{/if}
+<a href="?action=show&itemid={$v[itemid]}&page={$page}"{if $v[feedback]}onclick="if(confirm('该信件请求发送已读回执，是否发送？')){ Go(this.href+'&feedback=1');return false;}"{/if}><strong{if !$v[isread] || $v[style]} style="{if $v[style]}color:#{$v[style]};{/if}{if !$v[isread]}font-weight:bold;{/if}"{/if}>{$v[title]}</strong></a>
+<p><i class="ui-ico-time ui-fr">{timetodate($v[addtime], 5)}</i>{if $v[user]}<i class="ui-ico-user">{$v[user]}</i>{/if}</p>
+</div>
+{/loop}
+</div>
+<div id="load-{$js_pageid}" class="ui-load"></div>
+{else}
+<div class="im-msg">暂无消息</div>
+{/if}
+{if $status==3}
+{if $MG[inbox_limit]}
+<div class="limit">收件箱容量 <span class="f_b f_red">{$MG[inbox_limit]}</span> 条&nbsp;&nbsp;&nbsp;当前接收 <span class="f_b">{$limit_used}</span> 条&nbsp;&nbsp;&nbsp;还可以接收 <span class="f_b f_blue">{$limit_free}</span> 条&nbsp;&nbsp;&nbsp;建议定期删除无用信件</div>
+{/if}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{/if}
+{template 'footer',$module}

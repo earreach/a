@@ -1,0 +1,10 @@
+<?php exit;?>
+sid,ID,
+moduleid,模块ID,
+itemid,信息ID,
+comment,评论ID,
+star1,1星,
+star2,2星,
+star3,3星,
+star4,4星,
+star5,5星,

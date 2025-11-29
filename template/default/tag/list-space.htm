@@ -1,0 +1,17 @@
+{loop $tags $k $t}
+{if $t[thumb]}
+<div class="space-mix">
+<a href="{$t[linkurl]}" target="_blank"><img src="{$t[thumb]}" alt=""/></a>
+<ul>
+<li><a href="{$t[linkurl]}" target="_blank"><strong>{$t[title]}</strong></a></li>
+<li><p><i class="ui-ico-comm ui-fr">{if $module=='club'}{$t[reply]}回复{elseif $module=='know'}{$t[answer]}回答{else}{$t[comments]}评论{/if}</i><i class="ui-ico-time">{timetodate($t[addtime], 3)}</i></p></li>
+</ul>
+</div>
+{else}
+<div class="space-txt">
+<a href="{$t[linkurl]}" target="_blank"><strong>{$t[title]}</strong></a>
+{if $t[introduce]}<div>{$t[introduce]}</div>{/if}
+<p><i class="ui-ico-comm ui-fr">{if $module=='club'}{$t[reply]}回复{elseif $module=='know'}{$t[answer]}回答{else}{$t[comments]}评论{/if}</i><i class="ui-ico-time">{timetodate($t[addtime], 3)}</i><i class="ui-ico-hits">{$t[hits]}</i></p>
+</div>
+{/if}
+{/loop}

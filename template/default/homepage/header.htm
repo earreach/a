@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="{DT_CHARSET}"/>
+<title>{if $seo_title}{$seo_title}{else}{if $head_title}{$head_title}{$DT[seo_delimiter]}{/if}{$COM[company]}{/if}</title>
+{if $head_keywords}<meta name="keywords" content="{$head_keywords}"/>{/if}
+{if $head_description}<meta name="description" content="{$head_description}"/>{/if}
+<meta name="generator" content="DESTOON - www.destoon.com"/>
+<meta http-equiv="x-ua-compatible" content="IE=8"/>
+<meta name="template" content="{$template}"/>
+{if $head_mobile}
+<meta http-equiv="mobile-agent" content="format=html5;url={$head_mobile}">
+{/if}
+{if $head_canonical}
+<link rel="canonical" href="{$head_canonical}"/>
+{/if}
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}homepage.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<link rel="stylesheet" type="text/css" href="{$HSPATH}style.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<script type="text/javascript" src="{DT_PATH}lang/{DT_LANG}/lang.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_PATH}file/script/config.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{if strpos($DT_MBS, 'IE') === false}
+<script type="text/javascript" src="{DT_STATIC}script/jquery-3.6.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{else}
+<script type="text/javascript" src="{DT_STATIC}script/jquery-1.12.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{/if}
+<script type="text/javascript" src="{DT_STATIC}script/common.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_STATIC}script/page.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_STATIC}script/homepage.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{if $lazy}<script type="text/javascript" src="{DT_STATIC}script/jquery.lazyload.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>{/if}
+<script type="text/javascript">
+{if $itemid && $DT[anticopy]}
+document.oncontextmenu=function(e){return false;};
+document.onselectstart=function(e){return false;};
+{/if}
+</script>
+{if $css}<style type="text/css">{$css}</style>{/if}
+</head>
+<body{if $bgcolor || $background} style="background:{if $bgcolor}{$bgcolor}{/if}{if $background}url('{$background}') no-repeat center 0{/if};"{/if}>
+<div class="top" id="top">
+	<div class="m">
+		<span class="f_r">
+		<img src="{DT_SKIN}user.png" align="absmiddle"/>
+		{if $_userid}
+		<a href="{$MODULE[2][linkurl]}" onmouseover="Dcard('member',this);">{if $_truename}{$_truename}{elseif $_passport}{$_passport}{else}{$_username}{/if}</a><i>|</i><a href="{$MODULE[2][linkurl]}">会员中心</a><i>|</i>{if $DT[max_cart]>0}<a href="{$MODULE[2][linkurl]}order.php">我的订单</a><i>|</i>{/if}<a href="{$MODULE[2][linkurl]}message.php" onmouseover="Dcard('message',this);">站内信{if $_message} (<span class="f_red">{if $_message>99}99+{else}{$_message}{/if}</span>){/if}</a>{if $DT[im_web]}<i>|</i><a href="{$MODULE[2][linkurl]}im.php" onmouseover="Dcard('chat',this);">新交谈{if $_chat} (<span class="f_red">{if $_chat>99}99+{else}{$_chat}{/if}</span>){/if}</a>{/if}<i>|</i><a href="{$MODULE[2][linkurl]}home.php">管理入口</a><i>|</i><a href="{$MODULE[2][linkurl]}logout.php">退出登录</a>
+		{else}
+		<a href="{$MODULE[2][linkurl]}{$DT[file_login]}">会员登录</a><i>|</i><a href="{$MODULE[2][linkurl]}{$DT[file_register]}">免费注册</a><i>|</i><a href="{$MODULE[2][linkurl]}send.php">忘记密码</a><i>|</i><a href="{$MODULE[2][linkurl]}home.php">管理入口</a>
+		{/if}
+		</span>
+		<a href="{DT_PATH}">返回主站</a><i>|</i><script type="text/javascript">addFav('收藏本页');</script><i>|</i><a href="{DT_PATH}api/shortcut.php?itemid={$userid}">保存桌面</a>{if $head_mobile}<i>|</i><a href="javascript:Dqrcode();">手机浏览</a>{/if}<i>|</i><a href="{userurl($username, 'file=contact', $domain)}">联系方式</a>{if $DT[max_cart]>0}<i>|</i><a href="{$MODULE[2][linkurl]}cart.php" onmouseover="Dcard('cart',this);">购物车{if $_cart > 0}(<span class="f_red">{$_cart}</span>){/if}</a>{/if}
+	</div>
+</div>
+<div id="destoon-card"></div>
+{if $head_mobile}<div id="destoon-qrcode" style="display:none;"></div>{/if}
+<div class="m">
+{if $COM[vip]}
+<div class="sign-vip"><img src="{DT_SKIN}vip_{$COM[vip]}.gif" alt="{VIP}" title="{VIP}:{$COM[vip]}/10" align="absmiddle"/> &nbsp; <b>{$UG[groupname]}</b><span>第{$COM[year]}年</span></div>
+{else}
+<div class="sign-com"><b>{$UG[groupname]}</b><span>第{$COM[year]}年</span></div>
+{/if}
+<div class="head">
+{if $logo}<div class="logo"><a href="{$COM[linkurl]}"><img src="{$logo}" alt="{$COM[company]}"/></a></div>{/if}
+<div>
+<h1>
+<a href="{$COM[linkurl]}">{if $COM[shop] && $COM[vshop]}{$COM[shop]}{else}{$COM[company]}{/if}</a> &nbsp; 
+{if $DT[follow]}
+{if followed($COM[userid])}
+<div class="follow1" onclick="Dfollow('{$username}');" id="follow-{$username}" title="已关注，点击取消"><b>已关注</b><i>{numtoread($COM[fans])}</i></div>
+{else}
+<div class="follow0" onclick="Dfollow('{$username}');" id="follow-{$username}" title="未关注，点击关注"><b>加关注</b><i>{numtoread($COM[fans])}</i></div>
+{/if}
+{/if}
+</h1>
+{if $UG[type]}
+<a href="{userurl($username, 'file=introduce', $domain)}"><h4>{if $COM[business]}{$COM[business]}{else}没有填写主营业务~~{/if}</h4></a>
+{else}
+<a href="{userurl($username, 'file=introduce', $domain)}"><h4>{if $COM[sign]}{$COM[sign]}{else}没有留下签名~~{/if}</h4></a>
+{/if}
+</div>
+</div>
+</div>
+<div class="m">
+<div class="menu" id="menu">
+	<ul>
+	<li class="{if $file=='homepage'}menu_on{else}menu_li{/if}"><a href="{$COM[linkurl]}"><span>网站首页</span></a></li>
+	{loop $MENU $k $v}
+	<li class="{if $file==$k}menu_on{else}menu_li{/if}"><a href="{$v[linkurl]}"><span>{$v[name]}</span></a></li>
+	{/loop}
+	</ul>
+</div>
+</div>
+{if $file == 'homepage'}
+{if $bannert || $banner}
+<div class="m">
+<div class="banner">
+{if $bannert == 2}
+<div id="slide_banner" style="width:{$bannerw}px;height:{$bannerh}px;background:#FAFAFA;overflow:hidden;">
+{if $banner1}{if $bannerlink1}<a href="{$bannerlink1}" target="_blank">{else}<a href="{$COM[linkurl]}">{/if}<img src="{$banner1}" width="{$bannerw}" height="{$bannerh}" alt=""/></a>{/if}
+{if $banner2}{if $bannerlink2}<a href="{$bannerlink2}" target="_blank">{else}<a href="{$COM[linkurl]}">{/if}<img src="{$banner2}" width="{$bannerw}" height="{$bannerh}" alt=""/></a>{/if}
+{if $banner3}{if $bannerlink3}<a href="{$bannerlink3}" target="_blank">{else}<a href="{$COM[linkurl]}">{/if}<img src="{$banner3}" width="{$bannerw}" height="{$bannerh}" alt=""/></a>{/if}
+{if $banner4}{if $bannerlink4}<a href="{$bannerlink4}" target="_blank">{else}<a href="{$COM[linkurl]}">{/if}<img src="{$banner4}" width="{$bannerw}" height="{$bannerh}" alt=""/></a>{/if}
+{if $banner5}{if $bannerlink5}<a href="{$bannerlink5}" target="_blank">{else}<a href="{$COM[linkurl]}">{/if}<img src="{$banner5}" width="{$bannerw}" height="{$bannerh}" alt=""/></a>{/if}
+</div>
+{load('slide.js')}
+<script type="text/javascript">$(function(){new dslide('slide_banner');});</script>
+{elseif $bannert == 1}
+{load('player.js')}
+<script type="text/javascript">document.write(player('{$bannerf}',{$bannerw},{$bannerh},0));</script>
+{elseif $banner}
+<img src="{$banner}" width="100%"/>
+{/if}
+</div>
+</div>
+{/if}
+{/if}
+<div class="m">
+	<div class="pos" id="pos">
+		<div class="nvs">
+		<form action="{$MODULE[4][linkurl]}index.php">
+		<input type="hidden" name="homepage" value="{$username}"/>
+		<select name="file" class="dsn">
+		{loop $MENU $k $v}
+		{if !in_array($k, array('contact', 'introduce'))}<option value="{$k}"{if $file==$k} selected{/if}>{$v[name]}</option>{/if}
+		{/loop}
+		</select>
+		<input type="search" name="kw" value="{$kw}" placeholder="输入关键词搜索"/>
+		<s onclick="$(this).parent().submit();">搜索</s>
+		</form>
+		</div>
+		<span id="position"></span>
+	</div>
+</div>
+<div class="m">
+<table cellpadding="0" cellspacing="0" width="100%">
+<tr>
+{if $side_pos==0}
+<td width="{$side_width}" valign="top" id="side">{template 'side', $template}</td>
+<td width="10" id="split"></td>
+{/if}
+<td valign="top" id="main">

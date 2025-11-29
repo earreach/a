@@ -1,0 +1,62 @@
+</td>
+</tr>
+</table>
+</div>
+<!--[以下为系统关键代码，请勿删除]-->
+<div class="back2top"><a href="javascript:void(0);" title="返回顶部">&nbsp;</a></div>
+{if strpos($DT_MBS, 'IE') === false}{load('notification.js')}{/if}
+<script type="text/javascript">
+$(function(){
+	Msize();
+	$(window).resize(function() {
+		Msize();
+	});
+	$('#head').click(function(e) {
+		if(e.target.nodeName == 'DIV') $('html, body').animate({scrollTop:0}, 200);
+	});
+	setTimeout(function() {
+		if($('.sbt').length && $(document).height() > $(window).height()) {$('.sbt').attr('class', 'sbt sbt-fix');$('#main').append('<br/><br/><br/><br/>');}
+		if($('.btns').length && $(document).height() > $(window).height()) {$('.btns').last().attr('class', 'btns btns-fix');$('#main').append('<br/><br/><br/><br/>');}
+		if((get_local('m_side') == 'Y' && Dd('side_oh').className == 'side_h') || window.self != window.top) {Dh('side');Dd('side_oh').className = 'side_s';$('.sbt-fix,.btns-fix').css('left', '-6px');}
+	}, 300);
+	if(window.self != window.top) {
+		$('#head,#side,#side_oh,#destoon-space').hide();
+		$('.main').css('padding', '10px 0 0 10px');
+	}
+	{if $_cid == 0}
+	var destoon_message = {$_message};
+	var destoon_chat = {$_chat};
+	{if $_message && $_sound}
+	if(window.location.href.indexOf('message.php') == -1) $('#destoon-space').html(sound('message_{$_sound}'));
+	{/if}
+	{if $_chat && $_sound}
+	if(window.location.href.indexOf('im.php') == -1 && window.location.href.indexOf('chat.php') == -1) $('#destoon-space').html(sound('chat_new'));
+	{/if}
+	{if $_message && strpos($DT_MBS, 'IE') === false}
+	Dnotification('new_message', '{$MODULE[2][linkurl]}message.php', '{useravatar($_username, 'large')}', '站内信 ({$_message})', '收到新的站内信件，点击查看');
+	{/if}
+	{if $_chat && strpos($DT_MBS, 'IE') === false}
+	Dnotification('new_chat', '{$MODULE[2][linkurl]}im.php', '{useravatar($_username, 'large')}', '新交谈 ({$_chat})', '收到新的对话请求，点击交谈');
+	{/if}
+	{if $DT[max_cart]}
+	destoon_cart = get_cart();
+	if(destoon_cart > 0) {
+		$('#destoon_cart em').html(destoon_cart > 0 ? (destoon_cart > 99 ? '99+' : destoon_cart) : '');
+		$('#destoon_cart em').show();
+	}
+	{/if}
+	{if $_userid && $DT[pushtime]}
+	window.setInterval('PushNew()',{$DT[pushtime]}*1000);
+	{/if}
+	{/if}
+	{if $destoon_task}
+	Dtask('{$destoon_task}', {$DT[stats]});
+	{else}
+	{if $DT[stats]}
+	{php include load('api/stats.inc');}
+	{/if}
+	{/if}
+});
+</script>
+</body>
+</html>

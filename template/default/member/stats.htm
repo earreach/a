@@ -1,0 +1,354 @@
+{template 'header', 'member'}
+<div class="menu">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="tab" id="index"><a href="?action=index"><span>流量统计</span></a></td>
+<td class="tab" id="record"><a href="?action=record"><span>浏览记录</span></a></td>
+<td class="tab" id="report"><a href="?action=report"><span>统计报表</span></a></td>
+</tr>
+</table>
+</div>
+{if $action=='report'}
+<div class="tt">
+<form action="?">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="job" value="{$job}"/>
+{if in_array($job, array('domain', 'username', 'itemid'))}
+{if $module_select}{$module_select}&nbsp; {/if}
+{dcalendar('fromdate', $fromdate, '-', 1)} 至 {dcalendar('todate', $todate, '-', 1)}&nbsp;
+{else}
+截至日期 {dcalendar('todate', $todate)}&nbsp;
+{/if}
+<input type="submit" value=" 生 成 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?action={$action}&job={$job}');"/><br/>
+</form>
+</div>
+<div class="nav">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="{if $job=='pv'}nav_2{else}nav_1{/if}"><a href="?action={$action}&job=pv">流量趋势</a></td>
+<td class="{if $job=='ip'}nav_2{else}nav_1{/if}"><a href="?action={$action}&job=ip">IP趋势</a></td>
+<td class="{if $job=='rb'}nav_2{else}nav_1{/if}"><a href="?action={$action}&job=rb">抓取频次</a></td>
+<td class="{if $job=='domain'}nav_2{else}nav_1{/if}"><a href="?action={$action}&job=domain">外部链接</a></td>
+<td class="{if $job=='username'}nav_2{else}nav_1{/if}"><a href="?action={$action}&job=username">活跃会员</a></td>
+<td class="{if $job=='itemid'}nav_2{else}nav_1{/if}"><a href="?action={$action}&job=itemid">信息排行</a></td>
+</tr>
+</table>
+</div>
+{load('echarts.min.js')}
+{if $job == 'pv'}
+<div id="chart" style="width:90%;height:400px;margin:16px;"></div>
+<script type="text/javascript">
+var chart = echarts.init(Dd('chart'));
+var option = {
+    title: {
+        text: '流量趋势'
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data: ['总PV', '电脑PV', '手机PV']
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    toolbox: {
+        feature: {
+            saveAsImage: {}
+        }
+    },
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: [{$data}]
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [
+        {
+            name: '总PV',
+            type: 'line',
+            data: [{$pv}]
+        },
+        {
+            name: '电脑PV',
+            type: 'line',
+            data: [{$pv_pc}]
+        },
+        {
+            name: '手机PV',
+            type: 'line',
+            data: [{$pv_mb}]
+        }
+    ]
+};
+chart.setOption(option);
+</script>
+{elseif $job == 'ip'}
+<div id="chart" style="width:90%;height:400px;margin:16px;"></div>
+<script type="text/javascript">
+var chart = echarts.init(Dd('chart'));
+var option = {
+    title: {
+        text: 'IP趋势'
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data: ['总IP', '电脑IP', '手机IP']
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    toolbox: {
+        feature: {
+            saveAsImage: {}
+        }
+    },
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: [{$data}]
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [
+        {
+            name: '总IP',
+            type: 'line',
+            data: [{$ip}]
+        },
+        {
+            name: '电脑IP',
+            type: 'line',
+            data: [{$ip_pc}]
+        },
+        {
+            name: '手机IP',
+            type: 'line',
+            data: [{$ip_mb}]
+        }
+    ]
+};
+chart.setOption(option);
+</script>
+{elseif $job == 'rb'}
+<div id="chart" style="width:90%;height:400px;margin:16px;"></div>
+<script type="text/javascript">
+var chart = echarts.init(Dd('chart'));
+var option = {
+    title: {
+        text: '抓取频次'
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data: ['总PV', '电脑PV', '手机PV']
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    toolbox: {
+        feature: {
+            saveAsImage: {}
+        }
+    },
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: [{$data}]
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [
+        {
+            name: '总PV',
+            type: 'line',
+            data: [{$rb}]
+        },
+        {
+            name: '电脑PV',
+            type: 'line',
+            data: [{$rb_pc}]
+        },
+        {
+            name: '手机PV',
+            type: 'line',
+            data: [{$rb_mb}]
+        }
+    ]
+};
+chart.setOption(option);
+</script>
+{elseif in_array($job, array('domain', 'username', 'itemid'))}
+<div id="chart" style="width:90%;height:{$height}px;margin:16px;"></div>
+<script type="text/javascript">
+var chart = echarts.init(Dd('chart'));
+var option = {
+	color: ['#61A0A8'],
+    title: {
+        text: '',
+        subtext: ''
+    },
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'shadow'
+        }
+    },
+    grid: {
+		top: '16px;',
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    xAxis: {
+        type: 'value',
+        boundaryGap: [0, 0.01]
+    },
+    yAxis: {
+        type: 'category',
+        data: [{$xd}]
+    },
+    series: [
+        {
+            type: 'bar',
+            data: [{$yd}]
+        }
+    ]
+};
+chart.setOption(option);
+chart.on('click', function(e) {
+	if(e.data.url) {
+		if(e.data.url.substring(0, 1) == '?') {
+			Go(e.data.url);
+		} else {
+			window.open(e.data.url);
+		}
+	}
+});
+</script>
+{/if}
+<script type="text/javascript">s('stats');m('report');</script>
+{elseif $action == 'record'}
+<form action="?" id="search">
+<input type="hidden" name="action" value="{$action}"/>
+<div class="tt">
+{$fields_select}&nbsp;
+<input type="text" size="30" name="kw" value="{$kw}" placeholder="请输入关键词" title="请输入关键词"/>&nbsp;
+<span data-hide-1200="1">{dcalendar('fromdate', $fromdate, '-', 1)} 至 {dcalendar('todate', $todate, '-', 1)}&nbsp;</span>
+<select name="robot">
+<option value="">搜索引擎</option>
+<option value="all"{if $robot == 'all'} selected{/if}>全部爬虫</option>
+{loop $L[robot] $k $v}
+<option value="{$k}"{if $robot == $k} selected{/if}>{$v}</option>
+{/loop}
+</select>&nbsp;
+<select name="pc">
+<option value="-1">设备</option>
+<option value="1"{if $pc == 1} selected{/if}>电脑</option>
+<option value="0"{if $pc == 0} selected{/if}>手机</option>
+</select>&nbsp;
+<select name="islink">
+<option value="-1">链接</option>
+<option value="1"{if $islink == 1} selected{/if}>外链</option>
+<option value="0"{if $islink == 0} selected{/if}>内链</option>
+</select>&nbsp;
+{$module_select}&nbsp;
+<span data-hide-1400="1"><input type="text" name="itemid" value="{$itemid}" size="10" class="t_c" title="信息ID" placeholder="信息ID"/>&nbsp;</span>
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?action={$action}');"/>
+</div>
+</form>
+<form method="post">
+<div class="ls">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="150">时间</th>
+<th>网址</th>
+<th data-hide-1200="1">来源</th>
+<th>IP地区</th>
+<th>会员名</th>
+<th data-hide-1200="1" data-hide-1400="1">设备</th>
+<th data-hide-1200="1" data-hide-1400="1">爬虫</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><a href="javascript:;" onclick="Dq('date', this.innerHTML);">{$v[addtime]}</a></td>
+<td title="{$v[url]}"><input type="text" size="50" value="{$v[url]}"/> <a href="{$v[url]}" target="_blank"><img src="{DT_STATIC}image/ico-link.png" width="11" height="11" title="点击打开网址" alt="" align="absmiddle"/></a></td>
+<td data-hide-1200="1" title="{$v[refer]}"><input type="text" size="50" value="{$v[refer]}"/> <a href="{if $v[refer]}{$v[refer]}{else}###{/if}"{if $v[refer]} target="_blank"{/if}><img src="{DT_STATIC}image/ico-link.png" width="11" height="11" title="点击打开网址" alt="" align="absmiddle"/></a></td>
+<td>{ip2area($v[ip], 2)}</td>
+<td><a href="{userurl($v[username])}" target="_blank">{$v[username]}</a></td>
+<td data-hide-1200="1" data-hide-1400="1">{if $v[pc]}电脑{else}手机{/if}</td>
+<td data-hide-1200="1" data-hide-1400="1">{if $v[robot]}<img src="{DT_STATIC}image/robot-{$v[robot]}.gif" title="{$L[robot][$v[robot]]}"/>{/if}</td>
+</tr>
+{/loop}
+</table>
+</div>
+</form>
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('stats');m('record');</script>
+{else}
+<form action="?">
+<input type="hidden" name="action" value="{$action}"/>
+<div class="tt">
+{dcalendar('fromdate', $fromdate)} 至 {dcalendar('todate', $todate)}&nbsp;
+{$order_select}&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?action={$action}');"/>
+</div>
+</form>
+<form method="post">
+<div class="ls">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="150">日期</th>
+<th width="150">星期</th>
+<th>总IP</th>
+<th>电脑IP</th>
+<th>手机IP</th>
+<th>总PV</th>
+<th>电脑PV</th>
+<th>手机PV</th>
+<th>爬虫PV</th>
+<th>电脑PV</th>
+<th>手机PV</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><a href="?action=record&fromdate={$v[date]} 00:00:00&todate={$v[date]} 23:23:59" class="t">{$v[date]}</a></td>
+<td>{$v[week]}</td>
+<td bgcolor="#F9F9F9"><a href="?action=record&fromdate={$v[date]} 00:00:00&todate={$v[date]} 23:23:59">{$v[ip]}</a></td>
+<td><a href="?action=record&fromdate={$v[date]} 00:00:00&todate={$v[date]} 23:23:59&pc=1">{$v[ip_pc]}</a></td>
+<td><a href="?action=record&fromdate={$v[date]} 00:00:00&todate={$v[date]} 23:23:59&pc=0">{$v[ip_mb]}</a></td>
+<td bgcolor="#F9F9F9"><a href="?action=record&fromdate={$v[date]} 00:00:00&todate={$v[date]} 23:23:59">{$v[pv]}</a></td>
+<td><a href="?action=record&fromdate={$v[date]} 00:00:00&todate={$v[date]} 23:23:59&pc=1">{$v[pv_pc]}</a></td>
+<td><a href="?action=record&fromdate={$v[date]} 00:00:00&todate={$v[date]} 23:23:59&pc=0">{$v[pv_mb]}</a></td>
+<td bgcolor="#F9F9F9"><a href="?action=record&fromdate={$v[date]} 00:00:00&todate={$v[date]} 23:23:59&robot=all">{$v[rb]}</a></td>
+<td><a href="?action=record&fromdate={$v[date]} 00:00:00&todate={$v[date]} 23:23:59&robot=all&pc=1">{$v[rb_pc]}</a></td>
+<td><a href="?action=record&fromdate={$v[date]} 00:00:00&todate={$v[date]} 23:23:59&robot=all&pc=0">{$v[rb_mb]}</a></td>
+</tr>
+{/loop}
+</table>
+</div>
+</form>
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('stats');m('index');</script>
+{/if}
+{template 'footer', 'member'}

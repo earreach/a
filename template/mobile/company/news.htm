@@ -1,0 +1,53 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">企业新闻</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="javascript:Dmenu('news-{$js_pageid}');">新闻搜索</a>
+<a href="{$MOD[mobile]}" data-direction="reverse">{$MOD[name]}首页</a>
+<a href="{DT_MOB}channel.php" data-direction="reverse">切换频道</a>
+</div>
+</div>
+
+<div id="news-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="news.php" data-ajax="false">
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+</div>
+
+{if $tags}
+<div id="list-{$js_pageid}" class="main">
+{loop $tags $k $t}
+{if $t[thumb]}
+<div class="ui-list-mix">
+<a href="{$t[linkurl]}"><img src="{$t[thumb]}" alt=""/></a>
+<ul>
+<li><a href="{$t[linkurl]}"><strong>{$t[title]}</strong></a></li>
+<li><p><i class="ui-ico-hits ui-fr">{$t[hits]}</i><i class="ui-ico-time">{timetodate($t[addtime], 3)}</i></p></li>
+</ul>
+</div>
+{else}
+<div class="ui-list-txt">
+<a href="{$t[linkurl]}"><strong>{$t[title]}</strong></a>
+<p><i class="ui-ico-hits ui-fr">{$t[hits]}</i><i class="ui-ico-time">{timetodate($t[addtime], 3)}</i></p>
+</div>
+{/if}
+{/loop}
+</div>
+<div id="load-{$js_pageid}" class="ui-load"></div>
+{else}
+{template 'empty', 'chip'}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{template 'footer'}

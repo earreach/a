@@ -1,0 +1,101 @@
+{template 'header', 'member'}
+<div class="menu">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="tab" id="add"><a href="?action=add"><span>添加收藏</span></a></td>
+<td class="tab" id="s3"><a href="?action=index"><span>我的收藏</span></a></td>
+<td class="tab"><a href="javascript:;" onclick="Dwidget('type.php?item=favorite', '收藏分类', 1000, 600);"><span>收藏分类</span></a></td>
+</tr>
+</table>
+</div>
+<script type="text/javascript">var errimg = '{DT_STATIC}image/nopic50.png';</script>
+{if $action == 'edit' || $action == 'add'}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<table cellspacing="1" cellpadding="5" class="tb">
+<tr>
+<td class="tl">分类</td>
+<td class="tr"><span id="type_box">{$type_select}</span>&nbsp; <a href="javascript:var type_item='favorite-{$_userid}',type_name='post[typeid]',type_default='{$L[default_type]}',type_id={$typeid},type_interval=setInterval('type_reload()',500);Dwidget('type.php?item=favorite', '收藏分类', 1000, 600);" ><img src="{DT_STATIC}image/ico-add.png" width="11" height="11" title="管理分类"/></a></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 标题</td>
+<td class="tr"><input type="text" size="45" name="post[title]" id="title" value="{$title}"/> {dstyle('post[style]', $style)} <span id="dtitle" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 网址</td>
+<td class="tr"><input type="text" size="70" name="post[url]" id="url" value="{$url}"/> <span id="durl" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">备注</td>
+<td class="tr"><input type="text" size="70" name="post[note]" id="note" value="{$note}"/></td>
+</tr>
+<tr>
+<td class="tl">排序</td>
+<td class="tr f_gray"><input type="text" size="3" name="post[listorder]" id="listorder" value="{$listorder}"/> 请填写数字，数字越大越靠前</td>
+</tr>
+</table>
+<div class="sbt"><input type="submit" name="submit" value="{if $action=='add'}添 加{else}修 改{/if}" class="btn_g"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="取 消" class="btn" onclick="history.back(-1);"/></div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('title').value.length < 2) {
+		Dmsg('请填写标题', 'title');
+		return false;
+	}
+	if(Dd('url').value.length < 12) {
+		Dmsg('请填写网址', 'url');
+		return false;
+	}
+	return true;
+}
+</script>
+<script type="text/javascript">s('favorite');m({if $action=='add'}'add'{else}'s3'{/if});</script>
+{else}
+<form action="?" id="search">
+<div class="tt">
+&nbsp;{$fields_select}&nbsp;
+<input type="text" size="30" name="kw" value="{$kw}" title="关键词" placeholder="关键词"/>&nbsp;
+{dcalendar('fromdate', $fromdate, '-', 1)} 至 {dcalendar('todate', $todate, '-', 1)}&nbsp;
+{$type_select}&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?');"/>
+</div>
+</form>
+<form method="post">
+<div class="ls">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="20"><input type="checkbox" onclick="checkall(this.form);" title="全选/反选"/></th>
+<th width="60">图片</th>
+<th>标题</th>
+<th width="150">分类</th>
+<th width="150">收藏时间</th>
+<th width="180">备注</th>
+<th width="40">修改</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><input type="checkbox" name="itemid[]" value="{$v[itemid]}"/></td>
+<td><a href="{$v[linkurl]}" target="_blank"><img src="{$v[thumb]}" width="48" height="48" onerror="this.src=errimg;"/></a></td>
+<td align="left"><a href="{$v[linkurl]}" target="_blank" class="t">{$v[title]}</a></td>
+<td><a href="javascript:;" onclick="Dq('typeid', {$v[typeid]});">{$v[type]}</a></td>
+<td class="f_gray c_p" onclick="Dq('date', this.title);" title="{$v[adddate]}">{timetoread($v[addtime], 5)}</td>
+<td title="{$v[note]}"><input type="text" size="20" name="post[{$v[itemid]}][note]" value="{$v[note]}"/></td>
+<td><a href="?action=edit&itemid={$v[itemid]}"><img width="16" height="16" src="{DT_STATIC}member/edit.png" title="修改" alt=""/></a></td>
+</tr>
+{/loop}
+</table>
+<div class="btns">
+<label><input type="checkbox" onclick="checkall(this.form);" title="全选/反选"/></label>
+<input type="submit" value=" 删除记录 " class="btn_r" onclick="if(confirm('确定要删除选中记录吗？')){this.form.action='?action=delete'}else{return false;}"/>&nbsp;&nbsp;
+</div>
+</form>
+<div class="pages">{$pages}</div>
+{if $MG[favorite_limit]}
+<div class="limit">收藏夹容量 <span class="f_b f_red">{$MG[favorite_limit]}</span> 条&nbsp;&nbsp;&nbsp;当前已收藏 <span class="f_b">{$limit_used}</span> 条&nbsp;&nbsp;&nbsp;还可以收藏 <span class="f_b f_blue">{$limit_free}</span> 条</div>
+{/if}
+<script type="text/javascript">s('favorite');m('s3');</script>
+{/if}
+{template 'footer', 'member'}

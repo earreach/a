@@ -1,0 +1,17 @@
+{if $lists}
+<p class="rec"><a href="javascript:;" onclick="if(confirm('确定要清空所有搜索记录吗？')) DsDel();" title="清空记录"><i><img src="{DT_SKIN}ico-delete.png" width="16" height="16"/></i></a><b>最近搜索</b></p>
+<div>
+{loop $lists $v}
+<span onclick="DsKW('{$v}');">{$v}</span>
+{/loop}
+</div>
+{/if}
+{if $tags}
+<p class="hot">{if $EXT[spread_enable]}<a href="{$EXT[spread_url]}" title="排名推广"><i><img src="{DM_SKIN}ico-spread.png" width="16" height="16"/></i></a>{else}<a href="{$MODULE[$mid][linkurl]}search.php" title="高级搜索"><i><img src="{DT_SKIN}ico-filter.png" width="16" height="16"/></i></a>{/if}<b>热门搜索</b></p>
+<div>
+{loop $tags $v}
+<span onclick="DsKW('{$v}');">{$v}</span>
+{/loop}
+{else}
+</div>
+{/if}

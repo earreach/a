@@ -1,0 +1,74 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{if $typeid}{$TYPE[$typeid]}{else}广告中心{/if}</div>
+<div class="head-bar-right"><a href="javascript:Dmenu('{$ext}-{$js_pageid}');"><img src="{DM_SKIN}icon-action{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div id="{$ext}-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="{$mob}index.php">
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+<div class="list-set">
+<ul>
+<li><div><a href="{$MODULE[2][mobile]}ad.php" rel="external">我的广告</a></div></li>
+{loop $TYPE $k $v}
+{if $k}<li{if $typeid==$k} style="background:#F6F6F6;"{/if}><div><a href="{$mob}{list_url($k)}">{$v}</a></div></li>{/if}
+{/loop}
+</ul>
+</div>
+<div class="blank-36 bd-b"></div>
+</div>
+{if $itemid}
+<div class="content">
+<strong>{$title}</strong><br/>
+{if $ad_moduleid}
+	{ad($ad_moduleid,$ad_catid,$ad_kw,$typeid)}
+{elseif $pid}
+	{ad($pid)}
+{/if}
+<span class="f_gray px12">以上为广告效果预览，如未看到任何内容，表明此广告为空或不可预览</span>
+{if $MOD[ad_buy]}
+<div class="blank-16"></div>
+<a href="{$MODULE[2][mobile]}ad.php?action=add&pid={$pid}" rel="external"><div class="btn-green">预定此广告</div></a>
+<div class="blank-16"></div>
+{/if}
+</div>
+{else}
+{if $lists}
+<div id="list-{$js_pageid}" class="main">
+{loop $lists $v}
+<div class="ui-list-txt">
+<a href="{$mob}{show_url($v[pid])}" rel="external"><strong>{$v[name]}</strong></a>
+<p>
+<i class="ui-ico-price">
+{if $v[prices]}
+	{if count($v[prices]) == 1}
+	{loop $v[prices] $kk $vv}
+	<span class="f_orange">{$vv}{$unit}/{$PTYPE[$kk]}</span>
+	{/loop}
+	{else}
+	<select>
+	{loop $v[prices] $kk $vv}
+	<option>{$vv}{$unit}/{$PTYPE[$kk]}</option>
+	{/loop}
+	</select>
+	{/if}
+{else}
+	<span class="f_gray">面议</span>
+{/if}
+</i><i class="ui-ico-info ui-fr">{$v[typename]}</i></p>
+</div>
+{/loop}
+<div id="load-{$js_pageid}" class="ui-load"></div>
+{else}
+{template 'empty', 'chip'}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{/if}
+{template 'footer'}

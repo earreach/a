@@ -1,0 +1,10 @@
+<div class="order-t bd-b bd-t">
+<em>{$dservice_status[$O[status]]}</em>{$dservice[$O[typeid]]}</a>
+</div>
+<div class="list-img">
+<a href="{$O[linkurl]}"><img src="{if $O[thumb]}{$O[thumb]}{else}{DM_SKIN}60x60.png{/if}" width="60" height="60" alt="" onerror="this.src='{DM_SKIN}60x60.png';"/></a>
+<ul>
+<li><a href="{$O[linkurl]}"><strong>{$O[title]}</strong></a></li>
+<li><i>实付：{$DT[money_sign]}{$O[amount]}</i><span>{$DT[money_sign]}{$O[price]}x{$O[number]}</span></li>
+</ul>
+</div>

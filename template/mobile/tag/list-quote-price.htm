@@ -1,0 +1,9 @@
+{loop $tags $t}
+<div class="ui-list-mix">
+<ul>
+<li>{if $t[market]}<span class="ui-fr f_grey">{$MARKET[$t[market]]} &nbsp; </span>{/if}<strong style="font-size:24px;color:#1DAA39;">{$DT[money_sign]}{$t[price]}</strong></li>
+<li><a href="{userurl($t[username], 'file=contact')}" rel="external"><b>{$t[company]}</b></a></li>
+<li><p><i class="ui-ico-area">{area_pos($t[areaid], '', 2)}</i><i class="ui-ico-time ui-fr">{timetodate($t[addtime], 5)}</i></p></li>
+</ul>
+</div>
+{/loop}

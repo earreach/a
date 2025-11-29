@@ -1,0 +1,533 @@
+{template 'header', 'member'}
+{if $action == 'grade' || $action == 'vip'}
+<style>
+.member {height:96px;background:#26282A;background:linear-gradient(to right,#26282A,#A97843);padding:16px 0;}
+.member img {height:64px;width:64px;margin:16px 16px;float:left;border-radius:50%;}
+.member ul {padding:16px 0;}
+.member li {line-height:32px;color:#999999;font-size:12px;}
+.member b {font-size:16px;color:#DBB68B;}
+.member span {color:#DBB68B;}
+.member-s {height:32px;background:#FFFFFF;border-radius:16px;margin-top:-16px;}
+.member-g {height:56px;overflow-x:auto;margin-top:-16px;}
+.member-g ul {width:10000px;}
+.member-g li {height:32px;line-height:32px;display:inline;float:left;margin:0 0 24px 24px;color:#999999;font-size:16px;}
+.member-g .on {color:#333333;border-bottom:#333333 2px solid;}
+.member-p {height:172px;overflow-x:auto;clear:both;}
+.member-p ul {width:10000px;}
+.member-p li {height:96px;width:84px;display:inline;float:left;padding:24px 16px;color:#999999;font-size:16px;border:#EABD78 1px solid;background:#FFFFFF;border-radius:10px;margin:0 0 24px 24px;text-align:center;}
+.member-p li i {font-style:normal;color:#4F1D01;font-size:16px;}
+.member-p li b {display:block;line-height:56px;color:#E87C11;font-size:20px;}
+.member-p li s {text-decoration:none;color:#999999;font-size:12px;}
+.member-p li span {display:none;}
+.member-p .on {background:#F2D7AE;}
+.member-p .on b {color:#4F1D01;}
+.member-p .on span {position:absolute;display:block;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:12px solid #E87D13;margin:24px 0 0 32px;}
+.btn-gold {background:#DFBF96;color:#4F1D01;font-size:18px;width:100%;line-height:48px;border:none;border-radius:12px;text-align:center;-webkit-appearance:none;}
+.btn-gold:hover {background:#A97843;color:#FFFFFF;}
+</style>
+{/if}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right">
+{if $action == 'username' || $action == 'passport' || $action == 'close' || $action == 'login' || $action == 'vip' || $action == 'group'}
+<a href="?action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{/if}
+<a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a>
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=index" data-transition="none">账户详情</a>
+<a href="?action=upgrade" data-transition="none">升级记录</a>
+<a href="?action=renew" data-transition="none">续费记录</a>
+<a href="?action=setting" data-transition="none">账户设置</a>
+<a href="index.php" data-direction="reverse">会员中心</a>
+</div>
+</div>
+
+{if $action == 'group'}
+{if $itemid}
+	<div class="warn">您所在的会员组 <span class="f_red">{$MG[groupname]}</span> 没有权限使用此功能，请升级</div>
+{/if}
+<div class="blank-36 main"></div>
+<div class="list-set">
+<ul>
+{if $lists}
+{loop $lists $k $v}
+<li><div><a href="?action=grade&groupid={$v[groupid]}">{if $v[fee]}<span class="f_red">{$DT[money_sign]}{$v[fee]}/年</span>{else}<span class="f_gray">免费</span>{/if}{$v[groupname]}</a></div></li>
+{/loop}
+{else}
+<li><div>暂无可升级的会员组</div></li>
+{/if}
+</ul>
+</div>
+<div class="blank-600 main"></div>
+{elseif $action == 'grade'}
+<div class="member">
+<img src="{useravatar($_username, 'large')}"/>
+<ul>
+<li><b>{$_username}</b></li>
+<li><span>{$MG[groupname]}</span>，升级会员获取更多权限</li>
+</ul>
+</div>
+<div class="member-s"></div>
+{if $lists}
+<div class="member-g">
+<ul>
+{loop $lists $k $v}
+<a href="?action={$action}&groupid={$k}&month={$month}"><li{if $k==$groupid} class="on"{/if}>升级{$v[groupname]}<i></i></li></a>
+{/loop}
+</ul>
+</div>
+{/if}
+{if $fees}
+<div class="member-p">
+<ul>
+{loop $fees $k $v}
+<a href="?action={$action}&groupid={$groupid}&month={$k}"><li{if $k==$month} class="on"{/if}><i>{$L[account_month][$k]}</i><b>{$DT[money_sign]}{$v}</b><s>至{$ends[$k]}</s></li></a>
+{/loop}
+</ul>
+</div>
+{/if}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="groupid" value="{$groupid}"/>
+<input type="hidden" name="month" value="{$month}"/>
+<div class="blank-20"></div>
+<div class="list-set">
+	<ul>
+		{if $fee>0}
+		<li><div><span><b style="font-size:20px;color:#FF6600;" id="money">{$fee}</b>{$DT[money_unit]}</span>应付总额</div></li>
+		{else}
+		<li><div><span><input type="text" name="company" id="company" value="{$_company}"/></span>公司名称</div></li>
+		{/if}
+	</ul>
+</div>
+{if $fee>0}
+<div id="mymoney" style="display:none;">
+	<div class="blank-20"></div>
+	<div class="list-set">
+		<ul>
+			<li><div><span><b>{$DT[money_sign]}{$_money}</b>{$DT[money_unit]}</span>账户余额</div></li>
+		</ul>
+	</div>
+</div>
+
+<div id="payword" style="display:none;">
+	<div class="blank-20"></div>
+	<div class="list-inp">
+		<div>{template 'payword', 'chip'}</div>
+	</div>
+</div>
+
+<div id="paytype" style="display:none;">{template 'paylist', 'chip'}</div>
+{/if}
+<div class="blank-20"></div>
+<div class="list-btn"><input type="submit" name="submit" value="立即升级" class="btn-gold"/></div>
+<div class="blank-20"></div>
+</form>
+<script type="text/javascript">
+{if $fee > 0}
+var money = {$fee};
+function check() {
+	if(money > {$_money}) {
+		Go('charge.php?action=pay&reason=grade|{$groupid}|{$month}&amount='+money+'&bank='+$('#bank').val());
+		return false;
+	}
+	if(money > {$DT[quick_pay]}){
+		if(Dd('password').value.length < 6) {
+			Dmsg('请填写支付密码', 'password');
+			return false;
+		}
+	}
+	return true;
+}
+window.setInterval(
+	function() {
+		if(money > {$_money} || {$_money} < 0.01) {
+			$('#mymoney').hide();$('#paytype').show();$('#payword').hide();
+		} else {
+			$('#mymoney').show();$('#paytype').hide();if(money > {$DT[quick_pay]}){$('#payword').show();}else{$('#payword').hide();}
+		}
+	}, 
+500);
+$(function(){
+	if($('.member-g .on').offset().left > $(window).width()/2) {
+		$('.member-g').scrollLeft($('.member-g .on').offset().left - $(window).width()/2 + 30);
+	}
+	if($('.member-p .on').offset().left > $(window).width()/2) {
+		$('.member-p').scrollLeft($('.member-p .on').offset().left - $(window).width()/2 + 30);
+	}
+});
+{else}
+function check() {
+	if(Dd('company').value.length < 5) {
+		Dmsg('请填写公司名称', 'company');
+		return false;
+	}
+	return true;
+}
+{/if}
+</script>
+{elseif $action == 'vip'}
+<div class="member">
+<img src="{useravatar($_username, 'large')}"/>
+<ul>
+<li><b>{$_username}</b></li>
+<li><span>{$MG[groupname]}</span>，剩余 <span>{$havedays}</span> 天，<span>{$todate}</span> 到期</span></li>
+</ul>
+</div>
+<div class="member-s"></div>
+{if $fees}
+<div class="member-p">
+<ul>
+{loop $fees $k $v}
+<a href="?action={$action}&month={$k}"><li{if $k==$month} class="on"{/if}><i>续费{$L[account_month][$k]}</i><b>{$DT[money_sign]}{$v}</b><s>至{$ends[$k]}</s></li></a>
+{/loop}
+</ul>
+</div>
+{/if}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="month" value="{$month}"/>
+<div class="blank-20"></div>
+<div class="list-set">
+	<ul>
+		<li><div><span><b style="font-size:20px;color:#FF6600;" id="money">{$fee}</b>{$DT[money_unit]}</span>应付总额</div></li>
+	</ul>
+</div>
+<div id="mymoney" style="display:none;">
+	<div class="blank-20"></div>
+	<div class="list-set">
+		<ul>
+			<li><div><span><b>{$DT[money_sign]}{$_money}</b>{$DT[money_unit]}</span>账户余额</div></li>
+		</ul>
+	</div>
+</div>
+<div id="payword" style="display:none;">
+	<div class="blank-20"></div>
+	<div class="list-inp">
+		<div>{template 'payword', 'chip'}</div>
+	</div>
+</div>
+
+<div id="paytype" style="display:none;">{template 'paylist', 'chip'}</div>
+<div class="blank-20"></div>
+<div class="list-btn"><input type="submit" name="submit" value="立即续费" class="btn-gold"/></div>
+<div class="blank-20"></div>
+</form>
+<script type="text/javascript">
+var money = {$fee};
+function check() {
+	if(money > {$_money}) {
+		Go('charge.php?action=pay&reason=vip|{$month}&amount='+money+'&bank='+$('#bank').val());
+		return false;
+	}
+	if(money > {$DT[quick_pay]}){
+		if(Dd('password').value.length < 6) {
+			Dmsg('请填写支付密码', 'password');
+			return false;
+		}
+	}
+	return true;
+}
+window.setInterval(
+	function() {
+		if(money > {$_money} || {$_money} < 0.01) {
+			$('#mymoney').hide();$('#paytype').show();$('#payword').hide();
+		} else {
+			$('#mymoney').show();$('#paytype').hide();if(money > {$DT[quick_pay]}){$('#payword').show();}else{$('#payword').hide();}
+		}
+	}, 
+500);
+$(function(){
+	if($('.member-p .on').offset().left > $(window).width()/2) {
+		$('.member-p').scrollLeft($('.member-p .on').offset().left - $(window).width()/2 + 30);
+	}
+});
+</script>
+{elseif $action == 'upgrade'}
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li>
+<span class="f_r">{$_status[$v[status]]}</span>
+<strong>{$v[company]}</strong>
+</li>
+<li><span class="f_r">{$v[adddate]}</span><span>{$GROUP[$v[gid]][groupname]} - {$GROUP[$v[groupid]][groupname]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无{$head_name}</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+
+{elseif $action == 'renew'}
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li>
+<span class="f_r">{$DT[money_sign]}{$v[amount]}</span>
+<strong>{$GROUP[$v[groupid]][groupname]}</strong>
+</li>
+<li><span class="f_r">{$v[adddate]}</span><span>{$v[fromdate]}/{$v[todate]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无{$head_name}</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{elseif $action == 'login'}
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li>
+<span class="f_r">{$v[area]}</span>
+<strong style="font-size:24px;">{$v[loginip]}</strong>
+</li>
+<li><span class="f_r">{$v[message]}</span><span>{$v[logintime]}</span></li>
+</ul>
+</div>
+{/loop}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+
+{elseif $action == 'username'}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<div class="ui-form">
+<p>当前账号</p>
+<div>{$_username}</div>
+{if $linkurl}
+<p>主页地址</p>
+<div>{$linkurl}</div>
+{/if}
+<p>新会员名<i>*</i><b id="dnusername"></b></p>
+<div><input type="text" name="nusername" id="nusername" onblur="validator();" placeholder="{if $MOD[edit_username]==2}一年{/if}仅可修改一次"/></div>
+<p>格式要求</p>
+<div>{$MOD[minusername]}-{$MOD[maxusername]}个字符，只能使用小写字母(a-z)、数字(0-9)、下划线(_)、中划线(-)，且以字母或数字开头和结尾</div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="立即修改" class="btn-blue"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function validator() {
+	if(Dd('nusername').value.length < 2) return;
+	$.post(AJPath, 'moduleid=2&action=member&job=username&value='+Dd('nusername').value+'&userid={$_userid}', function(data) {
+		$('#dnusername').html('<img src="{DM_SKIN}check-'+(data ? 'ko' : 'ok')+'.png" align="absmiddle" width="16"/> '+data);
+	});
+}
+function check() {
+	if(Dd('nusername').value == '{$_username}') {
+		Dmsg('请填写新会员名', 'nusername');
+		return false;
+	}
+	if(Dd('nusername').value.length < 2) {
+		Dmsg('请填写新会员名', 'nusername');
+		return false;
+	}
+	if($('#dnusername').html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的会员名', 'nusername');
+		return false;
+	}
+	return true;
+}
+{if $linkurl}
+$(function(){
+	$('#nusername').on('input blur',function(e){
+		$('#domain').html($('#nusername').val());
+	});
+});
+{/if}
+</script>
+
+{elseif $action == 'passport'}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<div class="ui-form">
+<p>当前昵称<b id="dpassport"></b></p>
+<div>{$_passport}</div>
+<p>新昵称<i>*</i><b id="dnpassport"></b></p>
+<div><input type="text" name="npassport" id="npassport" onblur="validator();" placeholder="支持中文，{if $MOD[edit_passport]==2}一年{/if}仅可修改一次"/></div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="立即修改" class="btn-blue"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function validator() {
+	if(Dd('npassport').value.length < 2) return;
+	$.post(AJPath, 'moduleid=2&action=member&job=passport&value='+Dd('npassport').value+'&userid={$_userid}', function(data) {
+		$('#dnpassport').html('<img src="{DM_SKIN}check-'+(data ? 'ko' : 'ok')+'.png" align="absmiddle" width="24"/> '+data);
+	});
+}
+function check() {
+	if(Dd('npassport').value == '{$_passport}') {
+		Dmsg('请填写新昵称', 'npassport');
+		return false;
+	}
+	if(Dd('npassport').value.length < 2) {
+		Dmsg('请填写新昵称', 'npassport');
+		return false;
+	}
+	if($('#dnpassport').html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的昵称', 'npassport');
+		return false;
+	}
+	return true;
+}
+</script>
+
+{elseif $action == 'close'}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<div class="ui-form">
+<p>当前账号</p>
+<div>{$_username}</div>
+<p>注销原因<i>*</i><b id="dreason"></b></p>
+<div><textarea name="reason" id="reason" style="height:48px;" placeholder="请简要说明注销原因，限2-100字"></textarea></div>
+<p>重要提示</p>
+<div>注销申请一旦通过，该账号名下所有数据和文件将被彻底删除且不可恢复<br/>请确认必须要注销此账户并且已经备份过重要数据再点击申请按钮</div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="申请注销" class="btn-red"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	var l = Dd('reason').value.length;
+	if(l < 2 || l > 100) {
+		Dmsg('请填写2-100字注销原因，当前已填写'+l+'字', 'reason');
+		return false;
+	}
+	return confirm('确定要提交注销申请吗？此操作将不可撤销');
+}
+</script>
+{elseif $action == 'scan'}
+{if $cid == 1 || $cid == 2}
+<div class="ui-ko">
+<p>验证失败</p>
+<input type="button" value="确 定" class="btn-green" onclick="Go('{DT_MOB}my.php');"/>
+</div>
+{elseif $cid == 3}
+<div class="ui-ok">
+<p>登录成功</p>
+<input type="button" value="确 定" class="btn-green" onclick="Go('{DT_MOB}my.php');"/>
+</div>
+{else}
+<style>body{background:#F8F8F8;}</style>
+<div class="blank-32"></div>
+<div style="height:200px;background:url('{DT_STATIC}image/scan-pc.png') no-repeat center center;background-size:220px 90px;"></div>
+<div class="blank-32"></div>
+<div style="font-size:14px;text-align:center;color:#666666;">是否授权在电脑端登录 {$_username} 账号？</div>
+<div class="blank-16"></div>
+<div style="font-size:14px;text-align:center;color:#999999;">为确保帐号安全，请确认是您本人操作</div>
+<div class="blank-16"></div>
+<div style="padding:32px;">
+<div class="btn-green" onclick="Go('?action=scan&sid={$sid}&job=login');">确认登录</div>
+<div class="blank-32"></div>
+<div class="btn" onclick="Go('{DT_MOB}my.php');">取消登录</div>
+<div class="blank-32"></div>
+{/if}
+{elseif $action == 'setting'}
+<form method="post" action="?">
+<input type="hidden" name="action" value="{$action}"/>
+<div class="ui-form">
+<p>好友添加方式</p>
+<div>
+<label><input type="radio" name="verify" value="0" {if $verify==0}checked="checked"{/if}/> 需要我审核</label><br/>
+<label><input type="radio" name="verify" value="1" {if $verify==1}checked="checked"{/if}/> 允许任何人</label><br/>
+<label><input type="radio" name="verify" value="2" {if $verify==2}checked="checked"{/if}/> 拒绝任何人</label><br/>
+</div>
+<p>手机号码找我</p>
+<div>
+<label><input type="radio" name="fmobile" value="0" {if $fmobile==0}checked="checked"{/if}/> 关闭</label>&nbsp;&nbsp;
+<label><input type="radio" name="fmobile" value="1" {if $fmobile==1}checked="checked"{/if}/> 开启</label>&nbsp;&nbsp;
+</div>
+<p>邮箱地址找我</p>
+<div>
+<label><input type="radio" name="femail" value="0" {if $femail==0}checked="checked"{/if}/> 关闭</label>&nbsp;&nbsp;
+<label><input type="radio" name="femail" value="1" {if $femail==1}checked="checked"{/if}/> 开启</label>&nbsp;&nbsp;
+</div>
+<p>站内信转邮箱</p>
+<div>
+<label><input type="radio" name="send" value="0" {if $send==0}checked="checked"{/if}/> 关闭</label>&nbsp;&nbsp;
+<label><input type="radio" name="send" value="1" {if $send==1}checked="checked"{/if}/> 开启</label>&nbsp;&nbsp;
+</div>
+<p>站内信提示音</p>
+<div>
+<label><input type="radio" name="sound" value="0" {if $sound==0}checked="checked"{/if} id="sound_0"/> 关闭</label><br/>
+<label><input type="radio" name="sound" value="1" {if $sound==1}checked="checked"{/if} id="sound_1"/> 提示音1</label><br/>
+<label><input type="radio" name="sound" value="2" {if $sound==2}checked="checked"{/if} id="sound_2"/> 提示音2</label><br/>
+<label><input type="radio" name="sound" value="3" {if $sound==3}checked="checked"{/if} id="sound_3"/> 提示音3</label><br/>
+</div>
+<p>交谈自动回复</p>
+<div><textarea name="reply" id="reply" style="height:64px;">{$reply}</textarea></div>
+<s>会员首次发起交谈或超过一周没有交谈时，自动回复内容</s>
+</div>
+<div class="blank-16"></div>
+<div class="list-btn"><input type="submit" name="submit" value="保存设置" class="btn-green"/></div>
+<div class="blank-32"></div>
+</div>
+</form>
+{else}
+<div class="blank-32"></div>
+<center><a href="avatar.php"><img src="{useravatar($_username, 'large')}&reload={$DT_TIME}" width="80" height="80" class="avatar"/></a></center>
+<div class="blank-32"></div>
+<div class="list-set">
+<ul>
+{if $edit_username}
+<li><div><a href="?action=username"><span>修改账号</span>会员名:{$username}</a></div></li>
+{else}
+<li><div class="on"><span>{$username}</span>会员名</div></li>
+{/if}
+{if $edit_passport}
+<li><div><a href="?action=passport"><span>修改昵称</span>昵称:{$passport}</a></div></li>
+{else}
+<li><div class="on"><span>{$passport}</span>昵称</div></li>
+{/if}
+{if !$vip && $groupid>4}
+<li><div><a href="?action=group"><span>升级账号</span>会员组:{$MG[groupname]}</a></div></li>
+{else}
+<li><div class="on"><span>{$MG[groupname]}</span>会员组</div></li>
+{/if}
+{if $GD}
+<li><div><a href="credit.php?action=grade"><span>{$GD[name]} <img src="{DT_STATIC}image/grade-{$_gradeid}.png" width="24" alt=""/></span>{$DT[credit_name]}组</a></div></li>
+{/if}
+{if $vip}
+<li><div><a href="?action=vip"><span>立即续费</span>服务剩余:{$havedays}天</a></div></li>
+{/if}
+{if $support}
+<li><div><a href="ask.php?action=support"><span>联系方式</span>客服专员:{$support}</div></a></li>
+{/if}
+{if $DT[login_log]==2}
+<li><div><a href="?action=login"><span>登录记录</span>上次登录:{timetodate($logintime, 5)}</a></div></li>
+{else}
+<li><div class="on"><span>{timetodate($logintime, 5)}</span>上次登录</div></li>
+{/if}
+{if $MOD[account_close] && $_groupid > 1}
+<li><div><a href="?action=close"><span>注销账号</span>注册时间:{timetodate($regtime, 5)}</a></div></li>
+{else}
+<li><div class="on">注册时间:{timetodate($regtime, 5)}</div></li>
+{/if}
+</ul>
+</div>
+<div class="blank-32"></div>
+<div class="list-btn"><input type="button" value="退出登录" class="btn" onclick="Dsheet('{$js_pageid}','<a href=&#34;logout.php&#34; rel=&#34;external&#34;><span style=&#34;color:red&#34;>退出登录</span></a>', '取消', '确定要退出本次登录吗？');"/></div>
+<div class="blank-32"></div>
+<div class="blank-600"></div>
+{/if}
+{template 'footer', 'member'}

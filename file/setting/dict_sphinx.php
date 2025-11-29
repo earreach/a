@@ -1,0 +1,3 @@
+<?php exit;?>
+moduleid,模块ID,
+maxid,最大信息ID,

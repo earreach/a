@@ -1,0 +1,46 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+{if $foot == 'my'}<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>{/if}
+<div class="head-bar-title">{$head_name}</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div class="gird-4">
+	<ul>
+		{if $DT[city]}
+		<li><a href="{DT_MOB}api/city.php"><img src="{DM_SKIN}more-city.png" width="24" height="24"/><span>切换分站</span></a></li>
+		{/if}
+		<li><a href="{DT_MOB}api/about.php"><img src="{DM_SKIN}more-about.png" width="24" height="24"/><span>关于我们</span></a></li>
+		{if $DT[telephone]}
+		<li><a href="tel:{$DT[telephone]}"><img src="{DM_SKIN}more-telephone.png" width="24" height="24"/><span>客服电话</span></a></li>
+		{/if}
+		{if $EXT[announce_enable]}
+		<li><a href="{$EXT[announce_mob]}"><img src="{DM_SKIN}more-announce.png" width="24" height="24"/><span>公告中心</span></a></li>
+		{/if}
+		<li><a href="{$EXT[spread_mob]}"><img src="{DM_SKIN}more-spread.png" width="24" height="24"/><span>排名推广</span></a></li>
+		{if $EXT[ad_enable]}
+		<li><a href="{$EXT[ad_mob]}"><img src="{DM_SKIN}more-ad.png" width="24" height="24"/><span>广告服务</span></a></li>
+		{/if}
+		{if $EXT[gift_enable]}
+		<li><a href="{$EXT[gift_mob]}"><img src="{DM_SKIN}more-gift.png" width="24" height="24"/><span>积分换礼</span></a></li>
+		{/if}
+		{if $EXT[link_enable]}
+		<li><a href="{$EXT[link_mob]}"><img src="{DM_SKIN}more-link.png" width="24" height="24"/><span>友情链接</span></a></li>
+		{/if}
+		{if $EXT[guestbook_enable]}
+		<li><a href="{$EXT[guestbook_mob]}"><img src="{DM_SKIN}more-guestbook.png" width="24" height="24"/><span>留言反馈</span></a></li>
+		{/if}
+		{if $EXT[feed_enable]}
+		<li><a href="{$EXT[feed_mob]}"><img src="{DM_SKIN}more-feed.png" width="24" height="24"/><span>RSS订阅</span></a></li>
+		{/if}
+		{if $app}
+		<li><a href="{$app}" rel="external"><img src="{DM_SKIN}more-app.png" width="24" height="24"/><span>APP安装</span></a></li>
+		{/if}
+		{if !in_array($DT_MBS, array('app', 'web', 'cms', 'screen'))}
+		<li><a href="{DT_PATH}api/mobile.php?action=pc" rel="external"><img src="{DM_SKIN}more-pc.png" width="24" height="24"/><span>电脑版</span></a></li>
+		{/if}
+	</ul>
+</div>
+{template 'footer'}

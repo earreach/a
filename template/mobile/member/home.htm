@@ -1,0 +1,757 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="{DT_PATH}index.php?homepage={$_username}&update=1" rel="external">预览商铺</a>
+<a href="biz.php" data-direction="reverse">商户后台</a>
+</div>
+</div>
+
+{if $CK}<div class="warn">当前设置<span class="f_red">正在审核中</span>，暂时不可修改</div>{/if}
+
+{load('webuploader.min.js')}
+{load('url2video.js')}
+{load('player.js')}
+<form method="post" action="?" id="dform" onsubmit="return Dcheck();">
+<input type="hidden" name="tab" id="tab" value="{$tab}"/>
+<div class="main">
+<div class="blank-32"></div>
+<div class="list-set" id="Tab0" onclick="$('#Tabs0').slideToggle('fast');$('#tab').val(0);">
+<ul>
+<li><div><b>常用设置</b></div></li>
+</div>
+<div class="ui-form dsn" id="Tabs0">
+<p>自定义背景图</p>
+<div><input type="url" name="setting[background]" id="background" value="{$background}"/></div>
+<div class="ui-form-file-upload"><div id="background-picker"></div></div>
+<script type="text/javascript">
+var file_background = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width=0&height=0',
+    pick: '#background-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+file_background.on('beforeFileQueued', function(file) {
+	var exts = file_background.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_background.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_background.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_background.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#background').val(data.url);
+	}
+});
+file_background.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_background.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+
+<p>自定义背景色</p>
+<div><input type="text" name="setting[bgcolor]" id="bgcolor" value="{$bgcolor}" style="width:100px;"/> 例如红色为 red 或者 #FF0000</div>
+<p>自定义LOGO</p>
+<div><input type="url" name="setting[logo]" id="logo" value="{$logo}"/></div>
+<div class="ui-form-file-upload"><div id="logo-picker"></div></div>
+<script type="text/javascript">
+var file_logo = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width=0&height=0',
+    pick: '#logo-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+file_logo.on('beforeFileQueued', function(file) {
+	var exts = file_logo.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_logo.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_logo.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_logo.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#logo').val(data.url);
+	}
+});
+file_logo.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_logo.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+
+<p>自定义CSS</p>
+<div><textarea name="setting[css]" id="css" style="height:60px;">{$css}</textarea></div>
+<p>横幅宽度</p>
+<div><input type="tel" name="setting[bannerw]" value="{$bannerw}" id="bannerw" style="width:100px;"/> px</div>
+<p>横幅高度</p>
+<div><input type="tel" name="setting[bannerh]" value="{$bannerh}" id="bannerh" style="width:100px;"/> px</div>
+<p>横幅显示方式</p>
+<div>
+<input name="setting[bannert]" type="radio" id="bannert_0" value="0"{if $bannert==0} checked{/if} onclick="Ds('bt_0');Dh('bt_1');Dh('bt_2');"/> 图片</label>&nbsp;&nbsp;
+<input name="setting[bannert]" type="radio" id="bannert_1" value="1"{if $bannert==1} checked{/if} onclick="Dh('bt_0');Ds('bt_1');Dh('bt_2');"/> 视频</label>&nbsp;&nbsp;
+<input name="setting[bannert]" type="radio" id="bannert_2" value="2"{if $bannert==2} checked{/if} onclick="Dh('bt_0');Dh('bt_1');Ds('bt_2');"/> 幻灯片</label>&nbsp;&nbsp;
+</div>
+<section id="bt_0" style="display:{if $bannert!=0}none{/if};">
+<p>横幅图片地址</p>
+<div><input type="url" name="setting[banner]" id="banner" value="{$banner}"/></div>
+<div class="ui-form-file-upload"><div id="banner-picker"></div></div>
+<script type="text/javascript">
+var file_banner = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width='+Dd('bannerw').value+'&height='+Dd('bannerh').value,
+    pick: '#banner-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+file_banner.on('beforeFileQueued', function(file) {
+	var exts = file_banner.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_banner.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_banner.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_banner.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#banner').val(data.url);
+	}
+});
+file_banner.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_banner.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+
+</section>
+<section id="bt_1" style="display:{if $bannert!=1}none{/if};">
+<p>横幅视频地址</p>
+<div><input type="url" name="setting[bannerf]" id="bannerf" value="{$bannerf}"/></div>
+<div class="ui-form-file-upload"><div id="bannerf-picker"></div></div>
+<script type="text/javascript">
+var file_bannerf = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=file',
+    pick: '#bannerf-picker',
+    accept: {
+		title: 'video',
+		extensions: 'mp4,mov,3gp,mp3', 
+		mimeTypes: 'video/*'
+    },
+    resize: false
+});
+file_bannerf.on('beforeFileQueued', function(file) {
+	var exts = file_bannerf.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_bannerf.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_bannerf.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_bannerf.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#bannerf').val(data.url);
+	}
+});
+file_bannerf.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_bannerf.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+
+</section>
+<section id="bt_2" style="display:{if $bannert!=2}none{/if};">
+<p>横幅图片地址1</p>
+<div><input type="url" name="setting[banner1]" id="banner1" value="{$banner1}"/></div>
+<div class="ui-form-file-upload"><div id="banner1-picker"></div></div>
+<script type="text/javascript">
+var file_banner1 = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width='+Dd('bannerw').value+'&height='+Dd('bannerh').value,
+    pick: '#banner1-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+file_banner1.on('beforeFileQueued', function(file) {
+	var exts = file_banner1.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_banner1.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_banner1.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_banner1.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#banner1').val(data.url);
+	}
+});
+file_banner1.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_banner1.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+
+<p>横幅图片链接1</p>
+<div><input type="url" name="setting[bannerlink1]" id="bannerlink1" value="{$bannerlink1}"/></div>
+<p>横幅图片地址2</p>
+<div><input type="url" name="setting[banner2]" id="banner2" value="{$banner2}"/></div>
+<div class="ui-form-file-upload"><div id="banner2-picker"></div></div>
+<script type="text/javascript">
+var file_banner2 = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width='+Dd('bannerw').value+'&height='+Dd('bannerh').value,
+    pick: '#banner2-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+file_banner2.on('beforeFileQueued', function(file) {
+	var exts = file_banner2.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_banner2.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_banner2.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_banner2.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#banner2').val(data.url);
+	}
+});
+file_banner2.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_banner2.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+
+<p>横幅图片链接2</p>
+<div><input type="url" name="setting[bannerlink2]" id="bannerlink2" value="{$bannerlink2}"/></div>
+<p>横幅图片地址3</p>
+<div><input type="url" name="setting[banner3]" id="banner3" value="{$banner3}"/></div>
+<div class="ui-form-file-upload"><div id="banner3-picker"></div></div>
+<script type="text/javascript">
+var file_banner3 = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width='+Dd('bannerw').value+'&height='+Dd('bannerh').value,
+    pick: '#banner3-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+file_banner3.on('beforeFileQueued', function(file) {
+	var exts = file_banner3.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_banner3.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_banner3.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_banner3.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#banner3').val(data.url);
+	}
+});
+file_banner3.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_banner3.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+
+<p>横幅图片链接3</p>
+<div><input type="url" name="setting[bannerlink3]" id="bannerlink3" value="{$bannerlink3}"/></div>
+<p>横幅图片地址4</p>
+<div><input type="url" name="setting[banner4]" id="banner4" value="{$banner4}"/></div>
+<div class="ui-form-file-upload"><div id="banner4-picker"></div></div>
+<script type="text/javascript">
+var file_banner4 = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width='+Dd('bannerw').value+'&height='+Dd('bannerh').value,
+    pick: '#banner4-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+file_banner4.on('beforeFileQueued', function(file) {
+	var exts = file_banner4.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_banner4.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_banner4.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_banner4.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#banner4').val(data.url);
+	}
+});
+file_banner4.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_banner4.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+
+<p>横幅图片链接4</p>
+<div><input type="url" name="setting[bannerlink4]" id="bannerlink4" value="{$bannerlink4}"/></div>
+<p>横幅图片地址5</p>
+<div><input type="url" name="setting[banner5]" id="banner5" value="{$banner5}"/></div>
+<div class="ui-form-file-upload"><div id="banner5-picker"></div></div>
+<script type="text/javascript">
+var file_banner5 = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width='+Dd('bannerw').value+'&height='+Dd('bannerh').value,
+    pick: '#banner5-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+file_banner5.on('beforeFileQueued', function(file) {
+	var exts = file_banner5.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_banner5.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_banner5.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_banner5.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#banner5').val(data.url);
+	}
+});
+file_banner5.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_banner5.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+
+<p>横幅图片链接5</p>
+<div><input type="url" name="setting[bannerlink5]" id="bannerlink5" value="{$bannerlink5}"/></div>
+</section>
+<p>形象视频地址</p>
+<div>{template 'upload-video', 'chip'}</div>
+<script type="text/javascript">$(function(){$('#video').attr('name', 'setting[video]');});</script>
+<p>网站公告</p>
+<div><textarea name="setting[announce]" id="announce" style="height:60px;">{$announce}</textarea></div>
+<p>访问次数</p>
+<div>
+<label><input type="radio" name="setting[show_stats]" value="1" id="s_s_1"{if $show_stats==1} checked{/if}/> 显示</label>&nbsp;&nbsp;&nbsp;&nbsp;
+<label><input type="radio" name="setting[show_stats]" value="0" id="s_s_0"{if $show_stats==0} checked{/if}/> 不显示</label> 
+</div>
+<div class="blank-20"></div>
+</div>
+
+<div class="blank-32"></div>
+<div class="list-set" id="Tab1" onclick="$('#Tabs1').slideToggle('fast');$('#tab').val(1);">
+<ul>
+<li><div><b>导航菜单</b></div></li>
+</div>
+<div class="ui-form dsn" id="Tabs1">
+<table cellpadding="3" cellspacing="1" width="100%">
+<tr align="center" style="height:44px;">
+<td>选</td>
+<td>排序</td>
+<td>名称</td>
+<td>分页</td>
+</tr>
+{loop $U_MENU $k $v}
+{if isset($G_MENU[$k])}
+<tr align="center">
+<td>
+<input type="checkbox" value="{$k}"{if $v[status]} checked{/if} onclick="Dd('menu_{$k}').value=this.checked ? 1 : 0;"/><input type="hidden" name="home[menu][{$k}][status]" value="{$v[status]}" id="menu_{$k}"/>
+</td>
+<td><input type="text" name="home[menu][{$k}][listorder]" size="3" value="{$v[listorder]}"/></td>
+<td><input type="text" name="home[menu][{$k}][name]" size="20" value="{$v[name]}"/></td>
+<td><input type="text" name="home[menu][{$k}][pagesize]" size="3" value="{$v[pagesize]}"/>
+</tr>
+{/if}
+{/loop}
+{loop $G_MENU $k $v}
+{if !isset($U_MENU[$k])}
+<tr align="center">
+<td>
+<input type="checkbox" value="{$k}"{if $v[status]} checked{/if} onclick="Dd('menu_{$k}').value=this.checked ? 1 : 0;"/><input type="hidden" name="home[menu][{$k}][status]" value="{$v[status]}" id="menu_{$k}"/>
+</td>
+<td><input type="text" name="home[menu][{$k}][listorder]" size="3" value="{$v[listorder]}"/></td>
+<td><input type="text" name="home[menu][{$k}][name]" size="20" value="{$v[name]}"/></td>
+<td><input type="text" name="home[menu][{$k}][pagesize]" size="3" value="{$v[pagesize]}"/>
+</tr>
+{/if}
+{/loop}
+</table>
+<div class="blank-20"></div>
+<center><a href="?action=reset&item=menu" class="b" onclick="return confirm('确定要恢复菜单设置为默认吗？');">恢复默认</a></center>
+<div class="blank-20"></div>
+</div>
+
+<div class="blank-32"></div>
+<div class="list-set" id="Tab2" onclick="$('#Tabs2').slideToggle('fast');$('#tab').val(2);">
+<ul>
+<li><div><b>侧栏设置</b></div></li>
+</div>
+<div class="ui-form dsn" id="Tabs2">
+<p>侧栏宽度</p>
+<div><input type="tel" name="setting[side_width]" value="{$side_width}" style="width:100px;"/> px</div>
+<p>侧栏位置</p>
+<div>
+<label><input type="radio" name="setting[side_pos]" value="0" id="s_p_0"{if $side_pos==0} checked{/if}/> 侧栏在左</label>&nbsp;&nbsp;
+<label><input type="radio" name="setting[side_pos]" value="1" id="s_p_1"{if $side_pos==1} checked{/if}/> 侧栏在右</label>
+</div>
+<div class="blank-16"></div>
+<table cellpadding="3" cellspacing="1" width="100%">
+<tr align="center" style="height:44px;">
+<td>选</td>
+<td>排序</td>
+<td>名称</td>
+<td>数量</td>
+</tr>
+{loop $U_SIDE $k $v}
+{if isset($G_SIDE[$k])}
+<tr align="center">
+<td>
+<input type="checkbox" value="{$k}"{if $v[status]} checked{/if} onclick="Dd('side_{$k}').value=this.checked ? 1 : 0;"/><input type="hidden" name="home[side][{$k}][status]" value="{$v[status]}" id="side_{$k}"/>
+</td>
+<td><input type="text" name="home[side][{$k}][listorder]" size="3" value="{$v[listorder]}"/></td>
+<td><input type="text" name="home[side][{$k}][name]" size="20" value="{$v[name]}"/></td>
+<td><input type="text" name="home[side][{$k}][pagesize]" size="3" value="{$v[pagesize]}"/>
+</tr>
+{/if}
+{/loop}
+{loop $G_SIDE $k $v}
+{if !isset($U_SIDE[$k])}
+<tr align="center">
+<td>
+<input type="checkbox" value="{$k}"{if $v[status]} checked{/if} onclick="Dd('side_{$k}').value=this.checked ? 1 : 0;"/><input type="hidden" name="home[side][{$k}][status]" value="{$v[status]}" id="side_{$k}"/>
+</td>
+<td><input type="text" name="home[side][{$k}][listorder]" size="3" value="{$v[listorder]}"/></td>
+<td><input type="text" name="home[side][{$k}][name]" size="20" value="{$v[name]}"/></td>
+<td><input type="text" name="home[side][{$k}][pagesize]" size="3" value="{$v[pagesize]}"/>
+</tr>
+{/if}
+{/loop}
+</table>
+<div class="blank-20"></div>
+<center><a href="?action=reset&item=side" class="b" onclick="return confirm('确定要恢复侧栏位置为默认吗？');">恢复默认</a></center>
+<div class="blank-20"></div>
+</div>
+
+<div class="blank-32"></div>
+<div class="list-set" id="Tab3" onclick="$('#Tabs3').slideToggle('fast');$('#tab').val(3);">
+<ul>
+<li><div><b>首页设置</b></div></li>
+</div>
+<div class="ui-form dsn" id="Tabs3">
+<p>公司简介显示</p>
+<div><input type="tel" name="setting[intro_length]" value="{$intro_length}" style="width:100px;"/> 字符</div>
+<div class="blank-16"></div>
+<table cellpadding="3" cellspacing="1" width="100%">
+<tr align="center" style="height:44px;">
+<td>选</td>
+<td>排序</td>
+<td>名称</td>
+<td>数量</td>
+</tr>
+{loop $U_MAIN $k $v}
+{if isset($G_MAIN[$k])}
+<tr align="center">
+<td>
+<input type="checkbox" value="{$k}"{if $v[status]} checked{/if} onclick="Dd('main_{$k}').value=this.checked ? 1 : 0;"/><input type="hidden" name="home[main][{$k}][status]" value="{$v[status]}" id="main_{$k}"/>
+</td>
+<td><input type="text" name="home[main][{$k}][listorder]" size="3" value="{$v[listorder]}"/></td>
+<td><input type="text" name="home[main][{$k}][name]" size="20" value="{$v[name]}"/></td>
+<td><input type="text" name="home[main][{$k}][pagesize]" size="3" value="{$v[pagesize]}"/>
+</tr>
+{/if}
+{/loop}
+{loop $G_MAIN $k $v}
+{if !isset($U_MAIN[$k])}
+<tr align="center">
+<td>
+<input type="checkbox" value="{$k}"{if $v[status]} checked{/if} onclick="Dd('main_{$k}').value=this.checked ? 1 : 0;"/><input type="hidden" name="home[main][{$k}][status]" value="{$v[status]}" id="main_{$k}"/>
+</td>
+<td><input type="text" name="home[main][{$k}][listorder]" size="3" value="{$v[listorder]}"/></td>
+<td><input type="text" name="home[main][{$k}][name]" size="20" value="{$v[name]}"/></td>
+<td><input type="text" name="home[main][{$k}][pagesize]" size="3" value="{$v[pagesize]}"/>
+</tr>
+{/if}
+{/loop}
+</table>
+<div class="blank-20"></div>
+<center><a href="?action=reset&item=main" class="b" onclick="return confirm('确定要恢复首页主栏为默认吗？');">恢复默认</a></center>
+<div class="blank-20"></div>
+</div>
+
+<div class="blank-32"></div>
+<div class="list-set" id="Tab4" onclick="$('#Tabs4').slideToggle('fast');$('#tab').val(4);">
+<ul>
+<li><div><b>其他设置</b></div></li>
+</div>
+<div class="ui-form dsn" id="Tabs4">
+<p>首页SEO标题</p>
+<div><input type="text" name="setting[seo_title]" value="{$HOME[seo_title]}"/></div>
+<p>网站关键词</p>
+<div><input type="text" name="setting[seo_keywords]" value="{$seo_keywords}"/></div>
+<p>网站描述</p>
+<div><input type="text" name="setting[seo_description]" value="{$seo_description}"/></div>
+<table style="display:none;">
+{if $api_map && $MG[map]}
+{php include load('api/map/'.$api_map.'/post.inc');}
+{/if}
+{if $api_stats && $MG[stats]}
+{php include load('api/stats/these.name');}
+<tr>
+<td class="tl">统计类型</td>
+<td class="tr">
+<select name="setting[stats_type]" id="stats_type_s" onchange="stats_type(this.value)">
+{loop $api_stats $v}
+<option value="{$v}">{$names[$v]}</option>
+{/loop}
+</select>
+</td>
+</tr>
+{loop $api_stats $v}
+{php include load('api/stats/'.$v.'/post.inc');}
+{/loop}
+{/if}
+
+{if $api_kf && $MG[kf]}
+{php include load('api/kf/these.name');}
+<tr>
+<td class="tl">客服类型</td>
+<td class="tr">
+<select name="setting[kf_type]" id="kf_type_s" onchange="kf_type(this.value)">
+{loop $api_kf $v}
+<option value="{$v}">{$names[$v]}</option>
+{/loop}
+</select>
+</td>
+</tr>
+{loop $api_kf $v}
+{php include load('api/kf/'.$v.'/post.inc');}
+{/loop}
+{/if}
+</table>
+<div class="blank-20"></div>
+</div>
+
+{if $need_captcha}
+<div class="ui-form">
+<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+<div>{template 'captcha', 'chip'}</div>
+<div class="blank-20"></div>
+</div>
+{/if}
+
+<div class="blank-32"></div>
+{if !$CK}
+<div class="list-btn"><input type="submit" name="submit" value="保存设置" class="btn-green"/></div>
+<div class="blank-16"></div>
+<div class="list-btn"><input type="button" value=" 清空设置 " class="btn" onclick="Dsheet('{$js_pageid}','<a href=&#34;?action=reset&#34;><span style=&#34;color:red&#34;>清空</span></a>', '取消', '确定要清空所有设置并恢复默认吗？');"/></div>
+<div class="blank-32"></div>
+{/if}
+</form>
+</div>
+
+<script type="text/javascript">
+function Tab(id) {
+	$('#Tabs'+id).slideDown('fast');
+}
+$(function(){
+	Tab({$tab});
+	{if isset($success)}
+	Dtoast('{$js_pageid}','资料保存成功');
+	{/if}
+});
+{if $api_stats && $MG[stats]}
+function stats_type(type) {
+	var stats_types = [{loop $api_stats $k $v}{if $k},{/if}'{$v}'{/loop}];
+	var stats_pass = 0;
+	for(var i = 0; i < stats_types.length; i++) {
+		if(type == stats_types[i]) {
+			stats_pass = 1;
+			break;
+		}
+	}
+	if(stats_pass == 0) type = stats_types[0];
+	for(var i = 0; i < stats_types.length; i++) {
+		if(type == stats_types[i]) {
+			Ds('stats_post_'+stats_types[i]);
+		} else {
+			Dh('stats_post_'+stats_types[i]);
+		}
+	}
+	$('#stats_type_s').val(type);
+}
+stats_type('{$stats_type}');
+{/if}
+{if $api_kf && $MG[kf]}
+function kf_type(type) {
+	var kf_types = [{loop $api_kf $k $v}{if $k},{/if}'{$v}'{/loop}];
+	var kf_pass = 0;
+	for(var i = 0; i < kf_types.length; i++) {
+		if(type == kf_types[i]) {
+			kf_pass = 1;
+			break;
+		}
+	}
+	if(kf_pass == 0) type = kf_types[0];
+	for(var i = 0; i < kf_types.length; i++) {
+		if(type == kf_types[i]) {
+			Ds('kf_post_'+kf_types[i]);
+		} else {
+			Dh('kf_post_'+kf_types[i]);
+		}
+		$('#kf_type_s').val(type);
+	}
+}
+kf_type('{$kf_type}');
+{/if}
+function Dcheck() {
+{if $need_captcha}
+	f = 'captcha';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', f);
+		return false;
+	}
+{/if}
+{if $need_check}
+	return confirm('当前设置需要审核，确定要提交吗？');
+{/if}
+	return true;
+}
+$(function(){
+	{if $CK}
+	$('input,select,textarea').attr('disabled', 'disabled');
+	{/if}
+});
+</script>
+{template 'footer', 'member'}

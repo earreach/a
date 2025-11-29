@@ -1,0 +1,82 @@
+<style type="text/css">	
+.stars {width:200px;height:16px;}
+.stars span {width:16px;height:16px;display:inline-block;float:left;cursor:pointer;}
+.stars b {height:16px;line-height:16px;display:inline-block;float:left;font-weight:normal;color:#666666;margin-left:16px;}
+</style>
+<script type="text/javascript">
+$(function(){
+	$('.stars span').mouseover(function() {
+		var id = $(this).data('id');
+		$(this).parent().css('background', "url('{DT_STATIC}image/star"+id+".png') no-repeat");
+		$(this).siblings('b').html($(this).attr('title'));
+	});
+	$('.stars span').mouseleave(function() {
+		var id = $(this).parent().siblings('input').val();
+		$(this).parent().css('background', "url('{DT_STATIC}image/star"+id+".png') no-repeat");			
+		$(this).siblings('b').html($(this).siblings('[data-id="'+id+'"]').attr('title'));
+	});
+	$('.stars span').click(function() {
+		var id = $(this).data('id');
+		$(this).parent().css('background', "url('{DT_STATIC}image/star"+id+".png') no-repeat");
+		$(this).siblings('b').html($(this).attr('title'));
+		$(this).parent().siblings('input').val(id);
+	});
+});
+</script>
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+{template 'goods', 'chip'}
+{loop $lists $k $v}
+<div class="t2">交易评价 - {$v[title]}</div>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl">交易评分</td>
+<td class="tr">
+<input type="hidden" name="stars[{$v[itemid]}]" value="5"/>
+<div class="stars" style="background:url('{DT_STATIC}image/star5.png') no-repeat;">
+<span title="非常差" data-id="1"></span>
+<span title="差" data-id="2"></span>
+<span title="一般" data-id="3"></span>
+<span title="好" data-id="4"></span>
+<span title="非常好" data-id="5"></span>
+<b>非常好</b>
+</div>
+</td>
+</tr>
+<tr>
+<td class="tl">详细评价</td>
+<td class="tr f_gray">
+<textarea onkeyup="S({$v[itemid]});" name="contents[{$v[itemid]}]" id="content_{$v[itemid]}" style="width:300px;height:60px;margin:0 0 6px 0;"></textarea><br/>
+请您对此次交易做出客观、公正的评价<br/>
+(内容限0至500字) 当前已经输入 <span style="color:red;" id="chars_{$v[itemid]}">0</span> 字
+</td>
+</tr>
+</table>
+{/loop}
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl"> </td>
+<td class="tr">
+<input type="submit" name="submit" value=" 确 定 " class="btn_g"/>&nbsp;&nbsp;<input type="button" value=" 返 回 " class="btn" onclick="history.back(-1);"/>
+</td>
+</tr>
+</table>
+</form>
+<script type="text/javascript">
+function check() {
+	{loop $lists $k $v}
+	if(Dd('content_{$v[itemid]}').value.length > 500) {
+		alert('评价内容不能超过500字');
+		return false;
+	}
+	{/loop}
+	return confirm('您确认提交此评价吗？提交后评价分数和内容将不可更改');
+}
+function S(id) {
+	Inner('chars_'+id, Dd('content_'+id).value.length);
+}
+</script>
+<script type="text/javascript">s('trade');m('action');</script>

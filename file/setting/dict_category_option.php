@@ -1,0 +1,11 @@
+<?php exit;?>
+oid,ID,
+catid,分类ID,
+type,属性类别,
+required,是否必填,
+search,是否搜索,
+name,属性名称,
+value,默认值,
+extend,扩展代码,
+note,填写说明,
+listorder,排序,

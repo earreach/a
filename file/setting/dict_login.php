@@ -1,0 +1,12 @@
+<?php exit;?>
+itemid,ID,
+username,会员名,
+password,登录密码,
+passsalt,登录密钥,
+admin,是否登录后台,
+type,类型,
+loginip,登录ID,
+loginport,登录端口,
+logintime,登录时间,
+message,登录结果,
+agent,客户端,

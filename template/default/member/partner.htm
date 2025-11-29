@@ -1,0 +1,184 @@
+{template 'header', 'member'}
+<div class="menu">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="tab" id="add"><a href="?action=add"><span>申请代理</span></a></td>
+<td class="tab" id="s3"><a href="?status=3"><span>已通过({$nums[3]})</span></a></td>
+<td class="tab" id="s2"><a href="?status=2"><span>审核中({$nums[2]})</span></a></td>
+{if $action == 'list'}<td class="tab_on"><a href="?action={$action}&itemid={$itemid}"><span>商品列表</span></a></td>{/if}
+</tr>
+</table>
+</div>
+{if $action == 'add'}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl"><span class="f_red">*</span> 申请对象</td>
+<td class="tr"><input type="text" size="20" name="post[username]" id="username" value="{$username}"/> <span id="dusername" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 申请折扣</td>
+<td class="tr"><input type="text" size="4" name="post[discount]" id="discount" value="{$discount}"/> <span class="f_gray">% 限制为1-99</span> <span id="ddiscount" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 我的手机</td>
+<td class="tr"><input type="text" size="20" name="post[mobile]" id="mobile" value="{$mobile}"/> <span id="dmobile" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 申请理由</td>
+<td class="tr"><textarea name="post[reason]" id="reason" rows="6" cols="60">{$reason}</textarea><br/><span id="dreason" class="f_red"></span></td>
+</tr>
+</table>
+<div class="sbt"><input type="submit" name="submit" value="立即申请" class="btn_g"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="取 消" class="btn" onclick="history.back(-1);"/></div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('username').value == '{$_username}') {
+		Dmsg('不能添加自己', 'username');
+		return false;
+	}
+	if(Dd('username').value.length < 2) {
+		Dmsg('请填写申请对象会员名', 'username');
+		return false;
+	}
+	if(Dd('discount').value > 99 || Dd('discount').value < 1) {
+		Dmsg('折扣限制为1-99', 'discount');
+		return false;
+	}
+	if(Dd('mobile').value.length < 11) {
+		Dmsg('请填写手机', 'mobile');
+		return false;
+	}
+	if(Dd('reason').value.length < 20) {
+		Dmsg('申请理由不少于20字', 'reason');
+		return false;
+	}
+	return true;
+}
+</script>
+<script type="text/javascript">s('partner');m({if $action=='add'}'add'{else}'s{$status}'{/if});</script>
+{elseif $action == 'list'}
+<form action="?" id="search">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div class="tt">
+<select name="mid">
+{loop $MODS $k $v}
+<option value="{$k}"{if $mid == $k} selected{/if}>{$v[name]}</option>
+{/loop}
+</select>&nbsp;
+<input type="text" size="30" name="kw" value="{$kw}" title="关键词" placeholder="关键词"/>&nbsp;
+{$order_select}&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?mid={$mid}&action={$action}&itemid={$itemid}');"/>
+</div>
+</form>
+<form method="post">
+<div class="ls">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="90">图片</th>
+<th>商品</th>
+<th><a href="javascript:;" onclick="Dq('order','{if $order==5}6{else}5{/if}');">价格 <img src="{DT_STATIC}image/ico-{if $order==6}asc{elseif $order==5}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th><a href="javascript:;" onclick="Dq('order','{if $order==7}8{else}7{/if}');">订单 <img src="{DT_STATIC}image/ico-{if $order==8}asc{elseif $order==7}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th><a href="javascript:;" onclick="Dq('order','{if $order==9}10{else}9{/if}');">库存 <img src="{DT_STATIC}image/ico-{if $order==10}asc{elseif $order==9}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th><a href="javascript:;" onclick="Dq('order','{if $order==11}12{else}11{/if}');">评论 <img src="{DT_STATIC}image/ico-{if $order==12}asc{elseif $order==11}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th><a href="javascript:;" onclick="Dq('order','{if $order==13}14{else}13{/if}');">人气 <img src="{DT_STATIC}image/ico-{if $order==14}asc{elseif $order==13}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th width="80">分销</th>
+<th width="80">铺货</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><a href="javascript:_preview('{$v[thumb]}');"><img src="{if $v[thumb]}{$v[thumb]}{else}{DT_STATIC}image/nopic60.png{/if}" width="60" class="thumb"/></a></td>
+<td align="left" title="{$v[alt]}">
+<ul>
+<li>&nbsp;{if $v[elite]}<span class="f_red" title="公司主页推荐">[荐]</span> {/if}<a href="{$v[linkurl]}" target="_blank" class="t">{$v[title]}</a></li>
+<li class="f_gray">&nbsp;更新：{timetodate($v[edittime], 5)}</li>
+<li class="f_gray">&nbsp;添加：{timetodate($v[addtime], 5)}</li>
+</ul>
+</td>
+<td class="f_price">{$DT[money_sign]}{$v[price]}</td>
+<td>{$v[orders]}</td>
+<td>{$v[amount]}</td>
+<td>{$v[comments]}</td>
+<td>{$v[hits]}</td>
+<td><a href="javascript:;" data-clipboard-action="copy" data-clipboard-target="#copy-{$v[itemid]}" onclick="Dtoast('{if strpos($DT_MBS, 'IE') === false}商品分销链接已复制 请分享给您的社交好友或插入平台作品{else}IE浏览器不支持复制{/if}');" class="t">复制链接</a></td>
+<td><a href="{$DT[file_my]}?mid={$mid}&action=add&job=copy&itemid={$v[itemid]}" target="_blank" class="t">一键上架</a></td>
+</tr>
+{/loop}
+</table>
+</form>
+<div class="pages">{$pages}</div>
+{if strpos($DT_MBS, 'IE') === false}
+<div style="z-index:1000;position:absolute;top:-10000px;">
+{loop $lists $k $v}
+<textarea id="copy-{$v[itemid]}">{$MOD[linkurl]}invite.php?mid={$mid}&uid={$_userid}&itemid={$v[itemid]}</textarea>
+{/loop}
+</div>
+{load('clipboard.min.js')}
+<script type="text/javascript">var clipboard = new Clipboard('[data-clipboard-action]');</script>
+{/if}
+<script type="text/javascript">
+s('partner');
+</script>
+{else}
+<form action="?" id="search">
+<input type="hidden" name="status" value="{$status}"/>
+<div class="tt">
+{$fields_select}&nbsp;
+<input type="text" size="30" name="kw" value="{$kw}" title="关键词" placeholder="关键词"/>&nbsp;
+{$order_select}&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?status={$status}');"/>
+</div>
+</form>
+<form method="post">
+<div class="ls">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="20"><input type="checkbox" onclick="checkall(this.form);" title="全选/反选"/></th>
+<th>公司</th>
+<th>会员</th>
+<th width="80"><a href="javascript:;" onclick="Dq('order','{if $order==3}4{else}3{/if}');">享受折扣 <img src="{DT_STATIC}image/ico-{if $order==4}asc{elseif $order==3}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th width="80"><a href="javascript:;" onclick="Dq('order','{if $order==5}6{else}5{/if}');">订单数量 <img src="{DT_STATIC}image/ico-{if $order==6}asc{elseif $order==5}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th width="80"><a href="javascript:;" onclick="Dq('order','{if $order==7}8{else}7{/if}');">分销订单 <img src="{DT_STATIC}image/ico-{if $order==8}asc{elseif $order==7}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th width="80" data-hide-1200="1"><a href="javascript:;" onclick="Dq('order','{if $order==9}10{else}9{/if}');">总销售额 <img src="{DT_STATIC}image/ico-{if $order==10}asc{elseif $order==9}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th width="80" data-hide-1200="1" data-hide-1400="1" data-hide-1600="1"><a href="javascript:;" onclick="Dq('order','{if $order==11}12{else}11{/if}');">年销售额 <img src="{DT_STATIC}image/ico-{if $order==12}asc{elseif $order==11}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th width="80" data-hide-1200="1" data-hide-1400="1" data-hide-1600="1"><a href="javascript:;" onclick="Dq('order','{if $order==13}14{else}13{/if}');">月销售额 <img src="{DT_STATIC}image/ico-{if $order==14}asc{elseif $order==13}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th width="100"><a href="javascript:;" onclick="Dq('order','{if $order==1}2{else}1{/if}');">申请时间 <img src="{DT_STATIC}image/ico-{if $order==2}asc{elseif $order==1}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+{if $status==3}
+<th width="80">查看商品</th>
+<th width="80">分销记录</th>
+{/if}
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><input type="checkbox" name="itemid[]" value="{$v[itemid]}"/></td>
+<td align="left"> &nbsp; <a href="{userurl($v[username], 'file=contact')}" target="_blank" class="t">{$v[company]}</a></td>
+<td>{$v[username]}</td>
+<td><a href="javascript:;" onclick="Dq('fields',3,0);Dq('kw','={$v[discount]}');">{$v[discount]}%</a></td>
+<td><a href="javascript:;" onclick="Dwidget('order.php?seller={$v[username]}&fromdate={$v[adddate]} 00:00:00', '查看订单');">{$v[orders]}</a></td>
+<td><a href="javascript:;" onclick="Dwidget('record.php?agent={$v[username]}&fromdate={$v[adddate]} 00:00:00', '查看记录');">{$v[trades]}</a></td>
+<td data-hide-1200="1">{$DT[money_sign]}{$v[amount]}</td>
+<td data-hide-1200="1" data-hide-1400="1" data-hide-1600="1">{$DT[money_sign]}{$v[amounty]}</td>
+<td data-hide-1200="1" data-hide-1400="1" data-hide-1600="1">{$DT[money_sign]}{$v[amountm]}</td>
+<td class="f_gray">{$v[adddate]}</td>
+{if $status==3}
+<td><a href="?action=list&itemid={$v[itemid]}" class="t">商品列表</a></td>
+<td><a href="javascript:;" onclick="Dwidget('record.php?agent={$v[username]}&fromdate={$v[adddate]} 00:00:00', '查看记录');" class="t">分销记录</a></td>
+{/if}
+</tr>
+{/loop}
+</table>
+<div class="btns">
+<label><input type="checkbox" onclick="checkall(this.form);" title="全选/反选"/></label>
+<input type="submit" value=" 删除选中 " class="btn_r" onclick="if(confirm('确定要删除选中代理吗？')){this.form.action='?action=delete'}else{return false;}"/>&nbsp;&nbsp;
+</div>
+</form>
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('partner');m('s{$status}');</script>
+{/if}
+{template 'footer', 'member'}

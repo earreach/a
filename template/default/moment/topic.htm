@@ -1,0 +1,50 @@
+{template 'header'}
+{load('member/panel.css')}
+{load('panel.js')}
+<div class="m">
+	<div class="nav">
+	<div class="nvs"><form action="{$MOD[linkurl]}topic.php"><input type="search" name="kw" value="{$kw}" placeholder="搜索话题" title="搜索话题"/><s onclick="$(this).parent().submit();">搜索</s></form></div>
+	<a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> <a href="{$MOD[linkurl]}{rewrite('topic.php?page=1')}">话题</a></div>
+</div>
+
+<div class="m m5">
+	<div class="m5l">		
+		<div id="userinfo">{template 'userinfo', $module}</div>
+	</div>
+	<div class="m5m">
+	{if $itemid}
+		<div class="topic-show">
+			<h1>{$item[title]}</h1>
+			{if $item[content]}<div class="topic-show-content">{$item[content]}</div>{/if}
+			<div class="topic-show-info"><a href="javascript:;" onclick="Dwidget('{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&action=add&topicid={$itemid}', '参与话题：{$item[title]}', 1220);"><b>参与话题</b></a><i class="ui-ico-hits">浏览 <span>{$item[hits]}</span></i><i class="ui-ico-comm">讨论 <span>{$item[item]}</span></i></div>
+		</div>
+		<div class="mm-type">
+			<a href="{$MOD[linkurl]}{rewrite('topic.php?itemid='.$itemid)}"><span{if $typeid==0} class="on"{/if}>最新</span></a>
+			<a href="{$MOD[linkurl]}{rewrite('topic.php?itemid='.$itemid.'&typeid=1')}"><span{if $typeid==1} class="on"{/if}>推荐</span></a>
+			<a href="{$MOD[linkurl]}{rewrite('topic.php?itemid='.$itemid.'&typeid=2')}"><span{if $typeid==2} class="on"{/if}>关注</span></a>
+			<a href="{$MOD[linkurl]}{rewrite('topic.php?itemid='.$itemid.'&typeid=3')}"><span{if $typeid==3} class="on"{/if}>好友</span></a>
+			<a href="{$MOD[linkurl]}{rewrite('topic.php?itemid='.$itemid.'&typeid=4')}"><span{if $typeid==4} class="on"{/if}>热门</span></a>
+		</div>
+		{if $tags}
+		{template 'list-'.$module, 'tag'}
+		{else}
+		<div class="list-none">暂无相关{$MOD[name]}</div>
+		{/if}
+	{else}
+		<div class="b10"></div>
+		{if $tags}
+		<div class="list-topic">{template 'list-moment-topic', 'tag'}</div>
+		{else}
+		<div class="list-none">暂无相关话题</div>
+		{/if}
+	{/if}
+	</div>
+	<div class="m5r">
+		<div class="head-sub"><strong>推荐</strong></div>
+		<div class="list-topic">
+		<!--{tag("moduleid=$moduleid&table=$table_topic&prefix=&condition=status=3 and level>0&pagesize=10&datetype=2&order=item desc&template=list-moment-topic")}-->
+		</div>
+	</div>
+	<div class="b10 c_b"></div>
+</div>
+{template 'footer'}

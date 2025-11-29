@@ -1,0 +1,65 @@
+{load('cart.css')}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">拆分订单</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=update&step=detail&itemid={$itemid}" data-transition="none">订单详情</a>
+<a href="?action=index" data-direction="reverse">订单列表</a>
+</div>
+</div>
+
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+{loop $lists $k $v}	
+<div class="list-goods bd-b">
+<table cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td class="c1">{if $v[pid]}<section><label><input type="checkbox" name="itemids[]" value="{$v[itemid]}" checked id="check_{$v[itemid]}"/><i></i></label></section>{/if}</td>
+<td class="c2"><a href="{$v[linkurl]}"><img src="{if $v[thumb]}{$v[thumb]}{else}{DM_SKIN}60x60.png{/if}" width="60" height="60" alt="" onerror="this.src='{DM_SKIN}60x60.png';"/></a></td>
+<td>
+	<p><a href="{$v[linkurl]}">{$v[title]}</a></p>
+	<b>{$v[par]}</b>
+	<div>
+	<table cellpadding="0" cellspacing="0" width="100%">
+	<tr>
+	<td>x{$v[number]}</td>
+	<td class="a2"></td>
+	<td class="a3"></td>
+	</tr>
+	</table>
+	</div>
+</td>
+</tr>
+</table>
+</div>
+{/loop}
+
+<div class="ui-form">
+<div>下单时间：{$O[adddate]}</div>
+<div>订单总额：<strong class="f_red px14">{$DT[money_sign]}{$O[amount]}</strong></div>
+<div class="blank-20"></div>
+<div><input type="submit" name="submit" value="拆 分" class="btn-blue"/></div>
+<div class="blank-20"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if($('#dform :checkbox:checked').length < 1) {
+		alert('请至少选择1个需要拆离的订单');
+		return false;
+	}
+	return confirm('您确认将选中订单拆离当前订单吗？\n\n此操作将不可撤销');
+}
+</script>

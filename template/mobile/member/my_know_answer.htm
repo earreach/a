@@ -1,0 +1,191 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a>{if $action=='index' || !$action}<a href="javascript:Dmenu('search-{$js_pageid}');"><img src="{DM_SKIN}icon-search{$wh}.png" width="24" height="24"/></a>{/if}</div>
+<div class="head-bar-title">{if $action=='add'}我来回答{elseif $action=='edit'}修改回答{elseif $action=='question'}选择问题{else}我的回答{/if}</div>
+<div class="head-bar-right">
+{if $action=='add' || $action=='edit' || $action=='question'}
+<a href="?mid={$mid}&job={$job}&status=3"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{else}
+<a href="?mid={$mid}&job={$job}&action=add"><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></a>
+{/if}
+<a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a>
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?mid={$mid}&job={$job}&action=add" data-transition="none">我要回答</a>
+<a href="?mid={$mid}&job={$job}" data-transition="none">我的回答</a>
+<a href="?mid={$mid}&action=index" data-transition="none">提问管理</a>
+<a href="?action=index" data-direction="reverse">切换频道</a>
+</div>
+</div>
+
+{if $action=='add' || $action=='edit'}
+<div class="ui-form">
+{load('webuploader.min.js')}
+<iframe src="" name="send" id="send" style="display:none;"></iframe>
+<form method="post" action="?" id="dform" target="send" onsubmit="return check();">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<p>问题原文</p>
+<div><a href="{$MOD[mobile]}{$item[linkurl]}" class="b">{$item[title]}</a></div>
+<p>答案内容<b id="dcontent"></b></p>
+</div>
+<input type="hidden" name="content" id="content"/>
+<ul class="ui-editor-toolbar">
+<li class="ui-editor-img"><div id="editor-picker"></div></li>
+<li class="ui-editor-bold"><input type="button" value=" " editor-action="bold"/>B</li>
+<li class="ui-editor-italic"><input type="button" value=" " editor-action="italic"/>I</li>
+<li class="ui-editor-underline"><input type="button" value=" " editor-action="underline"/>U</li>
+</ul>
+<div class="ui-editor-content" id="editor">{$content}</div>
+{load('editor.js')}
+<script type="text/javascript">
+$(function(){
+    $('#editor').DEditor({
+        editorid: 'editor',
+        textareaid: 'content',
+        server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=editor'
+    });
+});
+</script>
+<div class="ui-form">
+<p>参考资料</p>
+<input type="text" name="url" size="60" id="url"/>
+{if $_userid}
+<p>匿名设定</p>
+<input type="checkbox" name="hidden" value="1" id="hidden"/> 如果不需要显示您的信息，您可以对回答设定匿名
+{/if}
+{if $need_question}
+<p>验证问题<i>*</i><b id="danswer"></b></p>
+<div>{template 'question', 'chip'}</div>
+{/if}
+{if $need_captcha}
+<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+<div>{template 'captcha', 'chip'}</div>
+{/if}
+{if $MOD[tip_answer]}
+<p>规则说明</p>
+<s>{$MOD[tip_answer]}</s>
+{/if}
+<div class="blank-16"></div>
+<input type="submit" name="submit" value=" 提交回答 " class="btn-blue"/>
+<div class="blank-16"></div>
+<center><a href="{$MOD[mobile]}faq.php#credit" class="b">{$DT[credit_name]}规则</a></center>
+<div class="blank-32"></div>
+</form>
+</div>
+{if $answer_limit}
+<div class="limit">
+今日可回答 <span class="f_b f_red">{$answer_limit}</span> 次&nbsp;&nbsp;&nbsp;
+当前已回答 <span class="f_b">{$limit_used}</span> 次&nbsp;&nbsp;&nbsp;
+还可以回答 <span class="f_b f_blue">{$limit_free}</span> 次&nbsp;&nbsp;&nbsp;
+</div>
+{/if}
+
+{elseif $action == 'question'}
+<div class="ui-form-search">
+<form action="?">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li><a href="?mid={$mid}&job={$job}&action=add&itemid={$v[itemid]}"><strong>{$v[title]}</strong></a></li>
+<li><span>{$v[adddate]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">{if $kw}未搜索到“{$kw}”相关结果{else}暂无待解决的问题{/if}</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+
+{else}
+{if $_userid}
+<script type="text/javascript">$(function(){Stabs('{$js_pageid}');});</script>
+<div class="list-menu" id="tabs-{$js_pageid}">
+	<ul>
+	<a href="?mid={$mid}&job={$job}&status=3"><li{if $status==3} class="on"{/if} id="s3">已发布{if !$kw} <i>{$nums[3]}</i>{/if}</li></a>
+	<a href="?mid={$mid}&job={$job}&status=2"><li{if $status==2} class="on"{/if} id="s2">审核中{if !$kw} <i>{$nums[2]}</i>{/if}</li></a>
+	<a href="?mid={$mid}&job={$job}&status=1"><li{if $status==1} class="on"{/if} id="s1">未通过{if !$kw} <i>{$nums[1]}</i>{/if}</li></a>
+	</ul>
+</div>
+{/if}
+
+<div id="search-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="?">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="status" value="{$status}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+</div>
+
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li><a href="?mid={$mid}&job={$job}&action=edit&itemid={$v[itemid]}"><strong>{$v[title]}</strong></a></li>
+<li><span>{$v[adddate]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+	<div class="list-none">{if $kw}未搜索到“{$kw}”相关结果{else}暂无记录{/if}</div>
+{/if}
+{if $answer_limit}
+<div class="limit">
+今日可回答 <span class="f_b f_red">{$answer_limit}</span> 次&nbsp;&nbsp;&nbsp;
+当前已回答 <span class="f_b">{$limit_used}</span> 次&nbsp;&nbsp;&nbsp;
+还可以回答 <span class="f_b f_blue">{$limit_free}</span> 次&nbsp;&nbsp;&nbsp;
+</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{/if}
+
+{if $action == 'add' || $action == 'edit'}
+<script type="text/javascript">
+function check() {
+	var l;
+	var f;
+	f = 'content';
+	l = Dd(f).value.length;
+	if(l < 5) {
+		Dmsg('内容应最少5字，当前已输入'+l+'字', f);
+		return false;
+	}
+	{if $need_captcha}
+	f = 'captcha';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', f);
+		return false;
+	}
+	{/if}
+	{if $need_question}
+	f = 'answer';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证问题', f);
+		return false;
+	}
+	{/if}
+}
+</script>
+{/if}
+{template 'footer', 'member'}

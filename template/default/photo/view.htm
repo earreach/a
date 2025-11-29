@@ -1,0 +1,38 @@
+{template 'header'}
+<a name="p"></a>
+<div class="m">	
+	<div class="nav"><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')} <i>&gt;</i> <a href="{$linkurl}">{$title}</a></div>
+</div>
+<div class="m">
+<table cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td valign="top" class="photo_l">
+<div class="photo_info">
+	<div class="photo_info_r"><span class="count_b">共{$items}图</span></div>
+	<h1 class="title" id="title">{$title}</h1>
+	<div class="photo_info_i">
+	<span onclick="Go('{$linkurl}');" class="f_r c_p"><img src="{DT_STATIC}image/ico-list-mix.png" width="16" height="16" title="返回图集" align="absmiddle"/></span>
+	<i class="ui-ico-time">{$adddate}</i>
+	{if $MOD[hits]}<i class="ui-ico-hits" id="hits">{$hits}</i>{/if}
+	{if $could_comment}<a href="{$EXT[comment_url]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}"><i class="ui-ico-comm">{$comments}</i></a>{/if}
+	</div>
+</div>
+<div class="photo_all" oncontextmenu="return false">
+<table width="100%">
+{loop $T $i $t}
+{if $i%6==0}<tr align="center">{/if}
+<td width="16.66%" valign="top">
+<a href="{$t[linkurl]}"><img src="{$t[thumb]}" width="160" title="{$t[introduce]}" class="thumb_a" onmouseover="this.className='thumb_b';" onmouseout="this.className='thumb_a';"/></a>
+<div>({$t[number]}) {$t[title]}</div>
+</td>
+{if $i%6==5}</tr>{/if}
+{/loop}
+</table>
+</div>
+<div class="b10"></div>
+</td>
+</tr>
+</table>
+{if $pages}<div class="pages">{$pages}</div>{/if}
+</div>
+{template 'footer'}

@@ -1,0 +1,19 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right"><a href="{if $back_link}{$back_link}{else}{DT_MOB}{/if}"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div style="padding:32px 24px;font-size:14px;">
+	<div style="padding:6px 0;"><strong>{$head_title}</strong></div>
+	<div style="color:#666666;">您即将离开本站，请注意您的帐号和财产安全</div>
+	<div style="color:#666666;padding:24px 0;">{$url}</div>
+	<div style="padding:6px 0;"><a href="{$url}" rel="nofollow" data-ajax="false"><div class="btn-blue"/>继续访问</div></a></div>
+	<div style="padding:10px 0;"><a href="{DT_MOB}"><div class="btn">取消访问</div></a></div>
+	</div>
+</div>
+{template 'footer'}

@@ -1,0 +1,28 @@
+{if $typeid==1}
+{$code}
+{elseif $typeid==2}
+<a href="{$url}" title="{$text_title}" target="_blank">{$text_name}</a>
+{elseif $typeid==3}
+{if $url}<a href="{$url}" target="_blank">{/if}<img src="{$image_src}" width="{$width}" height="{$height}" alt="{$image_alt}"/>{if $url}</a>{/if}
+{elseif $typeid==4}
+{if $url}<a href="{$url}" target="_blank"><img src="{DT_SKIN}spacer.gif" width="{$width}" height="{$height}" alt="" style="position:absolute;z-index:2;"/></a>{/if}<video src="{$video_src}" width="{$width}" height="{$height}" controls="controls"{if $video_auto} autoplay="autoplay" muted="muted"{/if}{if $video_loop} loop="loop"{/if}></video>
+{elseif $typeid == 5}
+{load('slide.js')}
+<div id="slide_a{$pid}" class="slide" style="width:{$width}px;height:{$height}px;">
+{loop $tags $i $t}
+<a href="{if $t[linkurl]}{$t[linkurl]}{else}###{/if}" target="{if $t[linkurl]}_blank{else}_self{/if}"><img src="{$t[thumb]}" width="{$width}" height="{$height}" alt="{$t[alt]}"/></a>
+{/loop}
+</div>
+<script type="text/javascript">$(function(){new dslide('slide_a{$pid}');});</script>
+{elseif $typeid==6}
+	{if $tags}
+		{if $ad_module == 'mall'}
+		{template 'list-'.$ad_module, 'tag'}
+		{else}
+		<div id="adword">
+		<div class="adword">{template 'list-'.$ad_module, 'tag'}</div>
+		</div>
+		{/if}
+	{/if}
+{/if}
+{if $sign}<div class="adsign">广告</div>{/if}

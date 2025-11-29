@@ -1,0 +1,5 @@
+{if $tags}
+<ul>
+{loop $tags $i $t}<li onclick="DsKW('{$t[word]}');"><span>{$t[items]} 结果</span>{$t[word]}</li>{/loop}
+</ul>
+{/if}

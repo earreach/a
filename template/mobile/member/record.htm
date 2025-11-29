@@ -1,0 +1,81 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="charge.php?action=pay" data-transition="none">账户充值</a>
+<a href="?action=record" data-transition="none">资金流水</a>
+<a href="?action=pay" data-transition="none">信息付费</a>
+<a href="?action=award" data-transition="none">打赏记录</a>
+<a href="index.php" data-direction="reverse">会员中心</a>
+</div>
+</div>
+
+{if $action == 'pay'}
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li>
+<span class="f_r">{$MODULE[$v[mid]][name]}</span>
+<strong style="font-size:24px;color:#FF6600;">-{$v[fee]}{if $v[currency] == 'money'}{$DT[money_unit]}{else}{$DT[credit_unit]}{/if}</strong>
+</li>
+<li><span class="f_r">{$v[paytime]}</span><span><a href="{$v[url]}">{$v[title]}</a></span></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无记录</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+
+{elseif $action == 'award'}
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li>
+<span class="f_r">{$MODULE[$v[mid]][name]}</span>
+<strong style="font-size:24px;color:#FF6600;">{$DT[money_sign]}{$v[fee]}</strong>
+</li>
+<li><span class="f_r">{$v[paytime]}</span><span><a href="{$v[url]}">{$v[title]}</a></span></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无记录</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+
+{else}
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li>
+<span class="f_r">余额:{$DT[money_sign]}{$v[balance]}</span>
+{if $v[amount] < 0}
+<strong style="font-size:24px;color:#FF6600;">{$v[amount]}</strong>
+{else}
+<strong style="font-size:24px;">+{$v[amount]}</strong>
+{/if}
+</li>
+<li><span class="f_r">{$v[addtime]}</span><span>{$v[bank]} / {$v[reason]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无记录</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{/if}
+{template 'footer', 'member'}

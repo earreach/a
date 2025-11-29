@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="{DT_CHARSET}"/>
+<title>{if $seo_title}{$seo_title}{else}{if $head_title}{$head_title}{$DT[seo_delimiter]}{/if}{if $city_sitename}{$city_sitename}{else}{$DT[sitename]}{/if}{/if}</title>
+{if $head_keywords}
+<meta name="keywords" content="{$head_keywords}"/>
+{/if}
+{if $head_description}
+<meta name="description" content="{$head_description}"/>
+{/if}
+{if $head_mobile}
+<meta http-equiv="mobile-agent" content="format=html5;url={$head_mobile}"/>
+{/if}
+<meta name="generator" content="DESTOON - www.destoon.com"/>
+<meta http-equiv="x-ua-compatible" content="IE=8"/>
+<link rel="shortcut icon" type="image/x-icon" href="{DT_PATH}favicon.ico"/>
+<link rel="bookmark" type="image/x-icon" href="{DT_PATH}favicon.ico"/>
+{if $head_canonical}
+<link rel="canonical" href="{$head_canonical}"/>
+{/if}
+{if $EXT[archiver_enable]}
+<link rel="archives" title="{$DT[sitename]}" href="{$EXT[archiver_url]}"/>
+{/if}
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}style.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+{if $moduleid>1}
+
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}{$module}.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+{/if}
+{if $CSS}
+{loop $CSS $css}
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}{$css}.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+{/loop}
+{/if}
+<link rel="stylesheet" type="text/css" href="{DT_PATH}file/style/home.reset.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}css/base.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<script type="text/javascript" src="{DT_PATH}lang/{DT_LANG}/lang.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_PATH}file/script/config.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{if defined('TOHTML')}
+<!--[if IE]><!-->
+<script type="text/javascript" src="{DT_STATIC}script/jquery-1.12.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<!--<![endif]-->
+<!--[if !IE]><!-->
+<script type="text/javascript" src="{DT_STATIC}script/jquery-3.6.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_STATIC}script/notification.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<!--<![endif]-->
+{else}
+{if strpos($DT_MBS, 'IE') === false}
+<script type="text/javascript" src="{DT_STATIC}script/jquery-3.6.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_STATIC}script/notification.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{else}
+<script type="text/javascript" src="{DT_STATIC}script/jquery-1.12.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{/if}
+{/if}
+<script type="text/javascript" src="{DT_STATIC}script/common.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_STATIC}script/page.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{if $lazy}<script type="text/javascript" src="{DT_STATIC}script/jquery.lazyload.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>{/if}
+{if $JS}
+{loop $JS $js}
+<script type="text/javascript" src="{DT_STATIC}script/{$js}.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{/loop}
+{/if}
+<script type="text/javascript">{if $head_mobile && $EXT[mobile_goto]}GoMobile('{$head_mobile}');{/if}{if $itemid && $DT[anticopy]}document.oncontextmenu=function(e){return false;};document.onselectstart=function(e){return false;};{/if}var searchid = {if $moduleid>3}{$moduleid}{else}{$searchid}{/if};</script>
+<!--[以上为系统关键代码，除非您明确其含义，否则请勿修改或删除，否则会导致系统错误]-->
+<!--[模板中所有带id的元素，请勿修改或删除，否则会导致部分JS代码无法运行]-->
+<!--[以上类似的注释，在编译模板时，系统会自动移除，不会显示在实际的页面中]-->
+
+
+<script>
+	$(document).ready(function () {
+		var attr = $(".qs .line1")
+		$.each(attr, function (i, val) {
+		$(this).click(function (){
+			if ($(this).index()==i){
+				$(this).children().filter(".bt") .slideToggle()
+				$(this).find(".j-right").toggleClass("xz90")
+				$(this).siblings().children().filter(".bt").slideUp()
+				$(this).siblings().find(".j-right").removeClass("xz90")
+									}
+								})
+			})
+		})
+
+
+	// $(document).ready(function (){
+	// 	$(".qs .qs-1").each(
+	// 	$(this).click(a,function (b,c){
+	// 		$(".qs .pt-10").slideToggle()
+	// 		console.log(a+"-"+b+"-"+c)
+	// 	})
+	//
+	//
+	// 	)
+	//
+	// })
+
+</script>
+
+</head>
+<body>
+<div class="head" id="head">
+	<div class="head_m">
+		<div class="head_r" id="destoon_member"></div>
+		<div class="head_l">
+			<ul>
+			{if $DT[city]}<li class="h_location"><a href="{DT_PATH}api/city.php" title="点击切换城市"><span id="destoon_city">{$city_name}</span></a></li>{/if}
+			<li class="h_fav"><script type="text/javascript">addFav('收藏本页');</script></li>
+			{if $EXT[desktop_enable]}<li class="h_desktop"><a href="{DT_PATH}api/desktop.php">桌面版</a></li>{/if}
+			{if $EXT[mobile_enable]}<li class="h_mobile"><a href="javascript:Dmobile();">手机版</a></li>{/if}
+			{if $head_mobile}<li class="h_qrcode"><a href="javascript:Dqrcode();">二维码</a></li>{/if}
+			{if $DT[max_cart]}<li class="h_cart"><a href="{$MODULE[2][linkurl]}cart.php" onmouseover="Dcard('cart',this);">购物车<span class="head_t" id="destoon_cart"></span></a></li>{/if}
+			</ul>
+		</div>
+	</div>
+</div>
+<div id="destoon-space" class="head_s"></div>
+<div class="m"><div id="search_tips" style="display:none;"></div></div>
+{if $head_mobile}<div id="destoon-qrcode" style="display:none;"></div>{/if}
+<div id="destoon-card"></div>
+<div id="destoon-fixon">
+<div class="m">
+	<div class="logo"><a href="{$MODULE[1][linkurl]}"><img src="{if $MODULE[$moduleid][logo]}{$MODULE[$moduleid][logo]}{elseif $DT[logo]}{$DT[logo]}{else}{DT_SKIN}logo.gif{/if}" alt="{$DT[sitename]}"/></a></div>
+	<form id="destoon-search" action="{$MODULE[$searchid][linkurl]}search.php" onsubmit="return DSearch();">
+	<div class="search-inp">
+		<input name="kw" id="destoon-kw" type="text" value="{if $kw}{$kw}{/if}" placeholder="请输入关键词" onfocus="DsRec();" onblur="$('#search-tip,#search-rec,#search-cls').fadeOut('fast');" {if $DT[search_tips]} onkeyup="DsTip(this.value);" autocomplete="off"{/if} x-webkit-speech speech/>
+		<div id="search-tip"></div><div id="search-rec"></div>
+	</div>
+	<div class="search-mod">
+		<div id="search-cls" onclick="$('#destoon-kw').val('');$('#search-cls').hide();" title="清空输入"></div>
+		<input type="text" id="destoon-mod" value="{$MODULE[$searchid][name]}" readonly onclick="$('#search-tip,#search-rec').hide();$('#search-mod').fadeIn('fast');"/>
+		<div id="search-mod">
+		<p onclick="$('#search-mod').fadeOut('fast');"><i title="关闭"></i>选择频道搜索</p>
+		<ul>
+		{loop $MODULE $m}{if $m[ismenu] && !$m[islink]}<li onclick="DsMod('{$m[moduleid]}','{$m[name]}','{$m[linkurl]}')">{$m[name]}</li>{/if}{/loop}
+		</ul>
+		</div>
+	</div>
+	<div class="search-btn"><input type="submit" value="搜 索"/></div>	
+	<div class="search-adv" title="高级搜索" onclick="Go($('#destoon-search').attr('action'));"></div>	
+	<div class="search-hot"><!--{tag("moduleid=$searchid&table=keyword&condition=moduleid=$searchid and status=3&pagesize=10&order=total_search desc&template=list-search-kw")}--></div>	
+	</form>
+</div>
+</div>
+<div class="m">
+	<div class="menu">
+		<ul><li{if $moduleid<4} class="menuon"{/if}><a href="{$MODULE[1][linkurl]}"><span>首页</span></a></li>{loop $MODULE $m}{if $m[ismenu]}<li{if $m[moduleid]==$moduleid} class="menuon"{/if}><a href="{$m[linkurl]}"{if $m[isblank]} target="_blank"{/if}><span{if $m[style]} style="color:{$m[style]};"{/if}>{$m[name]}</span></a></li>{/if}{/loop}</ul>
+	</div>
+</div>

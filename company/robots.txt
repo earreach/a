@@ -1,0 +1,4 @@
+# Robots For DESTOON
+User-agent: *
+Disallow: /image/
+Disallow: /skin/

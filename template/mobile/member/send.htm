@@ -1,0 +1,423 @@
+{template 'header', 'member'}
+{if $action == 'email'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">修改邮箱</div>
+<div class="head-bar-right"><a href="edit.php"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+{if $step == 2}
+<div class="ui-ok">
+<p>邮箱修改成功</p>
+<input type="button" value="立即返回" class="btn-green" onclick="Go('edit.php');"/>
+</div>
+{elseif $step == 1}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="2"/>
+<div class="ui-form">
+<p>邮件验证码<i>*</i><b id="dcode"></b></p>
+<div><input type="tel" name="code" id="code" placeholder="已发送至邮箱"/></div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="立即修改" class="btn-blue"/>
+<div class="blank-16"></div>
+<input type="button" value="重新发送" class="btn" onclick="Go('?action={$action}&email={$email}');"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('code').value.length < 6) {
+		Dmsg('请填写邮件验证码', 'code');
+		return false;
+	}
+	return true;
+}
+</script>
+{else}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="1"/>
+<div class="ui-form">
+<p>新邮箱<i>*</i><b id="demail"></b></p>
+<div><input type="email" name="email" id="email" value="{$email}"/></div>
+<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+<div>{template 'captcha', 'chip'}</div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="下一步" class="btn-blue" id="send_code"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('email').value.length < 6) {
+		Dmsg('请填写新邮箱地址', 'email');
+		return false;
+	}
+	if(Dd('email').value == '{$_email}') {
+		Dmsg('新邮箱地址不能与当前邮箱地址相同', 'email');
+		return false;
+	}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', 'captcha');
+		return false;
+	}
+	return true;
+}
+</script>
+{/if}
+{elseif $action == 'mobile'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">修改手机</div>
+<div class="head-bar-right"><a href="edit.php"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+{if $step == 2}
+<div class="ui-ok">
+<p>手机修改成功</p>
+<input type="button" value="立即返回" class="btn-green" onclick="Go('edit.php');"/>
+</div>
+{elseif $step == 1}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="2"/>
+<div class="ui-form">
+<p>短信验证码<i>*</i><b id="dcode"></b></p>
+<div><input type="tel" name="code" id="code" placeholder="已发送至手机"/></div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="立即修改" class="btn-blue"/>
+<div class="blank-16"></div>
+<input type="button" value="重新发送" class="btn" onclick="Go('?action={$action}&mobile={$mobile}');"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('code').value.length < 6) {
+		Dmsg('请填写短信验证码', 'code');
+		return false;
+	}
+	return true;
+}
+</script>
+{else}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="1"/>
+<div class="ui-form">
+<p>新手机号<i>*</i><b id="dmobile"></b></p>
+<div><input type="tel" name="mobile" id="mobile" value="{$mobile}"/></div>
+<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+<div>{template 'captcha', 'chip'}</div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="下一步" class="btn-blue" id="send_code"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('mobile').value.length < 11) {
+		Dmsg('请填写新手机号码', 'mobile');
+		return false;
+	}
+	if(Dd('mobile').value == '{$_mobile}') {
+		Dmsg('新手机号码不能与当前号码相同', 'mobile');
+		return false;
+	}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', 'captcha');
+		return false;
+	}
+	return true;
+}
+</script>
+{/if}
+{elseif $action == 'contact'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">人工申诉</div>
+<div class="head-bar-right"><a href="?action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div class="content"><br/>
+<center>请联系网站客服，并提供相关信息<br/>由客服人工协助找回</center>
+<div class="blank-32"></div>
+<input type="button" value="联系客服" class="btn-green" onclick="Go('{$url}');"/>
+<div class="blank-16"></div>
+<input type="button" value="返回" class="btn" onclick="Go('?action=index');"/>
+<div class="blank-32"></div>
+</div>
+{elseif $action == 'sms'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">短信找回</div>
+<div class="head-bar-right"><a href="?action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+{if $step == 2}
+<div class="ui-ok">
+{if $_userid}
+<p>支付密码修改成功</p>
+<input type="button" value="立即返回" class="btn-green" onclick="Go('{DT_MOB}my.php');"/>
+{else}
+<p>登录密码修改成功</p>
+<input type="button" value="立即登录" class="btn-green" onclick="Go('{$DT[file_login]}?username={$username}&forward={urlencode(DT_MOB.'my.php')}');"/>
+{/if}
+</div>
+{elseif $step == 1}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="2"/>
+<div class="ui-form">
+<p>新{if $_userid}支付{else}登录{/if}密码<i>*</i><b id="dpassword"></b></p>
+<div><input type="password" name="password" id="password" placeholder="新{if $_userid}支付{else}登录{/if}密码" autocomplete="new-password"/></div>
+
+<p>重复新密码<i>*</i><b id="dcpassword"></b></p>
+<div><input type="password" name="cpassword" id="cpassword" placeholder="再输入一遍新密码" autocomplete="new-password"/></div>
+
+<p>短信验证码<i>*</i><b id="dcode"></b></p>
+<div><input type="tel" name="code" id="code" placeholder="已发送至手机"/></div>
+
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="立即修改" class="btn-blue"/>
+<div class="blank-16"></div>
+<input type="button" value="重新发送" class="btn" onclick="Go('?action=sms');"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('password').value.length < 6) {
+		Dmsg('请填写新密码', 'password');
+		return false;
+	}
+	if(Dd('password').value != Dd('cpassword').value) {
+		Dmsg('两次输入的密码不一致', 'cpassword');
+		return false;
+	}
+
+	var f = 'password';
+	var l = Dd(f).value.length;
+	var a = Dpwd(Dd(f).value, '{$MOD[minpassword]}', '{$MOD[maxpassword]}', '{$MOD[mixpassword]}');
+	var s = '';
+	if(a[0] == 'mix') {
+		if(a[1] == '09') s = '密码必须包含数字';
+		if(a[1] == 'az') s = '密码必须包含小写字母';
+		if(a[1] == 'AZ') s = '密码必须包含大写字母';
+		if(a[1] == '..') s = '密码必须包含特殊符号';
+	} else if(a[0] == 'min') {
+		s = '密码最少'+a[1]+'字符';
+	} else if(a[0] == 'max') {
+		s = '密码最多'+a[1]+'字符';
+	}
+	if(s) {
+		Dmsg(s, f);
+		return false;
+	}
+	{if $DT[md5_pass]==3}
+	Dd(f).value = hex_md5(Dd(f).value);
+	Dd('c'+f).value = hex_md5(Dd('c'+f).value);		
+	{/if}
+
+	if(Dd('code').value.length < 6) {
+		Dmsg('请填写您收到的短信验证码', 'code');
+		return false;
+	}
+	return true;
+}
+</script>
+{else}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="1"/>
+<div class="ui-form">
+<p>手机号码<i>*</i><b id="dmobile"></b></p>
+<div><input type="tel" name="mobile" id="mobile" value="{$mobile}" placeholder="已经认证的手机号码"{if $_userid && $mobile} readonly{/if}/></div>
+<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+<div>{template 'captcha', 'chip'}</div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="下一步" class="btn-blue" id="send_code"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('mobile').value.length < 11) {
+		Dmsg('请填写手机号码', 'mobile');
+		return false;
+	}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', 'captcha');
+		return false;
+	}
+	return true;
+}
+</script>
+{/if}
+{elseif $action == 'mail'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">邮箱找回</div>
+<div class="head-bar-right"><a href="?action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+{if $step == 2}
+<div class="ui-ok">
+{if $_userid}
+<p>支付密码修改成功</p>
+<input type="button" value="立即返回" class="btn-green" onclick="Go('{DT_MOB}my.php');"/>
+{else}
+<p>登录密码修改成功</p>
+<input type="button" value="立即登录" class="btn-green" onclick="Go('{$DT[file_login]}?username={$username}&forward={urlencode(DT_MOB.'my.php')}');"/>
+{/if}
+</div>
+{elseif $step == 1}
+<form method="post" action="?" autocomplete="off" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="2"/>
+<div class="ui-form">
+<p>新{if $_userid}支付{else}登录{/if}密码<i>*</i><b id="dpassword"></b></p>
+<div><input type="password" name="password" id="password" placeholder="新{if $_userid}支付{else}登录{/if}密码" autocomplete="new-password"/></div>
+
+<p>重复新密码<i>*</i><b id="dcpassword"></b></p>
+<div><input type="password" name="cpassword" id="cpassword" placeholder="再输入一遍新密码" autocomplete="new-password"/></div>
+
+<p>邮件验证码<i>*</i><b id="dcode"></b></p>
+<div><input type="tel" name="code" id="code" placeholder="已发送至邮箱"/></div>
+
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="立即修改" class="btn-blue"/>
+<div class="blank-16"></div>
+<input type="button" value="重新发送" class="btn" onclick="Go('?action={$action}&email={$email}');"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('password').value.length < 6) {
+		Dmsg('请填写新密码', 'password');
+		return false;
+	}
+	if(Dd('password').value != Dd('cpassword').value) {
+		Dmsg('两次输入的密码不一致', 'cpassword');
+		return false;
+	}
+
+	var f = 'password';
+	var l = Dd(f).value.length;
+	var a = Dpwd(Dd(f).value, '{$MOD[minpassword]}', '{$MOD[maxpassword]}', '{$MOD[mixpassword]}');
+	var s = '';
+	if(a[0] == 'mix') {
+		if(a[1] == '09') s = '密码必须包含数字';
+		if(a[1] == 'az') s = '密码必须包含小写字母';
+		if(a[1] == 'AZ') s = '密码必须包含大写字母';
+		if(a[1] == '..') s = '密码必须包含特殊符号';
+	} else if(a[0] == 'min') {
+		s = '密码最少'+a[1]+'字符';
+	} else if(a[0] == 'max') {
+		s = '密码最多'+a[1]+'字符';
+	}
+	if(s) {
+		Dmsg(s, f);
+		return false;
+	}
+	{if $DT[md5_pass]==3}
+	Dd(f).value = hex_md5(Dd(f).value);
+	Dd('c'+f).value = hex_md5(Dd('c'+f).value);		
+	{/if}
+
+	if(Dd('code').value.length < 6) {
+		Dmsg('请填写您收到的邮件验证码', 'code');
+		return false;
+	}
+	return true;
+}
+</script>
+{else}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="1"/>
+<div class="ui-form">
+<p>邮箱地址<i>*</i><b id="demail"></b></p>
+<div><input type="email" name="email" id="email" value="{$email}" placeholder="注册时填写的邮箱地址"{if $_userid && $email} readonly{/if}/></div>
+<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+<div>{template 'captcha', 'chip'}</div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="下一步" class="btn-blue" id="send_code"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('email').value.length < 6) {
+		Dmsg('请填写邮箱地址', 'email');
+		return false;
+	}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', 'captcha');
+		return false;
+	}
+	return true;
+}
+</script>
+{/if}
+{else}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">找回密码</div>
+<div class="head-bar-right"><a href="{DT_MOB}my.php"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div class="blank-36 main"></div>
+<div class="list-set">
+<ul>
+{if $could_email}
+<li><div><a href="?action=mail">通过电子邮箱找回</a></div></li>
+{/if}
+{if $could_mobile}
+<li><div><a href="?action=sms">通过手机短信找回</a></div></li>
+{/if}
+<li><div><a href="?action=contact">联系客服人工申诉</a></div></li>
+</ul>
+</div>
+<div class="blank-600 main"></div>
+{/if}
+{if $seconds}
+<script type="text/javascript">
+Dd('send_code').disabled = true;
+var i = {$seconds};
+var interval=window.setInterval(
+	function() {
+		if(i < 1) {
+			Dd('send_code').value = '下一步';
+			Dd('send_code').disabled = false;
+			clearInterval(interval);
+		} else {
+			Dd('send_code').value = '下一步('+i+'秒)';
+			i--;
+		}
+	},
+1000);
+</script>
+{/if}
+{if $DT[md5_pass]}{load('md5.js')}<script type="text/javascript">$(function(){cls_pwd();});</script>{/if}
+{template 'footer', 'member'}}

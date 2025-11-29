@@ -1,0 +1,239 @@
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">验收商品</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=process&step=service&itemid={$itemid}" data-transition="none">服务详情</a>
+<a href="?action=update&step=detail&itemid={if $O[pid]}{$O[pid]}{else}{$O[oid]}{/if}" data-transition="none">订单详情</a>
+<a href="?action=service" data-direction="reverse">售后服务</a>
+</div>
+</div>
+
+{template 'goods_service', 'chip'}
+{load('mall.css')}
+{load('mall.js')}
+{load('player.js')}
+<div class="ui-head"><i></i><b>服务详情</b></div>
+<div class="content">
+联系买家：<a href="{userurl($O[buyer], 'file=contact')}" class="b">{$O[buyer]}</a><br/>
+申请时间：{$O[adddate]}<br/>
+最后更新：{$O[updatedate]}<br/>
+服务类型：{$dservice[$O[typeid]]}<br/>
+申请原因：{$O[buyer_title]}<br/>
+{if $O[buyer_reason]}
+补充说明：<br/>
+{nl2br($O[buyer_reason])}<br/>
+{/if}
+
+{if $O[buyer_thumbs] || $O[buyer_video]}
+申请凭据：<br/>
+<div class="comment-r">
+<ul id="{$itemid}0">			
+{if $O[buyer_video]}<li><img src="{DT_STATIC}image/play.gif" onclick="comment_thumb_show({$itemid}0, this);" data-video="{$O[buyer_video]}"/></li>{/if}
+{loop $O[buyer_thumbs] $t}
+{if $t}<li><img src="{$t}" onclick="comment_thumb_show({$itemid}0, this);"/></li>{/if}
+{/loop}
+</ul>
+</div>
+<p id="thumbshow-{$itemid}0" onclick="comment_thumb_next({$itemid}0);"></p>
+{/if}
+服务状态：{$dservice_status[$O[status]]}<br/>
+{if $O[seller_title]}
+操作原因：{$O[seller_title]}<br/>
+{/if}
+{if $O[seller_reason]}
+补充说明：<br/>
+{nl2br($O[seller_reason])}<br/>
+{/if}
+
+{if $O[seller_thumbs] || $O[seller_video]}
+操作凭据：<br/>
+<div class="comment-r">
+<ul id="{$itemid}1">			
+{if $O[seller_video]}<li><img src="{DT_STATIC}image/play.gif" onclick="comment_thumb_show({$itemid}1, this);" data-video="{$O[seller_video]}"/></li>{/if}
+{loop $O[seller_thumbs] $t}
+{if $t}<li><img src="{$t}" onclick="comment_thumb_show({$itemid}1, this);"/></li>{/if}
+{/loop}
+</ul>
+</div>
+<p id="thumbshow-{$itemid}1" onclick="comment_thumb_next({$itemid}1);"></p>
+{/if}
+
+{if $O[seller_note]}
+备注事项：<br/>
+{nl2br($O[seller_note])}<br/>
+{/if}
+</div>
+
+{load('webuploader.min.js')}
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div class="ui-head"><i></i><b>验收商品</b></div>
+
+
+<div class="ui-form">
+<p>验收结果<i>*</i><b id="dtypeid"></b></p>
+<div id="typeid">
+<label><input type="radio" name="post[typeid]" value="0" id="typeid-0" onclick="TP(0);" checked/> 拒绝</label> &nbsp;&nbsp;  
+<label><input type="radio" name="post[typeid]" value="1" id="typeid-1" onclick="TP(1);"/> 通过</label> &nbsp;&nbsp;   
+</div>
+<p>服务类型<i>*</i></p>
+<div>{$dservice[$O[typeid]]}</div>
+{if $O[typeid] < 2}
+<p>退款金额<i>*</i></p>
+<div class="f_red">{$DT[money_sign]}{$O[amount]}</div>
+{/if}
+<section id="tb-1"></section>
+
+<section id="tb-0">
+<p>操作原因<i>*</i><b id="dreason"></b></p>
+<div>
+	<select name="post[reason]" id="reason">
+	<option value="">请选择常见原因</option>
+	<option value="商品型号与订单不符" selected>商品型号与订单不符</option>
+	<option value="商品数量与申请不符">商品数量与申请不符</option>
+	<option value="包装破损">包装破损</option>
+	<option value="已发货">商品损坏</option>
+	<option value="商品损坏">其他</option>
+	</select>
+</div>
+<p>补充说明<b id="dcontent"></b></p>
+<div><textarea rows="8" cols="80" name="post[content]" id="content"></textarea></div>
+<s>请客观、如实填写，以便买家接受 限1000字</s>
+<p>图片凭证</p>
+<div>
+<script type="text/javascript">
+var album_max = parseInt({$DT[thumb_max]});
+if(album_max < 5 || album_max > 99) album_max = 9;
+for(var i = 0;i < album_max; i++) {
+	document.write('<input type="hidden" name="post[thumbs][]" id="thumb'+i+'" autocomplete="off"/>');
+	document.write('<div class="ui-form-album-show" id="album'+i+'" onclick="album_action('+i+');"></div>');
+}
+</script>
+<div class="ui-form-album-upload"><div id="album-picker"></div></div>
+<script type="text/javascript">
+function album_action(id) {
+	Dsheet('{$js_pageid}','<a href="javascript:album_delete('+id+');void(0);"><span style="color:red;">删除图片</span></a>', '取消', '确定要删除图片吗？');
+}
+function album_delete(id) {
+	$('#thumb'+id).val('');
+	$('#album'+id).html('');
+	$('#album'+id).hide();
+	$('.ui-form-album-upload').show();	
+}
+function album_show(id, url) {
+	if($('#thumb'+id).length == 0) return false;
+	$('#thumb'+id).val(url);
+	$('#album'+id).html('<img src="'+url+'"/>');
+	$('#album'+id).show();
+}
+function album_hide() {
+	var j = 1;
+	for(var i = 0; i < album_max; i++) {
+		if($('#thumb'+i).val() == '') {
+			j = 0;
+			break;
+		}
+	}
+	if(j) $('.ui-form-album-upload').hide();
+}
+var albumu = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=album&width={$MOD[thumb_width]}&height={$MOD[thumb_height]}',
+    pick: '#album-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+albumu.on('beforeFileQueued', function(file) {
+	var exts = albumu.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+albumu.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+albumu.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+albumu.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		for(var i = 0; i < album_max; i++) {
+			if($('#thumb'+i).val() == '') {
+				album_show(i, data.url);
+				break;
+			}
+		}
+		album_hide();
+	}
+});
+albumu.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+albumu.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+{if $thumbs}
+$(function(){
+	{loop $thumbs $k $v}
+	{if $v}album_show({$k}, '{$v}');{/if}
+	{/loop}
+	album_hide();
+});
+{/if}
+</script>
+</div>
+<p>视频凭证</p>
+<div>{template 'upload-video', 'chip'}</div>
+</section>
+<div class="blank-20"></div>
+<div><input type="submit" name="submit" value="确 定" class="btn-blue"/></div>
+<div class="blank-20"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	var agree = Dd('typeid-1').checked ? 1 : 0;
+	if(!agree && !$('#reason').val()) {
+		Dmsg('请选择操作原因', 'reason');
+		return false;
+	}
+	var len = $('#content').val().length;
+	if(len > 1000) {
+		Dmsg('补充说明不能多于1000个字，当前已输入'+len+'个字', 'content');
+		return false;
+	}
+	return confirm('您确认要'+(agree ? '通过' : '拒绝')+'此验收吗？');
+}
+function TP(i) {
+	if(i) {
+		$('#tb-1').show();
+		$('#tb-0').hide();
+	} else {
+		$('#tb-0').show();
+		$('#tb-1').hide();
+	}
+}
+$(function(){
+	TP(0);
+});
+</script>

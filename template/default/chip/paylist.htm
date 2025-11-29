@@ -1,0 +1,11 @@
+<table cellspacing="5" cellpadding="5">
+{php $PAYLIST = get_paylist();}
+<input type="hidden" name="bank" id="bank" value="{$PAYLIST[0][bank]}"/>
+{loop $PAYLIST $k $v}
+<tr onclick="$('#bank').val($('#paytype :checked').val());">
+<td><input type="radio" name="bank" value="{$v[bank]}" id="bank-{$v[bank]}"{if $k==0} checked{/if}/></td>
+<td><label for="bank-{$v[bank]}" class="c_p"><img src="{DT_PATH}api/pay/{$v[bank]}/logo.gif" alt=""/></label></td>
+<td>{if $v[percent]>0}手续费 {$v[percent]}%{/if}</td>
+</tr>
+{/loop}
+</table>

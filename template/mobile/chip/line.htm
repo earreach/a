@@ -1,0 +1,21 @@
+{if $DT[max_cart]>0}
+if($('#destoon-cart').length) {
+var destoon_cart = get_cart();
+if(destoon_cart > 0) {
+	if($('#destoon-cart').html().indexOf('<b>') == -1){$('#destoon-cart').append('<b>'+destoon_cart+'</b>');}else{$('#destoon-cart b').html(destoon_cart);$('#destoon-cart b').show();}
+} else {
+	$('#destoon-cart b').hide();
+}
+$('#destoon_cart').html(destoon_cart > 0 ? '<strong>'+destoon_cart+'</strong>' : 0);
+}
+{/if}
+if($('#destoon-message').length) {
+{if $_message || $_chat}
+if($('#destoon-message').html().indexOf('<i>') == -1){$('#destoon-message').append('<i></i>');}else{$('#destoon-message i').show();}
+{else}
+$('#destoon-message i').hide();
+{/if}
+}
+{if $sns_app}
+document.title = '{$site_name}';
+{/if}

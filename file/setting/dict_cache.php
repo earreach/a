@@ -1,0 +1,3 @@
+<?php exit;?>
+cacheid,缓存ID,内存表
+totime,过期时间,

@@ -1,0 +1,26 @@
+{template 'header'}
+<div class="m">	
+	<div class="nav">
+	<a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> <a href="{$MOD[linkurl]}{rewrite('news.php?page=1')}">{$L[news_title]}</a></div>	
+</div>
+<div class="m m1">
+	<div class="m1l">
+		<div class="catlist">
+		<ul>
+		{loop $lists $k $v}
+		<li><i>{timetodate($v[addtime], 5)}</i><a href="{$v[linkurl]}" target="_blank" title="{$v[alt]}">{$v[title]}</a></li>
+		{if $k && $k%5==4}<li class="sp">&nbsp;</li>{/if}
+		{/loop}
+		</ul>
+		</div>
+		{if $pages}<div class="pages">{$pages}</div>{/if}
+	</div>
+	<div class="m1r side">
+		<ul>
+		<li class="side_on" id="type_0"><a href="{$MOD[linkurl]}{rewrite('news.php?page=1')}">企业新闻</a></li>
+		<li class="side_li"><a href="{$MODULE[2][linkurl]}news.php?action=add" rel="nofollow">发布新闻</a></li>
+		</ul>
+		<form action="news.php"><input type="search" name="kw" value="{$kw}" ondblclick="if(this.value){Go('{$MOD[linkurl]}{rewrite('news.php?page=1')}');}" placeholder="搜索" title="输入关键词，按回车搜索"/></form>
+	</div>
+</div>
+{template 'footer'}

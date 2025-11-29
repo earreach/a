@@ -1,0 +1,44 @@
+{template 'header'}
+<div class="m">	
+	<div class="nav"><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')}</div>
+</div>
+<div class="m">
+	<style type="text/css">.sort-v{width:1110px;}</style>
+	<form action="{$MOD[linkurl]}search.php" id="search">
+	<input type="hidden" name="catid" value="{$catid}"/>
+	<div class="sort-f">
+	<div class="sort">
+		<div class="sort-k">行业</div>
+		<div class="sort-v">
+			<ul>
+			{loop $maincat $k $v}
+			<li{if $v[catid]==$catid} class="on"{/if}><a href="{$MOD[linkurl]}{$v[linkurl]}">{set_style($v[catname],$v[style])}</a>{if !$cityid} <i>({$v[item]})</i>{/if}</li>
+			{/loop}
+			</ul>
+		</div>
+	</div>
+	<div class="sort">
+		<div class="sort-k">地区</div>
+		<div class="sort-v">
+			<ul>
+			{php $mainarea = get_mainarea(0)}
+			{loop $mainarea $k $v}
+			<li><a href="{$MOD[linkurl]}{rewrite('search.php?catid='.$catid.'&areaid='.$v['areaid'])}">{$v[areaname]}</a></li>
+			{/loop}
+			</ul>
+		</div>
+	</div>
+	{if $FD}{template 'fields_search', 'chip'}{/if}
+	{if $CP}{template 'property_search', 'chip'}{/if}
+	</div>
+	</form>
+</div>
+{if $tags}
+<div class="m">
+	<div class="group-list">
+	{if $page == 1}{ad($moduleid,$catid,'',6)}{/if}
+	{template 'list-'.$module, 'tag'}
+	</div>
+</div>
+{/if}
+{template 'footer'}

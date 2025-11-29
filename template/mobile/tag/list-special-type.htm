@@ -1,0 +1,17 @@
+{loop $tags $k $t}
+{if $t[thumb]}
+<div class="ui-list-mix">
+<a href="{$t[linkurl]}" rel="external"><img src="{$t[thumb]}" alt=""/></a>
+<ul>
+<li><a href="{$t[linkurl]}" rel="external"><strong>{$t[title]}</strong></a></li>
+<li><p><i class="ui-ico-time">{timetodate($t[addtime], 3)}</i></p></li>
+</ul>
+</div>
+{else}
+<div class="ui-list-txt">
+<a href="{$t[linkurl]}" rel="external"><strong>{$t[title]}</strong></a>
+{if $t[introduce]}<div>{$t[introduce]}</div>{/if}
+<p><i class="ui-ico-time">{timetodate($t[addtime], 3)}</i></p>
+</div>
+{/if}
+{/loop}

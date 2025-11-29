@@ -1,0 +1,105 @@
+{template 'header', $template}
+<div class="dsn" id="pos_show"><a href="{$COM[linkurl]}">首页</a> <i>&gt;</i> <a href="{$MENU[$menuid][linkurl]}">{$MENU[$menuid][name]}</a>{if $itemid} <i>&gt;</i> {$title}{/if}</div>
+{if $itemid}
+<div class="main_head"><div>{if $itemid}<span class="f_r"><a href="{$MENU[$menuid][linkurl]}"><img src="{DT_STATIC}image/ico-list-mix.png" width="16" height="16" title="返回列表" align="absmiddle"/></a></span>{/if}<strong>{$MENU[$menuid][name]}</strong></div></div>
+<div class="main_body">
+	<div class="title">{$title}</div>
+	<div class="info"><i class="ui-ico-time">{timetodate($edittime, 3)}</i>{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}{if $MOD[hits]}<i class="ui-ico-hits ui-fr">{$hits}</i>{/if}</div>
+
+		<div class="content">
+			<table cellpadding="10" cellspacing="1" width="100%" bgcolor="#DDDDDD">			
+			<tr>
+			<td colspan="5" bgcolor="#F1F1F1" align="center"><strong id="title">{$truename}个人简历</strong></td>
+			</tr>
+			<tr bgcolor="#FFFFFF">
+			<td align="center" width="120">姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名</td>
+			<td width="360">{$truename}</td>
+			<td align="center" width="120">性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别</td>
+			<td width="360">{if $gender == 1}男{else}女{/if}</td>
+			<td rowspan="5" align="center"><img src="{if $thumb}{$thumb}{else}{DT_STATIC}image/nohead.gif{/if}" width="{$MOD[thumb_width]}" height="{$MOD[thumb_height]}" alt=""/></td>
+			</tr>
+			<tr bgcolor="#FFFFFF">
+			<td align="center">生&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日</td>
+			<td>{$birthday}</td>
+			<td align="center">婚姻状况</td>
+			<td>{if $marriage == 2}已婚{else}未婚{/if}</td>
+			</tr>
+			<tr bgcolor="#FFFFFF">
+			<td align="center">身&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;高</td>
+			<td>{$height} cm</td>
+			<td align="center">体&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重</td>
+			<td>{$weight} kg</td>
+			</tr>
+			<tr bgcolor="#FFFFFF">
+			<td align="center">居 住 地</td>
+			<td>{area_pos($areaid, '')}</td>
+			<td align="center">学&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;历</td>
+			<td>{$EDUCATION[$education]}</td>
+			</tr>
+			<tr bgcolor="#FFFFFF">
+			<td align="center">毕业院校</td>
+			<td>{$school}</td>
+			<td align="center">专&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;业</td>
+			<td>{$major}</td>
+			</tr>
+			<tr bgcolor="#FFFFFF">
+			<td align="center">工作性质</td>
+			<td>{$TYPE[$type]}</td>
+			<td align="center">工作经验</td>
+			<td colspan="2">{if $experience}{$experience}年{else}无{/if}</td>
+			</tr>
+			<tr bgcolor="#FFFFFF">
+			<td align="center">行业意向</td>
+			<td>{$CATEGORY[$parentid][catname]}</td>
+			<td align="center">职位意向</td>
+			<td colspan="2">{$CATEGORY[$catid][catname]}</td>
+			</tr>
+			<tr bgcolor="#FFFFFF">
+			<td align="center">专业技能</td>
+			<td>{$skill}</td>
+			<td align="center">语言水平</td>
+			<td colspan="2">{$language}</td>
+			</tr>
+			<tr bgcolor="#FFFFFF">
+			<td align="center">期望薪资</td>
+			<td>
+			{if $minsalary && $maxsalary}
+				{$minsalary}-{$maxsalary}{$DT[money_unit]}/月
+			{elseif $minsalary}
+				{$minsalary}{$DT[money_unit]}/月以上
+			{elseif $maxsalary}
+				{$maxsalary}{$DT[money_unit]}/月以内
+			{else}
+				面议
+			{/if}
+			</td>
+			<td align="center">求职状态</td>
+			<td colspan="2">{$SITUATION[$situation]}</td>
+			</tr>
+			<tr>
+			<td colspan="5" bgcolor="#F1F1F1">&nbsp;&nbsp;<strong>自我鉴定</strong></td>
+			</tr>
+			<tr>
+			<td colspan="5" bgcolor="#FFFFFF"><div class="content">{$content}</div></td>
+			</tr>
+			</table>
+		</div>
+	</div>
+	<script type="text/javascript">var content_id = 'content'; var img_max_width = 900;</script>
+	{load('content.js')}
+{else}
+<div class="main_head"><div><strong>{$MENU[$menuid][name]}</strong></div></div>
+<div class="main_body">
+	<table cellpadding="10" cellspacing="1" width="100%" align="center">
+	{loop $lists $k $v}
+	<tr>
+	<td class="px14">&middot; <a href="{$v[linkurl]}">{$v[title]}</a></td>
+	<td align="center">{$v[catname]}</td>
+	<td align="center" width="80" class="f_gray">{timetodate($v[edittime], 3)}</td>
+	</tr>
+	{/loop}
+	</table>
+	<div class="pages">{$pages}</div>
+</div>
+{/if}
+{template 'footer', $template}

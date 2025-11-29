@@ -1,0 +1,86 @@
+{template 'header'}
+<script type="text/javascript">var module_id= {$moduleid},item_id={$itemid},content_id='content',img_max_width={$MOD[max_width]};</script>
+<div class="m">	
+	<div class="nav"><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')}</div>
+</div>
+<div class="m">
+	<table cellpadding="0" cellspacing="0" width="100%">
+	<tr>
+	<td>
+	<div class="video_title">
+	<h1 id="title">{$title}</h1>
+	<div>
+	{if $duration}
+	<i class="ui-fr ui-ico-play" title="时长 {sectotime($duration)}">{sectotime($duration)}</i>
+	{/if}
+	<i class="ui-ico-time">{$adddate}</i>
+	{if $MOD[hits]}<i class="ui-ico-hits"><span id="hits">{$hits}</span></i>{/if}
+	{if $could_comment}<a href="{$EXT[comment_url]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}"><i class="ui-ico-comm">{$comments}</i></a>{/if}
+	{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}
+	</div>
+	</div>
+	</td>
+	<td>{if $MOD[show_user] && $username}{template 'userinfo', 'chip'}{/if}</td>
+	</tr>
+	<tr>
+	<td bgcolor="#000000" align="center"><div id="player">{template 'content', 'chip'}</div></td>
+	<td bgcolor="#333333" width="348" valign="top">
+	<div class="play-list">
+		{php $tags = playlist($item);}
+		{loop $tags $t}
+		<div title="{$t[title]}"{if $t[itemid]==$itemid} class="on"{/if}>
+			<a href="{$MOD[linkurl]}{$t[linkurl]}">
+			<img src="{$t[thumb]}" width="100" height="75" alt=""/>
+			<ul>
+			<li><p>{$t[title]}</p></li>
+			<li><span>{$t[hits]}次播放</span>{if $t[duration]}<i>{sectotime($t[duration])}</i>{/if}</li>
+			</ul>
+			</a>
+		</div>
+		{/loop}
+	</div>
+	</td>
+	</tr>
+	</table>
+</div>
+
+{if $album}
+{php $tags = albumlist($item);}
+{if $tags[2] > 1}
+<div class="m">
+	<div class="album-list">
+		<p><span>{$tags[1]}/{$tags[2]}</span><b>专辑：{$album}</b></p>
+		<ul>
+		{loop $tags[0] $t}
+		<a href="{$MOD[linkurl]}{$t[linkurl]}"><li{if $t[itemid]==$itemid} class="on"{/if}>{if $t[duration] && $t[itemid]!=$itemid}<i>{sectotime($t[duration])}</i>{/if}{$t[title]}</li></a>
+		{/loop}
+		</ul>
+	</div>
+</div>
+{/if}
+{/if}
+
+<div class="m">
+	{if $CP}{template 'property_show', 'chip'}{/if}
+	{if $content}<div class="content" id="content">{$content}</div>{/if}
+	{if $keytags}
+	<div class="tags">
+	{loop $keytags $t}
+	<a href="{$MOD[linkurl]}{rewrite('search.php?kw='.urlencode($t))}" target="_blank">{$t}</a>
+	{/loop}
+	</div>
+	{/if}
+	<div class="tool">
+	{if $MOD[show_like]}<i class="like" onclick="Dlike({$moduleid}, {$itemid}, 0);">点赞 <b id="like-{$moduleid}-{$itemid}-0">{$likes}</b></i>{/if}
+	{if $MOD[show_hate]}<i class="hate" onclick="Dhate({$moduleid}, {$itemid}, 0);">反对 <b id="hate-{$moduleid}-{$itemid}-0">{$hates}</b></i>{/if}
+	{if $MOD[show_report]}<i class="report" onclick="Dreport({$moduleid}, {$itemid}, 0);">举报</i>{/if}
+	{if $MOD[show_favorite]}<i class="favorite" onclick="Dfavor({$moduleid}, {$itemid});">收藏 <b>{$favorites}</b></i>{/if}
+	{if $MOD[fee_award]}<a href="{$MODULE[2][linkurl]}award.php?mid={$moduleid}&itemid={$itemid}" target="_blank"><i class="award">打赏 <b>{$awards}</b></i></a>{/if}
+	{if $could_comment}<a href="{$EXT[comment_url]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}" target="_blank"><i class="comment">评论 <b>{$comments}</b></i></a>{/if}
+	{if $MOD[show_share]}<a href="{DT_PATH}api/share.php?mid={$moduleid}&itemid={$itemid}" target="_blank"><i class="share">分享 <b>{$shares}</b></i></a>{/if}
+	</div>
+	<div class="head-txt"><span><a href="{$MOD[linkurl]}{$CAT[linkurl]}">更多<i>&gt;</i></a></span><strong>推荐{$MOD[name]}</strong></div>
+	<div class="list-img list0"><!--{tag("moduleid=$moduleid&condition=status=3 and level>0&catid=$catid&areaid=$cityid&itemid=$itemid&order=".$MOD[order]."&width=180&height=135&datetype=3&lazy=$lazy&template=list-video")}--></div>
+</div>
+{if $content}{load('content.js')}{/if}
+{template 'footer'}

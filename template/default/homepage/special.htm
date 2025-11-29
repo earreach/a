@@ -1,0 +1,38 @@
+{template 'header', $template}
+<div class="dsn" id="pos_show"><a href="{$COM[linkurl]}">首页</a> <i>&gt;</i> <a href="{$MENU[$menuid][linkurl]}">{$MENU[$menuid][name]}</a>{if $itemid} <i>&gt;</i> {$title}{/if}</div>
+<div class="main_head"><div>{if $itemid}<span class="f_r"><a href="{$MENU[$menuid][linkurl]}"><img src="{DT_STATIC}image/ico-list-img.png" width="16" height="16" title="返回列表" align="absmiddle"/></a></span>{/if}<strong>{$MENU[$menuid][name]}</strong></div></div>
+<div class="main_body">
+{if $itemid}
+	<div class="title">{$title}</div>
+	<div class="info"><i class="ui-ico-time">{timetodate($addtime, 3)}</i>{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}{if $MOD[hits]}<i class="ui-ico-hits ui-fr">{$hits}</i>{/if}</div>
+	{if $CP}{template 'property_show', 'chip'}{/if}
+	<div class="content" id="content">
+	{if $banner}<a href="{$linkurl}"><img src="{$banner}" alt=""/></a><br/>{/if}
+	{$content}
+	</div>
+	<center><input type="button" value="查看详情" class="btn-act" onclick="Go('{$linkurl}');"/></center><br/>
+	<script type="text/javascript">var content_id = 'content';	var img_max_width = 900;</script>
+	{load('content.js')}
+</div>
+{else}
+	{if $lists}
+	<table cellpadding="0" cellspacing="0" width="100%">
+	{loop $lists $k $v}
+	{if $k%4==0}<tr align="center">{/if}
+	<td valign="top" width="25%">
+	<div class="thumb">
+		<a href="{$v[linkurl]}"><img src="{$v[thumb]}" width="200" height="150" alt="{$v[alt]}" title="{$v[alt]}"/></a>
+		<div><a href="{$v[linkurl]}" title="{$v[alt]}">{$v[title]}</a></div>
+		<b><span class="px12">{timetodate($v[addtime], 3)}</span><em>{$v[hits]}点击</em></b>
+	</div>
+	</td>
+	{if $k%4==3}</tr>{/if}
+	{/loop}
+	</table>
+	{else}
+	<div class="list-none">暂无记录</div>
+	{/if}
+	{if $pages}<div class="pages">{$pages}</div>{/if}
+{/if}
+</div>
+{template 'footer', $template}

@@ -1,0 +1,53 @@
+{load('webuploader.min.js')}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">修改订单</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=update&step=detail&itemid={$itemid}" data-transition="none">订单详情</a>
+<a href="?action=index" data-direction="reverse">订单列表</a>
+</div>
+</div>
+
+{template 'goods', 'chip'}
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div class="ui-form">
+<p>附加名称</p>
+<div><input type="text" name="fee_name" id="fee_name" value="{$O[fee_name]}"/></div>
+<p>附加金额</p>
+<div><input type="text" name="fee" id="fee" value="{$O[fee]}"/></div>		
+{if $O[status] < 1}
+<div><input type="checkbox" name="confirm_order" value="1"{if $confirm} checked{/if}/> 同时确认订单</div>
+{/if}
+{if $O[cod] < 1}
+<div><input type="checkbox" name="edit_cod" value="1"/> 改为货到付款</div>
+{/if}
+{if $DT[sms]}
+<div><input type="checkbox" name="sendsms" value="1" checked="checked"/> 短信通知买家 <a href="sms.php">可用短信{$_sms}条</a></div>
+{/if}
+<div class="blank-20"></div>
+<div><input type="submit" name="submit" value="确 定" class="btn-blue"/></div>
+<div class="blank-20"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('fee').value < 0 && Dd('fee').value < -{$O[amount]}) {
+		Dmsg('附加金额不能小于-{$O[amount]}', 'fee');
+		return false;
+	}
+	return true;
+}
+</script>

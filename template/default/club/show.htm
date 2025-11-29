@@ -1,0 +1,162 @@
+{template 'header'}
+{load('member/panel.css')}
+{load('panel.js')}
+<script type="text/javascript">var module_id= {$moduleid},item_id={$itemid},content_id='',img_max_width={$MOD[max_width]};</script>
+<div class="m">
+	<div class="nav">
+	<div class="club_show_btn">
+	<a href="javascript:;" onclick="Dwidget('{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&action=add&gid={$gid}', '{$GRP[title]}{$MOD[seo_name]} 发帖', 1220);"><b class="club-btn-post">发帖</b></a><a href="javascript:;" onclick="Dwidget('{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&action=add&job=reply&tid={$itemid}', '回复：{$title}', 1220);"><b class="club-btn-reply">回复</b></a>
+	</div>
+	<a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')}  <i>&gt;</i> <a href="{$MOD[linkurl]}{$GRP[linkurl]}">{$GRP[title]}{$MOD[seo_name]}</a>{if $page>1} <i>&gt;</i> <a href="{$linkurl}">{$title}</a>{/if}
+	</div>
+</div>
+{if $page == 1}
+<div class="m">
+	<div class="club_show">
+	<table>
+	<tr>
+	<td valign="top" class="club_show_l">
+	<ul>
+	<li><a href="{userurl($item[username], 'file=space&mid='.$moduleid)}" target="_blank"><img src="{useravatar($item[username], 'large')}" alt="" class="club_avatar"/></a><i class="userinfo-v{$member[validate]}" title="{valid_name($member[validate])}"></i></li>
+	<li>
+		{if $item[username]}
+		<a href="{userurl($item[username], 'file=space&mid='.$moduleid)}" target="_blank"><b>{$item[passport]}</b></a>
+		{else}
+		<b title="{hide_info($item[ip], 'ip')}" class="f_gray">游客</b>
+		{/if}
+	</li>
+	<li><img src="{DT_STATIC}image/grade-{$member[gradeid]}.png" width="24" alt=""/></li>
+	{if $item[username] == $GRP[username]}
+	<li><span class="fb_orange">圈主</span></li>
+	{elseif in_array($item[passport], $GRP[managers])}
+	<li><span class="fb_orange">版主</span></li>
+	{/if}
+	<li><span class="fb_green">楼主</span></li>
+	<li></li>
+	</ul>
+	</td>
+	<td valign="top">
+		<div class="club_info">
+			<span class="f_r">
+			{if $MOD[hits]}<i class="ui-ico-hits">点击 <span id="hits">{$hits}</span></i>{/if}
+			<a href="javascript:;" onclick="Dwidget('{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&action=add&job=reply&tid={$itemid}', '回复：{$title}', 1220);"><i class="ui-ico-quote">回复 <span id="reply">{$reply}</span></i></a>
+			<span class="manage"{if !$admin} style="display:none;"{/if}><a href="{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&job=manage&tid={$itemid}" target="manage"><i class="ui-ico-sort">管理</i></a></span>
+			原帖
+			</span>
+			<i class="ui-ico-time" title="{timetodate($addtime, 5)}">{timetoread($addtime, 5)}</i>			
+			{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}
+			{if $ontop}&nbsp;&nbsp;<span class="fb_red">置顶</span>{/if}
+			{if $level}&nbsp;&nbsp;<span class="fb_red">精华{$level}</span>{/if}
+		</div>
+		<h1 class="title" id="title">{$title}</h1>
+		{if $CP}{template 'property_show', 'chip'}{/if}
+		<div id="question" class="content">{$content}</div>
+
+	<div class="tool">
+	{if $MOD[show_like]}<i class="like" onclick="Dlike({$moduleid}, {$itemid}, 0);">点赞 <b id="like-{$moduleid}-{$itemid}-0">{$likes}</b></i>{/if}
+	{if $MOD[show_hate]}<i class="hate" onclick="Dhate({$moduleid}, {$itemid}, 0);">反对 <b id="hate-{$moduleid}-{$itemid}-0">{$hates}</b></i>{/if}
+	{if $MOD[show_report]}<i class="report" onclick="Dreport({$moduleid}, {$itemid}, 0);">举报</i>{/if}
+	{if $MOD[show_favorite]}<i class="favorite" onclick="Dfavor({$moduleid}, {$itemid});">收藏 <b>{$favorites}</b></i>{/if}
+	{if $MOD[fee_award]}<a href="{$MODULE[2][linkurl]}award.php?mid={$moduleid}&itemid={$itemid}" target="_blank"><i class="award">打赏 <b>{$awards}</b></i></a>{/if}
+	{if $could_comment}<a href="{$EXT[comment_url]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}" target="_blank"><i class="comment">评论 <b>{$comments}</b></i></a>{/if}
+	{if $MOD[show_share]}<a href="{DT_PATH}api/share.php?mid={$moduleid}&itemid={$itemid}" target="_blank"><i class="share">分享 <b>{$shares}</b></i></a>{/if}
+	</div>
+
+	</td>
+	</tr>
+	</table>
+	</div>
+</div>
+{/if}
+{if $lists}
+	{loop $lists $k $v}
+	<div class="b10"></div>	
+	<a name="H{$v[itemid]}"></a>
+	<div class="m">
+		<div class="club_show">
+		<table>
+		<tr>
+		<td valign="top" class="club_show_l">
+		<ul>
+		<li><a href="{userurl($v[username], 'file=space&mid='.$moduleid)}" target="_blank"><img src="{useravatar($v[username], 'large')}" alt="" class="club_avatar"/></a><i class="userinfo-v{$v[member][validate]}" title="{valid_name($v[member][validate])}"></i></li>
+		<li id="u_{$v[itemid]}">
+			{if $v[username]}
+			<a href="{userurl($v[username], 'file=space&mid='.$moduleid)}" target="_blank"><b>{$v[passport]}</b></a>
+			{else}
+			<b title="{hide_info($item[ip], 'ip')}" class="f_gray">游客</b>
+			{/if}
+		</li>
+		<li><img src="{DT_STATIC}image/grade-{$v[member][gradeid]}.png" width="24" alt=""/></li>
+		{if $v[username] == $GRP[username]}
+		<li><span class="fb_red">圈主</span></li>
+		{elseif in_array($v[passport], $GRP[managers])}
+		<li><span class="fb_orange">版主</span></li>
+		{/if}
+		{if $v[username] == $item[username]}
+		<li><span class="fb_green">楼主</span></li>
+		{/if}
+		<li></li>
+		</ul>
+		</td>
+		<td valign="top">
+			<div class="club_info">
+				<span class="f_r">
+				<i class="ui-ico-like" onclick="Dlike({$moduleid}, 0, {$v[itemid]});">支持 <span id="like-{$moduleid}-0-{$v[itemid]}">{$v[likes]}</span></i>
+				<i class="ui-ico-hate" onclick="Dhate({$moduleid}, 0, {$v[itemid]});">反对 <span id="hate-{$moduleid}-0-{$v[itemid]}">{$v[hates]}</span></i>
+				<a href="javascript:;" onclick="Dwidget('{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&action=add&job=reply&tid={$itemid}&rid={$v[itemid]}', '回复：{$title}', 1220);"><i class="ui-ico-quote">回复</i></a>				 
+				<i class="ui-ico-report" onclick="Rreply({$v[itemid]});">举报</i>
+				<span class="manage"{if !$admin} style="display:none;"{/if}><a href="{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&job=manage&rid={$v[itemid]}&pid={$page}" target="manage"><i class="ui-ico-sort">管理</i></a></span>
+				{if $v[fname]}{$v[fname]}{else}{$v[floor]}楼{/if}
+				</span>
+				<i class="ui-ico-time" title="{timetodate($v[addtime], 5)}">{timetoread($v[addtime], 5)}</i>				
+				{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($v[ip], $MOD[ip])}</i>{/if}
+				{if $v[level]}&nbsp;&nbsp;<span class="fb_red">精华</span>{/if}
+			</div>
+			<div class="content" id="R_{$v[itemid]}">{$v[content]}</div>
+		</td>
+		</tr>
+		</table>
+		</div>
+	</div>
+	{/loop}
+{/if}
+<div class="b10"></div>
+<a name="REPLY"></a>
+<div class="m">
+	<div class="club_show">
+	<table>
+	<tr>
+	<td valign="top" class="club_show_l">
+	<script type="text/javascript">
+	var destoon_uname = get_cookie('username');
+	document.write('<ul>');
+	document.write('<li><img src="'+DTPath+'api/avatar/show.php?size=large&reload={DT_TIME}&username='+destoon_uname+'" class="club_avatar"/></li>');
+	document.write('<li>'+(destoon_uname ? '<b>'+destoon_uname+'</b>' : '<a href="{$MODULE[2][linkurl]}{$DT[file_login]}" target="_top">登录</a> / <a href="{$MODULE[2][linkurl]}{$DT[file_register]}" target="_top">注册</a>')+'</li>');
+	document.write('<li></li></ul>');
+	</script>
+	</td>
+	<td valign="top">
+		<textarea style="width:996px;height:96px;margin:16px 0 12px 16px;color:#999999;font-size:14px;border:#EEEEEE 1px solid;" onfocus="Dwidget('{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&action=add&job=reply&tid={$itemid}', '回复：{$title}', 1220);">回复：{$title}</textarea>
+	</td>
+	</tr>
+	</table>
+	</div>
+</div>
+{if $pages}
+<div class="m bd-t"><div class="pages">{$pages}</div></div>
+{/if}
+<div id="destoon-usercard"></div>
+{load('content.js')}
+<script style="text/javascript">
+$(function(){Dusercard({$moduleid}, '.club_avatar');});
+function Rreply(id) {
+	var c = Dd('R_'+id).innerHTML;
+	if(c.indexOf('club_break') != -1) {
+		var t = c.split('club_break');
+		c = t[1];
+		c = c.substring(c.indexOf('>') + 1);
+	}
+	Dreport({$moduleid}, 0, id, '{$MOD[name]}回复举报，回复ID:'+id+'\n回复内容:\n'+c);
+}
+</script>
+{template 'footer'}

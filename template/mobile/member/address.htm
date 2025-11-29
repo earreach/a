@@ -1,0 +1,151 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="javascript:Dback();" id="back-{$js_pageid}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right">
+{if $action=='add' || $action=='edit'}
+<a href="?action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{else}
+<a href="?action=add"><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></a>
+{/if}
+<a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a>
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=add" data-transition="none">添加地址</a>
+<a href="?action=index" data-transition="none">地址管理</a>
+<a href="index.php" data-direction="reverse">会员中心</a>
+</div>
+</div>
+
+{if $action=='add' || $action=='edit'}
+<form method="post" action="?" id="dform" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<div class="ui-form">
+<p>所在地区<i>*</i><b id="dareaid"></b></p>
+<div>{ajax_area_select('post[areaid]', '请选择', $areaid)}</div>
+<p>详细地址<i>*</i><b id="dtitle"></b></p>
+<div><input type="text" name="post[address]" id="title" value="{$address}"/></div>
+{if $DT[postcode]}
+<p>邮政编码<i>*</i><b id="dpostcode"></b></p>
+<div><input type="tel" name="post[postcode]" id="postcode" value="{$postcode}" style="width:100px;"/></div>
+{/if}
+<p>真实姓名<i>*</i><b id="dtruename"></b></p>
+<div><input type="text" name="post[truename]" id="truename" value="{$truename}" style="width:100px;"/></div>
+<p>手机号码<i>*</i><b id="dmobile"></b></p>
+<div><input type="tel" name="post[mobile]" id="mobile" value="{$mobile}" style="width:200px;"/></div>
+<p>电话号码</p>
+<div><input type="tel" name="post[telephone]" id="telephone" value="{$telephone}" style="width:200px;"/></div>
+<p>地址标签</p>
+<div><input type="text" name="post[typename]" id="typename" value="{$typename}" style="width:200px;"/>&nbsp;
+<select name="post[typeid]" onchange="if(this.value>0){$('#typename').val($(this).find('option:selected').text());}else{$('#typename').val('');}">
+{loop $L[address_type] $k $v}
+<option value="{$k}"{if $typeid == $k} selected{/if}>{$v}</option>
+{/loop}
+</select>
+</div>
+<p>显示顺序</p>
+<div><input type="tel" name="post[listorder]" id="listorder" value="{$listorder}" style="width:100px;"/></div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="{if $action=='edit'}修改{else}添加{/if}" class="btn-blue"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	var l;
+	var f;
+	f = 'areaid_1';
+	if(Dd(f).value == 0) {
+		Dmsg('请选择所在地区', 'areaid', 1);
+		return false;
+	}
+	f = 'title';
+	l = Dd(f).value.length;
+	if(l < 5) {
+		Dmsg('请填写详细地址', f);
+		return false;
+	}
+	{if $DT[postcode]}
+	f = 'postcode';
+	l = Dd(f).value.length;
+	if(l < 6) {
+		Dmsg('请填写邮政编码', f);
+		return false;
+	}
+	{/if}
+	f = 'truename';
+	l = Dd(f).value.length;
+	if(l < 2) {
+		Dmsg('请填写真实姓名', f);
+		return false;
+	}
+	f = 'mobile';
+	l = Dd(f).value.length;
+	if(l < 11) {
+		Dmsg('请填写手机号码', f);
+		return false;
+	}
+	return true;
+}
+</script>
+{else}
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<input type="checkbox" name="itemid[]" value="{$v[itemid]}" class="dsn" id="checkbox-{$v[itemid]}"/>
+<ul>
+<li><em class="check" id="check-{$v[itemid]}"></em><a href="?action=edit&itemid={$v[itemid]}"><strong>{$v[address]}</strong></a></li>
+<li><em class="sheet" id="sheet-{$v[itemid]}"></em><span>{$v[truename]} {$v[mobile]}</span></li>
+</ul>
+</div>
+{/loop}
+{/if}
+{if $MG[address_limit]}
+<div class="limit">总共可加 <span class="f_b f_red">{$MG[address_limit]}</span> 条&nbsp;&nbsp;&nbsp;当前已加 <span class="f_b">{$limit_used}</span> 条&nbsp;&nbsp;&nbsp;还可以加 <span class="f_b f_blue">{$limit_free}</span> 条</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<div id="foot-bar" class="dsn">
+<div class="foot-bar-fix"></div>
+<div class="foot-bar btns">
+<input type="submit" name="submit" value="删除选中" class="btn-red" onclick="if(confirm('确定要删除选中地址吗？')){this.form.action='?action=delete'}else{return false;}"/>
+</div>
+</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	if($('#foot-bar input').length == 0) $('.check').hide();
+	$('.list-img em').click(function() {
+		if($(this).attr('class') == 'sheet') {
+			var id = $(this).attr('id').replace('sheet-', '');
+			Dsheet('{$js_pageid}','<a href="?action=edit&itemid='+id+'"><span>修改</span></a>|<a href="?action=delete&itemid='+id+'" onclick="return _delete();"><span style="color:red;">删除</span></a>', '取消');
+		} else {
+			var id = $(this).attr('id').replace('check-', '');
+			if($('#checkbox-'+id).attr('checked')) {
+				$('#checkbox-'+id).attr('checked', false);
+				$(this).attr('class', 'check');
+			} else {
+				$('#checkbox-'+id).attr('checked', true);
+				$(this).attr('class', 'checked');
+			}
+			if($('.checked').length > 0) {
+				$('#foot-bar').fadeIn(300);
+			} else {
+				$('#foot-bar').fadeOut(300);
+			}
+		}
+	});
+});
+</script>
+{/if}
+{template 'footer', 'member'}

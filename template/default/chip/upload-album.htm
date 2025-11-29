@@ -1,0 +1,78 @@
+<div id="thumbs">
+{loop $thumbs $k $v}
+<div class="thumbs">
+<input type="hidden" name="post[thumbs][]" id="thumb{$k}" value="{$v}"/>
+<div><img src="{if $v}{$v}{else}{DT_STATIC}image/upload-image.png{/if}" width="100" height="100" id="showthumb{$k}" title="上传/预览图片" alt="" onerror="this.src='{DT_STATIC}image/upload-image.png';" onclick="if(this.src.indexOf('upload-image.png') == -1){_preview(Dd('showthumb{$k}').src, 1);}else{Dalbum({$k},{$moduleid},{$MOD[thumb_width]},{$MOD[thumb_height]}, Dd('thumb{$k}').value, true);}"/></div>
+<p><img src="{DT_STATIC}image/ico-upl.png" width="11" height="11" title="上传" onclick="Dalbum({$k},{$moduleid},{$MOD[thumb_width]},{$MOD[thumb_height]}, Dd('thumb{$k}').value, true);"/><img src="{DT_STATIC}image/ico-del.png" width="11" height="11" title="删除" onclick="delAlbum({$k});"/></p>
+</div>
+{/loop}
+</div>
+<div class="dsn" id="thumbtpl">
+<div class="thumbs">
+<input type="hidden" name="post[thumbs][]" id="thumb-99" value="" autocomplete="off"/>
+<div><img src="{DT_STATIC}image/upload-image.png" id="showthumb-99" title="上传/预览图片" alt="" onclick="if(this.src.indexOf('upload-image.png') == -1){_preview(Dd('showthumb-99').src, 1);}else{Dalbum(-99,{$moduleid},{$MOD[thumb_width]},{$MOD[thumb_height]}, Dd('thumb-99').value, true);}"/></div>
+<p><img src="{DT_STATIC}image/ico-upl.png" width="11" height="11" title="上传" onclick="Dalbum(-99,{$moduleid},{$MOD[thumb_width]},{$MOD[thumb_height]}, Dd('thumb{if $thumbs}{$k}{else}0{/if}').value, true);"/><img src="{DT_STATIC}image/ico-del.png" width="11" height="11" title="删除" onclick="delAlbum(-99);"/></p>
+</div>
+</div>
+<div class="thumbs" id="thumbmuti" title="批量上传图片，按Ctrl键多选">
+<div id="file-picker"><img src="{DT_STATIC}image/upload-muti.png" alt=""/></div>
+<p>批量上传<span id="file-progress"></span></p>
+</div>
+<span id="dthumb" class="f_red"></span>
+<script type="text/javascript">
+var album_max = parseInt({$DT[thumb_max]});
+if(album_max < 5 || album_max > 99) album_max = 9;
+{if strpos($DT_MBS, 'IE') === false}
+	var fileu = WebUploader.create({
+		auto: true,
+		server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=album&width={$MOD[thumb_width]}&height={$MOD[thumb_height]}',
+		pick: '#file-picker',
+		accept: {
+			title: 'image',
+			extensions: 'jpg,jpeg,png,gif,bmp',
+			mimeTypes: 'image/*'
+		},
+		fileNumLimit: album_max,
+		resize: false
+	});
+	fileu.on('beforeFileQueued', function(file) {
+		var exts = fileu.options.accept[0].extensions;
+		if((','+exts).indexOf(','+ext(file.name)) == -1) {
+			alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+			return false;
+		}
+	});
+	fileu.on('fileQueued', function(file) {
+		$('#file-progress').html('0%');
+	});
+	fileu.on('uploadProgress', function(file, percentage) {
+		var p = parseInt(percentage * 100);
+		if(p >= 100) p = 100;
+		$('#file-progress').html(p+'%');
+	});
+	fileu.on( 'uploadSuccess', function(file, data) {
+		if(data.error) {
+			Dmsg(data.message, 'thumb');
+		} else {
+			addAlbum(data.url, album_max);
+			newAlbum(album_max);
+		}
+	});
+	fileu.on( 'uploadError', function(file, data) {
+		Dmsg(data.message, 'thumb');
+	});
+	fileu.on('uploadFinished', function(file) {
+		$('#file-progress').html('');
+		if($("#thumbs input[value!='']").length >= album_max) $('#thumbmuti').hide();
+	});
+	$(function(){
+		if($("#thumbs input[value!='']").length >= album_max) window.setTimeout(function(){$('#thumbmuti').hide();}, 3000);
+		newAlbum(album_max);
+	});
+{else}
+	$(function(){
+		$('#thumbmuti').hide();
+		newAlbum(album_max);
+	});
+{/if}
+</script>

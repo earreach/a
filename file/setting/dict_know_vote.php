@@ -1,0 +1,8 @@
+<?php exit;?>
+itemid,ID,
+qid,问题ID,
+aid,答案ID,
+username,会员名,
+passport,昵称,
+addtime,添加时间,
+ip,IP,

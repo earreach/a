@@ -1,0 +1,51 @@
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">确认发货</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=update&step=detail&itemid={$itemid}" data-transition="none">订单详情</a>
+<a href="?action=index" data-direction="reverse">订单列表</a>
+</div>
+</div>
+
+{template 'goods', 'chip'}
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div class="ui-form">
+<p>快递类型</p>
+<div>
+	<select name="send_type" id="send_type">
+	<option value="">常用快递类型</option>
+	{loop $send_types $v}
+	<option value="{$v}">{$v}</option>
+	{/loop}
+	</select>
+</div>
+<p>快递单号</p>
+<div><input type="text" name="send_no" id="send_no"/>{if in_array($DT_MBS, array('app','cms','web')) || $wx_jssdk}<div class="ui-form-scan" onclick="App_Scan('#send_no');"></div>{/if}</div>
+<p>发货时间</p>
+<div><input type="date" name="send_time" id="send_time" value="{$send_time}"/></div>
+{if $DT[sms]}
+<div><input type="checkbox" name="sendsms" value="1" checked="checked"/> 短信通知买家 <a href="sms.php">可用短信{$_sms}条</a></div>
+{/if}
+<div class="blank-20"></div>
+<div><input type="submit" name="submit" value="发 货" class="btn-blue"/></div>
+<div class="blank-20"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	return confirm('您确认货物已经发出，并且以上信息填写无误吗？\n\n此操作将不可撤销');
+}
+</script>

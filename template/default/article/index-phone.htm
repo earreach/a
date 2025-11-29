@@ -1,0 +1,37 @@
+{template 'header'}
+<div class="b10"></div>
+<div class="m ">
+	<div class="">
+
+
+
+
+
+
+
+		{if $MOD[page_icat]}
+		<div class="">
+		{loop $maincat1 $i $c}
+		<div class="">
+
+			<div class=""><span><a href="{$MOD[linkurl]}{$c[linkurl]}">更多<i>&gt;</i></a></span><strong>{$c[catname]}</strong></div>
+			<div class="df fw mt-20">
+				{loop $c[child1] $j $h}
+					<a href="{$h[linkurl]}">
+						<div class=" ml-30 mr-30  ">
+							<div><img src="{$h[thumb]}" alt="{$h[catname]}"　title="{$h[catname]}" class=""></div>
+							<p class="tac">{$h[catname]}</p>
+						</div>
+					</a>
+
+				{/loop}
+			</div>
+		</div>
+		{/loop}
+		</div>
+		{/if}
+
+	</div>
+
+</div>
+{template 'footer'}

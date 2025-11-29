@@ -1,0 +1,24 @@
+/*
+	DESTOON Copyright (C)2008-2099 www.destoon.com
+	This is NOT a freeware,Use is subject to license.txt
+*/
+.video_title {padding:0 24px;}
+.video_title h1 {font-weight:bold;font-size:22px;margin:0 0 10px 0;height:32px;line-height:32px;overflow:hidden;}
+.player {}
+.play-list {padding:24px 24px 8px 24px;}
+.play-list div {height:75px;margin-bottom:16px;}
+.play-list div:hover {background:#404040;}
+.play-list img {float:left;}
+.play-list ul {float:left;width:190px;}
+.play-list p {height:40px;line-height:20px;overflow:hidden;margin:6px 10px;color:#F1F1F1;}
+.play-list span {color:#999999;padding-left:10px;}
+.play-list i {color:#999999;font-style:normal;float:right;}
+.play-list .on {background:#0072C6;}
+.album-list {overflow:hidden;padding:0 0 16px 0;border-bottom:#EEEEEE 1px solid;}
+.album-list p {margin:0;border-bottom:#EEEEEE 1px solid;line-height:48px;padding:0 16px;}
+.album-list p b {font-size:18px;}
+.album-list p span {float:right;color:#999999;}
+.album-list li {width:362px;height:36px;line-height:36px;overflow:hidden;float:left;padding:0 12px;background:#F6F6F6;margin:16px 0 0 16px;font-size:14px;border-radius:6px;}
+.album-list li:hover {background:#EEEEEE;color:#333333;}
+.album-list li i {float:right;font-size:12px;color:#999999;font-style:normal;}
+.album-list .on {background:#F6F6F6 url('../../image/ico-play.gif') no-repeat 366px center;background-size:8px 16px;width:342px;padding:0 32px 0 12px;}

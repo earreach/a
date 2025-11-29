@@ -1,0 +1,10 @@
+修复视频插入后被自动清空
+ueditor.all.min.js
+
+修复视频不能预览
+dialogs/video/player.js
+dialogs/video/video.js
+
+修复附件不能保持中文名称
+dialogs/attachment/attachment.html
+dialogs/attachment/attachment.js

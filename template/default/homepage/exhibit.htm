@@ -1,0 +1,85 @@
+{template 'header', $template}
+<div class="dsn" id="pos_show"><a href="{$COM[linkurl]}">首页</a> <i>&gt;</i> <a href="{$MENU[$menuid][linkurl]}">{$MENU[$menuid][name]}</a>{if $itemid} <i>&gt;</i> {$title}{/if}</div>
+<div class="main_head"><div>{if $itemid}<span class="f_r"><a href="{$MENU[$menuid][linkurl]}"><img src="{DT_STATIC}image/ico-list-mix.png" width="16" height="16" title="返回列表" align="absmiddle"/></a></span>{/if}<strong>{$MENU[$menuid][name]}</strong></div></div>
+<div class="main_body">
+{if $itemid}
+	<div class="title">{$title}</div>
+	<div class="info"><i class="ui-ico-time">{$editdate}</i>{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}{if $MOD[hits]}<i class="ui-ico-hits ui-fr">{$hits}</i>{/if}</div>
+	{if $CP}{template 'property_show', 'chip'}{/if}
+	<div class="content">	
+	<table cellpadding="10" cellspacing="1" width="100%" bgcolor="#CCCCCC">
+	<tr bgcolor="#FFFFFF">
+	<td  width="120">展会日期</td>
+	<td>{$fromdate} 至 {$todate} &nbsp; <img src="{DT_STATIC}image/process_{$process}.gif" id="process" alt="状态" align="absmiddle"/></td>
+	</tr>
+	<tr bgcolor="#FFFFFF">
+	<td>展出城市</td>
+	<td>{$city}</td>
+	</tr>
+	<tr bgcolor="#FFFFFF">
+	<td>展出地址</td>
+	<td><a href="{DT_PATH}api/address.php?auth={encrypt($address.'|'.$title, DT_KEY.'MAP')}" target="_blank">{$address}</a></td>
+	</tr>
+	<tr bgcolor="#FFFFFF">
+	<td>展馆名称</td>
+	<td>{$hallname}</td>
+	</tr>
+	<tr bgcolor="#FFFFFF">
+	<td>主办单位</td>
+	<td>{$sponsor}</td>
+	</tr>
+	{if $undertaker}
+	<tr bgcolor="#FFFFFF">
+	<td>承办单位</td>
+	<td>{$undertaker}</td>
+	</tr>
+	{/if}			
+	{if $homepage}
+	<tr bgcolor="#FFFFFF">
+	<td>官方网站</td>
+	<td><a href="{$homepage}" target="_blank" class="b">{$homepage}</a></td>
+	</tr>
+	{/if}
+	{if $sign && $process == 1}
+	<tr bgcolor="#FFFFFF">
+	<td></td>
+	<td><input type="button" value="在线报名" class="btn-act" onclick="Go('{$MOD[linkurl]}{rewrite('sign.php?itemid='.$itemid)}');"/></td>
+	</tr>
+	{/if}
+	</table>
+	</div>
+	<div class="content" id="content">
+	{$content}<br/>	
+	{if $remark}
+	<strong>展会备注</strong><br/>
+	{nl2br($remark)}<br/>
+	{/if}
+	</div>
+	<script type="text/javascript">var content_id = 'content';	var img_max_width = 900;</script>
+	{load('content.js')}
+</div>
+{else}
+	{if $lists}
+	<div class="list-mix">
+	<table cellpadding="6" cellspacing="0">
+	<tr bgcolor="#F6F6F6">
+	<th>标 题</th>
+	<th width="100">城市</th>
+	<th width="120">日期</th>
+	</tr>
+	{loop $lists $k $v}
+	<tr align="center">
+	<td><p>&middot; <a href="{$v[linkurl]}">{$v[title]}</a></p></td>
+	<td class="f_grey">{$v[city]}</td>
+	<td class="f_grey">{timetodate($v[fromtime], 3)}</td>
+	</tr>
+	{/loop}
+	</table>
+	</div>
+	{else}
+	<div class="list-none">暂无记录</div>
+	{/if}
+	{if $pages}<div class="pages">{$pages}</div>{/if}
+{/if}
+</div>
+{template 'footer', $template}

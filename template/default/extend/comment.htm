@@ -1,0 +1,355 @@
+{if $iframe}
+<!--[框架头部]-->
+<!doctype html>
+<html>
+<head>
+<meta charset="{DT_CHARSET}"/>
+<title>{if $seo_title}{$seo_title}{else}{if $head_title}{$head_title}{$DT[seo_delimiter]}{/if}{$DT[sitename]}{/if}</title>
+{if $head_keywords}
+<meta name="keywords" content="{$head_keywords}"/>
+{/if}
+{if $head_description}
+<meta name="description" content="{$head_description}"/>
+{/if}
+<meta http-equiv="x-ua-compatible" content="IE=8"/>
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}style.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}extend.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}comment.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<link rel="stylesheet" type="text/css" href="{DT_PATH}file/style/home.reset.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<script type="text/javascript" src="{DT_PATH}lang/{DT_LANG}/lang.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_PATH}file/script/config.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{if strpos($DT_MBS, 'IE') === false}
+<script type="text/javascript" src="{DT_STATIC}script/jquery-3.6.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{else}
+<script type="text/javascript" src="{DT_STATIC}script/jquery-1.12.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{/if}
+<script type="text/javascript" src="{DT_STATIC}script/common.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_STATIC}script/page.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript">//if(parent.location == window.location) Go('{$linkurl}');</script>
+</head>
+<body oncontextmenu="return false">
+<div id="destoon-space" style="display:none;"></div>
+<iframe id="proxy_iframe" src="" style="display:none;"></iframe>
+{else}
+<!--[列表头部]-->
+{template 'header'}
+<div id="destoon-space" style="display:none;"></div>
+<div class="m">	
+	<div class="nav"><div><a href="javascript:;" onclick="Golast();" id="post-comment"><b class="comment_post">发表评论</b></a></div><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MODULE[$mid][linkurl]}">{$MODULE[$mid][name]}</a> <i>&gt;</i> <a href="{$linkurl}">{$title}</a> <i>&gt;</i> <a href="{$EXT[comment_url]}{rewrite('index.php?mid='.$mid.'&itemid='.$itemid)}">评论列表</a> &nbsp; | &nbsp; <a href="javascript:;" onclick="$('.stat').slideToggle(300);">评分统计</a></div>
+</div>
+<div class="m m3">
+	<div class="m3l">
+
+{/if}
+<!--[特殊情况]-->
+{if $iframe}
+	{if $action == 'close'}
+		<div class="comment_close">评论已关闭</div>
+		<script style="text/javascript">
+		$(function(){
+			try{parent.Dd('comment_div').style.display = 'none';}catch(e){}
+		});
+		</script>
+	</body>
+	</html>
+	{exit}
+	{/if}
+{else}
+	{if $action == 'close'}
+		<div class="comment_close">评论已关闭</div>
+	</div>
+	</div>
+	<script style="text/javascript">
+	$(function(){
+		$('#post-comment').hide();
+	});
+	</script>
+	{template 'footer'}
+	{exit}
+	{/if}
+	{if $EXT[comment_api] == 'changyan'}
+		<div class="b20"></div>
+		<div id="SOHUCS" sid="{$mid}-{$itemid}"></div>
+		<script charset="utf-8" type="text/javascript" src="http://changyan.sohu.com/upload/changyan.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+		<script type="text/javascript">
+			window.changyan.api.config({
+				appid: '{$EXT[comment_api_id]}',
+				conf: '{$EXT[comment_api_key]}'
+			});
+		</script>
+	</div>
+	</div>
+	{template 'footer'}
+	{exit}
+	{/if}
+{/if}
+
+
+<div id="destoon_comment">
+	<a name="top"></a>
+	<div class="stat">
+	<table cellpadding="6" cellspacing="1" width="100%">
+	<tr align="center">
+	<td width="100"><img src="{DT_STATIC}image/star5.gif" width="60" height="12" alt="5星"/> </td>
+	<td><div class="stat_p"><div style="width:{$stat[pc5]};"></div></div></td>
+	<td class="stat_c" width="100">{$stat[pc5]}</td>
+	</tr>
+	<tr align="center">
+	<td><img src="{DT_STATIC}image/star4.gif" width="60" height="12" alt="4星"/> </td>
+	<td><div class="stat_p"><div style="width:{$stat[pc4]};"></div></div></td>
+	<td class="stat_c">{$stat[pc4]}</td>
+	</tr>
+	<tr align="center">
+	<td><img src="{DT_STATIC}image/star3.gif" width="60" height="12" alt="3星"/> </td>
+	<td><div class="stat_p"><div style="width:{$stat[pc3]};"></div></div></td>
+	<td class="stat_c">{$stat[pc3]}</td>
+	</tr>
+	<tr align="center">
+	<td><img src="{DT_STATIC}image/star2.gif" width="60" height="12" alt="2星"/></td>
+	<td><div class="stat_p"><div style="width:{$stat[pc2]};"></div></div></td>
+	<td>{$stat[pc2]}</td>
+	</tr>
+	<tr align="center">
+	<td><img src="{DT_STATIC}image/star1.gif" width="60" height="12" alt="1星"/></td>
+	<td><div class="stat_p"><div style="width:{$stat[pc1]};"></div></div></td>
+	<td>{$stat[pc1]}</td>
+	</tr>
+	</table>
+	</div>
+	{if $lists}
+	{if $level}<div class="comment_tips">本评论开启了筛选功能，仅展示作者筛选出的评论</div>{/if}
+	{loop $lists $k $v}	
+	<a name="H{$v[itemid]}"></a>
+	<div class="comment">
+	<table>
+	<tr>
+	<td class="comment_l" valign="top">
+	<div><i class="userinfo-v{$v[member][validate]}" title="{valid_name($v[member][validate])}"></i>{if $v[uname]}<a href="{userurl($v[uname], 'file=space')}" target="_blank">{/if}<img src="{useravatar($v[uname])}"  width="48" height="48" alt="" class="avatar" align="absmiddle"/>{if $v[uname]}</a>{/if}
+	</div>
+	<ul>
+	<li><img src="{DT_STATIC}image/grade-{$v[member][gradeid]}.png" width="24" alt=""/></li>
+	{if $v[username]==$v[item_username]}<li><span class="fb_green">作者</span></li>{/if}
+	</ul>
+	</td>
+	<td valign="top">
+		<div class="comment_title">
+			{if $v[floor]}<span class="comment_floor"><strong>{$v[floor]}</strong> 楼</span>{elseif $v[level]==2}<span class="fb_red f_r">置顶</span>{elseif $v[level]==1}<span class="fb_orange f_r">精选</span>{/if}
+			<span id="i_{$v[itemid]}">{$v[name]} <span class="comment_time" title="{$v[adddate]}">{timetoread($v[addtime], 5)}</span></span>{if $MOD[comment_ip]} &nbsp; <span class="f_gray">IP属地 {ip2area($v[ip], $MOD[comment_ip])}</span>{/if}
+		</div>
+		<div class="comment_content" id="c_{$v[itemid]}">{if $v[quotation]}{$v[quotation]}{else}{$v[content]}{/if}</div>
+		{if $v[reply]}
+		<div class="comment_reply">
+		<div>{if $v[replyer]==$v[item_username]}<span class="fb_green">作者</span>{else}<span class="fb_orange">网站</span>{/if} <span title="{$v[replydate]}">{timetoread($v[replytime], 5)}</span> 回复： </div>
+		{nl2br($v[reply])}
+		</div>
+		{/if}
+		<div class="comment_info">
+			<span class="comment_vote">
+			{if $MOD[comment_vote]}
+			<i class="ui-ico-like" onclick="Dlike(3, 0, {$v[itemid]});">支持 <span id="like-3-0-{$v[itemid]}">{$v[likes]}</span></i>
+			<i class="ui-ico-hate" onclick="Dhate(3, 0, {$v[itemid]});">反对 <span id="hate-3-0-{$v[itemid]}">{$v[hates]}</span></i>
+			{/if}
+			<i class="ui-ico-quote" onclick="Q({$v[itemid]});">回复 {$v[quotes]}</i>
+			<i class="ui-ico-report" onclick="R({$v[itemid]});">举报</i>
+			{if $could_del}
+			<a href="?mid={$mid}&itemid={$itemid}&page={$page}&action=delete&cid={$v[itemid]}&proxy={$proxy}" target="send" onclick="return confirm('确定要删除此评论吗？')"><i class="ui-ico-delete">删除</i></a>
+			{/if}
+			</span>
+			<img src="{DT_STATIC}image/star{$v[star]}.gif" width="60" height="12" alt="" align="absmiddle"/>
+		</div>
+	</td>
+	</tr>
+	</table>
+	</div>
+	{/loop}
+	{if $pages}<div class="pages">{$pages}</div>{/if}
+	{else}
+	<div class="list-none">暂时没有评论，来说点什么吧</div>
+	{/if}
+	<a name="last"></a>
+	<iframe src="" name="send" id="send" style="display:none;" scrolling="no" frameborder="0"></iframe>
+	<div class="comment_form">
+	<form method="post" action="?" target="send" onsubmit="return C();">
+	<input type="hidden" name="proxy" value="{$proxy}"/>
+	<input type="hidden" name="mid" value="{$mid}"/>
+	<input type="hidden" name="itemid" value="{$itemid}"/>
+	<input type="hidden" name="items" value="{$items}"/>
+	<input type="hidden" name="page" value="{$page}"/>
+	<input type="hidden" name="qid" value="0" id="qid"/>
+	<table cellpadding="10" cellspacing="1" width="100%">
+	<tr>
+	<td id="qbox" style="display:none;" bgcolor="#FFFFFF"></td>
+	</tr>	
+	<tr>
+	<td>
+	<input type="hidden" name="star" id="star" value="5"/>
+	<div class="stars f_r" style="background:url('{DT_STATIC}image/star5.png') no-repeat;" id="stars">
+	<span title="1星" data-id="1"></span>
+	<span title="2星" data-id="2"></span>
+	<span title="3星" data-id="3"></span>
+	<span title="4星" data-id="4"></span>
+	<span title="5星" data-id="5"></span>
+	</div>
+	<img src="{DT_STATIC}image/face.gif" title="插入表情" class="face" onmouseover="face_show();"/>
+	<div id="face" style="display:none;">
+		<div><span onclick="face_hide();" title="点击关闭" class="sc">x</span><strong>选择表情</strong></div>
+		{loop $faces $k $v}<img src="{DT_PATH}file/face/{$k}.png" onclick="face_into('{$k}', this.title);" title="{$v}"/>{/loop}
+	</div>
+	</td>
+	</tr>
+	<tr>
+	<td><textarea class="comment_area" onfocus="F();face_hide();" onkeyup="S();" name="content" id="content"  placeholder="请输入评论内容" style="resize:none;"></textarea></td>
+	</tr>
+	{if $need_captcha}
+	<tr id="tr_captcha" style="display:none;">
+	<td>
+	<div class="comment_input">
+	<table cellpadding="0" cellspacing="0">
+	<tr>
+	<td>&nbsp;<span>*</span> 验证码：</td>
+	<td>&nbsp;{template 'captcha', 'chip'} <span class="f_red" id="dcaptcha"></span></td>
+	</tr>
+	</table>
+	</div>	
+	</td>
+	</tr>
+	{/if}
+	{if $MOD[comment_tip]}
+	<tr>
+	<td class="comment_tip">{$MOD[comment_tip]}</td>
+	</tr>
+	{/if}
+	<tr>
+	<td>
+	<input type="submit" name="submit" value="我来说两句" class="btn-blue"/>
+	&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="hidden" value="1"/> 匿名发表</label>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span class="f_grey">(内容限{$MOD[comment_min]}至{$MOD[comment_max]}字)
+	&nbsp;&nbsp;&nbsp;&nbsp;当前已经输入 <span class="f_red" id="chars">0</span> 字
+	&nbsp;&nbsp;&nbsp;&nbsp;<span class="f_red" id="dcontent"></span>
+	</span>
+	</td>
+	</tr>
+	</table>
+	</form>
+	</div>
+</div>
+<div id="destoon-usercard"></div>
+{load('panel.js')}
+<script style="text/javascript">
+{if $iframe}
+function H() {
+	Dd('proxy_iframe').src = '{if $proxy}{decrypt($proxy, DT_KEY.'PROXY')}{else}{$MODULE[$mid][linkurl]}{/if}ajax.php?action=proxy&itemid=1#'+Dd('destoon_comment').scrollHeight+'|{$items}';
+}
+function F() {
+	{if $need_captcha}
+	Ds('tr_captcha');
+	{/if}
+	H();
+}
+$(function(){
+	try{parent.Dd('comment_count').innerHTML = {$items};}catch(e){}
+	H();
+});
+{else}
+function Golast() {
+	$('html,body').animate({scrollTop:$("[name='last']").offset().top}, 500);
+	Dd('content').focus();
+}
+function F() {
+	{if $need_captcha}
+	Ds('tr_captcha');
+	{/if}
+}
+{/if}
+function face_show(){
+	$('#face').toggle();F();
+}
+function face_hide(){
+	$('#face').hide();
+}
+function face_into(s, t){
+	_into('content', ':'+s+t+')');
+}
+function R(id) {
+	Dreport(3, 0, id, '评论举报，评论ID:'+id+'\n评论内容:\n'+Dd('c_'+id).innerHTML);
+}
+function Q(qid){
+	Dd('qid').value = qid;
+	Ds('qbox');
+	Dd('qbox').innerHTML = '&nbsp;<strong>回复:</strong><div class="comment_title">'+Dd('i_'+qid).innerHTML+'</div><div class="comment_content">'+Dd('c_'+qid).innerHTML+'</div>';
+	Dd('content').focus();
+}
+function S() {
+	Inner('chars', Dd('content').value.length);
+}
+function C() {
+	var user_status = {$user_status};
+	if(user_status == 1) {
+		alert('您的会员组没有评论权限');
+		return false;
+	}
+	if(user_status == 2) {
+		if(confirm('您还没有登录,是否现在登录?')) {
+			top.location = '{$MODULE[2][linkurl]}{$DT[file_login]}?forward={urlencode($linkurl)}';
+		}
+		return false;
+	}
+	if(Dd('content').value.length < {$MOD[comment_min]}) {
+		Dmsg('内容最少{$MOD[comment_min]}字', 'content');
+		return false;
+	}
+	if(Dd('content').value.length > {$MOD[comment_max]}) {
+		Dmsg('内容最多{$MOD[comment_max]}字', 'content');
+		return false;
+	}
+	{if $need_captcha}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dmsg('请填写验证码', 'captcha');
+		Ds('tr_captcha');
+		return false;
+	}
+	{/if}
+	return true;
+}
+$(function(){
+	Dusercard({$mid}, '.comment_avatar');
+	$('#stars span').mouseover(function() {
+		var id = $(this).data('id');
+		$('#stars').css('background', "url('{DT_STATIC}image/star"+id+".png') no-repeat");
+	});
+	$('#stars span').mouseleave(function() {
+		var id = $('#star').val();
+		$('#stars').css('background', "url('{DT_STATIC}image/star"+id+".png') no-repeat");
+	});
+	$('#stars span').click(function() {
+		var id = $(this).data('id');
+		$('#stars').css('background', "url('{DT_STATIC}image/star"+id+".png') no-repeat");
+		$('#star').val(id);
+	});
+});
+</script>
+
+{if $iframe}
+<!--[框架尾部]-->
+</body>
+</html>
+{else}
+<!--[列表尾部]-->
+	</div>
+	<div class="m3r">
+		{if $mid == 4}
+		<div class="head-sub"><strong>评论排行</strong></div>
+		<div class="list-rank"><!--{tag("moduleid=$mid&condition=groupid IN (".get_gids().")&areaid=$cityid&order=comments desc&key=comments&pagesize=9&template=list-rank")}--></div>
+		{else}
+		<div class="head-sub"><strong>评论月排行</strong></div>
+		<div class="list-rank"><!--{tag("moduleid=$mid&condition=status=3 and addtime>$DT_TODAY-30*86400&areaid=$cityid&order=comments desc&key=comments&pagesize=9&template=list-rank")}--></div>
+		<div class="head-sub"><strong>评论年排行</strong></div>
+		<div class="list-rank"><!--{tag("moduleid=$mid&condition=status=3 and addtime>$DT_TODAY-365*86400&areaid=$cityid&order=comments desc&key=comments&pagesize=9&template=list-rank")}--></div>
+		<div class="head-sub"><strong>评论总排行</strong></div>
+		<div class="list-rank"><!--{tag("moduleid=$mid&condition=status=3&areaid=$cityid&order=comments desc&key=comments&pagesize=9&template=list-rank")}--></div>
+		{/if}
+	</div>
+	<div class="b10 c_b"></div>
+</div>
+{template 'footer'}
+{/if}

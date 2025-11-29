@@ -1,0 +1,31 @@
+{template 'header'}
+<style type="text/css">
+.down {width:200px;height:68px;padding:16px 0 16px 112px;margin:24px;background:#EEEEEE;border-radius:12px;}
+.down b {font-size:28px;}
+.down p {margin:6px 0;font-size:16px;}
+.down-win {background:#EEEEEE url('{DT_STATIC}image/pc-win.png') no-repeat 32px center;background-size:48px 48px;}
+.down-win-on,.down-win:hover {background:{$DT[color_pc]} url('{DT_STATIC}image/pc-win-on.png') no-repeat 32px center;background-size:48px 48px;color:#FFFFFF;}
+.down-mac {background:#EEEEEE url('{DT_STATIC}image/pc-mac.png') no-repeat 32px center;background-size:48px 48px;}
+.down-mac-on,.down-mac:hover {background:{$DT[color_pc]} url('{DT_STATIC}image/pc-mac-on.png') no-repeat 32px center;background-size:48px 48px;color:#FFFFFF;}
+.down-lnx {background:#EEEEEE url('{DT_STATIC}image/pc-lnx.png') no-repeat 32px center;background-size:48px 48px;}
+.down-lnx-on,.down-lnx:hover {background:{$DT[color_pc]} url('{DT_STATIC}image/pc-lnx-on.png') no-repeat 32px center;background-size:48px 48px;color:#FFFFFF;}
+</style>
+<div class="m">	
+	<div class="nav"><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> 桌面版</div>
+</div>
+<div class="m">
+	<div style="padding:24px 260px 24px 620px;min-height:360px;background:url('{DT_STATIC}image/desktop.png') no-repeat 120px center;overflow:hidden;">
+		<div>
+			{if $win}<a href="{$EXT[desktop_win_exe]}"><div class="down down-win{if $os == 'win'}-on{/if}"><b>Windows</b><p>立即下载</p></div></a>{/if}
+			{if $mac}<a href="{$EXT[desktop_mac_dmg]}"><div class="down down-mac{if $os == 'mac'}-on{/if}"><b>Mac</b><p>立即下载</p></div></a>{/if}
+			{if $lnx}<div class="down down-lnx{if $os == 'lnx'}-on{/if}"><b>Linux</b><p><select onchange="if(this.value) Go(this.value);">
+			<option value="">选择版本</option>
+			{if $EXT[desktop_lnx_deb_x86]}<option value="{$EXT[desktop_lnx_deb_x86]}">deb x86</option>{/if}
+			{if $EXT[desktop_lnx_deb_arm64]}<option value="{$EXT[desktop_lnx_deb_arm64]}">deb arm64</a></option>{/if}
+			{if $EXT[desktop_lnx_rpm_x86]}<option value="{$EXT[desktop_lnx_rpm_x86]}">rpm x86</option>{/if}
+			{if $EXT[desktop_lnx_rpm_arm64]}<option value="{$EXT[desktop_lnx_rpm_arm64]}">rpm arm64</a></option>{/if}
+			</select></p></div>{/if}
+		</div>
+	</div>
+</div>
+{template 'footer'}

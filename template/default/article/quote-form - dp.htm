@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="{DT_CHARSET}"/>
+<title>{$head_title}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}style.css"/>
+<script type="text/javascript" src="{DT_STATIC}script/jquery.js"></script>
+<script type="text/javascript" src="{DT_STATIC}script/common.js"></script>
+<script type="text/javascript">
+var DT_PATH = '{DT_PATH}';
+var MODULE = {$moduleid};
+var devices_data = {$devices_json|json_encode};
+
+$(function() {
+    // 地区三级联动
+    $('#province').change(function() {
+        var province_id = $(this).val();
+        if(province_id) {
+            $.get('api.php?action=get_area&parentid=' + province_id, function(data) {
+                $('#city').html('<option value="">请选择市</option>').append(data);
+                $('#county').html('<option value="">请选择县/区</option>');
+                update_companies();
+            });
+        }
+    });
+    
+    $('#city').change(function() {
+        var city_id = $(this).val();
+        if(city_id) {
+            $.get('api.php?action=get_area&parentid=' + city_id, function(data) {
+                $('#county').html('<option value="">请选择县/区</option>').append(data);
+                update_companies();
+            });
+        }
+    });
+    
+    $('#county').change(update_companies);
+    
+    function update_companies() {
+        var area_id = $('#county').val();
+        if(area_id) {
+            $.get('api.php?action=get_companies&areaid=' + area_id, function(data) {
+                $('#company_list').html(data);
+            });
+        }
+    }
+    
+    // 验证码发送
+    $('#send_verify').click(function() {
+        var email = $('#email').val();
+        var mobile = $('#mobile').val();
+        var verify_type = $('input[name="verify_type"]:checked').val();
+        
+        if(!email && !mobile) {
+            alert('请至少填写邮箱或手机号');
+            return;
+        }
+        
+        if(verify_type == 'mobile' && !isMobile(mobile)) {
+            alert('请输入正确的手机号');
+            return;
+        }
+        
+        if(verify_type == 'email' && !isEmail(email)) {
+            alert('请输入正确的邮箱地址');
+            return;
+        }
+        
+        var $btn = $(this);
+        $btn.prop('disabled', true).text('发送中...');
+        
+        $.post('api.php?action=send_verify', {
+            email: email,
+            mobile: mobile,
+            verify_type: verify_type,
+            captcha: $('#captcha').val()
+        }, function(data) {
+            if(data.status == 'success') {
+                alert('验证码已发送');
+                startCountdown();
+            } else {
+                alert(data.message);
+                $btn.prop('disabled', false).text('获取验证码');
+            }
+        }, 'json');
+    });
+    
+    // 倒计时
+    function startCountdown() {
+        var countdown = 60;
+        var $btn = $('#send_verify');
+        var timer = setInterval(function() {
+            countdown--;
+            $btn.text(countdown + '秒后重发');
+            if(countdown <= 0) {
+                clearInterval(timer);
+                $btn.prop('disabled', false).text('获取验证码');
+            }
+        }, 1000);
+    }
+    
+    // 表单提交验证
+    $('#quote_form').submit(function() {
+        var company_selected = $('input[name="company_id"]:checked').length > 0;
+        if(!company_selected) {
+            alert('请选择服务公司');
+            return false;
+        }
+        
+        var has_contact = $('#email').val() || $('#mobile').val();
+        if(has_contact && !$('#verify_code').val()) {
+            alert('请填写验证码');
+            return false;
+        }
+        
+        return true;
+    });
+});
+
+function isEmail(email) {
+    var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+function isMobile(mobile) {
+    var re = /^1[3-9]\d{9}$/;
+    return re.test(mobile);
+}
+</script>
+</head>
+<body>
+<div class="header">
+    <div class="wrap">
+        <h1>设备故障报价</h1>
+    </div>
+</div>
+
+<div class="main">
+    <div class="wrap">
+        <!-- 设备故障信息确认 -->
+        <div class="section">
+            <h2>设备故障信息确认</h2>
+            <div class="device-list">
+                {loop $devices_data $catid $device}
+                <div class="device-item">
+                    <h3>{$device.name}</h3>
+                    {if $device.faults}
+                    <div class="faults">
+                        <strong>故障类型：</strong>
+                        {loop $device.faults $fault_id}
+                        <span class="fault-tag">故障{$fault_id}</span>
+                        {/loop}
+                    </div>
+                    {/if}
+                </div>
+                {/loop}
+            </div>
+        </div>
+        
+        <form id="quote_form" action="?action=submit" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="devices" value="{$devices_json|htmlspecialchars}">
+            <input type="hidden" name="submit" value="1">
+            
+            <!-- 手机颜色选择 -->
+            <div class="section">
+                <h2>手机颜色</h2>
+                <div class="form-group">
+                    <label>选择颜色：</label>
+                    <select name="color" id="color" class="input">
+                        <option value="">请选择颜色</option>
+                        {loop $color_options $color}
+                        <option value="{$color}">{$color}</option>
+                        {/loop}
+                    </select>
+                </div>
+            </div>
+            
+            <!-- 故障补充说明 -->
+            <div class="section">
+                <h2>故障补充说明</h2>
+                <div class="form-group">
+                    <textarea name="fault_desc" id="fault_desc" class="textarea" placeholder="请详细描述您的设备故障情况..." rows="4"></textarea>
+                </div>
+            </div>
+            
+            <!-- 图片上传 -->
+            <div class="section">
+                <h2>上传图片 <small>(最多5张)</small></h2>
+                <div class="form-group">
+                    <input type="file" name="images[]" multiple accept="image/*" class="input">
+                    <p class="help-text">支持格式：JPG、PNG、GIF，每张图片不超过2MB</p>
+                </div>
+            </div>
+            
+            <!-- 公司选择 -->
+            <div class="section">
+                <h2>选择服务公司</h2>
+                <div class="form-group">
+                    <label>所在地区：</label>
+                    <select name="province" id="province" class="input">
+                        <option value="">请选择省</option>
+                        {loop $AREA $area}
+                        {if $area.parentid == 0}
+                        <option value="{$area.areaid}">{$area.areaname}</option>
+                        {/if}
+                        {/loop}
+                    </select>
+                    
+                    <select name="city" id="city" class="input">
+                        <option value="">请选择市</option>
+                    </select>
+                    
+                    <select name="county" id="county" class="input">
+                        <option value="">请选择县/区</option>
+                    </select>
+                </div>
+                
+                <div id="company_list" class="company-list">
+                    <p>请先选择地区</p>
+                </div>
+            </div>
+            
+            <!-- 个人信息 -->
+            <div class="section">
+                <h2>个人信息</h2>
+                <div class="form-group">
+                    <label class="required">姓：</label>
+                    <input type="text" name="first_name" id="first_name" class="input" required>
+                    
+                    <label class="required">名：</label>
+                    <input type="text" name="last_name" id="last_name" class="input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="optional">邮箱：</label>
+                    <input type="email" name="email" id="email" class="input">
+                    
+                    <label class="optional">手机号：</label>
+                    <input type="tel" name="mobile" id="mobile" class="input">
+                </div>
+                
+                <!-- 验证码 -->
+                <div class="form-group" id="verify_section" style="display:none;">
+                    <label>验证方式：</label>
+                    <label><input type="radio" name="verify_type" value="email"> 邮箱验证码</label>
+                    <label><input type="radio" name="verify_type" value="mobile"> 手机验证码</label>
+                    
+                    <input type="text" name="verify_code" id="verify_code" class="input" placeholder="请输入验证码">
+                    <button type="button" id="send_verify" class="btn">获取验证码</button>
+                </div>
+            </div>
+            
+            <!-- 优惠码 -->
+            <div class="section">
+                <h2>优惠信息</h2>
+                <div class="form-group">
+                    <label>优惠码：</label>
+                    <input type="text" name="discount_code" id="discount_code" class="input" placeholder="如有优惠码请填写">
+                </div>
+            </div>
+            
+            <div class="form-submit">
+                <button type="submit" class="btn btn-primary">提交报价申请</button>
+                <button type="button" class="btn" onclick="history.back()">返回修改</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// 显示/隐藏验证码区域
+$('#email, #mobile').on('input', function() {
+    if($('#email').val() || $('#mobile').val()) {
+        $('#verify_section').show();
+        // 自动选择验证方式
+        if($('#email').val() && !$('#mobile').val()) {
+            $('input[name="verify_type"][value="email"]').prop('checked', true);
+        } else if($('#mobile').val() && !$('#email').val()) {
+            $('input[name="verify_type"][value="mobile"]').prop('checked', true);
+        }
+    } else {
+        $('#verify_section').hide();
+    }
+});
+</script>
+</body>
+</html>

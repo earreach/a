@@ -1,0 +1,8 @@
+<?php exit;?>
+areaid,地区ID,
+areaname,地区名称,
+parentid,上级ID,
+arrparentid,上级地区所有ID,
+child,是否有子地区,
+arrchildid,子地区所有ID,
+listorder,排序,

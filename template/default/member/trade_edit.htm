@@ -1,0 +1,65 @@
+{template 'goods', 'chip'}
+<div class="t2">修改订单</div>
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<table cellspacing="1" cellpadding="10" class="tb">	
+<tr>
+<td class="tl">联系买家</td>
+<td class="tr">{if $DT[im_web]}{im_web($O[buyer])}&nbsp;{/if}<a href="{userurl($O[buyer], 'file=contact')}" target="_blank" class="t">{$O[buyer]}</a></td>
+</tr>	
+<tr>
+<td class="tl">下单时间</td>
+<td class="tr">{$O[adddate]}</td>
+</tr>
+<tr>
+<td class="tl">订单总额</td>
+<td class="tr f_red">{$DT[money_sign]}{$O[amount]}</td>
+</tr>
+<tr>
+<td class="tl">附加名称</td>
+<td class="tr f_gray"><input type="text" size="10" name="fee_name" id="fee_name" value="{$O[fee_name]}"/> 例如运费、退款、优惠等&nbsp;<span id="dfee_name" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">附加金额</td>
+<td class="tr f_gray"><input type="text" size="5" name="fee" id="fee" value="{$O[fee]}"/>  {$DT[money_unit]} 可以为负值&nbsp;<span id="dfee" class="f_red"></span></td>
+</tr>
+{if $O[status] < 1}
+<tr>
+<td class="tl"></td>
+<td class="tr"><label><input type="checkbox" name="confirm_order" value="1"{if $confirm} checked{/if}/> 同时确认订单</label></td>
+</tr>
+{/if}
+{if $O[cod] < 1}
+<tr>
+<td class="tl"></td>
+<td class="tr"><label><input type="checkbox" name="edit_cod" value="1"/> 改为货到付款</label></td>
+</tr>
+{/if}
+{if $DT[sms]}
+<tr>
+<td class="tl"></td>
+<td class="tr"><label><input type="checkbox" name="sendsms" value="1" checked="checked"/> 短信通知买家</label> (<a href="sms.php" target="_blank" class="t">我的可用短信 <strong class="f_blue">{$_sms}</strong> 条</a>)</td>
+</tr>
+{/if}
+<tr>
+<td class="tl"> </td>
+<td class="tr">
+<input type="submit" name="submit" value=" 确 定 " class="btn_g"/>&nbsp;&nbsp;
+<input type="button" value=" 返 回 " class="btn" onclick="history.back(-1);"/>
+</td>
+</tr>
+</table>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('fee').value < 0 && Dd('fee').value < -{$O[amount]}) {
+		Dmsg('附加金额不能小于-{$O[amount]}', 'fee');
+		return false;
+	}
+	return true;
+}
+</script>
+<script type="text/javascript">s('trade');m('action');</script>

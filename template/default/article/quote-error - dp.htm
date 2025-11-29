@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="{DT_CHARSET}"/>
+<title>{$head_title}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}style.css"/>
+<style>
+.error-container {
+    text-align: center;
+    padding: 50px 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.error-icon {
+    font-size: 80px;
+    color: #ff4d4f;
+    margin-bottom: 20px;
+}
+
+.retry-info {
+    background: #fff2f0;
+    border: 1px solid #ffccc7;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 0 10px;
+    background: #1890ff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.btn-danger {
+    background: #ff4d4f;
+}
+</style>
+<script>
+var retryCount = 0;
+var maxRetries = 3;
+
+function retrySubmission() {
+    if(retryCount < maxRetries) {
+        retryCount++;
+        document.getElementById('retry-count').textContent = retryCount;
+        document.getElementById('retry-status').textContent = '第 ' + retryCount + ' 次重试中...';
+        
+        // 模拟重试提交
+        setTimeout(function() {
+            if(retryCount === maxRetries) {
+                document.getElementById('retry-status').textContent = '重试失败，请检查网络后手动重新提交';
+                document.getElementById('auto-retry').style.display = 'none';
+                document.getElementById('manual-retry').style.display = 'block';
+            } else {
+                document.getElementById('retry-status').textContent = '第 ' + retryCount + ' 次重试完成，准备下一次...';
+            }
+        }, 2000);
+    }
+}
+
+// 自动重试
+window.onload = function() {
+    setTimeout(function() {
+        document.getElementById('auto-retry').style.display = 'block';
+        retrySubmission();
+        
+        var autoRetry = setInterval(function() {
+            if(retryCount < maxRetries) {
+                retrySubmission();
+            } else {
+                clearInterval(autoRetry);
+            }
+        }, 3000);
+    }, 1000);
+}
+
+// 保留表单数据
+function saveFormData() {
+    // 这里可以添加保存表单数据的逻辑
+    console.log('保存表单数据...');
+}
+
+// 重新提交
+function resubmit() {
+    saveFormData();
+    window.location.href = '{$MOD['linkurl']}quote.php';
+}
+</script>
+</head>
+<body>
+<div class="header">
+    <div class="wrap">
+        <h1>提交失败</h1>
+    </div>
+</div>
+
+<div class="main">
+    <div class="wrap">
+        <div class="error-container">
+            <div class="error-icon">✗</div>
+            <h2>提交失败</h2>
+            <p>很抱歉，您的报价申请提交失败，系统正在自动重试...</p>
+            
+            <div id="auto-retry" style="display:none;">
+                <div class="retry-info">
+                    <p><strong>自动重试状态：</strong></p>
+                    <p id="retry-status">准备重试...</p>
+                    <p>已重试次数：<span id="retry-count">0</span> / {maxRetries}</p>
+                </div>
+            </div>
+            
+            <div id="manual-retry" style="display:none;">
+                <div class="retry-info">
+                    <p><strong>自动重试失败，请手动重新提交：</strong></p>
+                    <p>系统已自动保存您填写的信息，点击重新提交按钮即可</p>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button onclick="resubmit()" class="btn">重新提交</button>
+                    <a href="{$MOD['linkurl']}list-4.htm" class="btn btn-danger">重新选择设备</a>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px;">
+                <p>如果问题持续存在，请联系客服：</p>
+                <p><strong>客服热线：400-xxx-xxxx</strong></p>
+                <p>工作时间：周一至周五 9:00-18:00</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

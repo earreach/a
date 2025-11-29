@@ -1,0 +1,190 @@
+{template 'header', 'member'}
+{load('chat.css')}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">
+<div class="head-tab">
+<div class="head-tab-tb"><a href="message.php" data-transition="none"><b>消息</b></a>{if $_message}<i>{if $_message>99}99+{else}{$_message}{/if}</i>{/if}</div>
+<div class="head-tab-on"><a href="im.php" data-transition="none"><b>聊天</b></a>{if $_chat}<i>{if $_chat>99}99+{else}{$_chat}{/if}</i>{/if}</div>
+</div>
+</div>
+<div class="head-bar-right">
+{if $action == 'guest' || $action == 'close'}
+{elseif $action=='view'}
+<a href="?action=index" data-direction="reverse"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{elseif $action=='group'}
+<a href="{$MODULE[$chat_group][mobile]}"><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></a>
+{elseif $action=='friend'}
+<a href="friend.php?action=add"><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></a>
+{else}
+<a href="javascript:Dmenu('chat-{$js_pageid}');"><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></a>
+{/if}
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+{if $action == 'guest'}
+<div class="im-msg">
+	您还没有登录，请先登录或注册
+	<div class="blank-32"></div>
+	<div class="blank-32"></div>
+	<a href="{$DT[file_login]}"><div class="btn-green">立即登录</div></a>
+	<div class="blank-32"></div>
+	<a href="{$DT[file_register]}"><div class="btn">注册会员</div></a>
+</div>
+{elseif $action == 'close'}
+<div class="im-msg">
+	您所在的会员组无权限
+</div>
+{elseif $action=='view'}
+<div class="ui-form-search">
+<form action="?">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="chatid" value="{$chatid}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+{if $lists}
+{loop $lists $v}
+<div class="list-user" style="height:54px;">
+<img src="{useravatar($v[username])}" width="32" height="32" alt="" class="avatar"/>
+<ul>
+<li><span class="f_r">{$v[date]}</span><b>{if $v[nickname]}{$v[nickname]}@{/if}{$v[username]}</b></li>
+</ul>
+</div>
+<div class="content">{$v[word]}</div>
+<div class="main blank-10"></div>
+{/loop}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{elseif $action == 'group'}
+<style type="text/css">
+.list-chat {height:48px;padding:10px 16px;}
+.list-chat li {height:24px;line-height:24px;}
+.list-chat ul {margin:0;}
+.list-chat img {margin:0 10px 0 0;width:48px;height:48px;border-radius:50%;}
+.list-chat em {font-style:normal;font-size:10px;color:#FFFFFF;text-align:center;float:right;display:block;width:16px;height:16px;line-height:16px;margin-top:4px;background:#FF0000;border:1px solid #F43531;border-radius:50%;}
+</style>
+<div class="list-tab">
+	<ul>
+		<li><a href="?action=friend" data-transition="none"><span>我的好友</span></a></li>
+		<li><a href="?action=index" data-transition="none"><span>站内交谈</span></a></li>
+		{if $chat_group}<li class="on"><a href="?action=group" data-transition="none"><span>我的群聊</span></a></li>{/if}
+	</ul>
+</div>
+{if $lists}
+{loop $lists $k $v}
+<div class="list-img list-chat"><a href="{$v[linkurl]}"><img src="{$v[thumb]}"></a><ul><li><span class="f_r">{$v[fans]}人</span><a href="{$v[linkurl]}"><strong>{$v[title]}</strong></a></li><li><span>最后发言:{$v[last]}</span></li></ul></div>
+{/loop}
+{else}
+<div class="im-msg">
+	暂未加入群聊
+	<div class="blank-32"></div>
+	<div class="blank-32"></div>
+	<a href="{$MODULE[$chat_group][mobile]}"><div class="btn-green">查找群</div></a>
+	<div class="blank-32"></div>
+</div>
+{/if}
+{elseif $action == 'friend'}
+<style type="text/css">
+.list-chat {height:48px;padding:10px 16px;}
+.list-chat li {height:24px;line-height:24px;}
+.list-chat ul {margin:0;}
+.list-chat img {margin:0 10px 0 0;width:48px;height:48px;border-radius:50%;}
+.list-chat em {font-style:normal;font-size:10px;color:#FFFFFF;text-align:center;float:right;display:block;width:16px;height:16px;line-height:16px;margin-top:4px;background:#FF0000;border:1px solid #F43531;border-radius:50%;}
+.list-type {padding:10px 0 10px 24px;font-size:16px;}
+.list-type span {color:#999999;}
+</style>
+<div class="list-tab">
+	<ul>
+		<li class="on"><a href="?action=friend" data-transition="none"><span>我的好友</span></a></li>
+		<li><a href="?action=index" data-transition="none"><span>站内交谈</span></a></li>
+		{if $chat_group}<li><a href="?action=group" data-transition="none"><span>我的群聊</span></a></li>{/if}
+	</ul>
+</div>
+<div class="ui-form-search">
+<form action="?">
+<input type="hidden" name="action" value="{$action}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="会员名/昵称/姓名/别名/手机号"/></div>
+</form>
+</div>
+{if $lists}
+{loop $TYPE $i $t}
+<div onclick="$('#f-{$i}').toggle(100);" class="list-type">{$t[typename]} <span>({$t[num]})</span></div>
+<div id="f-{$i}">
+{loop $lists[$i] $k $v}
+<div class="list-img list-chat"><a href="{$v[linkurl]}"><img src="{useravatar($v[username])}"></a><ul><li><a href="{$v[linkurl]}"><strong>{$v[name]}</strong></a></li><li><span>{$v[note]}</span></li></ul></div>
+{/loop}
+</div>
+{/loop}
+{else}
+<div class="im-msg">
+	暂无好友
+	<div class="blank-32"></div>
+	<div class="blank-32"></div>
+	<a href="friend.php?action=add"><div class="btn-green">添加好友</div></a>
+	<div class="blank-32"></div>
+</div>
+{/if}
+{else}
+<style type="text/css">
+.list-chat {height:48px;padding:10px 16px;}
+.list-chat li {height:24px;line-height:24px;}
+.list-chat ul {margin:0;}
+.list-chat img {margin:0 10px 0 0;width:48px;height:48px;border-radius:50%;}
+.list-chat em {font-style:normal;font-size:10px;color:#FFFFFF;text-align:center;float:right;display:block;width:16px;height:16px;line-height:16px;margin-top:4px;background:#FF0000;border:1px solid #F43531;border-radius:50%;}
+.chat-spin {height:300px;background:#FFFFFF url('{DM_SKIN}spinner.gif') no-repeat center center;background-size:16px 16px;}
+.chat_onl {}
+.chat_off {opacity:0.3;filter:Alpha(Opacity=30);}
+</style>
+<div class="list-tab">
+	<ul>
+		<li><a href="?action=friend" data-transition="none"><span>我的好友</span></a></li>
+		<li class="on"><a href="?action=index" data-transition="none"><span>站内交谈</span></a></li>
+		{if $chat_group}<li><a href="?action=group" data-transition="none"><span>我的群聊</span></a></li>{/if}
+	</ul>
+</div>
+<div style="display:none;" id="chat-{$js_pageid}">
+	<div style="width:100%;height:48px;" class="bd-b">
+	<table cellpadding="0" cellspacing="0" width="100%">
+	<tr>
+	<td width="16"></td>
+	<td height="48"><input name="touser" id="touser" placeholder="会员名/昵称/姓名/别名/手机号" onblur="window.scrollTo(0,0);" style="width:100%;height:28px;line-height:28px;border:none;padding:0;margin:0;font-size:16px;"/></td>
+	<td width="68" onclick="Nchat();"><div style="width:48px;height:28px;line-height:28px;margin-left:10px;background:#1AAD19;border-radius:3px;text-align:center;color:#FFFFFF;font-size:14px;">交谈</div></td>
+	</tr>
+	</table>
+	</div>
+</div>
+<div id="chat-list"><div class="chat-spin" onclick="window.location.reload();"></div></div>
+<script type="text/javascript">
+function Nchat() {
+		var len;
+		len = $('#touser').val().length;
+		if(len < 3) {
+			Dtoast('{$js_pageid}','请输入对方用户名');
+			return false;
+		}
+		$('#chat-new').hide();
+		Go('chat.php?touser='+$('#touser').val());
+}
+function Lchat() {
+	$('#chat-list').load('?action=list&reload={$DT_TIME}', function() {
+		$('#chat-list div').on('tap', function(event) {
+			$(this).css('background-color', '#F6F6F6');
+		});
+		$('#chat-list div').on('mouseout', function(event) {
+			$(this).css('background-color', '#FFFFFF');
+		});
+	});
+}
+$(function(){
+	Lchat();
+	setInterval(function() {
+		Lchat();
+	}, 10000);
+});
+</script>
+{/if}
+{template 'footer', 'member'}

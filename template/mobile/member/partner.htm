@@ -1,0 +1,189 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a>{if $action=='index' || !$action}<a href="javascript:Dmenu('search-{$js_pageid}');"><img src="{DM_SKIN}icon-search{$wh}.png" width="24" height="24"/></a>{/if}</div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right">
+{if $action=='add' || $action=='list'}
+<a href="?action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{else}
+<a href="?action=add"><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></a>
+{/if}
+<a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a>
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=add" data-transition="none">申请代理</a>
+<a href="?action=index" data-transition="none">代理分销</a>
+<a href="index.php" data-direction="reverse">会员中心</a>
+</div>
+</div>
+
+{if $action == 'add'}
+<form method="post" action="?" id="dform" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<div class="ui-form">
+<p>申请对象<i>*</i><b id="dusername"></b></p>
+<div><input type="text" name="post[username]" id="username" value="{$username}" style="width:200px;"/></div>
+<p>申请折扣<i>*</i><b id="ddiscount"></b></p>
+<div><input type="tel" name="post[discount]" id="discount" value="{$discount}" style="width:40px;"/> % <span>限制为1-99</span></div>
+<p>手机号码<i>*</i><b id="dmobile"></b></p>
+<div><input type="tel" name="post[mobile]" id="mobile" value="{$mobile}" style="width:200px;"/></div>
+<p>申请理由<i>*</i><b id="dreason"></b></p>
+<div><input type="text" name="post[reason]" id="reason" value="{$reason}"/></div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="立即申请" class="btn-blue"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('username').value == '{$_username}') {
+		Dmsg('不能添加自己', 'username');
+		return false;
+	}
+	if(Dd('username').value.length < 2) {
+		Dmsg('请填写申请对象会员名', 'username');
+		return false;
+	}
+	if(Dd('discount').value > 99 || Dd('discount').value < 1) {
+		Dmsg('折扣限制为1-99', 'discount');
+		return false;
+	}
+	if(Dd('mobile').value.length < 11) {
+		Dmsg('请填写手机', 'mobile');
+		return false;
+	}
+	if(Dd('reason').value.length < 20) {
+		Dmsg('申请理由不少于20字', 'reason');
+		return false;
+	}
+	return true;
+}
+</script>
+
+{elseif $action == 'list'}
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<input type="checkbox" name="itemid[]" value="{$v[itemid]}" class="dsn" id="checkbox-{$v[itemid]}"/>
+<a href="{$v[linkurl]}"><img src="{if $v[thumb]}{$v[thumb]}{else}{DM_SKIN}80x60.png{/if}" width="80" height="60" alt="" onerror="this.src='{DM_SKIN}80x60.png';"/></a>
+<ul>
+<li><span class="f_r"></span><a href="{$v[linkurl]}" rel="external"><strong>{$v[title]}</strong></a></li>
+<li><em class="sheet" id="sheet-{$v[itemid]}"></em><span>{$DT[money_sign]}{$v[price]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无记录</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+</form>
+<div style="z-index:1000;position:absolute;top:-10000px;">
+{loop $lists $k $v}
+<textarea id="copy-{$v[itemid]}">{$MOD[linkurl]}invite.php?mid={$mid}&uid={$_userid}&itemid={$v[itemid]}</textarea>
+{/loop}
+</div>
+{load('clipboard.min.js')}
+<script type="text/javascript">
+var clipboard = new Clipboard('[data-clipboard-action]');
+$(function(){
+	if($('#foot-bar input').length == 0) $('.check').hide();
+	$('.list-img em').click(function() {
+		if($(this).attr('class') == 'sheet') {
+			var id = $(this).attr('id').replace('sheet-', '');
+			Dsheet('{$js_pageid}','<a href="{$DT[file_my]}?mid={$mid}&action=add&job=copy&itemid='+id+'"><span>一键上架</span></a>|<a href="javascript:;" data-clipboard-action="copy" data-clipboard-target="#copy-'+id+'" onclick="Dtoast(\'{$js_pageid}\', \'商品分销链接已复制 请分享给您的社交好友或插入平台作品\');">复制链接</a>', '取消');
+		} else {
+			var id = $(this).attr('id').replace('check-', '');
+			if($('#checkbox-'+id).attr('checked')) {
+				$('#checkbox-'+id).attr('checked', false);
+				$(this).attr('class', 'check');
+			} else {
+				$('#checkbox-'+id).attr('checked', true);
+				$(this).attr('class', 'checked');
+			}
+			if($('.checked').length > 0) {
+				$('#foot-bar').fadeIn(300);
+			} else {
+				$('#foot-bar').fadeOut(300);
+			}
+		}
+	});
+});
+</script>
+{else}
+<script type="text/javascript">$(function(){Stabs('{$js_pageid}');});</script>
+<div class="list-menu" id="tabs-{$js_pageid}">
+	<ul>
+	<a href="?mid={$mid}&status=3"><li{if $status==3} class="on"{/if} id="s3">已通过{if !$kw} <i>{$nums[3]}</i>{/if}</li></a>
+	<a href="?mid={$mid}&status=2"><li{if $status==2} class="on"{/if} id="s2">审核中{if !$kw} <i>{$nums[2]}</i>{/if}</li></a>
+	</ul>
+</div>
+
+<div id="search-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="?">
+<input type="hidden" name="status" value="{$status}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+</div>
+
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<input type="checkbox" name="itemid[]" value="{$v[itemid]}" class="dsn" id="checkbox-{$v[itemid]}"/>
+<ul>
+<li><em class="check" id="check-{$v[itemid]}"></em><a href="{userurl($v[username], 'file=contact')}"><strong>{$v[company]}</strong></a></li>
+<li><em class="sheet" id="sheet-{$v[itemid]}"></em><span>折扣：{$v[discount]}% &nbsp; 订单：{$v[orders]} &nbsp; 分销：{$v[trades]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+	<div class="list-none">{if $kw}未搜索到“{$kw}”相关结果{else}暂无记录{/if}</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<div id="foot-bar" class="dsn">
+<div class="foot-bar-fix"></div>
+<div class="foot-bar btns">
+<input type="submit" name="submit" value="删除选中" class="btn-red" onclick="if(confirm('确定要删除选中地址吗？')){this.form.action='?action=delete'}else{return false;}"/>
+</div>
+</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	if($('#foot-bar input').length == 0) $('.check').hide();
+	$('.list-img em').click(function() {
+		if($(this).attr('class') == 'sheet') {
+			var id = $(this).attr('id').replace('sheet-', '');
+			Dsheet('{$js_pageid}','<a href="?action=list&itemid='+id+'"><span>商品列表</span></a>|<a href="record.php?agent={$v[username]}&fromdate={$v[adddate]} 00:00:00"><span>分销记录</span></a>|<a href="?action=delete&itemid='+id+'" onclick="return _delete();"><span style="color:red;">删除</span></a>', '取消');
+		} else {
+			var id = $(this).attr('id').replace('check-', '');
+			if($('#checkbox-'+id).attr('checked')) {
+				$('#checkbox-'+id).attr('checked', false);
+				$(this).attr('class', 'check');
+			} else {
+				$('#checkbox-'+id).attr('checked', true);
+				$(this).attr('class', 'checked');
+			}
+			if($('.checked').length > 0) {
+				$('#foot-bar').fadeIn(300);
+			} else {
+				$('#foot-bar').fadeOut(300);
+			}
+		}
+	});
+});
+</script>
+{/if}
+{template 'footer', 'member'}

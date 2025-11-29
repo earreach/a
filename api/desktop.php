@@ -1,0 +1,31 @@
+<?php
+$moduleid = 3;
+require '../common.inc.php';
+require DT_ROOT.'/module/'.$module.'/common.inc.php';
+$MOD['desktop_enable'] or dheader(DT_PATH);
+$win = $mac = $lnx = 0;
+if($EXT['desktop_win_x64']) $win++;
+if($EXT['desktop_win_x86']) $win++;
+if($EXT['desktop_win_x86_x64']) $win++;
+if($EXT['desktop_mac_dmg']) $mac++;
+if($EXT['desktop_lnx_deb_x86']) $lnx++;
+if($EXT['desktop_lnx_deb_arm64']) $lnx++;
+if($EXT['desktop_lnx_rpm_x86']) $lnx++;
+if($EXT['desktop_lnx_rpm_arm64']) $lnx++;
+$os = '';
+if($lnx) $os = 'lnx';
+if($mac) $os = 'mac';
+if($win) $os = 'win';
+$os or dheader(DT_PATH);
+$ua = strtolower(DT_UA);
+if(strpos($ua, 'linux') !== false && $lnx) $os = 'lnx';
+if(strpos($ua, 'mac os') !== false && $mac) $os = 'mac';
+$EXT['desktop_win_exe'] = $EXT['desktop_win_x86_x64'];
+$EXT['desktop_win_exe'] or $EXT['desktop_win_exe'] = $EXT['desktop_win_x64'];
+$EXT['desktop_win_exe'] or $EXT['desktop_win_exe'] = $EXT['desktop_win_x86'];
+if(strpos($ua, 'x86') !== false && $EXT['desktop_win_x86']) $EXT['desktop_win_exe'] = $EXT['desktop_win_x86'];
+if(strpos($ua, 'x64') !== false && $EXT['desktop_win_x64']) $EXT['desktop_win_exe'] = $EXT['desktop_win_x64'];
+$destoon_task = rand_task();
+$head_title = '桌面版';
+include template('desktop', $module);
+?>

@@ -1,0 +1,68 @@
+{template 'header'}
+<script type="text/javascript">var module_id= {$moduleid},item_id={$itemid},content_id='content',img_max_width={$MOD[max_width]};</script>
+<div class="m">	
+	<div class="nav">
+	<div>
+	<b class="ui-ico-time">{$adddate}</b>
+	{if $MOD[ip]}<b class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</b>{/if}
+	{if $MOD[hits]}<b class="ui-ico-hits"><span id="hits">{$hits}</span></b>{/if}
+	{if $could_comment}<a href="{$EXT[comment_url]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}"><b class="ui-ico-comm">{$comments}</b></a>{/if}
+	</div><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')} <i>&gt;</i> {if $action == 'type'}<a href="{$linkurl}">{$title}</a> <i>&gt;</i> {$type[typename]}{else}{$title}{/if}</div>
+</div>
+{if $banner}<div class="m"><a href="{$linkurl}"><img src="{$banner}" alt="" width="100%"/></a></div>{/if}
+{if $action == 'type'}
+<div class="m">
+	<div class="catlist">
+	<!--{tag("table=special_item_$moduleid&condition=specialid=$itemid and typeid=$typeid&order=addtime desc&pagesize=$pagesize&page=$page&showpage=1&datetype=5&target=_blank&template=list-article&cols=5")}-->
+	</div>
+</div>
+<div class="b10"></div>
+{else}
+{if $cfg_photo}
+<div class="m">
+	<div class="head-txt"><strong>图片报道</strong></div>
+	<div class="list-img list0"><!--{tag("table=special_item_$moduleid&condition=specialid=$itemid and level=3 and thumb<>''&pagesize=$cfg_photo&order=addtime desc&width=180&height=135&datetype=0&lazy=$lazy&target=_blank&template=list-thumb")}--></div>
+</div>
+<div class="b10"></div>
+{/if}
+{if $cfg_video}
+<div class="m">
+	<div class="head-txt"><strong>视频报道</strong></div>
+	<div class="list-img list0"><!--{tag("table=special_item_$moduleid&condition=specialid=$itemid and level=6 and thumb<>''&pagesize=$cfg_video&order=addtime desc&width=180&height=135&datetype=0&lazy=$lazy&target=_blank&template=list-thumb")}--></div>
+</div>
+<div class="b10"></div>
+{/if}
+{if $cfg_type}
+<div class="m">
+	<div class="special_box">
+	<table cellpadding="0" cellspacing="0" width="1230">
+	{loop $TYPE $k $v}
+	{if $k%3==0}<tr>{/if}
+	<td valign="top" width="400">
+		<div class="head-txt"><span><a href="{$v[linkurl]}">更多<i>&gt;</i></a></span><strong>{$v[typename]}</strong></div>
+		<div class="list-txt"><!--{tag("table=special_item_$moduleid&condition=specialid=$itemid and typeid=".$v[typeid]."&order=addtime desc&pagesize=$cfg_type&datetype=2&target=_blank")}--></div>			
+	</td>
+	<td width="10">&nbsp;</td>
+	{if $k%3==2}</tr>{/if}
+	{/loop}
+	</table>
+	</div>
+	<div class="b10"></div>
+</div>
+<div class="b10"></div>
+{/if}
+<div class="m">
+	{if $CP}{template 'property_show', 'chip'}{/if}
+	{if $content}<div class="content" id="content">{$content}</div>{/if}
+	<div class="tool">
+	{if $MOD[show_like]}<i class="like" onclick="Dlike({$moduleid}, {$itemid}, 0);">点赞 <b id="like-{$moduleid}-{$itemid}-0">{$likes}</b></i>{/if}
+	{if $MOD[show_hate]}<i class="hate" onclick="Dhate({$moduleid}, {$itemid}, 0);">反对 <b id="hate-{$moduleid}-{$itemid}-0">{$hates}</b></i>{/if}
+	{if $MOD[show_report]}<i class="report" onclick="Dreport({$moduleid}, {$itemid}, 0);">举报</i>{/if}
+	{if $MOD[show_favorite]}<i class="favorite" onclick="Dfavor({$moduleid}, {$itemid});">收藏 <b>{$favorites}</b></i>{/if}
+	{if $MOD[fee_award]}<a href="{$MODULE[2][linkurl]}award.php?mid={$moduleid}&itemid={$itemid}" target="_blank"><i class="award">打赏 <b>{$awards}</b></i></a>{/if}
+	{if $could_comment}<a href="{$EXT[comment_url]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}" target="_blank"><i class="comment">评论 <b>{$comments}</b></i></a>{/if}
+	{if $MOD[show_share]}<a href="{DT_PATH}api/share.php?mid={$moduleid}&itemid={$itemid}" target="_blank"><i class="share">分享 <b>{$shares}</b></i></a>{/if}
+	</div>
+</div>
+{/if}
+{template 'footer'}

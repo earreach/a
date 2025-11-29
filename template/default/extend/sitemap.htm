@@ -1,0 +1,73 @@
+{template 'header'}
+<style type="text/css">
+.map p {margin:0;line-height:28px;padding:0 0 0 20px;font-size:14px;}
+.L1 {display:inline-block;width:24px;height:24px;line-height:24px;margin:10px 1px 0 1px;padding:2px !important;font-size:16px !important;text-align:center;font-style:normal;}
+.L1:hover {background:#FF6600;color:#FFFFFF !important;border-radius:50%;}
+.L2 {display:inline-block;width:24px;height:24px;line-height:24px;background:#FF6600;color:#FFFFFF !important;border-radius:50%;margin:10px 1px 0 1px;padding:2px !important;font-size:16px !important;text-align:center;font-style:normal;}
+</style>
+<div class="m">
+	<div class="nav"><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="./">网站地图</a>{if $mid} <i>&gt;</i> {$MODULE[$mid][name]}{/if}</div>
+	{if $action=='letter'}
+	<div class="map">
+	<div class="head-txt">
+	<span>
+	{loop $LETTER $L}
+	<a href="{rewrite('index.php?mid='.$M['moduleid'].'&letter='.$L)}"><em class="{if $letter==$L}L2{else}L1{/if}">{$L}</em></a>
+	{/loop}
+	</span>
+	<a href="{rewrite('index.php?mid='.$M['moduleid'])}"><strong>{$M[name]}</strong></a>
+	</div>
+	<div class="box_body">
+	{if $CATALOG}
+	<table cellspacing="0" cellpadding="0">
+	{loop $CATALOG $i $c}
+	{if $i%8==0}<tr>{/if}
+	<td valign="top" width="150">
+		<p><a href="{$M[linkurl]}{$c[linkurl]}" target="_blank">{set_style($c[catname], $c[style])}</a> <span class="f_gray">({$c[item]})</span></p>
+	</td>
+	{if $i%8==7}</tr>{/if}
+	{/loop}
+	</table>
+	{else}
+	<div class="list-none">没有字母 <strong>{$letter}</strong> 开头的类目</div>
+	{/if}
+	</div>
+	</div>
+	{elseif $action=='module'}
+	<div class="head-txt">
+	<span>
+	{loop $LETTER $L}
+	<a href="{rewrite('index.php?mid='.$M['moduleid'].'&letter='.$L)}"><em class="L1">{$L}</em></a>
+	{/loop}
+	</span>
+	<a href="{$M[linkurl]}" target="_blank"><strong>{$M[name]}</strong></a>
+	</div>
+	<div class="box_body">
+		<div class="catalog" style="border:none;padding:0;">
+			{template 'catalog', 'chip'}
+		</div>
+	</div>
+	{else}
+		{loop $MODULE $m}
+		{if $m[moduleid] > 3 && !$m[islink]}
+		<div class="map">
+		<div class="head-txt"><a href="{rewrite('index.php?mid='.$m['moduleid'])}"><span>更多<i>&gt;</i></span></a><a href="{$m[linkurl]}" target="_blank"><strong>{$m[name]}</strong></a></div>
+		<div class="box_body">
+		<table cellspacing="0" cellpadding="0">
+		{php $child = get_maincat(0, $m[moduleid]);}
+		{loop $child $i $c}
+		{if $i%8==0}<tr>{/if}
+		<td valign="top" width="150">
+			<p><a href="{$m[linkurl]}{$c[linkurl]}" target="_blank">{set_style($c[catname], $c[style])}</a></p>
+		</td>
+		{if $i%8==7}</tr>{/if}
+		{/loop}
+		</table>
+		</div>
+		</div>
+		<div class="b20">&nbsp;</div>
+		{/if}
+		{/loop}
+	{/if}
+</div>
+{template 'footer'}

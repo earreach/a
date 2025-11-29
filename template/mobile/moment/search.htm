@@ -1,0 +1,52 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<form action="{$MOD[mobile]}search.php" id="fsearch">
+<div class="head-bar-title"><input type="search" name="kw" value="{$kw}" placeholder="搜索{$MOD[name]}"/></div>
+</form>
+<div class="head-bar-right"><a href="{DT_MOB}api/search.php?mid={$moduleid}&kw={urlencode($kw)}&catid={$catid}&areaid={$areaid}" data-direction="reverse"><img src="{DM_SKIN}icon-filter{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div class="ui-viewer" id="viewer-{$js_pageid}"></div>
+
+<form action="{$MOD[mobile]}search.php" id="filter-{$js_pageid}" data-ajax="false">
+<input type="hidden" name="kw" value="{$kw}"/>
+<input type="hidden" name="catid" value="{$catid}"/>
+<input type="hidden" name="areaid" value="{$areaid}"/>
+<input type="hidden" name="orderby" value="{$orderby}"/>
+<input type="hidden" name="elite" value="{$elite}"/>
+</form>
+
+{load('moment.css')}
+{load('moment.js')}
+{load('player.js')}
+<div class="ui-filter">
+<i class="ui-filter-{if $elite}ckd{else}box{/if} ui-fr" onclick="Dfilter('elite', '{if $elite}0{else}1{/if}');">推荐</i>
+<i {if $orderby == ''}class="ui-filter-dsc on"{else}class="ui-filter-ord" onclick="Dfilter('orderby', '');"{/if}>综合</i>
+<b {if $orderby == 'dlikes'}class="on"{else}onclick="Dfilter('orderby', 'dlikes');"{/if}>点赞</b>
+<b {if $orderby == 'dquotes'}class="on"{else}onclick="Dfilter('orderby', 'dquotes');"{/if}>转发</b>
+<b {if $orderby == 'dcomments'}class="on"{else}onclick="Dfilter('orderby', 'dcomments');"{/if}>评论</b>
+</div>
+{if $catid || $areaid}
+<div class="ui-filter-key">
+{if $catid}<i onclick="Dfilter('catid', '0');">{$CAT[catname]}</i>{/if}
+{if $areaid}<i onclick="Dfilter('areaid', '0');">{$ARE[areaname]}</i>{/if}
+</div>
+{/if}
+<div id="list-{$js_pageid}" class="main">
+{if $page==1 && $kw}
+{ad($moduleid,$catid,$kw,6)}
+{load('m'.$moduleid.'_k'.urlencode($kw).'.htm')}
+{/if}
+{if $tags}
+{template 'list-'.$module, 'tag'}
+{else}
+{template 'empty', 'chip'}
+{/if}
+</div>
+<div id="load-{$js_pageid}" class="ui-load"></div>
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{template 'footer'}

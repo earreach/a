@@ -1,0 +1,25 @@
+{if $username}
+{php $member = userinfo($username);}
+{if $member}
+<div class="userinfo">
+<a href="{userurl($username, 'file=space&mid='.$moduleid)}" target="_blank"><img src="{useravatar($username, 'large')}"/></a><i class="userinfo-v{$member[validate]}" title="{valid_name($member[validate])}"></i>
+<ul>
+<li>
+<a href="{userurl($username, 'file=space&mid='.$moduleid)}" target="_blank" title="{if $member[passport]}{$member[passport]}{else}{$member[username]}{/if}的空间"><b>{if $member[passport]}{dsubstr($member[passport], 12, '..')}{else}{dsubstr($member[username], 12, '..')}{/if}</b></a>
+{if $DT[follow]}
+{if defined('TOHTML')}
+<div class="follow0" onclick="Dfollow('{$member[username]}');" id="follow-{$member[username]}" title="未关注，点击关注" data-follow="{$member[userid]}"><b>加关注</b><i>{numtoread($member[fans])}</i></div>
+{else}
+{if followed($member[userid])}
+<div class="follow1" onclick="Dfollow('{$member[username]}');" id="follow-{$member[username]}" title="已关注，点击取消"><b>已关注</b><i>{numtoread($member[fans])}</i></div>
+{else}
+<div class="follow0" onclick="Dfollow('{$member[username]}');" id="follow-{$member[username]}" title="未关注，点击关注"><b>加关注</b><i>{numtoread($member[fans])}</i></div>
+{/if}
+{/if}
+{/if}
+</li>
+<li title="{$member[sign]}"><s>{if $member[sign]}{$member[sign]}{else}没有留下签名~~{/if}</s></li>
+</ul>
+</div>
+{/if}
+{/if}

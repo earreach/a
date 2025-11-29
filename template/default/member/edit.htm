@@ -1,0 +1,618 @@
+{template 'header', 'member'}
+{if $_U}
+	<div class="warn">当前资料<span class="f_red">正在审核中</span>，暂时不可修改</div>
+{/if}
+<div class="menu">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="tab" id="Tab0"><a href="javascript:Tab(0);"><span>个人资料</span></a></td>
+<td class="tab" id="Tab1"><a href="javascript:Tab(1);"><span>密码管理</span></a></td>
+{if $enterprise}
+<td class="tab" id="Tab2"><a href="javascript:Tab(2);"><span>公司资料</span></a></td>
+<td class="tab" id="Tab3"><a href="javascript:Tab(3);"><span>联系方式</span></a></td>
+<td class="tab" id="Tab4"><a href="javascript:Tab(4);"><span>公司介绍</span></a></td>
+{else}
+<td class="tab" id="Tab2"><a href="javascript:Tab(2);"><span>个人介绍</span></a></td>
+{/if}
+</tr>
+</table>
+</div>
+<form method="post" action="?" onsubmit="return Dcheck();" id="dform">
+<input type="hidden" name="tab" id="tab" value="{$tab}"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tbody id="Tabs0" style="display:;">
+<tr>
+<td class="tl">会员头像</td>
+<td class="tr"><a href="avatar.php"><img src="{useravatar($_username, 'large')}&reload={$DT_TIME}" width="64" height="64" class="avatar" title="上传头像"/></a></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 会员名</td>
+<td class="tr"><span style="width:205px;display:inline-block;">{$username}</span>{if $edit_username}<a href="javascript:;"
+ onclick="Dwidget('account.php?action=username', '修改会员名');" class="t">修改</a>{/if}</td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 昵称</td>
+<td class="tr"><span style="width:205px;display:inline-block;">{$passport}</span>{if $edit_passport}<a href="javascript:;"
+ onclick="Dwidget('account.php?action=passport', '修改昵称');" class="t">修改</a>{/if}</td>
+</tr>
+{if $vtruename}
+<tr>
+<td class="tl"><span class="f_red">*</span> 姓名</td>
+<td class="tr"><span style="width:148px;display:inline-block;">{$truename}</span> &nbsp; <span class="f_green">已认证</span> &nbsp; <a href="validate.php?action=truename" class="t">修改</a></td>
+</tr>
+{else}
+<tr>
+<td class="tl"><span class="f_red">*</span> 姓名</td>
+<td class="tr"><input type="text" size="20" name="post[truename]" id="truename" value="{$truename}"/> &nbsp; <span id="dtruename" class="f_red"></span></td>
+</tr>
+{/if}
+<tr>
+<td class="tl"><span class="f_red">*</span> 性别</td>
+<td class="tr">
+<label><input type="radio" name="post[gender]" value="1" {if $gender==1}checked="checked"{/if}/> 先生</label>&nbsp;&nbsp;&nbsp;&nbsp;
+<label><input type="radio" name="post[gender]" value="2" {if $gender==2}checked="checked"{/if}/> 女士</label>
+</td>
+</tr>
+{if $enterprise}
+<tr>
+<td class="tl">部门</td>
+<td class="tr"><input type="text" size="20" name="post[department]" id="department" value="{$department}"/></td>
+</tr>
+<tr>
+<td class="tl">职位</td>
+<td class="tr"><input type="text" size="20" name="post[career]" id="career" value="{$career}"/></td>
+</tr>
+{/if}
+{if $vmobile}
+<tr>
+<td class="tl"><span class="f_red">*</span> 手机</td>
+<td class="tr"><span style="width:148px;display:inline-block;">{hide_str($mobile)}</span> &nbsp; <span class="f_green">已认证</span> &nbsp; <a href="validate.php?action=mobile" class="t">修改</a></td>
+</tr>
+{else}
+<tr>
+<td class="tl">{if $MOD[mobile_register] == 2}<span class="f_red">*</span> {/if}手机</td>
+<td class="tr"><input type="text" size="20" name="post[mobile]" id="mobile" value="{$mobile}"/></td>
+</tr>
+{/if}
+{if $vemail}
+<tr>
+<td class="tl"><span class="f_red">*</span> 邮箱</td>
+<td class="tr"><span style="width:148px;display:inline-block;">{hide_str($email)}</span> &nbsp; <span class="f_green">已认证</span> &nbsp; <a href="validate.php?action=email" class="t">修改</a></td>
+</tr>
+{else}
+<tr>
+<td class="tl">{if $MOD[email_register] == 2}<span class="f_red">*</span> {/if}邮箱</td>
+<td class="tr"><input type="text" size="30" name="post[email]" id="email" value="{$email}"/></td>
+</tr>
+{/if}
+{if $DT[im_qq]}
+<tr>
+<td class="tl">{if $MOD[qq_register] == 2}<span class="f_red">*</span> {/if}QQ</td>
+<td class="tr"><input type="text" size="20" name="post[qq]" id="qq" value="{$qq}"/></td>
+</tr>
+<tr>
+<td class="tl"></td>
+<td class="ts">如果图标无法点亮，请点<a href="http://shang.qq.com/v3/widget.html" target="_blank" class="t">这里</a>设置</td>
+</tr>
+{/if}
+{if $DT[im_wx]}
+<tr>
+<td class="tl">{if $MOD[wx_register] == 2}<span class="f_red">*</span> {/if}微信</td>
+<td class="tr"><input type="text" size="20" name="post[wx]" id="wx" value="{$wx}"/></td>
+</tr>
+<tr>
+<td class="tl">微信二维码</td>
+<td class="tr"><input name="post[wxqr]" type="text" size="70" id="wxqr" value="{$wxqr}" readonly ondblclick="Dthumb({$moduleid}, 128, 128, Dd('wxqr').value, true, 'wxqr');"/>
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dthumb({$moduleid},128,128, Dd('wxqr').value, true, 'wxqr');"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="_preview(Dd('wxqr').value);"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('wxqr').value='';"/>
+</span>
+</td>
+</tr>
+{/if}
+{if $DT[im_ali]}
+<tr>
+<td class="tl">阿里旺旺</td>
+<td class="tr"><input type="text" size="20" name="post[ali]" id="ali" value="{$ali}"/></td>
+</tr>
+<tr>
+<td class="tl"></td>
+<td class="ts">如果是淘宝旺旺，请填写TB:旺旺帐号，例如：TB:abcd，否则无法点亮</td>
+</tr>
+{/if}
+{if $DT[im_skype]}
+<tr>
+<td class="tl">Skype</td>
+<td class="tr"><input type="text" size="20" name="post[skype]" id="skype" value="{$skype}"/></td>
+</tr>
+{/if}
+<tr>
+<td class="tl">个性签名</td>
+<td class="tr"><input type="text" size="90" name="post[sign]" id="sign" value="{$sign}" maxlength="200"/>{if in_array('sign', $_E)}&nbsp;{if isset($_U[sign])}<span class="f_red">审核中</span>{else}<span class="f_gray">需审核</span>{/if}{/if}</td>
+</tr>
+<tr>
+<td class="tl">空间封面</td>
+<td class="tr"><input name="post[cover]" type="text" size="70" id="cover" value="{$cover}" readonly ondblclick="Dthumb({$moduleid}, 1220, 200,{if in_array('cover', $_E)}''{else}Dd('cover').value{/if}, true, 'cover');"/>
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dthumb({$moduleid}, 1220, 200,{if in_array('cover', $_E)}''{else}Dd('cover').value{/if}, true, 'cover');"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="_preview(Dd('cover').value);"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('cover').value='';"/>
+</span>
+{if in_array('cover', $_E)}&nbsp;{if isset($_U[cover])}<span class="f_red">审核中</span>{else}<span class="f_gray">需审核</span>{/if}{/if}</td>
+</tr>
+{if !$enterprise}
+<tr>
+<td class="tl"><span class="f_red">*</span> 地区</td>
+<td class="tr">{ajax_area_select('post[areaid]', '请选择', $areaid)}{if in_array('areaid', $_E)}&nbsp;{if isset($_U[areaid])}<span class="f_red">审核中</span>{else}<span class="f_gray">需审核</span>{/if}{/if}&nbsp;<span id="dareaid" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">地址</td>
+<td class="tr"><input type="text" size="40" name="post[address]" id="daddress" value="{$address}"/> &nbsp; <span id="ddaddress" class="f_red"></span></td>
+</tr>
+{if $DT[postcode]}
+<tr>
+<td class="tl">邮编</td>
+<td class="tr"><input type="text" size="8" name="post[postcode]" id="postalcode" value="{$postcode}"/></td>
+</tr>
+{/if}
+<tr>
+<td class="tl">电话</td>
+<td class="tr"><input type="text" size="20" name="post[telephone]" id="telephone" value="{$telephone}"/> &nbsp; <span id="dtelephone" class="f_red"></span></td>
+</tr>
+{/if}
+{if $MFD}{fields_html('<td class="tl">', '<td class="tr">', $user, $MFD)}{/if}
+</tbody>
+<tbody id="Tabs1" style="display:none;">
+<tr>
+<td class="tl">新登录密码</td>
+<td class="tr"><input type="password" size="20" name="post[password]" id="password" autocomplete="new-password"/> &nbsp; <span class="f_grey">如不更改密码，请留空</span> <span id="dpassword" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">重复登录密码</td>
+<td class="tr"><input type="password" size="20" name="post[cpassword]" id="cpassword" autocomplete="new-password"/> &nbsp; <span id="dcpassword" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">现有登录密码</td>
+<td class="tr f_red"><input type="password" size="20" name="post[oldpassword]" id="oldpassword" autocomplete="new-password"/> &nbsp; 如需更改密码，需输入现有密码&nbsp;&nbsp;<a href="logout.php?forward=send.php" class="t">找回登录密码</a> <span id="doldpassword" class="f_red"></span></td>
+</tr>
+
+<tr>
+<td class="tl">新支付密码</td>
+<td class="tr"><input type="password" size="20" name="post[payword]" id="payword" autocomplete="new-password"/> &nbsp; <span class="f_grey">如不更改支付密码，请留空</span> <span id="dpayword" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">重复支付密码</td>
+<td class="tr"><input type="password" size="20" name="post[cpayword]" id="cpayword" autocomplete="new-password"/> &nbsp; <span id="dcpayword" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">现有支付密码</td>
+<td class="tr f_red"><input type="password" size="20" name="post[oldpayword]" id="oldpayword" autocomplete="new-password"/> &nbsp; 支付密码默认和注册设置密码相同&nbsp;&nbsp;<a href="send.php" class="t">找回支付密码</a><span id="doldpayword" class="f_red"></span></td>
+</tr>
+</tbody>
+{if $enterprise}
+<tbody id="Tabs2" style="display:none;">
+<tr>
+<td class="tl"><span class="f_red">*</span> 公司全称</td>
+<td class="tr"><b>{$company}</b>{if $vcompany} &nbsp; <span class="f_green">已认证</span>{/if} &nbsp; <a href="validate.php?action=company" class="t">修改</a></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span>公司类型</td>
+<td class="tr">{dselect($COM_TYPE, 'post[type]', '请选择', $type, 'id="type"', 0)}{if in_array('type', $_E)}&nbsp;{if isset($_U[type])}<span class="f_red">审核中</span>{else}<span class="f_gray">需审核</span>{/if}{/if}&nbsp;<span id="dtype" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span>所在地区</td>
+<td class="tr">{ajax_area_select('post[areaid]', '请选择', $areaid)}{if in_array('areaid', $_E)}&nbsp;{if isset($_U[areaid])}<span class="f_red">审核中</span>{else}<span class="f_gray">需审核</span>{/if}{/if}&nbsp;<span id="dareaid" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span>主营行业</td>
+<td class="tr">
+<style type="text/css">
+#cate-box {width:380px;margin-top:12px;background:#EEEEEE;padding:6px 12px;}
+#cate-box div {height:24px;line-height:24px;overflow:hidden;}
+#cate-box span {float:right;}
+</style>
+<div id="catesch"></div>
+<span id="cate">{ajax_category_select('', '请选择行业', 0, 4)}</span> &nbsp; <a href="javascript:cate_add({$MOD[cate_max]});" class="t">添加</a>{if $DT[schcate_limit]} &nbsp; <a href="javascript:schcate(4);" class="t">搜索</a>{/if}
+<div id="cate-box">
+<div id="cate-tip"{if $cates}style="display:none;"{/if}>请添加主营行业，最多可添加 <strong class="f_red">{$MOD[cate_max]}</strong> 个</div>
+{loop $cates $c}
+<div id="cate-{$c}"><span><a href="javascript:cate_del({$c});" class="t">删除</a></span>{strip_tags(cat_pos(get_cat($c), '/'))}</div>
+{/loop}
+</div>
+<input type="hidden" name="post[catid]" value="{$catid}" id="catid"/>
+<span id="dcatid" class="f_red"></span>
+</td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span>主营范围</td>
+<td class="tr"><input type="text" size="70" name="post[business]" id="business" value="{$business}" maxlength="200"/>{if in_array('business', $_E)}&nbsp;{if isset($_U[business])}<span class="f_red">审核中</span>{else}<span class="f_gray">需审核</span>{/if}{/if}&nbsp;<span id="dbusiness" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span>成立年份</td>
+<td class="tr"><input type="text" size="15" name="post[regyear]" id="regyear" value="{$regyear}" maxlength="4"/>{if in_array('regyear', $_E)}&nbsp;{if isset($_U[regyear])}<span class="f_red">审核中</span>{else}<span class="f_gray">需审核</span>{/if}{/if}&nbsp;<span id="dregyear" class="f_red"></span> <span class="f_grey">(年份，如：2004)</span></td>
+</tr>
+<tr>
+<td class="tl">形象图片</td>
+<td class="tr"><input name="post[thumb]" type="text" size="70" id="thumb" value="{$thumb}" readonly ondblclick="Dthumb({$moduleid},{$MOD[thumb_width]},{$MOD[thumb_height]}, Dd('thumb').value);"/>
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dthumb({$moduleid},{$MOD[thumb_width]},{$MOD[thumb_height]}, Dd('thumb').value);"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="_preview(Dd('thumb').value);"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('thumb').value='';"/>
+</span>
+{if in_array('thumb', $_E)}&nbsp;{if isset($_U[thumb])}<span class="f_red">审核中</span>{else}<span class="f_gray">需审核</span>{/if}{/if}
+</td>
+</tr>
+<tr>
+<td class="tl"></td>
+<td class="ts">建议使用LOGO、办公环境等标志性图片，最佳大小为{$MOD[thumb_width]}px*{$MOD[thumb_height]}px</td>
+</tr>
+{if $mode_check}
+<tr>
+<td class="tl">经营模式</td>
+<td class="tr">
+<span id="com_mode">{$mode_check}</span> <span class="f_grey">(最多可选{$MOD[mode_max]}种)</span></td>
+</tr>
+{/if}
+{if $invoice_check}
+<tr>
+<td class="tl">可开发票</td>
+<td class="tr">{$invoice_check}</td>
+</tr>
+{/if}
+{if $MG[agent]}
+<tr>
+<td class="tl">分销代理</td>
+<td class="tr">
+<label><input type="radio" name="post[agent]" value="1" {if $agent==1}checked="checked"{/if}/> 开启</label>&nbsp;&nbsp;&nbsp;&nbsp;
+<label><input type="radio" name="post[agent]" value="0" {if $agent==0}checked="checked"{/if}/> 关闭</label>
+</td>
+</tr>
+{/if}
+{if $MG[trade_order] || $MG[group_order]}
+<tr>
+<td class="tl">确认订单</td>
+<td class="tr">
+<label><input type="radio" name="post[checkorder]" value="1" {if $checkorder==1}checked="checked"{/if}/> 开启</label>&nbsp;&nbsp;&nbsp;&nbsp;
+<label><input type="radio" name="post[checkorder]" value="0" {if $checkorder==0}checked="checked"{/if}/> 关闭</label>&nbsp;&nbsp;&nbsp;&nbsp;<span class="f_grey">订单需要您确认后买家才能付款</span>
+</td>
+</tr>
+{/if}
+{if $MG[bill]}
+<tr>
+<td class="tl">线下收款</td>
+<td class="tr">
+<label><input type="radio" name="post[bill]" value="1" {if $bill==1}checked="checked"{/if}/> 开启</label>&nbsp;&nbsp;&nbsp;&nbsp;
+<label><input type="radio" name="post[bill]" value="0" {if $bill==0}checked="checked"{/if}/> 关闭</label>&nbsp;&nbsp;&nbsp;&nbsp;<span class="f_grey">允许买家直接向<a href="validate.php?action=bank" class="t">已认证银行账号</a>转账</span>
+</td>
+</tr>
+{/if}
+<tr>
+<td class="tl">公司规模</td>
+<td class="tr">{dselect($COM_SIZE, 'post[size]', '请选择规模', $size, '', 0)}</td>
+</tr>
+<tr>
+<td class="tl">注册资本</td>
+<td class="tr">{dselect($MONEY_UNIT, 'post[regunit]', '', $regunit, '', 0)} <input type="text" size="6" name="post[capital]" id="capital" value="{$capital}"/> 万{if in_array('capital', $_E)}&nbsp;{if isset($_U[capital])}<span class="f_red">审核中</span>{else}<span class="f_gray">需审核</span>{/if}{/if}</td>
+</tr>
+<tr>
+<td class="tl">销售产品</td>
+<td class="tr"><input type="text" size="70" name="post[sell]" id="sell" value="{$sell}" maxlength="200"/> <span class="f_grey">多个产品或服务请用'|'号隔开</span></td>
+</tr>
+<tr>
+<td class="tl">采购产品</td>
+<td class="tr"><input type="text" size="70" name="post[buy]" id="buy" value="{$buy}" maxlength="200"/> <span class="f_grey">多个产品或服务请用'|'号隔开</span></td>
+</tr>
+{if $CFD}{fields_html('<td class="tl">', '<td class="tr">', $user, $CFD)}{/if}
+</tbody>
+<tbody id="Tabs3" style="display:none;">
+
+<tr>
+<td class="tl"><span class="f_red">*</span>公司地址</td>
+<td class="tr"><input type="text" size="70" name="post[address]" id="daddress" value="{$address}" maxlength="200"/>{if in_array('address', $_E)}&nbsp;{if isset($_U[address])}<span class="f_red">审核中</span>{else}<span class="f_gray">需审核</span>{/if}{/if}&nbsp;<span id="ddaddress" class="f_red"></span></td>
+</tr>
+{if $DT[postcode]}
+<tr>
+<td class="tl">邮政编码</td>
+<td class="tr"><input type="text" size="8" name="post[postcode]" id="postalcode" value="{$postcode}"/></td>
+</tr>
+{/if}
+<tr>
+<td class="tl"><span class="f_red">*</span>公司电话</td>
+<td class="tr"><input type="text" size="20" name="post[telephone]" id="telephone" value="{$telephone}"/>{if in_array('telephone', $_E)}&nbsp;{if isset($_U[telephone])}<span class="f_red">审核中</span>{else}<span class="f_gray">需审核</span>{/if}{/if}&nbsp;<span id="dtelephone" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">公司传真</td>
+<td class="tr"><input type="text" size="20" name="post[fax]" id="fax" value="{$fax}"/></td>
+</tr>
+<tr>
+<td class="tl">公司邮件</td>
+<td class="tr"><input type="text" size="30" name="post[mail]" id="mail" value="{$mail}"/> <span class="f_grey">公开</span></td>
+</tr>
+<tr>
+<td class="tl">公司网址</td>
+<td class="tr"><input type="text" size="30" name="post[homepage]" id="homepage" value="{$homepage}"/>{if in_array('homepage', $_E)}&nbsp;{if isset($_U[homepage])}<span class="f_red">审核中</span>{else}<span class="f_gray">需审核</span>{/if}{/if}</td>
+</tr>
+<tr>
+<td class="tl">微信公众号</td>
+<td class="tr"><input type="text" size="20" name="post[gzh]" id="gzh" value="{$gzh}"/>{if in_array('gzh', $_E)}&nbsp;{if isset($_U[gzh])}<span class="f_red">审核中</span>{else}<span class="f_gray">需审核</span>{/if}{/if}</td>
+</tr>
+<tr>
+<td class="tl">公众号二维码</td>
+<td class="tr"><input name="post[gzhqr]" type="text" size="70" id="gzhqr" value="{$gzhqr}" readonly ondblclick="Dthumb({$moduleid}, 128, 128, {if in_array('gzhqr', $_E)}''{else}Dd('gzhqr').value{/if}, true, 'gzhqr');"/>
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dthumb({$moduleid}, 128, 128, {if in_array('gzhqr', $_E)}''{else}Dd('gzhqr').value{/if}, true, 'gzhqr');"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="_preview(Dd('gzhqr').value);"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('gzhqr').value='';"/>
+</span>
+{if in_array('gzhqr', $_E)}&nbsp;{if isset($_U[gzhqr])}<span class="f_red">审核中</span>{else}<span class="f_gray">需审核</span>{/if}{/if}</td>
+</tr>
+</tbody>
+{/if}
+<tbody id="Tabs{if $enterprise}4{else}2{/if}">
+<tr>
+<td class="tl">{if $enterprise}公司{else}个人{/if}介绍</td>
+<td class="tr"><textarea name="post[content]" id="content" class="dsn">{$content}</textarea>
+{deditor($moduleid, 'content', $group_editor, '95%', 300)}<br/>
+{if in_array('content', $_E)}{if isset($_U[content])}<span class="f_red">审核中</span>{else}<span class="f_gray">需审核</span>{/if}&nbsp;{/if}<span id="dcontent" class="f_red"></span></td>
+</tr>
+</tbody>
+{if $need_captcha}
+<tr>
+<td class="tl"><span class="f_red">*</span> 验证码</td>
+<td class="tr">{template 'captcha', 'chip'} <span id="dcaptcha" class="f_red"></span></td>
+</tr>
+{/if}
+{if !$_U}
+<tr>
+<td class="tl"> &nbsp; </td>
+<td class="tr" height="30"><input type="submit" name="submit" value=" 保 存 " class="btn_g"/></td>
+</tr>
+{/if}
+</table>
+</form>
+{load('clear.js')}
+<script type="text/javascript">
+function check_mode(c, m) {
+	if($('#com_mode input:checkbox:checked').length > m) {confirm('最多可选'+m+'种经营模式'); c.checked = false;}
+}
+function cate_del(id) {
+	$('#cate-'+id).remove();
+	var cids = $('#catid').val().replace(','+id+',', ',');
+	$('#catid').val(cids);
+	if($('#cate-box').html().indexOf('span') == -1) {
+		$('#cate-tip').show();
+	} else {
+		$('#cate-tip').hide();
+	}
+}
+function cate_add(max) {
+	if($('#cate-box div').length > max) {
+		Dmsg('最多可以添加'+max+'个行业', 'catid');
+		return;
+	}
+	var cid = $('#catid_1').val();
+	if(cid == 0) {
+		Dmsg('请选择行业', 'catid');
+		return;
+	}
+	if($('#cate-box').html().indexOf('cate-'+cid) != -1) {
+		Dmsg('所选行业已经存在', 'catid');
+		return;
+	}
+	var str = '';
+	$('#cate option:selected').each(function() {
+		if($(this).val()) str += $(this).text()+'/';
+	});
+	if(str) {
+		str = str.replace('&amp;', '&');
+		str = str.replace('请选择行业/', '');
+		str = str.substring(0, str.length-1);
+		$('#cate-box').append('<div id="cate-'+cid+'"><span><a href="javascript:cate_del('+cid+');" class="t">删除</a></span>'+str+'</div>');
+		var cids = $('#catid').val() ? $('#catid').val() +cid+',' : ','+cid+',';
+		$('#catid').val(cids);
+		$('#cate-tip').hide();
+	} else {
+		Dmsg('请选择行业', 'catid');
+	}
+}
+var vid = '';
+function validator(id) {
+	if(!Dd(id).value) return false;
+	vid = id;
+	$.post(AJPath, 'moduleid={$moduleid}&action=member&job='+id+'&value='+Dd(id).value+'&userid={$userid}', function(data) {
+		Dd('d'+vid).innerHTML = data ? data : '';
+	});
+}
+function Dcheck() {
+	if(Dd('truename').value == '') {
+		Tab(0);
+		Dmsg('请填写真实姓名', 'truename');
+		return false;
+	}
+	{if $MOD[mobile_register] == 2 && !$vmobile}
+	if(Dd('mobile').value.length != 11) {
+		Tab(0);
+		Dmsg('请填写手机号码', 'mobile');
+		return false;
+	}
+	{/if}
+	{if $MOD[email_register] == 2 && !$vemail}
+	if(Dd('email').value.length < 6) {
+		Tab(0);
+		Dmsg('请填写电子邮箱', 'email');
+		return false;
+	}
+	{/if}
+	{if $MOD[qq_register] == 2 && $DT[im_qq]}
+	if(Dd('qq').value.length < 5) {
+		Tab(0);
+		Dmsg('请填写QQ号码', 'qq');
+		return false;
+	}
+	{/if}
+	{if $MOD[wx_register] == 2 && $DT[im_wx]}
+	if(Dd('wx').value.length < 3) {
+		Tab(0);
+		Dmsg('请填写微信号码', 'wx');
+		return false;
+	}
+	{/if}
+	{if !$enterprise}	
+	if(Dd('areaid_1').value == 0) {
+		Tab(0);
+		Dmsg('请选择地区', 'areaid');
+		return false;
+	}
+	{/if}
+	if(Dd('password').value.length > 0 && Dd('password').value.length < 32) {
+		if(Dd('cpassword').value.length < 6) {
+			Tab(1);
+			Dmsg('请重复输入密码', 'cpassword');
+			return false;
+		}
+		if(Dd('password').value != Dd('cpassword').value) {
+			Tab(1);
+			Dmsg('两次输入的密码不一致', 'password');
+			return false;
+		}
+		if(Dd('oldpassword').value.length < 6) {
+			Tab(1);
+			Dmsg('请输入现有登录密码', 'oldpassword');
+			return false;
+		}
+	}
+	if(Dd('payword').value.length > 0 && Dd('payword').value.length < 32) {
+		if(Dd('cpayword').value.length < 6) {
+			Tab(1);
+			Dmsg('请重复输入支付密码', 'cpayword');
+			return false;
+		}
+		if(Dd('payword').value != Dd('cpayword').value) {
+			Tab(1);
+			Dmsg('两次输入的支付密码不一致', 'payword');
+			return false;
+		}
+		if(Dd('oldpayword').value.length < 6) {
+			Tab(1);
+			Dmsg('请输入现有支付密码', 'oldpayword');
+			return false;
+		}
+	}
+
+	var f = 'password';
+	var l = Dd(f).value.length;
+	if(l > 5 && l < 32) {
+		var a = Dpwd(Dd(f).value, '{$MOD[minpassword]}', '{$MOD[maxpassword]}', '{$MOD[mixpassword]}');
+		var s = '';
+		if(a[0] == 'mix') {
+			if(a[1] == '09') s = '密码必须包含数字';
+			if(a[1] == 'az') s = '密码必须包含小写字母';
+			if(a[1] == 'AZ') s = '密码必须包含大写字母';
+			if(a[1] == '..') s = '密码必须包含特殊符号';
+		} else if(a[0] == 'min') {
+			s = '密码最少'+a[1]+'字符';
+		} else if(a[0] == 'max') {
+			s = '密码最多'+a[1]+'字符';
+		}
+		if(s) {
+			Dmsg(s, f);
+			Tab(1);
+			return false;
+		}
+		{if $DT[md5_pass]==3}
+		Dd(f).value = hex_md5(Dd(f).value);
+		Dd('c'+f).value = hex_md5(Dd('c'+f).value);
+		Dd('old'+f).value = hex_md5(Dd('old'+f).value);
+		{/if}
+	}
+	f = 'payword';
+	l = Dd(f).value.length;
+	if(l > 5 && l < 32) {
+		var a = Dpwd(Dd(f).value, '{$MOD[minpassword]}', '{$MOD[maxpassword]}', '{$MOD[mixpassword]}');
+		var s = '';
+		if(a[0] == 'mix') {
+			if(a[1] == '09') s = '密码必须包含数字';
+			if(a[1] == 'az') s = '密码必须包含小写字母';
+			if(a[1] == 'AZ') s = '密码必须包含大写字母';
+			if(a[1] == '..') s = '密码必须包含特殊符号';
+		} else if(a[0] == 'min') {
+			s = '密码最少'+a[1]+'字符';
+		} else if(a[0] == 'max') {
+			s = '密码最多'+a[1]+'字符';
+		}
+		if(s) {
+			Dmsg(s, f);
+			Tab(1);
+			return false;
+		}
+		{if $DT[md5_pass]==3}
+		Dd(f).value = hex_md5(Dd(f).value);
+		Dd('c'+f).value = hex_md5(Dd('c'+f).value);
+		Dd('old'+f).value = hex_md5(Dd('old'+f).value);
+		{/if}
+	}
+
+	{if $MFD}{fields_js($MFD)}{/if}
+	{if $enterprise}
+	{if $CFD}{fields_js($CFD)}{/if}
+	if(Dd('type').value == '') {
+		Tab(2);
+		Dmsg('请选择公司类型', 'type');
+		return false;
+	}
+	if(Dd('areaid_1').value == 0) {
+		Tab(2);
+		Dmsg('请选择公司所在地', 'areaid');
+		return false;
+	}
+	if(Dd('catid').value.length < 2) {
+		Tab(2);
+		Dmsg('请选择公司主营行业', 'catid');
+		return false;
+	}
+	if(Dd('business').value.length < 4) {
+		Tab(2);
+		Dmsg('主要经营范围最少3字', 'business');
+		return false;
+	}
+	if(Dd('regyear').value.length < 4) {
+		Tab(2);
+		Dmsg('请填写公司成立年份', 'regyear');
+		return false;
+	}
+	if(Dd('daddress').value.length < 5) {
+		Tab(3);
+		Dmsg('请填写公司地址', 'daddress');
+		return false;
+	}
+	if(Dd('telephone').value.length < 6) {
+		Tab(3);
+		Dmsg('请填写公司电话', 'telephone');
+		return false;
+	}
+	{/if}	
+	{if $need_captcha}
+	f = 'captcha';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', f);
+		return false;
+	}
+	{/if}
+	return true;
+}
+$(function(){
+	$('#Tabs{if $enterprise}4{else}2{/if}').hide();
+	s('edit');
+	{if $tab}
+	Tab({$tab});
+	{else}
+	m('Tab0');
+	{/if}
+	{if $_U}
+	$('input,select,textarea').attr('disabled', 'disabled');
+	{/if}
+});
+</script>
+{if $DT[md5_pass]}{load('md5.js')}<script type="text/javascript">$(function(){cls_pwd();});</script>{/if}
+{template 'footer',$module}

@@ -1,0 +1,41 @@
+{template 'header'}
+<div class="m">
+  <div class="quote-my">
+    <h1>我的报价</h1>
+
+    <!--{if $lists}-->
+    <table class="tb" cellpadding="8">
+      <tr>
+        <th>报价ID</th>
+        <th>创建时间</th>
+        <th>审核状态</th>
+        <th>用户确认</th>
+        <th>维修状态</th>
+        <th>报价金额</th>
+        <th>最终金额</th>
+        <th>操作</th>
+      </tr>
+      <!--{loop $lists $k $v}-->
+      <tr>
+        <td>{$v[itemid]}</td>
+        <td>{$v[adddate]}</td>
+        <td>{$v[status_text]}</td>
+        <td>{$v[user_confirm_text]}</td>
+        <td>{$v[repair_status_text]}</td>
+        <td>{$v[total_fault_amount_str]}</td>
+        <td>{$v[final_amount_str]}</td>
+        <td>
+          <!-- 这里的链接地址你根据现在 quote_view 的实际访问方式调整 -->
+          <a href="quote_view.php?itemid={$v[itemid]}">查看详情</a>
+        </td>
+      </tr>
+      <!--{/loop}-->
+    </table>
+
+    <div class="pages">{$pages}</div>
+    <!--{else}-->
+    <div class="empty">当前账号暂无报价记录。</div>
+    <!--{/if}-->
+  </div>
+</div>
+{template 'footer'}

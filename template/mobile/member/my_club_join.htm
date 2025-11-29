@@ -1,0 +1,151 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a>{if $action=='index' || !$action}<a href="javascript:Dmenu('search-{$js_pageid}');"><img src="{DM_SKIN}icon-search{$wh}.png" width="24" height="24"/></a>{/if}</div>
+<div class="head-bar-title">加入商圈</div>
+<div class="head-bar-right">
+{if $action=='add'}
+<a href="{$MOD[mobile]}{$GRP[linkurl]}" data-transition="reverse"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{elseif $action=='edit'}
+<a href="?mid={$mid}&job={$job}" data-transition="reverse"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{else}
+{/if}
+<a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a>
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?mid={$mid}&job=join" data-transition="none">加入商圈</a>
+<a href="?mid={$mid}&action=index" data-transition="none">我的帖子</a>
+<a href="?mid={$mid}&job=reply" data-transition="none">我的回复</a>
+<a href="?mid={$mid}&job=group" data-transition="none">我的商圈</a>
+<a href="?mid={$mid}&job=fans" data-transition="none">粉丝管理</a>
+<a href="?mid={$mid}&job=manage" data-transition="none">商圈管理</a>
+<a href="?action=index" data-direction="reverse">切换频道</a>
+</div>
+</div>
+
+{if $action=='add' || $action=='edit'}
+{load('webuploader.min.js')}
+<div class="ui-form">
+<iframe src="" name="send" id="send" style="display:none;"></iframe>
+<form method="post" action="?" id="dform" target="send" data-ajax="false" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="gid" value="{$gid}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<p>加入 {$GRP[title]} 原因<i>*</i><b id="dreason"></b></p>
+<div><textarea name="post[reason]" id="reason" style="width:100%;height:80px;">{$reason}</textarea></div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="加 入" class="btn-blue"/>
+<div class="blank-32"></div>
+</div>
+</form>
+{else}
+{if $_userid}
+<script type="text/javascript">$(function(){Stabs('{$js_pageid}');});</script>
+<div class="list-menu" id="tabs-{$js_pageid}">
+	<ul>
+	<a href="?mid={$mid}&status=3&job=join"><li{if $status==3} class="on"{/if} id="s3">已加入{if !$kw} <i>{$nums[3]}</i>{/if}</li></a>
+	<a href="?mid={$mid}&status=2&job=join"><li{if $status==2} class="on"{/if} id="s2">审核中{if !$kw} <i>{$nums[2]}</i>{/if}</li></a>
+	<a href="?mid={$mid}&status=1&job=join"><li{if $status==1} class="on"{/if} id="s1">未通过{if !$kw} <i>{$nums[1]}</i>{/if}</li></a>
+	</ul>
+</div>
+{/if}
+
+<div id="search-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="?">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="status" value="{$status}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+</div>
+
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<input type="checkbox" name="itemid[]" value="{$v[itemid]}" class="dsn" id="checkbox-{$v[itemid]}"/>
+<a href=""><img src="{if $v[thumb]}{$v[thumb]}{else}{DM_SKIN}60x60.png{/if}" width="60" height="60" alt="" class="avatar" onerror="this.src='{DM_SKIN}60x60.png';"/></a>
+<ul>
+<li><em class="check" id="check-{$v[itemid]}"></em><a href="{$v[linkurl]}"><strong>{$v[title]}</strong></a></li>
+<li><em class="sheet" id="sheet-{$v[itemid]}"></em><span>主题：{$v[post]} &nbsp; 粉丝：{$v[fans]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+	<div class="list-none">{if $kw}未搜索到“{$kw}”相关结果{else}暂无记录{/if}</div>
+{/if}
+{if $join_limit}
+<div class="limit">
+总共可加 <span class="f_b f_red">{$join_limit}</span> 个&nbsp;&nbsp;&nbsp;
+当前已加 <span class="f_b">{$limit_used}</span> 个&nbsp;&nbsp;&nbsp;
+还可以加 <span class="f_b f_blue">{$limit_free}</span> 个&nbsp;&nbsp;&nbsp;
+</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<div id="foot-bar" class="dsn">
+<div class="foot-bar-fix"></div>
+<div class="foot-bar btns">
+{if $MG[delete]}<input type="submit" name="submit" value="退出选中" class="btn-red" onclick="if(confirm('确定要退出选中{$MOD[name]}吗？')){this.form.action='?mid={$mid}&status={$status}&action=delete'}else{return false;}"/>{/if}
+</div>
+</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	if($('#foot-bar input').length == 0) $('.check').hide();
+	$('.list-img em').click(function() {
+		if($(this).attr('class') == 'sheet') {
+			var id = $(this).attr('id').replace('sheet-', '');
+			Dsheet('{$js_pageid}','{if $status==2 || $status==1}<a href="?mid={$mid}&job=join&action=edit&itemid='+id+'"><span>修改</span></a>{/if}{if $status==3}{if $MG[delete]}<a href="?mid={$mid}&job=join&action=delete&itemid='+id+'" onclick="return _delete();"><span style="color:red;">退出</span></a>{/if}{/if}', '取消');
+    } else {
+			var id = $(this).attr('id').replace('check-', '');
+			if($('#checkbox-'+id).attr('checked')) {
+				$('#checkbox-'+id).attr('checked', false);
+				$(this).attr('class', 'check');
+			} else {
+				$('#checkbox-'+id).attr('checked', true);
+				$(this).attr('class', 'checked');
+			}
+			if($('.checked').length > 0) {
+				$('#foot-bar').fadeIn(300);
+			} else {
+				$('#foot-bar').fadeOut(300);
+			}
+		}
+	});
+});
+</script>
+{/if}
+{if $action == 'add' || $action == 'edit'}
+<script type="text/javascript">
+function check() {
+	var l;
+	var f;
+	f = 'reason';
+	l = Dd(f).value.length;
+	if(l > 500) {
+		Dmsg('加入原因最多500字，当前已输入'+l+'字', f);
+		return false;
+	}
+{if $GRP[join_type]}
+	if(l < 3) {
+		Dmsg('请填写加入原因', f);
+		return false;
+	}
+{/if}
+	return true;
+}
+</script>
+{/if}
+{template 'footer', 'member'}

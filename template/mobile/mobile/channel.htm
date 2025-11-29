@@ -1,0 +1,67 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $mid > 3}channel.php{else}{DT_MOB}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right">{if $mid > 3}<a href="{DT_MOB}api/search.php?mid={$mid}" data-transition="none"><img src="{DM_SKIN}icon-search{$wh}.png" width="24" height="24"/></a>{else}<a href="{DT_MOB}{rewrite('channel.php?mid='.$sid)}" data-transition="none"><img src="{DM_SKIN}icon-sort{$wh}.png" width="24" height="24"/></a>{/if}</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+{if $mid > 3}
+<style type="text/css">
+.cat-side {width:96px;height:100%;overflow-y:auto;background:#F6F6F6;position:fixed;z-index:9;left:0;top:48px;user-select:none;-webkit-user-select:none;}
+.cat-side  li {height:48px;line-height:48px;overflow:hidden;}
+.cat-side .side_li {width:80px;background:#F6F6F6;padding:0 0 0 16px;}
+.cat-side .side_on {width:80px;background:#F6F6F6;padding:0 0 0 16px;color:#FF6600;font-size:16px;font-weight:bold;}
+.cat-main {padding:0 0 0 96px;}
+.cat-main h3 {height:48px;line-height:48px;font-size:14px;padding:0 24px;margin:0;clear:both;border-bottom:#F6F6F6 1px solid;}
+.cat-main ul {border-bottom:#F6F6F6 10px solid;overflow:hidden;}
+.cat-main li {width:32%;float:left;text-align:center;}
+.cat-main li p {margin:0;padding:0;height:48px;line-height:48px;overflow:hidden;font-size:12px;}
+.cat-main li img {width:90%;height:auto;}
+</style>
+<div class="cat-side" id="side-{$js_pageid}">
+<ul>
+{php $j = 1;}
+{loop $MODULE $i $m}
+{if $m[moduleid] > 3 && $m[ismenu]}<a {if $m[islink]}href="{$m[linkurl]}" rel="external" target="_blank"{else}href="{if $m[moduleid]==$mid}{$m[mobile]}{else}{DT_MOB}{rewrite('channel.php?mid='.$m['moduleid'])}{/if}" data-transition="none"{/if}><li class="{if $m[moduleid]==$mid}side_on{else}side_li{/if}" data-id="{$j++}">{$m[name]}</li></a>{/if}
+{/loop}
+<li class="side_li">&nbsp;</li>
+</ul>
+</div>
+
+<div class="cat-main">
+{loop $child $i $c}
+<h3><a href="{$MODULE[$mid][mobile]}{$c[linkurl]}">{set_style($c[catname], $c[style])}</a></h3>
+{if $c[child]}
+{php $sub = get_maincat($c[catid], $mid, 1);}
+<ul>
+{loop $sub $j $s}
+<li><a href="{$MODULE[$mid][mobile]}{$s[linkurl]}">{if $s[thumb]}<img src="{$s[thumb]}"/>{/if}<p>{set_style($s[catname], $s[style])}</p></a></li>
+{/loop}
+</ul>
+{/if}
+{/loop}
+</div>
+<script type="text/javascript">
+$(function(){
+	var side_height = $(window).height() - 49;
+	var max_id = parseInt(side_height/48) - 1;
+	var cur_id = $('#side-{$js_pageid} .side_on').attr('data-id');
+	$('#side-{$js_pageid}').css('height', side_height+'px');
+	if(cur_id > max_id) {
+		$('#side-{$js_pageid}').animate({'scrollTop':48*(cur_id-max_id)}, 100);
+	}
+});
+</script>
+{else}
+<div class="gird-4">
+	<ul>
+		{loop $MODULE $i $m}
+		{if $m[moduleid] > 3 && $m[ismenu]}<li><a {if $m[islink]}href="{$m[linkurl]}" rel="external" target="_blank"{else}href="{$m[mobile]}"{/if}><img src="{if $m[icon]}{$m[icon]}{else}{DM_SKIN}mod-{$m[module]}.png{/if}" width="24" height="24"/><span>{$m[name]}</span></a></li>{/if}
+		{/loop}
+	</ul>
+</div>
+{/if}
+{template 'footer'}

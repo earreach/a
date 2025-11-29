@@ -1,0 +1,67 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<form action="{$MOD[mobile]}topic.php">
+<div class="head-bar-title"><input type="search" name="kw" value="{$kw}" placeholder="话题搜索"/></div>
+</form>
+<div class="head-bar-right"><a href="{$MODULE[2][mobile]}{$DT[file_my]}?mid={$moduleid}&action=add{if $itemid}&topicid={$itemid}{/if}" rel="external"><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div class="ui-viewer" id="viewer-{$js_pageid}"></div>
+{load('moment.css')}
+{if $itemid}
+	{load('moment.js')}
+	{load('player.js')}
+	<div class="title"><h1>{$item[title]}</h1></div>
+	<div class="info"><i class="ui-ico-time">{timetodate($item[addtime], 3)}</i><i class="ui-ico-hits ui-fr" id="hits">{$item[hits]}</i><i class="ui-ico-comm ui-fr">{$item[item]}</i></div>
+	{if $item[content]}<div class="topic-show-content" data-content="{$js_pageid}">{$item[content]}</div>{/if}
+	<script type="text/javascript">$(function(){Stabs('{$js_pageid}');});</script>
+	<div class="list-menu" id="tabs-{$js_pageid}">
+		<ul>
+		<a href="{$MOD[mobile]}{rewrite('topic.php?itemid='.$itemid)}" data-transition="none"><li{if $typeid==0} class="on"{/if}>最新</li></a>
+		<a href="{$MOD[mobile]}{rewrite('topic.php?itemid='.$itemid.'&typeid=1')}" data-transition="none"><li{if $typeid==1} class="on"{/if}>推荐</li></a>
+		<a href="{$MOD[mobile]}{rewrite('topic.php?itemid='.$itemid.'&typeid=2')}" data-transition="none"><li{if $typeid==2} class="on"{/if}>关注</li></a>
+		<a href="{$MOD[mobile]}{rewrite('topic.php?itemid='.$itemid.'&typeid=3')}" data-transition="none"><li{if $typeid==3} class="on"{/if}>好友</li></a>
+		<a href="{$MOD[mobile]}{rewrite('topic.php?itemid='.$itemid.'&typeid=4')}" data-transition="none"><li{if $typeid==4} class="on"{/if}>热门</li></a>
+		<a href="{$MODULE[2][mobile]}{$DT[file_my]}?mid={$moduleid}&action=add{if $itemid}&topicid={$itemid}{/if}"><li>发布</li></a>
+		</ul>
+	</div>
+	<!--
+	<div class="ui-filter">
+	<a href="{$MOD[mobile]}topic.php?elite=1&catid={$catid}&areaid={$areaid}"><i class="ui-filter-box ui-fr">推荐</i></a>
+	<i class="ui-filter-dsc on">综合</i>
+	<a href="{$MOD[mobile]}topic.php?orderby=dlikes&catid={$catid}&areaid={$areaid}"><b>点赞</b></a>
+	<a href="{$MOD[mobile]}topic.php?orderby=dquotes&catid={$catid}&areaid={$areaid}"><b>转发</b></a>
+	<a href="{$MOD[mobile]}topic.php?orderby=dcomments&catid={$catid}&areaid={$areaid}"><b>评论</b></a>
+	</div>
+	-->
+	{if $tags}
+	<div id="list-{$js_pageid}">{template 'list-'.$module, 'tag'}</div>
+	<div id="load-{$js_pageid}" class="ui-load"></div>
+	{else}
+	{template 'empty', 'chip'}
+	{/if}
+{else}
+	<script type="text/javascript">$(function(){Stabs('{$js_pageid}');});</script>
+	<div class="list-menu" id="tabs-{$js_pageid}">
+		<ul>
+		<a href="{$MOD[mobile]}" data-transition="none"><li>最新</li></a>
+		<a href="{$MOD[mobile]}{rewrite('index.php?typeid=1')}" data-transition="none"><li>推荐</li></a>
+		<a href="{$MOD[mobile]}{rewrite('index.php?typeid=2')}" data-transition="none"><li>关注</li></a>
+		<a href="{$MOD[mobile]}{rewrite('index.php?typeid=3')}" data-transition="none"><li>好友</li></a>
+		<a href="{$MOD[mobile]}{rewrite('index.php?typeid=4')}" data-transition="none"><li>热门</li></a>
+		<a href="{$MOD[mobile]}{rewrite('topic.php?page=1')}" data-transition="none"><li class="on">话题</li></a>
+		</ul>
+	</div>
+	{if $tags}
+	<div id="list-{$js_pageid}" class="list-topic">{template 'list-moment-topic', 'tag'}</div>
+	<div id="load-{$js_pageid}" class="ui-load"></div>
+	{else}
+	{template 'empty', 'chip'}
+	{/if}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{template 'footer'}

@@ -1,0 +1,82 @@
+{template 'header', 'member'}
+{load('member/index.css')}
+<div class="ihead ihead-td">订单数据</div>
+<div class="iorder">
+<ul>
+<a href="trade.php?nav=0"><li><b>{php echo numtoread($db->count($DT_PRE.'order', "seller='$_username' AND pid=0 AND status=0"));}</b>待确认</li></a>
+<a href="trade.php?nav=1"><li><b>{php echo numtoread($db->count($DT_PRE.'order', "seller='$_username' AND pid=0 AND status=1"));}</b>待付款</li></a>
+<a href="trade.php?nav=2"><li><b>{php echo numtoread($db->count($DT_PRE.'order', "seller='$_username' AND pid=0 AND status=2"));}</b>待发货</li></a>
+<a href="trade.php?nav=5"><li><b>{php echo numtoread($db->count($DT_PRE.'order', "seller='$_username' AND pid=0 AND status=5"));}</b>待退款</li></a>
+<a href="trade.php?nav=4"><li><b>{php echo numtoread($db->count($DT_PRE.'order', "seller='$_username' AND pid=0 AND status=4 AND buyer_star=0"));}</b>待评价</li></a>
+</ul>
+</div>
+<form action="?">
+<div class="tt">
+<select name="year">
+<option value="0">选择年</option>
+<?php for($i = date("Y", $DT_TIME); $i >= 2000; $i--) { ?>
+<option value="<?php echo $i;?>"<?php echo $i == $year ? ' selected' : ''?>><?php echo $i;?>年</option>
+<?php } ?>
+</select>&nbsp;
+<select name="month">
+<option value="0">选择月</option>
+<?php for($i = 1; $i < 13; $i++) { ?>
+<option value="<?php echo $i;?>"<?php echo $i == $month ? ' selected' : ''?>><?php echo $i;?>月</option>
+<?php } ?>
+</select>&nbsp;
+<input type="submit" value="生成报表" class="btn"/>&nbsp;
+<input type="button" value="重 置" class="btn" onclick="Go('?action=index');"/>
+</div>
+</form>
+<div>
+{load('echarts.min.js')}
+<div id="chart" style="width:90%;height:500px;margin:16px;"></div>
+<script type="text/javascript">
+var chart = echarts.init(Dd('chart'));
+var option = {
+    title: {
+        text: '{$title}',
+		subtext: '交易成功({$t0}{$DT[money_unit]})   买家退款({$t1}{$DT[money_unit]})'
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data: ['交易成功', '买家退款']
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    toolbox: {
+        feature: {
+            saveAsImage: {}
+        }
+    },
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: [{$xd}]
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [
+        {
+            name: '交易成功',
+            type: 'line',
+            data: [{$y0}]
+        },
+        {
+            name: '买家退款',
+            type: 'line',
+            data: [{$y1}]
+        }
+    ]
+};
+chart.setOption(option);
+</script>
+</div>
+{template 'footer', 'member'}

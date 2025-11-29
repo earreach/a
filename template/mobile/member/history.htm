@@ -1,0 +1,63 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right"><a href="javascript:Dmenu('search-{$js_pageid}');"><img src="{DM_SKIN}icon-search{$wh}.png" width="24" height="24"/></a><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=index" data-transition="none">浏览历史</a>
+<a href="?action=visit" data-transition="none">我的访客</a>
+<a href="index.php" data-direction="reverse">会员中心</a>
+</div>
+</div>
+
+<script type="text/javascript">var errimg = '{DT_STATIC}image/nopic50.png';</script>
+{if $action == 'visit'}
+<div class="ui-form-search" id="search-{$js_pageid}"{if !$kw} style="display:none;"{/if}>
+<form action="?">
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<a href="{$v[linkurl]}"><img src="{$v[thumb]}" width="60" height="60" alt=""  onerror="this.src=errimg;"/></a>
+<ul>
+<li><a href="{$v[linkurl]}" rel="external"><strong>{$v[title]}</strong></a></li>
+<li><span class="ui-ico-time">{timetodate($v[lasttime], 6)}</span> &nbsp; <a href="{userurl($v[username], 'file=space')}" rel="external"><span class="ui-ico-user">{$v[username]}</span></a></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无记录</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{else}
+<div class="ui-form-search" id="search-{$js_pageid}"{if !$kw} style="display:none;"{/if}>
+<form action="?">
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<a href="{$v[linkurl]}"><img src="{$v[thumb]}" width="60" height="60" alt=""  onerror="this.src=errimg;"/></a>
+<ul>
+<li><a href="{$v[linkurl]}" rel="external"><strong>{$v[title]}</strong></a></li>
+<li><span class="ui-ico-time">{timetodate($v[lasttime], 6)}</span> &nbsp; <a href="{userurl($v[author], 'file=space')}" rel="external"><span class="ui-ico-user">{$v[author]}</span></a></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无记录</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{/if}
+{template 'footer', 'member'}

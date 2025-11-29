@@ -1,0 +1,31 @@
+{template 'header'}
+{load('member/panel.css')}
+{load('panel.js')}
+{load('moment.js')}
+{load('player.js')}
+<div class="m">	
+	<div class="nav"><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')}</div>
+</div>
+<div class="m m5">
+	<div class="m5l">		
+		<div id="userinfo">{if defined('TOHTML')}<div class="mm-load"></div>{else}{template 'userinfo', $module}{/if}</div>
+	</div>
+	<div class="m5m">
+		<div class="mm-type">
+			<a href="{$MOD[linkurl]}{$CAT[linkurl]}"><span class="on">最新</span></a>
+			<a href="{$MOD[linkurl]}{rewrite('index.php?typeid=1&catid='.$catid)}"><span>推荐</span></a>
+			<a href="{$MOD[linkurl]}{rewrite('index.php?typeid=2&catid='.$catid)}"><span>关注</span></a>
+			<a href="{$MOD[linkurl]}{rewrite('index.php?typeid=3&catid='.$catid)}"><span>好友</span></a>
+			<a href="{$MOD[linkurl]}{rewrite('index.php?typeid=4&catid='.$catid)}"><span>热门</span></a>
+		</div>
+		{if $page == 1}{ad($moduleid,$catid,'',6)}{/if}
+		{if $tags}{template 'list-'.$module, 'tag'}{/if}
+	</div>
+	<div class="m5r">
+		<div class="head-sub"><span><a href="{$MOD[linkurl]}{rewrite('topic.php?page=1')}">更多<i>&gt;</i></a></span><strong>话题</strong></div>
+		<div class="list-topic">
+		<!--{tag("moduleid=$moduleid&table=$table_topic&prefix=&condition=status=3 and level>0&catid=$catid&pagesize=10&datetype=2&order=addtime desc&target=_blank&template=list-moment-topic")}-->
+		</div>
+	</div>
+</div>
+{template 'footer'}

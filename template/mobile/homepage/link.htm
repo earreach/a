@@ -1,0 +1,34 @@
+{template 'header', $template}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{if $head_name}{$head_name}{else}{$DMENU[11]}{/if}</div>
+<div class="head-bar-right"><a href="javascript:Dmenu('{$file}-{$js_pageid}');"><img src="{DM_SKIN}icon-search{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div id="{$file}-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="{$MODULE[4][mobile]}index.php">
+<input type="hidden" name="file" value="{$file}"/>
+<input type="hidden" name="homepage" value="{$username}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+</div>
+{if $lists}
+<div id="list-{$js_pageid}" class="main">
+{loop $lists $v}
+<div class="ui-list-txt">
+<a href="{gourl($v[linkurl])}" rel="nofollow" data-ajax="false"><strong>{$v[title]}</strong></a>
+<p><i class="ui-ico-hits">{$v[linkurl]}</i></p>
+</div>
+{/loop}
+</div>
+<div id="load-{$js_pageid}" class="ui-load"></div>
+{else}
+{template 'empty', 'chip'}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{template 'footer', $template}

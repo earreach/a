@@ -1,0 +1,7 @@
+{template 'header'}
+<div class="m">	
+	<div class="nav"><div><a href="{$mapurl}" id="mapurl" target="_blank"><img src="{DT_SKIN}ico-full.png" width="16" height="16" title="全屏" align="absmiddle"/></a></div><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> 查看地图</div>
+</div>
+<div class="m"><div id="dmap" style="width:100%;height:600px;"></div></div>
+{php include load('api/map/'.$map.'/show.inc');}
+{template 'footer'}

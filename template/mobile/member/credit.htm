@@ -1,0 +1,204 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right">
+{if $action == 'buy' || $action == 'exchange'}
+<a href="?action=record"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{/if}
+<a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a>
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=buy" data-transition="none">{$DT[credit_name]}购买</a>
+{if $MOD[credit_exchange]}<a href="?action=exchange" data-transition="none">{$DT[credit_name]}兑换</a>{/if}
+<a href="?action=index" data-transition="none">{$DT[credit_name]}记录</a>
+<a href="?action=grade" data-transition="none">{$DT[credit_name]}级别</a>
+{if $EXT[gift_enable]}<a href="{$EXT[gift_url]}" rel="external">{$DT[credit_name]}换礼</a>{/if}
+<a href="index.php" data-direction="reverse">会员中心</a>
+</div>
+</div>
+
+{if $action == 'exchange'}
+<div class="list-tab">
+	<ul>
+		<li class="on"><a href="?action=exchange"><span>{$DT[credit_name]}兑换</span></a></li>
+		<li><a href="?action=index"><span>{$DT[credit_name]}记录</span></a></li>
+		<li><a href="?action=grade"><span>{$DT[credit_name]}级别</span></a></li>
+		{if $EXT[gift_enable]}<li><a href="{$EXT[gift_mob]}" rel="external"><span>{$DT[credit_name]}换礼</span></a></li>{/if}
+	</ul>
+</div>
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="submit" value="1"/>
+<div class="ui-form">
+<p>可用{$MOD[ex_name]}<b>{$num}</b></p>
+<p>兑换比率</p>
+<div><span class="f_blue">1</span> {$MOD[ex_name]} 兑换 <span class="f_red">{$MOD[ex_rate]}</span> {$DT[credit_name]}</div>
+<p>兑换额度<i>*</i><b id="damount"></b></p>
+<div><input type="tel" name="amount" id="amount" style="width:100px;"/></div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="{if $action=='edit'}修改{else}添加{/if}" class="btn-blue"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	m = parseInt(Dd('amount').value);
+	n = {$num};
+	if(m > 0 && m < n) {
+		return confirm('确定要兑换'+m+'{$MOD[ex_name]}吗？ 可换取'+(m*{$MOD[ex_rate]})+'{$DT[credit_name]}\n\n注意:兑换{$MOD[ex_name]}可能会降低您在论坛的会员级别');
+	} else {
+		Dd('amount').value = '';
+		Dmsg('请填写兑换额度', 'amount');
+		return false;
+	}
+}
+</script>
+
+{elseif $action == 'buy'}
+<style>
+.member-g {height:56px;overflow-x:auto;margin-top:-16px;}
+.member-g ul {width:10000px;}
+.member-g li {height:32px;line-height:32px;display:inline;float:left;margin:0 0 24px 24px;color:#999999;font-size:16px;}
+.member-g .on {color:#333333;border-bottom:#333333 2px solid;}
+.member-p {height:142px;overflow-x:auto;}
+.member-p ul {width:10000px;}
+.member-p li {height:66px;width:84px;display:inline;float:left;padding:24px 16px;color:#999999;font-size:16px;border:#EABD78 1px solid;background:#FFFFFF;border-radius:10px;margin:0 0 24px 24px;text-align:center;}
+.member-p li i {font-style:normal;color:#4F1D01;font-size:16px;}
+.member-p li b {display:block;line-height:56px;color:#E87C11;font-size:20px;}
+.member-p li s {text-decoration:none;color:#999999;font-size:12px;}
+.member-p li span {display:none;}
+.member-p .on {background:#F2D7AE;}
+.member-p .on b {color:#4F1D01;}
+.member-p .on span {position:absolute;display:block;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:12px solid #E87D13;margin:24px 0 0 32px;}
+</style>
+
+<div class="blank-32"></div>
+{if $C}
+<div class="member-p">
+<ul>
+{loop $C $k $v}
+<a href="?action={$action}&type={$k}"><li{if $k==$type} class="on"{/if}><i>{$v}{$DT[credit_name]}</i><b>{$DT[money_sign]}{$P[$k]}</b></li></a>
+{/loop}
+</ul>
+</div>
+{/if}
+
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="type" value="{$type}"/>
+<div class="blank-20"></div>
+<div class="list-set">
+	<ul>
+		<li><div><span><b style="font-size:20px;color:#FF6600;" id="money">{$money}</b>{$DT[money_unit]}</span>应付总额</div></li>
+	</ul>
+</div>
+<div id="mymoney" style="display:none;">
+	<div class="blank-20"></div>
+	<div class="list-set">
+		<ul>
+			<li><div><span><b>{$DT[money_sign]}{$_money}</b>{$DT[money_unit]}</span>账户余额</div></li>
+		</ul>
+	</div>
+</div>
+<div id="payword" style="display:none;">
+	<div class="blank-20"></div>
+	<div class="list-inp">
+		<div>{template 'payword', 'chip'}</div>
+	</div>
+</div>
+<div id="paytype" style="display:none;">{template 'paylist', 'chip'}</div>
+<div class="blank-20"></div>
+<div class="list-btn"><input type="submit" name="submit" value="立即购买" class="btn-green"/></div>
+<div class="blank-20"></div>
+</form>
+
+<script type="text/javascript">
+function check() {
+	var money = {$money};
+	if(money > {$_money}) {
+		Go('charge.php?action=pay&reason=credit|{$type}&amount='+money+'&bank='+$('#bank').val());
+		return false;
+	}
+	if(money > {$DT[quick_pay]}){
+		if(Dd('password').value.length < 6) {
+			Dmsg('请填写支付密码', 'password');
+			return false;
+		}
+	}
+	return true;
+}
+window.setInterval(
+	function() {
+		var money = {$money};
+		if(money > {$_money} || {$_money} < 0.01) {
+			$('#mymoney').hide();$('#paytype').show();$('#payword').hide();
+		} else {
+			$('#mymoney').show();$('#paytype').hide();if(money > {$DT[quick_pay]}){$('#payword').show();}else{$('#payword').hide();}
+		}
+	}, 
+500);
+</script>
+
+{elseif $action == 'less'}
+<div class="warn">抱歉！由于您的{$DT[credit_name]}不足，无法进行此操作</div>
+<div class="blank-32"></div>
+<div class="content t_c">可用{$DT[credit_name]}：{$_credit} {$DT[credit_unit]}</div>
+<div class="blank-32"></div>
+<div class="list-btn"><input type="button" value="购买{$DT[credit_name]}" class="btn-green" onclick="Go('?action=buy');"/></div>
+{if $MOD[credit_exchange]}
+<div class="blank-20"></div>
+<div class="list-btn"><input type="button" value="兑换{$DT[credit_name]}" class="btn" onclick="Go('?action=exchange');"/></div>
+{/if}
+<div class="blank-20"></div>
+<div class="list-btn"><input type="button" value="推广赚{$DT[credit_name]}" class="btn" onclick="Go('invite.php?action=code');"/></div>
+<div class="blank-20"></div>
+<div class="list-btn"><input type="button" value="取消操作" class="btn" onclick="Go('./');"/></div>
+<div class="blank-32"></div>
+
+{elseif $action == 'grade'}
+<div class="content">
+我的{$DT[credit_name]}：{$_credit} {$DT[credit_unit]}<br/>
+我的级别：{$GRADE[$_gradeid][name]} &nbsp; <img src="{DT_STATIC}image/grade-{$_gradeid}.png" width="24" alt=""/><br/>
+{if $left > 0}距离升级：{$left} {$DT[credit_unit]}<br/>{/if}
+</div>
+<div class="list-set">
+<ul>
+{loop $GRADE $k $v}
+<li><div><span>{if $k==1}少于{$v[credit]}{else}{$GRADE[$k-1][credit]+1}到{$v[credit]}{/if}</span><img src="{DT_STATIC}image/grade-{$k}.png" width="24" alt=""/> &nbsp; {$v[name]}</div></li>
+{/loop}
+</ul>
+</div>
+
+{else}
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li>
+<span class="f_r">余额:{$v[balance]}</span>
+{if $v[amount] < 0}
+<strong style="font-size:24px;color:#FF6600;">{$v[amount]}</strong>
+{else}
+<strong style="font-size:24px;">+{$v[amount]}</strong>
+{/if}
+</li>
+<li><span class="f_r">{$v[addtime]}</span><span>{$v[reason]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无记录</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{/if}
+{template 'footer', 'member'}

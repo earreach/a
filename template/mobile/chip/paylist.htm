@@ -1,0 +1,10 @@
+<div class="blank-20"></div>
+{php $PAYLIST = get_paylist();}
+<input type="hidden" name="bank" id="bank" value="{$PAYLIST[0][bank]}"/>
+<div class="list-pay">
+	<ul>
+	{loop $PAYLIST $k $v}
+	<li onclick="var bk=$('#bank').val();if(bk=='{$v[bank]}'){return;}$('#check-'+bk).attr('class', 'check');$('#check-{$v[bank]}').attr('class', 'checked');$('#bank').val('{$v[bank]}');"><div><em class="{if $k}check{else}checked{/if}" id="check-{$v[bank]}"></em><img src="{DT_PATH}api/pay/{$v[bank]}/icon.png" width="24" height="24"/>{$v[name]} {if $v[percent]>0}<span>手续费 {$v[percent]}%</span>{/if}</div></li>
+	{/loop}
+	</ul>
+</div>

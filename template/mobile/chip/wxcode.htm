@@ -1,0 +1,29 @@
+<img src="{DT_PATH}api/weixin/qrcode.php" style="width:148px;width:148px;margin:0 0 0 8px;"/>
+<p style="padding:0 0 0 24px;color:#666666;font-size:12px;line-height:24px;margin:0;">微信扫码关注公众号<br/>回复文字<span class="f_green">验证码</span>获取</p>
+<div class="list-inp"><div><input name="wxcode" id="wxcode" type="text" size="6" placeholder="微信验证码" class="input-captcha" style="width:128px;"/> <span id="cwxcode"></span></div></div>
+<script type="text/javascript">
+function checkwxcode(s) {
+	s = $.trim(s);
+	var t = encodeURIComponent(s);
+	if(t.indexOf('%E2%80%86') != -1) s = decodeURIComponent(t.replace(/%E2%80%86/g, ''));
+	if(!is_wxcode(s)) return;
+	$.post(AJPath, 'action=wxcode&wxcode='+s,
+		function(data) {
+			if(data == '0') {
+				Dd('cwxcode').innerHTML = '&nbsp;&nbsp;<img src="{DM_SKIN}check-ok.png" width="24" align="absmiddle"/>';
+			} else {
+				Dd('wxcode').focus;
+				Dd('cwxcode').innerHTML = '&nbsp;&nbsp;<img src="{DM_SKIN}check-ko.png" width="24" align="absmiddle"/>';
+			}
+		}
+	);
+}
+function is_wxcode(v) {
+	return v.match(/^[0-9]{6}$/);
+}
+$(function() {
+	$('#wxcode').bind('keyup blur', function() {
+		checkwxcode($('#wxcode').val());
+	});
+});
+</script>

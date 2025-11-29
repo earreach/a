@@ -1,0 +1,136 @@
+{template 'header', $template}
+{if $itemid}
+<div id="head-bar-{$js_pageid}"{if !$audio} class="dsn"{/if}>
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<form action="{$MODULE[4][mobile]}index.php" id="filter-{$js_pageid}" data-ajax="false">
+<input type="hidden" name="homepage" value="{$username}"/>
+<input type="hidden" name="file" value="{$file}"/>
+<input type="hidden" name="orderby" value="{$orderby}"/>
+<input type="hidden" name="elite" value="{$elite}"/>
+<div class="head-bar-title"><input type="search" name="kw" value="{$kw}" placeholder="{$MOD[name]}搜索"/></div>
+</form>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+{if $audio}<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>{/if}
+</div>
+
+<div class="head-ico-left-wh dsn" id="ico-left-{$js_pageid}"><a href="javascript:;" onclick="if($('#back-{$js_pageid}').attr('href').indexOf('javascript:')==-1){Go($('#back-{$js_pageid}').attr('href'));}else{Dback();}" data-direction="reverse"><img src="{DM_SKIN}icon-back-wh.png" width="24" height="24"/></a></div>
+<div class="head-ico-right-wh dsn" id="ico-right-{$js_pageid}"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet-wh.png" width="24" height="24"/></a></div>
+
+<div class="ui-viewer" id="viewer-{$js_pageid}"></div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="{DT_MOB}api/share.php?mid={$moduleid}&itemid={$itemid}" data-transition="slideup" rel="external">分享好友</a>
+<a href="{$MENU[$menuid][linkurl]}" data-direction="reverse">{$MENU[$menuid][name]}</a>
+<a href="{userurl($username, 'file=channel', $domain)}" data-direction="reverse">切换频道</a>
+<a href="{$COM[linkurl]}" data-direction="reverse">{$home_name}</a>
+</div>
+</div>
+
+{if $audio}
+<div class="blank-16"></div>
+<center id="video-{$js_pageid}">{$player}</center>
+{else}
+<div id="video-{$js_pageid}" style="width:100%;height:100px;background:#000000;">{$player}</div>
+{/if}
+
+<div class="title"><h1>{$title}</h1></div>
+<div class="info"><i class="ui-ico-time">{$editdate}</i>{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}{if $MOD[hits]}<i class="ui-ico-play ui-fr" id="hits">{$hits}</i>{/if}<i class="ui-ico-comm ui-fr">{$comments}</i></div>
+
+{if $album}
+{php $tags = albumlist($item);}
+{if $tags[2] > 1}
+<div class="album-list">
+	<p><span>{$tags[1]}/{$tags[2]}</span><b>专辑：{$album}</b></p>
+	<div>
+	<ul>
+	{loop $tags[0] $t}
+	<a href="{userurl($username, 'file='.$MOD['moduledir'].'&itemid='.$t[itemid], $domain)}" data-transition="none"><li{if $t[itemid]==$itemid} class="on"{/if}>{if $t[itemid]==$itemid}<s></s>{elseif $t[duration]}<i>{sectotime($t[duration])}</i>{/if}{$t[title]}</li></a>
+	{/loop}
+	</ul>
+	</div>
+</div>
+{php $item['album']='';}
+{/if}
+{/if}
+
+{if $content}<div class="content" data-content="{$js_pageid}">{$content}</div>{/if}
+<div class="tool">
+{if $MOD[show_like]}<div class="like" onclick="Dlike({$moduleid}, {$itemid}, 0);">点赞 <b id="like-{$moduleid}-{$itemid}-0">{$likes}</b></div>{/if}
+{if $MOD[show_hate]}<div class="hate" onclick="Dhate({$moduleid}, {$itemid}, 0);">反对 <b id="hate-{$moduleid}-{$itemid}-0">{$hates}</b></div>{/if}
+{if $MOD[show_report]}<div class="report" onclick="Dreport({$moduleid}, {$itemid}, 0);">举报</div>{/if}
+{if $MOD[show_favorite]}<div class="favorite" onclick="Dfavor({$moduleid}, {$itemid});">收藏 <b>{$favorites}</b></div>{/if}
+{if $MOD[fee_award]}<div class="award" onclick="Go('{$MODULE[2][mobile]}award.php?mid={$moduleid}&itemid={$itemid}');">打赏 <b>{$awards}</b></div>{/if}
+{if $could_comment}<div class="comment" onclick="Go('{$EXT[comment_mob]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}');">评论 <b>{$comments}</b></div>{/if}
+{if $MOD[show_share]}<div class="share" onclick="Go('{DT_MOB}api/share.php?mid={$moduleid}&itemid={$itemid}');">分享 <b>{$shares}</b></div>{/if}
+</div>
+
+{if !$audio}
+<script type="text/javascript">
+$(function(){
+	var w = $(document).width();
+	var h = {if $width>$height}parseInt(w*9/16);{else}parseInt(w*16/9);{/if}
+	if(h > 100) {$('#video-{$js_pageid}').css('height', h+'px');}
+	$(document).on('scroll.{$js_pageid}', function(e) {
+		var st = $(document).scrollTop();
+		if(st > h - 10) {
+			$('#head-bar-{$js_pageid}').fadeIn(100);
+		} else {
+			$('#head-bar-{$js_pageid}').fadeOut(0);
+		}
+		if(st > 1) {
+			$('#ico-left-{$js_pageid},#ico-right-{$js_pageid}').fadeIn(100);
+		} else {			
+			$('#ico-left-{$js_pageid},#ico-right-{$js_pageid}').fadeOut(0);
+		}
+	});
+	$('div').on('click', function(e) {
+		e.stopPropagation();
+		$('#ico-left-{$js_pageid},#ico-right-{$js_pageid}').fadeToggle(100);
+	});
+	$(document).on('pagebeforeload', function(e) {
+		$('[name="theme-color"]').attr('content', '{$DT[color_mb]}');
+	});
+	$('[name="theme-color"]').attr('content', '#000000');
+});
+</script>
+{/if}
+
+{else}
+	<div id="head-bar">
+	<div class="head-bar">
+	<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+	<form action="{$MODULE[4][mobile]}index.php" id="filter-{$js_pageid}" data-ajax="false">
+	<input type="hidden" name="homepage" value="{$username}"/>
+	<input type="hidden" name="file" value="{$file}"/>
+	<input type="hidden" name="orderby" value="{$orderby}"/>
+	<input type="hidden" name="elite" value="{$elite}"/>
+	<div class="head-bar-title"><input type="search" name="kw" value="{$kw}" placeholder="{$MOD[name]}搜索"/></div>
+	</form>
+	<div class="head-bar-right"><a href="{userurl($username, 'file=channel', $domain)}"><img src="{DM_SKIN}icon-gird{$wh}.png" width="24" height="24"/></a></div>
+	</div>
+	<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+	<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+	</div>
+
+	<div class="ui-filter">
+	<i class="ui-filter-{if $elite}ckd{else}box{/if} ui-fr" onclick="Dfilter('elite', '{if $elite}0{else}1{/if}');">推荐</i>
+	<i {if $orderby == ''}class="ui-filter-dsc on"{else}class="ui-filter-ord" onclick="Dfilter('orderby', '');"{/if}>综合</i>
+	<b {if $orderby == 'dhits'}class="on"{else}onclick="Dfilter('orderby', 'dhits');"{/if}>播放</b>
+	<b {if $orderby == 'dcomments'}class="on"{else}onclick="Dfilter('orderby', 'dcomments');"{/if}>评论</b>
+	<b {if $orderby == 'dlikes'}class="on"{else}onclick="Dfilter('orderby', 'dlikes');"{/if}>点赞</b>
+	</div>
+
+	{if $tags}
+	<div id="list-{$js_pageid}" class="ui-main">{template 'list-'.$module, 'tag'}</div>
+	<div id="load-{$js_pageid}" class="ui-load"></div>
+	{else}
+	{template 'empty', 'chip'}
+	{/if}
+	{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{/if}
+{template 'footer', $template}

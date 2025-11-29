@@ -1,0 +1,19 @@
+{template 'header', $template}
+<style type="text/css">
+.gird {padding:24px 0;overflow:hidden;}
+.gird li {float:left;width:20%;text-align:center;padding:24px 0;}
+.gird li:hover {background:#F6F6F6;}
+.gird span {display:block;height:32px;line-height:32px;font-size:14px;}
+</style>
+<div class="dsn" id="pos_show"><a href="{$COM[linkurl]}">首页</a> <i>&gt;</i> 频道</div>
+<div class="main_head"><div><strong>频道列表</strong></div></div>
+<div class="main_body">
+	<div class="gird">
+		<ul>
+			{loop $M $i $m}
+			<li><a href="{$m[linkurl]}"><img src="{$m[icon]}" width="32" height="32"/><span>{$m[name]}</span></a></li>
+			{/loop}
+		</ul>
+	</div>
+</div>
+{template 'footer', $template}

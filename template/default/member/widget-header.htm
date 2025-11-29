@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="{DT_CHARSET}"/>
+<title>{if $head_title}{$head_title}{$DT[seo_delimiter]}{/if}{$DT[sitename]}</title>
+<meta http-equiv="x-ua-compatible" content="IE=8"/>
+<link rel="stylesheet" type="text/css" href="{DT_STATIC}member/style.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<link rel="stylesheet" type="text/css" href="{DT_STATIC}member/panel.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<link rel="stylesheet" type="text/css" href="{DT_PATH}file/style/member.reset.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<style type="text/css">
+#msgbox{z-index:5;position:absolute;background:#333333;border-radius:5px;top:100px;left:40%;color:#FFFFFF;padding:15px;font-size:14px;letter-spacing:2px;opacity:0.9;filter:alpha(opacity=90);}
+</style>
+<script type="text/javascript" src="{DT_PATH}lang/{DT_LANG}/lang.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_PATH}file/script/config.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{if strpos($DT_MBS, 'IE') === false}
+<script type="text/javascript" src="{DT_STATIC}script/jquery-3.6.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{else}
+<script type="text/javascript" src="{DT_STATIC}script/jquery-1.12.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{/if}
+<script type="text/javascript" src="{DT_STATIC}script/common.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_STATIC}script/panel.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+</head>
+<body>
+<div id="msgbox" style="display:none;"></div>
+{dmsg()}

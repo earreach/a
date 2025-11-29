@@ -1,0 +1,236 @@
+{template 'header'}
+{loop $JS $js}
+{load($js.'.js')}
+{/loop}
+{loop $CSS $css}
+{load($css.'.css')}
+{/loop}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">个人空间</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div class="ui-viewer" id="viewer-{$js_pageid}"></div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="javascript:Dmenu('space-{$js_pageid}');">搜索{$name}</a>
+<a href="{$member[space]}" data-transition="none">空间首页</a>
+{if $mid > 3}<a href="{$MODULE[$mid][mobile]}" data-transition="reverse">返回{$MODULE[$mid][name]}</a>{/if}
+<a href="{DT_MOB}channel.php" data-direction="reverse">切换频道</a>
+</div>
+</div>
+
+<div class="space-cover"><a href="{$member[space]}" data-transition="none"><img src="{$member[cover]}" onerror="this.src='{DT_STATIC}image/cover.png';"/></a></div>
+
+<div class="space-member">
+	<div><img src="{useravatar($username, 'large')}"/><i class="member-v{$member[validate]}"></i></div>
+</div>
+
+{if $DT[follow]}
+<div class="space-stats">
+	<ul>
+	<a href="{userurl($username, 'file=space&mid=2&typeid=3', $domain)}" data-transition="none"><li><i>{numtoread($member[fans])}</i><span>粉丝</span></li></a>
+	<a href="{userurl($username, 'file=space&mid=2&typeid=2', $domain)}" data-transition="none"><li><div><i>{numtoread($member[follows])}</i><span>关注</span></div></li></a>
+	{if isset($MODULE[20])}
+	<a href="{userurl($username, 'file=space&mid=20', $domain)}" data-transition="none"><li><i>{numtoread($member[moments])}</i><span>{$MODULE[20][name]}</span></li></a>
+	{else}
+	<a href="{$member[space]}"><li><i>{numtoread($member[hits])}</i><span>访问</span></li></a>
+	{/if}
+	</ul>
+</div>
+{/if}
+
+<div class="space-name">
+<strong>{$passport}</strong> <a href="{$MODULE[2][mobile]}grade.php?action=credit" rel="external"><img src="{DT_STATIC}image/grade-{$member[gradeid]}.png" width="24" alt=""/></a>
+{if $DT[follow]}
+	{if followed($member[userid])}
+	<div class="follow1" onclick="Dfollow('{$member[username]}');" id="follow-{$member[username]}" title="已关注，点击取消"><b>已关注</b><i>{numtoread($member[fans])}</i></div>
+	{else}
+	<div class="follow0" onclick="Dfollow('{$member[username]}');" id="follow-{$member[username]}" title="未关注，点击关注"><b>加关注</b><i>{numtoread($member[fans])}</i></div>
+	{/if}
+{/if}
+</div>
+<div class="space-sign">{if $member[sign]}{$member[sign]}{else}没有留下签名~~{/if}</div>
+<div class="space-info">
+<ul>
+	{if $UG[type]}
+	<li><a href="{$member[linkurl]}" rel="external"><span class="ui-ico-home">{if $member[shop] && $member[vshop]}{$member[shop]}{else}{$member[company]}{/if}</span></a>
+	{if $member[validated]}<span class="ui-fr f_green">通过{$member[validator]}认证</span>{else}<span class="ui-fr">未认证</span>{/if}
+	</li>
+	{/if}
+	<li><span class="ui-ico-time">上次登录 {timetoread($member[logintime], 3)}</span>{if online($member[userid])==1}<span class="ui-fr f_green">当前在线</span>{else}<span class="ui-fr">当前离线</span>{/if}</li>
+	<li><span class="ui-ico-area">{if $member[areaid]}{area_pos($member[areaid], '-')}{else}未知{/if}</span>
+	<span class="ui-fr"><a href="{userurl($username, 'file=space&mid=2', $domain)}" data-transition="none"><b>联系TA</b></a></span>
+	</li>
+	
+</ul>
+</div>
+{if $MENU}
+<script type="text/javascript">$(function(){Stabs('{$js_pageid}');});</script>
+<div class="list-menu" id="tabs-{$js_pageid}">
+	<ul>
+	{loop $MENU $k $v}
+	<a href="{userurl($username, 'file=space&mid='.$k, $domain)}" data-transition="none"><li{if $k==$mid} class="on"{/if}>{$v}</li></a>
+	{/loop}
+	</ul>
+</div>
+{/if}
+{if $SUBMENU}
+<div class="list-tab">
+	<ul>
+	{loop $SUBMENU $k $v}
+	<li{if $k==$typeid} class="on"{/if}><a href="{userurl($username, 'file=space&mid='.$mid.($k ? '&typeid='.$k : ''), $domain)}" data-transition="none"><span>{$v}</span></a></li>
+	{/loop}
+	</ul>
+</div>
+{/if}
+
+<div id="space-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="{$MODULE[4][linkurl]}index.php" data-ajax="false"><input type="hidden" name="homepage" value="{$username}"/><input type="hidden" name="file" value="{$file}"/><input type="hidden" name="mid" value="{$mid}"/>{if $typeid}<input type="hidden" name="typeid" value="{$typeid}"/>{/if}
+<div><input type="search" name="kw" value="{$kw}" placeholder="搜索{$name}"/></div>
+</form>
+</div>
+</div>
+
+{if $tags}
+<div class="main">
+	{if $sub == 'about'}
+		<div style="background:#FFFFFF;">
+		<div class="ui-head"><i></i><b>联系方式</b></div>
+		{if $could_contact}
+		<div class="gird-4">
+			<ul>
+				{if $DT[im_web]}
+				<li><a href="{$MODULE[2][mobile]}chat.php?touser={$COM[username]}" rel="external"><img src="{DT_STATIC}image/share-chat.png" width="48" height="48"/><span>在线交谈</span></a></li>
+				{/if}
+				<li><a href="{$MODULE[2][mobile]}message.php?action=send&touser={$COM[username]}" rel="external"><img src="{DT_STATIC}image/share-message.png" width="48" height="48"/><span>发送私信</span></a></li>
+				<li><a href="{$MODULE[2][mobile]}friend.php?action=add&username={$COM[username]}" rel="external"><img src="{DT_STATIC}image/share-friend.png" width="48" height="48"/><span>添加好友</span></a></li>
+				{if $COM[telephone]}
+				<li><a href="tel:{$COM[telephone]}"><img src="{DT_STATIC}image/share-tel.png" width="48" height="48"/><span>拨打电话</span></a></li>
+				{elseif $COM[mobile] && $DT[im_mob]}
+				<li><a href="tel:{$COM[mobile]}"><img src="{DT_STATIC}image/share-tel.png" width="48" height="48"/><span>拨打电话</span></a></li>
+				{/if}
+				{if $COM[mobile] && $DT[im_mob]}
+				<li><a href="sms:{$COM[mobile]}"><img src="{DT_STATIC}image/share-sms.png" width="48" height="48"/><span>发送短信</span></a></li>
+				{/if}
+				{if $COM[mail]}
+				<li><a href="mailto:{$COM[mail]}"><img src="{DT_STATIC}image/share-email.png" width="48" height="48"/><span>发送邮件</span></a></li>
+				{/if}
+				{if $COM[qq] && $DT[im_qq]}
+				<li><a href="http://wpa.qq.com/msgrd?v=3&uin={$COM[qq]}&site=qq&menu=yes" target="_blank" rel="external"><img src="{DT_STATIC}image/share-qq.png" width="48" height="48"/><span>QQ交谈</span></a></li>
+				{/if}
+				{if $COM[wx] && $DT[im_wx]}
+				<li><a href="{DT_MOB}api/wx.php?wid={$COM[wx]}&username={$COM[username]}" rel="external"><img src="{DT_STATIC}image/share-wx.png" width="48" height="48"/><span>微信交谈</span></a></li>
+				{/if}
+				{if $COM[gzh] && $DT[im_wx]}
+				<li><a href="{DT_MOB}api/wx.php?gzh={$COM[gzh]}&username={$COM[username]}" rel="external"><img src="{DT_STATIC}image/share-gzh.png" width="48" height="48"/><span>微信公众号</span></a></li>
+				{/if}
+				{if $COM[ali] && $DT[im_ali]}
+				<li><a href="http://amos.alicdn.com/msg.aw?v=2&uid={$COM[ali]}&site=cnalichn&s=6&charset=UTF-8" target="_blank" rel="external"><img src="{DT_STATIC}image/share-ali.png" width="48" height="48"/><span>阿里旺旺</span></a></li>
+				{/if}
+				{if $COM[skype] && $DT[im_skype]}
+				<li><img src="{DT_STATIC}image/share-skype.png" width="48" height="48" onclick="prompt('长按号码可以复制', '{$COM[skype]}');"/><span>Skype通话</span></li>
+				{/if}
+				{if $COM[address]}
+				<li><a href="{DT_MOB}api/address.php?auth={encrypt($COM[address].'|'.$COM[company].'|'.$COM[lng].','.$COM[lat], DT_KEY.'MAP')}" rel="external"><img src="{DT_STATIC}image/share-map.png" width="48" height="48"/><span>地图导航</span></a></li>
+				{/if}
+			</ul>
+		</div>
+		{else}
+		<div class="content">
+			{if $_userid}
+			<br/><br/><br/><center>请先 <a href="{$MODULE[2][mobile]}grade.php" rel="external" class="b">升级</a> 会员级别后查看联系方式</center><br/><br/><br/>
+			{else}
+			<br/><br/><br/><center>请先 <a href="{$MODULE[2][mobile]}{$DT[file_login]}" rel="external" class="b">登录</a> 或 <a href="{$MODULE[2][mobile]}{$DT[file_register]}" rel="external" class="b">注册</a> 后查看联系方式</center><br/><br/><br/>
+			{/if}
+		</div>
+		{/if}
+		<div class="ui-head"><i></i><b>个人简介</b></div>
+		{if $tags[0]}
+		<div class="content">{$tags[0]}</div>
+		{else}
+		<div class="list-none">暂未填写简介~~</div>
+		{/if}
+		</div>
+	{elseif $sub == 'comment'}
+		{loop $tags $k $t}
+		<div class="space-txt">
+		<a href="{gourl('?mid=3&itemid='.$t['itemid'])}" rel="external"><strong>{$t[item_title]}</strong></a>
+		<div>{dsubstr(strip_tags($t[content]), 100, '...')}</div>
+		<p><i class="ui-ico-time">{timetodate($t[addtime], 3)}</i><i class="ui-ico-like">{$t[likes]}</i></p>
+		</div>
+		{/loop}
+	{elseif $sub == 'follow'}
+		{php $tags = list_user($tags, 'userid,fans,follows,sign,validate', 'fuserid');}
+		{loop $tags $k $t}
+		<div class="space-mix">
+		<a href="{userurl($t[fusername], 'file=space')}" data-transition="none"><img src="{useravatar($t[fusername])}" alt="" style="width:64px;height:64px;" class="avatar"/></a><i class="userinfo-v{$t[member][validate]}"></i>
+		<ul>
+		<li><i class="ui-ico-hits ui-fr">{$t[member][follows]}关注</i><i class="ui-ico-user ui-fr">{$t[member][fans]}粉丝 &nbsp; </i><a href="{userurl($t[fusername], 'file=space')}" data-transition="none"><strong>{$t[fpassport]}</strong></a></li>
+		<li><div>{if $t[member][sign]}{$t[member][sign]}{else}没有留下签名~~{/if}</div></li>
+		</ul>
+		</div>
+		{/loop}
+	{elseif $sub == 'fans'}
+		{php $tags = list_user($tags, 'userid,fans,follows,sign,validate');}
+		{loop $tags $k $t}
+		<div class="space-mix">
+		<a href="{userurl($t[username], 'file=space')}" data-transition="none"><img src="{useravatar($t[username])}" alt="" style="width:64px;height:64px;" class="avatar"/></a><i class="userinfo-v{$t[member][validate]}"></i>
+		<ul>
+		<li><i class="ui-ico-hits ui-fr">{$t[member][follows]}关注</i><i class="ui-ico-user ui-fr">{$t[member][fans]}粉丝 &nbsp; </i><a href="{userurl($t[username], 'file=space')}" data-transition="none"><strong>{$t[passport]}</strong></a></li>
+		<li><div>{if $t[member][sign]}{$t[member][sign]}{else}没有留下签名~~{/if}</div></li>
+		</ul>
+		</div>
+		{/loop}
+	{elseif $sub == 'reply'}
+		{loop $tags $k $t}
+		<div class="space-txt">
+		<a href="{$MOD[linkurl]}goto.php?itemid={$t[itemid]}" rel="external"><strong>{dsubstr(strip_tags($t[content]), 36, '...')}</strong></a>
+		<div>{dsubstr(strip_tags($t[content]), 100, '...')}</div>
+		<p><i class="ui-ico-time">{timetodate($t[addtime], 3)}</i><i class="ui-ico-like">{$t[likes]}</i></p>
+		</div>
+		{/loop}
+	{elseif $sub == 'group'}
+		{php $tags = list_group($tags);}
+		{loop $tags $k $t}
+		<div class="space-mix">
+		<a href="{$t[linkurl]}" rel="external"><img src="{$t[thumb]}" alt="" style="width:64px;height:64px;" class="avatar"/></a>
+		<ul>
+		<li><a href="{$t[linkurl]}" rel="external"><strong>{$t[title]}</strong></a></li>
+		<li><p><i class="ui-ico-comm ui-fr">{$t[post]}主题</i><i class="ui-ico-user">{$t[fans]}粉丝</i></p></li>
+		</ul>
+		</div>
+		{/loop}
+	{elseif $sub == 'answer'}
+		{loop $tags $k $t}
+		<div class="space-txt">
+		<a href="{$MOD[linkurl]}goto.php?itemid={$t[itemid]}" rel="external"><strong>{dsubstr(strip_tags($t[content]), 36, '...')}</strong></a>
+		<div>{dsubstr(strip_tags($t[content]), 100, '...')}</div>
+		<p><i class="ui-ico-time">{timetodate($t[addtime], 3)}</i><i class="ui-ico-like">{$t[likes]}</i></p>
+		</div>
+		{/loop}
+	{elseif $module == 'buy' && !$could_showbuy}
+		<div class="list-none">
+		{if $_userid}
+		<br/><br/><br/><center>请先 <a href="{$MODULE[2][mobile]}grade.php" rel="external" class="b">升级</a> 会员级别后查看{$name}</center><br/><br/><br/>
+		{else}
+		<br/><br/><br/><center>请先 <a href="{$MODULE[2][mobile]}{$DT[file_login]}" rel="external" class="b">登录</a> 或 <a href="{$MODULE[2][mobile]}{$DT[file_register]}" rel="external" class="b">注册</a> 后查看{$name}</center><br/><br/><br/>
+		{/if}
+		</div>
+		{php $pages = '';}
+	{else}
+		{template $tag, 'tag'}
+	{/if}
+	{else}
+	<div class="list-none">暂无相关信息</div>
+	{/if}
+	{if $pages}<div class="pages">{$pages}</div>{/if}
+</div>
+{template 'footer'}

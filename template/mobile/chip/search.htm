@@ -1,0 +1,17 @@
+{if $lists}
+<p class="rec"><a href="javascript:;" onclick="Dsheet(js_pageid,'<a href=&#34;javascript:DsDel();&#34;><span style=&#34;color:red;&#34;>清空</span></a>', '取消', '确定要清空所有搜索记录吗？');"><i><img src="{DM_SKIN}ico-delete.png" width="16" height="16"/></i></a><b>最近搜索</b></p>
+<div>
+{loop $lists $v}
+<span onclick="DsKW('{$v}');">{$v}</span>
+{/loop}
+</div>
+{/if}
+{if $tags}
+<p class="hot">{if $EXT[spread_enable]}<a href="{$EXT[spread_mob]}"><i><img src="{DM_SKIN}ico-spread.png" width="16" height="16"/></i></a>{/if}<b>热门搜索</b></p>
+<div>
+{loop $tags $v}
+<span onclick="DsKW('{$v}');">{$v}</span>
+{/loop}
+{else}
+</div>
+{/if}

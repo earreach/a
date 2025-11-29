@@ -1,0 +1,45 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">投递简历</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="{$forward}" data-direction="reverse">取消投递</a>
+<a href="{$MOD[mobile]}" data-direction="reverse">{$MOD[name]}首页</a>
+<a href="{DT_MOB}{rewrite('channel.php?mid='.$moduleid)}" data-transition="none">{$MOD[name]}分类</a>
+<a href="{DT_MOB}channel.php" data-direction="reverse">切换频道</a>
+</div>
+</div>
+
+<div class="ui-form">
+<form method="post" action="{$MOD[mobile]}apply.php" id="dform">
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<p>选择简历</p>
+{loop $lists $k $v}
+<div>
+<label><input type="radio" name="resumeid" value="{$v[itemid]}"{if $k==0} checked{/if}/> &nbsp;&nbsp; </label><a href="{$v[linkurl]}" class="b">{$v[title]}</a>
+</div>
+{/loop}
+</div>
+<div class="blank-16"></div>
+<div class="blank-16"></div>
+
+
+<div class="foot-bar-fix"></div>
+<div class="foot-btn">
+<ul>
+<li></li>
+<li><input type="submit" name="submit" value="立即投递" class="btn-blue"/></li>
+<li></li>
+</ul>
+</div>
+</form>
+{template 'footer'}

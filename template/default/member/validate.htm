@@ -1,0 +1,1043 @@
+{template 'header', 'member'}
+{if $itemid == 1}<div class="warn">尊敬的会员，依据《网络安全法》，您需要完成<span>{$head_title}</span>后方可继续使用会员功能</div>{/if}
+<div class="menu">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="tab"><a href="account.php?action=index"><span>账户详情</span></a></td>
+<td class="tab_on"><a href="?action=index"><span>身份认证</span></a></td>
+<td class="tab"><a href="account.php?action=group"><span>账户升级</span></a></td>
+<td class="tab"><a href="account.php?action=upgrade"><span>升级记录</span></a></td>
+<td class="tab"><a href="account.php?action=renew"><span>续费记录</span></a></td>
+{if $DT[login_log]==2}<td class="tab" id="login"><a href="account.php?action=login"><span>登录记录</span></a></td>{/if}
+<td class="tab" id="setting"><a href="account.php?action=setting"><span>账户设置</span></a></td>
+{if $EXT[mobile_enable]}<td class="tab" id="scan"><a href="account.php?action=scan"><span>扫码访问</span></a></td>{/if}
+</tr>
+</table>
+</div>
+{if $status}
+<table cellpadding="0" cellspacing="0">
+<tr align="center" class="f_gray">
+{if $action == 'email'}
+<td>填写邮箱</td>
+<td>邮件验证</td>
+{elseif $action == 'mobile'}
+<td>填写手机</td>
+<td>短信验证</td>
+{else}
+<td>提交资料</td>
+<td>等待审核</td>
+{/if}
+<td>通过认证</td>
+</tr>
+<tr height="64">
+<td><img src="{DT_STATIC}member/state_2.gif"/></td>
+<td><img src="{DT_STATIC}member/state_{if $status>1}2{else}1{/if}.gif"/></td>
+<td><img src="{DT_STATIC}member/state_{if $status>2}2{else}1{/if}.gif"/></td>
+</tr>
+</table>
+{/if}
+{if $action == 'email'}
+{if $status == 1}
+{if $step == 2}
+<div class="ok">邮箱认证成功 <a href="?action=index" class="t">立即返回</a></div>
+{elseif $step == 1}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="2"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl"><span class="f_red">*</span> 邮件验证码</td>
+<td class="tr"><input type="text" size="10" name="code" id="code" placeholder="已发送至邮箱"/> <span id="dcode" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">&nbsp;</td>
+<td class="tr" height="30"><input type="submit" name="submit" value="立即认证" class="btn_g"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="重新发送" class="btn" onclick="Go('?action={$action}&email={$email}');"/></td>
+</tr>
+</table>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('code').value.length < 6) {
+		Dmsg('请填写邮件验证码', 'code');
+		return false;
+	}
+	return true;
+}
+</script>
+{else}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="1"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl"><span class="f_red">*</span> 电子邮件</td>
+<td class="tr"><input type="text" size="30" name="email" id="email" value="{$email}"/> <span id="demail" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 验证码</td>
+<td class="tr">{template 'captcha', 'chip'} <span id="dcaptcha" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">&nbsp;</td>
+<td class="tr" height="30"><input type="submit" name="submit" value="下一步" class="btn_g"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="返 回" class="btn" onclick="history.back(-1);"/></td>
+</tr>
+</table>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('email').value.length < 6) {
+		Dmsg('请填写电子邮件', 'email');
+		return false;
+	}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', 'captcha');
+		return false;
+	}
+	return true;
+}
+</script>
+{/if}
+{else}
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl">邮件地址</td>
+<td class="tr"><b>{hide_str($_email)}</b>{if $status == 3} &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:;" class="t" onclick="Dconfirm('确定要重新认证吗？当前已认证状态将被取消', '?action={$action}&job=reset');">重新认证</a>{/if}</td>
+</tr>
+<tr>
+<td class="tl">认证状态</td>
+<td class="tr f_green">已认证</td>
+</tr>
+{if $V}
+{if $V[addtime]}
+<tr>
+<td class="tl">申请时间</td>
+<td class="tr">{timetodate($V[addtime], 5)}</td>
+</tr>
+{/if}
+{if $status == 3}
+<tr>
+<td class="tl">审核时间</td>
+<td class="tr">{timetodate($V[edittime], 5)}</td>
+</tr>
+{/if}
+{/if}
+</table>
+{/if}
+{elseif $action == 'mobile'}
+{if $status == 1}
+{if $step == 2}
+<div class="ok">手机号码认证成功 <a href="?action=index" class="t">立即返回</a></div>
+{elseif $step == 1}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="2"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl"><span class="f_red">*</span> 短信验证码</td>
+<td class="tr"><input type="text" size="10" name="code" id="code" placeholder="已发送至手机"/> <span id="dcode" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">&nbsp;</td>
+<td class="tr" height="30"><input type="submit" value="立即认证" class="btn_g"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="重新发送" class="btn" onclick="Go('?action={$action}&mobile={$mobile}');"/></td>
+</tr>
+</table>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('code').value.length < 6) {
+		Dmsg('请填写短信验证码', 'code');
+		return false;
+	}
+	return true;
+}
+</script>
+{else}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="1"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl"><span class="f_red">*</span> 手机号码</td>
+<td class="tr"><input type="text" size="30" name="mobile" id="mobile" value="{$mobile}"/> <span id="dmobile" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 验证码</td>
+<td class="tr">{template 'captcha', 'chip'} <span id="dcaptcha" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">&nbsp;</td>
+<td class="tr" height="30"><input type="submit"  name="submit" value="下一步" class="btn_g"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="返 回" class="btn" onclick="history.back(-1);"/></td>
+</tr>
+</table>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('mobile').value.length < 11) {
+		Dmsg('请填写手机号码', 'mobile');
+		return false;
+	}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', 'captcha');
+		return false;
+	}
+	return true;
+}
+</script>
+{/if}
+{else}
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl">手机号码</td>
+<td class="tr"><b>{hide_str($_mobile)}</b>{if $status == 3} &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:;" class="t" onclick="Dconfirm('确定要重新认证吗？当前已认证状态将被取消', '?action={$action}&job=reset');">重新认证</a>{/if}</td>
+</tr>
+<tr>
+<td class="tl">认证状态</td>
+<td class="tr f_green">已认证</td>
+</tr>
+{if $V}
+{if $V[addtime]}
+<tr>
+<td class="tl">申请时间</td>
+<td class="tr">{timetodate($V[addtime], 5)}</td>
+</tr>
+{/if}
+{if $status == 3}
+<tr>
+<td class="tl">审核时间</td>
+<td class="tr">{timetodate($V[edittime], 5)}</td>
+</tr>
+{/if}
+</table>
+{/if}
+{/if}
+{elseif $action == 'truename'}
+{if $status == 1}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl"><span class="f_red">*</span> 真实姓名</td>
+<td class="tr"><input type="text" size="10" name="truename" id="truename" value="{$user[truename]}"/> <span id="dtruename" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 证件类型</td>
+<td class="tr">
+<select name="idtype" id="idtype">
+{loop $types $v}
+<option value="{$v}"{if $v==$user[idtype]} selected{/if}>{$v}</option>
+{/loop}
+</select>&nbsp;
+<span id="didtype" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 证件号码</td>
+<td class="tr"><input type="text" size="30" name="idno" id="idno" value="{$user[idno]}"/> <span id="didno" class="f_red"></span></td>
+</tr>
+{if $MOD[vtruename_v1] && $MOD[vtruename_v1_name]}
+<tr>
+<td class="tl">{if $MOD[vtruename_v1] == 2}<span class="f_red">*</span> {/if}{$MOD[vtruename_v1_name]}</td>
+<td class="tr">
+<input name="thumb" id="thumb1" type="text" size="70" readonly ondblclick="Dthumb({$moduleid},0,0, Dd('thumb1').value, true, 'thumb1');"/>
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dthumb({$moduleid},0,0, Dd('thumb1').value, true, 'thumb1');"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="_preview(Dd('thumb1').value);"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('thumb1').value='';"/>
+</span>
+<span id="dthumb1" class="f_red"></span>
+</td>
+</tr>
+{if $MOD[vtruename_e1]}
+<tr>
+<td class="tl">{if $MOD[vtruename_e1] == 2}<span class="f_red">*</span> {/if}有效期至</td>
+<td class="tr">{dcalendar('totime', '', '-', 1)} <span class="f_gray">不填代表长期</span> <span id="dtotime" class="f_red"></span></td>
+</tr>
+{/if}
+{if $MOD[vtruename_v1_name] == '身份证正面'}
+<tr>
+<td class="tl">图片示例</td>
+<td class="tr"><img src="{DT_STATIC}image/demo-id-1.png" title="点击上传" class="c_p"  onclick="Dthumb({$moduleid},0,0, Dd('thumb1').value, true, 'thumb1');"/></td>
+</tr>
+{/if}
+{/if}
+{if $MOD[vtruename_v2] && $MOD[vtruename_v2_name]}
+<tr>
+<td class="tl">{if $MOD[vtruename_v2] == 2}<span class="f_red">*</span> {/if}{$MOD[vtruename_v2_name]}</td>
+<td class="tr">
+<input name="thumb1" id="thumb2" type="text" size="70" readonly ondblclick="Dthumb({$moduleid},0,0, Dd('thumb2').value, true, 'thumb2');"/>
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dthumb({$moduleid},0,0, Dd('thumb2').value, true, 'thumb2');"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="_preview(Dd('thumb2').value);"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('thumb2').value='';"/>
+</span>
+<span id="dthumb2" class="f_red"></span>
+</td>
+</tr>
+{if $MOD[vtruename_v2_name] == '身份证反面'}
+<tr>
+<td class="tl">图片示例</td>
+<td class="tr"><img src="{DT_STATIC}image/demo-id-2.png" title="点击上传" class="c_p"  onclick="Dthumb({$moduleid},0,0, Dd('thumb2').value, true, 'thumb2');"/></td>
+</tr>
+{/if}
+{if $MOD[vtruename_e2]}
+<tr>
+<td class="tl">{if $MOD[vtruename_e2] == 2}<span class="f_red">*</span> {/if}有效期至</td>
+<td class="tr">{dcalendar('totime1', '', '-', 1)} <span class="f_gray">不填代表长期</span> <span id="dtotime1" class="f_red"></span></td>
+</tr>
+{/if}
+{/if}
+{if $MOD[vtruename_v3] && $MOD[vtruename_v3_name]}
+<tr>
+<td class="tl">{if $MOD[vtruename_v3] == 2}<span class="f_red">*</span> {/if}{$MOD[vtruename_v3_name]}</td>
+<td class="tr">
+<input name="thumb2" id="thumb3" type="text" size="70" readonly ondblclick="Dthumb({$moduleid},0,0, Dd('thumb3').value, true, 'thumb3');"/>
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dthumb({$moduleid},0,0, Dd('thumb3').value, true, 'thumb3');"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="_preview(Dd('thumb3').value);"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('thumb3').value='';"/>
+</span>
+<span id="dthumb3" class="f_red"></span>
+</td>
+</tr>
+{if $MOD[vtruename_v3_name] == '手持身份证'}
+<tr>
+<td class="tl">图片示例</td>
+<td class="tr"><img src="{DT_STATIC}image/demo-id-3.png" title="点击上传" class="c_p" onclick="Dthumb({$moduleid},0,0, Dd('thumb3').value, true, 'thumb3');"/></td>
+</tr>
+{/if}
+{if $MOD[vtruename_e3]}
+<tr>
+<td class="tl">{if $MOD[vtruename_e3] == 2}<span class="f_red">*</span> {/if}有效期至</td>
+<td class="tr">{dcalendar('totime2', '', '-', 1)} <span class="f_gray">不填代表长期</span> <span id="dtotime2" class="f_red"></span></td>
+</tr>
+{/if}
+{/if}
+<tr>
+<td class="tl"><span class="f_red">*</span> 验证码</td>
+<td class="tr">{template 'captcha', 'chip'} <span id="dcaptcha" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">认证说明</td>
+<td class="tr lh18">
+证件上的姓名必须与填写的真实姓名一致，并且图片需要清晰可辨<br/>
+</td>
+</tr>
+</tbody>
+<tr>
+<td class="tl">&nbsp;</td>
+<td class="tr" height="30"><input type="submit" name="submit" value="确 定" class="btn_g"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="返 回" class="btn" onclick="history.back(-1);"/></td>
+</tr>
+</table>
+</form>
+{load('clear.js')}
+{if $MOD[vfax]}
+<br/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl">传真认证</td>
+<td class="tr">
+您可以传真有效证件至 {$MOD[vfax]} 进行认证，复印件上需注明会员名
+</td>
+</tr>
+</table>
+{/if}
+<script type="text/javascript">
+function check() {
+	if(Dd('truename').value.length < 2) {
+		Dmsg('请填写真实姓名', 'truename');
+		return false;
+	}
+	if(Dd('idno').value.length < 18) {
+		Dmsg('请填写证件号码', 'idno');
+		return false;
+	}
+	{if $MOD[vtruename_v1] == 2 && $MOD[vtruename_v1_name]}
+	if(Dd('thumb1').value.length < 15) {
+		Dmsg('请上传{$MOD[vtruename_v1_name]}', 'thumb1');
+		return false;
+	}
+	{/if}
+	{if $MOD[vtruename_v2] == 2 && $MOD[vtruename_v2_name]}
+	if(Dd('thumb2').value.length < 15) {
+		Dmsg('请上传{$MOD[vtruename_v2_name]}', 'thumb2');
+		return false;
+	}
+	{/if}
+	{if $MOD[vtruename_v3] == 2 && $MOD[vtruename_v3_name]}
+	if(Dd('thumb3').value.length < 15) {
+		Dmsg('请上传{$MOD[vtruename_v3_name]}', 'thumb3');
+		return false;
+	}
+	{/if}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', 'captcha');
+		return false;
+	}
+	return true;
+}
+</script>
+{else}
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl">真实姓名</td>
+<td class="tr"><b>{if $status==3}{$user[truename]}{else}{$V[title]}{/if}</b>{if $status == 3} &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:;" class="t" onclick="Dconfirm('确定要重新认证吗？当前已认证状态将被取消', '?action={$action}&job=reset');">重新认证</a>{/if}</td>
+</tr>
+<tr>
+<td class="tl">证件类型</td>
+<td class="tr">{if $status==3}{$user[idtype]}{else}{$V[title1]}{/if}</td>
+</tr>
+<tr>
+<td class="tl">证件号码</td>
+<td class="tr">{if $status==3}{hide_str($user[idno])}{else}{hide_str($V[title2])}{/if}</td>
+</tr>
+<tr>
+<td class="tl">认证状态</td>
+<td class="tr">{if $status == 3}<span class="f_green">已认证</span>{else}<span class="f_red">审核中</span>{/if}</td>
+</tr>
+{if $V}
+{if $V[addtime]}
+<tr>
+<td class="tl">申请时间</td>
+<td class="tr">{timetodate($V[addtime], 5)}</td>
+</tr>
+{/if}
+{if $status == 3}
+<tr>
+<td class="tl">审核时间</td>
+<td class="tr">{timetodate($V[edittime], 5)}</td>
+</tr>
+{/if}
+{/if}
+</table>
+{/if}
+{elseif $action == 'bank'}
+{if $status == 1}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl"><span class="f_red">*</span> 开户银行</td>
+<td class="tr">
+<select name="bank" id="bank">
+<option value="">请选择</option>
+{loop $BANKS $v}
+<option value="{$v}"{if $v==$user[bank]} selected{/if}>{$v}</option>
+{/loop}
+</select> <span id="dbank" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 银行全称</td>
+<td class="tr"><input type="text" size="70" name="branch" id="branch" value="{$user[branch]}"/> <span class="f_gray">{if $MG[type]}请与开户许可证保持一致{else}精确到支行{/if}</span> <span id="dbranch" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 银行户名</td>
+<td class="tr">{if $MG[type]}{$user[company]}{else}{$user[truename]}{/if} <span id="dname" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 银行帐号</td>
+<td class="tr"><input type="text" size="70" name="account" id="account" value="{$user[account]}"/> <span id="daccount" class="f_red"></span></td>
+</tr>
+{if $MOD[vbank_v1] && $MOD[vbank_v1_name]}
+<tr>
+<td class="tl">{if $MOD[vbank_v1] == 2}<span class="f_red">*</span> {/if}{$MOD[vbank_v1_name]}</td>
+<td class="tr">
+<input name="thumb" id="thumb1" type="text" size="70" readonly ondblclick="Dthumb({$moduleid},0,0, Dd('thumb1').value, true, 'thumb1');"/>
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dthumb({$moduleid},0,0, Dd('thumb1').value, true, 'thumb1');"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="_preview(Dd('thumb1').value);"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('thumb1').value='';"/>
+</span>
+<span id="dthumb1" class="f_red"></span>
+</td>
+</tr>
+{if $MOD[vbank_e1]}
+<tr>
+<td class="tl">{if $MOD[vbank_e1] == 2}<span class="f_red">*</span> {/if}有效期至</td>
+<td class="tr">{dcalendar('totime', '', '-', 1)} <span class="f_gray">不填代表长期</span> <span id="dtotime" class="f_red"></span></td>
+</tr>
+{/if}
+{/if}
+{if $MOD[vbank_v2] && $MOD[vbank_v2_name]}
+<tr>
+<td class="tl">{if $MOD[vbank_v2] == 2}<span class="f_red">*</span> {/if}{$MOD[vbank_v2_name]}</td>
+<td class="tr">
+<input name="thumb1" id="thumb2" type="text" size="70" readonly ondblclick="Dthumb({$moduleid},0,0, Dd('thumb2').value, true, 'thumb2');"/>
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dthumb({$moduleid},0,0, Dd('thumb2').value, true, 'thumb2');"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="_preview(Dd('thumb2').value);"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('thumb2').value='';"/>
+</span>
+<span id="dthumb2" class="f_red"></span>
+</td>
+</tr>
+{if $MOD[vbank_e2]}
+<tr>
+<td class="tl">{if $MOD[vbank_e2] == 2}<span class="f_red">*</span> {/if}有效期至</td>
+<td class="tr">{dcalendar('totime1', '', '-', 1)} <span class="f_gray">不填代表长期</span> <span id="dtotime1" class="f_red"></span></td>
+</tr>
+{/if}
+{/if}
+{if $MOD[vbank_v3] && $MOD[vbank_v3_name]}
+<tr>
+<td class="tl">{if $MOD[vbank_v3] == 2}<span class="f_red">*</span> {/if}{$MOD[vbank_v3_name]}</td>
+<td class="tr">
+<input name="thumb2" id="thumb3" type="text" size="70" readonly ondblclick="Dthumb({$moduleid},0,0, Dd('thumb3').value, true, 'thumb3');"/>
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dthumb({$moduleid},0,0, Dd('thumb3').value, true, 'thumb3');"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="_preview(Dd('thumb3').value);"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('thumb3').value='';"/>
+</span>
+<span id="dthumb3" class="f_red"></span>
+</td>
+</tr>
+{if $MOD[vbank_e3]}
+<tr>
+<td class="tl">{if $MOD[vbank_e3] == 2}<span class="f_red">*</span> {/if}有效期至</td>
+<td class="tr">{dcalendar('totime2', '', '-', 1)} <span class="f_gray">不填代表长期</span> <span id="dtotime2" class="f_red"></span></td>
+</tr>
+{/if}
+{/if}
+<tr>
+<td class="tl"><span class="f_red">*</span> 验证码</td>
+<td class="tr">{template 'captcha', 'chip'} <span id="dcaptcha" class="f_red"></span></td>
+</tr>
+</tbody>
+<tr>
+<td class="tl">&nbsp;</td>
+<td class="tr" height="30"><input type="submit" name="submit" value="确 定" class="btn_g"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="返 回" class="btn" onclick="history.back(-1);"/></td>
+</tr>
+</table>
+</form>
+{load('clear.js')}
+{if $MOD[vfax]}
+<br/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl">传真认证</td>
+<td class="tr">
+您可以传真有效证件至 {$MOD[vfax]} 进行认证，传真件上需盖公司公章
+</td>
+</tr>
+</table>
+{/if}
+<script type="text/javascript">
+function check() {
+	if(Dd('bank').value.length < 2) {
+		Dmsg('请选择开户银行', 'bank');
+		return false;
+	}
+	if(Dd('branch').value.length < 4) {
+		Dmsg('请填写银行全称', 'branch');
+		return false;
+	}
+	var name = '{if $MG[type]}{$user[company]}{else}{$user[truename]}{/if}';
+	if(name.length < 2) {
+		Dmsg('{if $MG[type]}公司名称为空{else}真实姓名为空{/if}', 'name');
+		return false;
+	}
+	if(Dd('account').value.length < 8) {
+		Dmsg('请填写银行帐号', 'account');
+		return false;
+	}
+	{if $MOD[vbank_v1] == 2 && $MOD[vbank_v1_name]}
+	if(Dd('thumb1').value.length < 15) {
+		Dmsg('请上传{$MOD[vbank_v1_name]}', 'thumb1');
+		return false;
+	}
+	{/if}
+	{if $MOD[vbank_v2] == 2 && $MOD[vbank_v2_name]}
+	if(Dd('thumb2').value.length < 15) {
+		Dmsg('请上传{$MOD[vbank_v2_name]}', 'thumb2');
+		return false;
+	}
+	{/if}
+	{if $MOD[vbank_v3] == 2 && $MOD[vbank_v3_name]}
+	if(Dd('thumb3').value.length < 15) {
+		Dmsg('请上传{$MOD[vbank_v3_name]}', 'thumb3');
+		return false;
+	}
+	{/if}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', 'captcha');
+		return false;
+	}
+	return true;
+}
+$(function(){
+	{if $MG[type]}
+	$('#bank').find('option').each(function() {
+		if($(this).val() == '支付宝' || $(this).val() == '微信') {
+			$(this).remove();
+		}
+	});
+	{else}
+	$('#bank').change(function(){
+		var bank = $('#bank').val();
+		if(bank == '支付宝') {
+			$('#branch').val('支付宝（中国）网络技术有限公司');
+			$('#account').val('{$_mobile}');
+		} else if(bank == '微信') {
+			$('#branch').val('财付通支付科技有限公司');
+			$('#account').val('{$_mobile}');
+		}
+	});
+	{/if}
+});
+</script>
+{else}
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl">开户银行</td>
+<td class="tr"><b>{if $status==3}{$user[bank]}{else}{$V[title]}{/if}</b>{if $status == 3} &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:;" class="t" onclick="Dconfirm('确定要重新认证吗？当前已认证状态将被取消', '?action={$action}&job=reset');">重新认证</a>{/if}</td>
+</tr>
+<tr>
+<td class="tl">银行全称</td>
+<td class="tr">{if $status==3}{$user[branch]}{else}{$V[title2]}{/if}</td>
+</tr>
+<tr>
+<td class="tl">银行户名</td>
+<td class="tr">{if $MG[type]}{$user[company]}{else}{$user[truename]}{/if}</td>
+</tr>
+<tr>
+<td class="tl">银行帐号</td>
+<td class="tr">{if $status==3}{hide_str($user[account])}{else}{hide_str($V[title1])}{/if}</td>
+</tr>
+<tr>
+<td class="tl">认证状态</td>
+<td class="tr">{if $status == 3}<span class="f_green">已认证</span>{else}<span class="f_red">审核中</span>{/if}</td>
+</tr>
+{if $V}
+{if $V[addtime]}
+<tr>
+<td class="tl">申请时间</td>
+<td class="tr">{timetodate($V[addtime], 5)}</td>
+</tr>
+{/if}
+{if $status == 3}
+<tr>
+<td class="tl">审核时间</td>
+<td class="tr">{timetodate($V[edittime], 5)}</td>
+</tr>
+{/if}
+{/if}
+</table>
+{/if}
+{elseif $action == 'company'}
+{if $status == 1}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl"><span class="f_red">*</span> 公司名称</td>
+<td class="tr"><input type="text" size="70" name="company" id="company" value="{$user[company]}"/> <span id="dcompany" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 社会信用代码</td>
+<td class="tr"><input name="taxid" type="text" id="taxid" size="30" value="{$user[taxid]}"/> <span id="dtaxid" class="f_red"></span></td>
+</tr>
+{if $MOD[vcompany_v1] && $MOD[vcompany_v1_name]}
+<tr>
+<td class="tl">{if $MOD[vcompany_v1] == 2}<span class="f_red">*</span> {/if}{$MOD[vcompany_v1_name]}</td>
+<td class="tr">
+<input name="thumb" id="thumb1" type="text" size="70" readonly ondblclick="Dthumb({$moduleid},0,0, Dd('thumb1').value, true, 'thumb1');"/>
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dthumb({$moduleid},0,0, Dd('thumb1').value, true, 'thumb1');"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="_preview(Dd('thumb1').value);"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('thumb1').value='';"/>
+</span>
+<span id="dthumb1" class="f_red"></span>
+</td>
+</tr>
+{if $MOD[vcompany_e1]}
+<tr>
+<td class="tl">{if $MOD[vcompany_e1] == 2}<span class="f_red">*</span> {/if}有效期至</td>
+<td class="tr">{dcalendar('totime', '', '-', 1)} <span class="f_gray">不填代表长期</span> <span id="dtotime" class="f_red"></span></td>
+</tr>
+{/if}
+{/if}
+{if $MOD[vcompany_v2] && $MOD[vcompany_v2_name]}
+<tr>
+<td class="tl">{if $MOD[vcompany_v2] == 2}<span class="f_red">*</span> {/if}{$MOD[vcompany_v2_name]}</td>
+<td class="tr">
+<input name="thumb1" id="thumb2" type="text" size="70" readonly ondblclick="Dthumb({$moduleid},0,0, Dd('thumb2').value, true, 'thumb2');"/>
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dthumb({$moduleid},0,0, Dd('thumb2').value, true, 'thumb2');"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="_preview(Dd('thumb2').value);"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('thumb2').value='';"/>
+</span>
+<span id="dthumb2" class="f_red"></span>
+</td>
+</tr>
+{if $MOD[vcompany_e2]}
+<tr>
+<td class="tl">{if $MOD[vcompany_e2] == 2}<span class="f_red">*</span> {/if}有效期至</td>
+<td class="tr">{dcalendar('totime1', '', '-', 1)} <span class="f_gray">不填代表长期</span> <span id="dtotime1" class="f_red"></span></td>
+</tr>
+{/if}
+{/if}
+{if $MOD[vcompany_v3] && $MOD[vcompany_v3_name]}
+<tr>
+<td class="tl">{if $MOD[vcompany_v3] == 2}<span class="f_red">*</span> {/if}{$MOD[vcompany_v3_name]}</td>
+<td class="tr">
+<input name="thumb2" id="thumb3" type="text" size="70" readonly ondblclick="Dthumb({$moduleid},0,0, Dd('thumb3').value, true, 'thumb3');"/>
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dthumb({$moduleid},0,0, Dd('thumb3').value, true, 'thumb3');"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="_preview(Dd('thumb3').value);"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('thumb3').value='';"/>
+</span>
+<span id="dthumb3" class="f_red"></span>
+</td>
+</tr>
+{if $MOD[vcompany_e3]}
+<tr>
+<td class="tl">{if $MOD[vcompany_e3] == 2}<span class="f_red">*</span> {/if}有效期至</td>
+<td class="tr">{dcalendar('totime2', '', '-', 1)} <span class="f_gray">不填代表长期</span> <span id="dtotime2" class="f_red"></span></td>
+</tr>
+{/if}
+{/if}
+<tr>
+<td class="tl"><span class="f_red">*</span> 验证码</td>
+<td class="tr">{template 'captcha', 'chip'} <span id="dcaptcha" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">认证说明</td>
+<td class="tr lh18">
+证件上的公司名称必须与填写的公司名称一致，并且图片需要清晰可辨<br/>
+</td>
+</tr>
+</tbody>
+<tr>
+<td class="tl">&nbsp;</td>
+<td class="tr" height="30"><input type="submit" name="submit" value="确 定" class="btn_g"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="返 回" class="btn" onclick="history.back(-1);"/></td>
+</tr>
+</table>
+</form>
+{load('clear.js')}
+{if $MOD[vfax]}
+<br/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl">传真认证</td>
+<td class="tr">
+您可以传真有效证件至 {$MOD[vfax]} 进行认证，传真件上需盖公司公章
+</td>
+</tr>
+</table>
+{/if}
+<script type="text/javascript">
+function check() {
+	if(Dd('company').value.length < 2) {
+		Dmsg('请填写公司名称', 'company');
+		return false;
+	}
+	if(Dd('taxid').value.length < 12) {
+		Dmsg('请填写社会信用代码', 'taxid');
+		return false;
+	}
+	{if $MOD[vcompany_v1] == 2 && $MOD[vcompany_v1_name]}
+	if(Dd('thumb1').value.length < 15) {
+		Dmsg('请上传{$MOD[vcompany_v1_name]}', 'thumb1');
+		return false;
+	}
+	{/if}
+	{if $MOD[vcompany_v2] == 2 && $MOD[vcompany_v2_name]}
+	if(Dd('thumb2').value.length < 15) {
+		Dmsg('请上传{$MOD[vcompany_v2_name]}', 'thumb2');
+		return false;
+	}
+	{/if}
+	{if $MOD[vcompany_v3] == 2 && $MOD[vcompany_v3_name]}
+	if(Dd('thumb3').value.length < 15) {
+		Dmsg('请上传{$MOD[vcompany_v3_name]}', 'thumb3');
+		return false;
+	}
+	{/if}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', 'captcha');
+		return false;
+	}
+	return true;
+}
+</script>
+{else}
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl">公司名称</td>
+<td class="tr"><b>{if $status==3}{$user[company]}{else}{$V[title]}{/if}</b>{if $status == 3} &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:;" class="t" onclick="Dconfirm('确定要重新认证吗？当前已认证状态将被取消', '?action={$action}&job=reset');">重新认证</a>{/if}</td>
+</tr>
+<tr>
+<td class="tl">社会信用代码</td>
+<td class="tr">{if $status==3}{hide_str($user[taxid])}{else}{hide_str($V[title1])}{/if}</td>
+</tr>
+<tr>
+<td class="tl">认证状态</td>
+<td class="tr">{if $status == 3}<span class="f_green">已认证</span>{else}<span class="f_red">审核中</span>{/if}</td>
+</tr>
+{if $V}
+{if $V[addtime]}
+<tr>
+<td class="tl">申请时间</td>
+<td class="tr">{timetodate($V[addtime], 5)}</td>
+</tr>
+{/if}
+{if $status == 3}
+<tr>
+<td class="tl">审核时间</td>
+<td class="tr">{timetodate($V[edittime], 5)}</td>
+</tr>
+{/if}
+{/if}
+</table>
+{/if}
+{elseif $action == 'shop'}
+{if $status == 1}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl"><span class="f_red">*</span> 商铺名称</td>
+<td class="tr"><input type="text" size="70" name="shop" id="shop" value="{$user[shop]}"/> <span id="dshop" class="f_red"></span></td>
+</tr>
+{if $MOD[vshop_v1] && $MOD[vshop_v1_name]}
+<tr>
+<td class="tl">{if $MOD[vshop_v1] == 2}<span class="f_red">*</span> {/if}{$MOD[vshop_v1_name]}</td>
+<td class="tr">
+<input name="thumb" id="thumb1" type="text" size="70" readonly ondblclick="Dthumb({$moduleid},0,0, Dd('thumb1').value, true, 'thumb1');"/>
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dthumb({$moduleid},0,0, Dd('thumb1').value, true, 'thumb1');"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="_preview(Dd('thumb1').value);"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('thumb1').value='';"/>
+</span>
+<span id="dthumb1" class="f_red"></span>
+</td>
+</tr>
+{if $MOD[vshop_e1]}
+<tr>
+<td class="tl">{if $MOD[vshop_e1] == 2}<span class="f_red">*</span> {/if}有效期至</td>
+<td class="tr">{dcalendar('totime', '', '-', 1)} <span class="f_gray">不填代表长期</span> <span id="dtotime" class="f_red"></span></td>
+</tr>
+{/if}
+{/if}
+{if $MOD[vshop_v2] && $MOD[vshop_v2_name]}
+<tr>
+<td class="tl">{if $MOD[vshop_v2] == 2}<span class="f_red">*</span> {/if}{$MOD[vshop_v2_name]}</td>
+<td class="tr">
+<input name="thumb1" id="thumb2" type="text" size="70" readonly ondblclick="Dthumb({$moduleid},0,0, Dd('thumb2').value, true, 'thumb2');"/>
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dthumb({$moduleid},0,0, Dd('thumb2').value, true, 'thumb2');"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="_preview(Dd('thumb2').value);"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('thumb2').value='';"/>
+</span>
+<span id="dthumb2" class="f_red"></span>
+</td>
+</tr>
+{if $MOD[vshop_e2]}
+<tr>
+<td class="tl">{if $MOD[vshop_e2] == 2}<span class="f_red">*</span> {/if}有效期至</td>
+<td class="tr">{dcalendar('totime1', '', '-', 1)} <span class="f_gray">不填代表长期</span> <span id="dtotime1" class="f_red"></span></td>
+</tr>
+{/if}
+{/if}
+{if $MOD[vshop_v3] && $MOD[vshop_v3_name]}
+<tr>
+<td class="tl">{if $MOD[vshop_v3] == 2}<span class="f_red">*</span> {/if}{$MOD[vshop_v3_name]}</td>
+<td class="tr">
+<input name="thumb2" id="thumb3" type="text" size="70" readonly ondblclick="Dthumb({$moduleid},0,0, Dd('thumb3').value, true, 'thumb3');"/>
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dthumb({$moduleid},0,0, Dd('thumb3').value, true, 'thumb3');"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="_preview(Dd('thumb3').value);"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('thumb3').value='';"/>
+</span>
+<span id="dthumb3" class="f_red"></span>
+</td>
+</tr>
+{if $MOD[vshop_e3]}
+<tr>
+<td class="tl">{if $MOD[vshop_e3] == 2}<span class="f_red">*</span> {/if}有效期至</td>
+<td class="tr">{dcalendar('totime2', '', '-', 1)} <span class="f_gray">不填代表长期</span> <span id="dtotime2" class="f_red"></span></td>
+</tr>
+{/if}
+{/if}
+<tr>
+<td class="tl"><span class="f_red">*</span> 验证码</td>
+<td class="tr">{template 'captcha', 'chip'} <span id="dcaptcha" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">认证说明</td>
+<td class="tr lh18">
+证件上的公司名称必须与当前账号已认证公司名称一致，并且图片需要清晰可辨<br/>
+</td>
+</tr>
+</tbody>
+<tr>
+<td class="tl">&nbsp;</td>
+<td class="tr" height="30"><input type="submit" name="submit" value="确 定" class="btn_g"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="返 回" class="btn" onclick="history.back(-1);"/></td>
+</tr>
+</table>
+</form>
+{load('clear.js')}
+{if $MOD[vfax]}
+<br/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl">传真认证</td>
+<td class="tr">
+您可以传真有效证件至 {$MOD[vfax]} 进行认证，传真件上需盖公司公章
+</td>
+</tr>
+</table>
+{/if}
+<script type="text/javascript">
+function check() {
+	if(Dd('shop').value.length < 2) {
+		Dmsg('请填写商铺名称', 'shop');
+		return false;
+	}
+	{if $MOD[vshop_v1] == 2 && $MOD[vshop_v1_name]}
+	if(Dd('thumb1').value.length < 15) {
+		Dmsg('请上传{$MOD[vshop_v1_name]}', 'thumb1');
+		return false;
+	}
+	{/if}
+	{if $MOD[vshop_v2] == 2 && $MOD[vshop_v2_name]}
+	if(Dd('thumb2').value.length < 15) {
+		Dmsg('请上传{$MOD[vshop_v2_name]}', 'thumb2');
+		return false;
+	}
+	{/if}
+	{if $MOD[vshop_v3] == 2 && $MOD[vshop_v3_name]}
+	if(Dd('thumb3').value.length < 15) {
+		Dmsg('请上传{$MOD[vshop_v3_name]}', 'thumb3');
+		return false;
+	}
+	{/if}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', 'captcha');
+		return false;
+	}
+	return true;
+}
+</script>
+{else}
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl">商铺名称</td>
+<td class="tr"><b>{if $status==3}{$user[shop]}{else}{$V[title]}{/if}</b>{if $status == 3} &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:;" class="t" onclick="Dconfirm('确定要重新认证吗？当前已认证状态将被取消', '?action={$action}&job=reset');">重新认证</a>{/if}</td>
+</tr>
+<tr>
+<td class="tl">认证状态</td>
+<td class="tr">{if $status == 3}<span class="f_green">已认证</span>{else}<span class="f_red">审核中</span>{/if}</td>
+</tr>
+{if $V}
+{if $V[addtime]}
+<tr>
+<td class="tl">申请时间</td>
+<td class="tr">{timetodate($V[addtime], 5)}</td>
+</tr>
+{/if}
+{if $status == 3}
+<tr>
+<td class="tl">审核时间</td>
+<td class="tr">{timetodate($V[edittime], 5)}</td>
+</tr>
+{/if}
+{/if}
+</table>
+{/if}
+{else}
+<div class="ls">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="120">类型</th>
+<th width="300">账号</th>
+<th width="80">模式</th>
+<th width="80">状态</th>
+<th width="100">操作</th>
+<th></th>
+</tr>
+{if $MOD[vemail] && $MG[vemail]}
+<tr align="center">
+<td>邮件认证</td>
+<td>{hide_str($email)}</td>
+<td>{if $MG[vemail] == 2}<span class="f_green">必选</span>{else}<span class="f_gray">可选</span>{/if}</td>
+<td>{if $vemail}<img src="{DT_STATIC}member/ok.png" width="20" title="已认证"/>{else}<img src="{DT_STATIC}member/ko.png" width="20" title="未认证"/>{/if}</td>
+<td><a href="?action=email" class="t">{if $vemail}认证详情{else}立即认证{/if}</a></td>
+<td></td>
+</tr>
+{/if}
+{if $MOD[vmobile] && $MG[vmobile]}
+<tr align="center">
+<td>手机认证</td>
+<td>{hide_str($mobile)}</td>
+<td>{if $MG[vmobile] == 2}<span class="f_green">必选</span>{else}<span class="f_gray">可选</span>{/if}</td>
+<td>{if $vmobile}<img src="{DT_STATIC}member/ok.png" width="20" title="已认证"/>{else}<img src="{DT_STATIC}member/ko.png" width="20" title="未认证"/>{/if}</td>
+<td><a href="?action=mobile" class="t">{if $vmobile}认证详情{else}立即认证{/if}</a></td>
+<td></td>
+</tr>
+{/if}
+{if $MOD[vtruename] && $MG[vtruename]}
+{php $vcheck = vcheck('truename');}
+<tr align="center">
+<td>实名认证</td>
+<td>{$truename}</td>
+<td>{if $MG[vtruename] == 2}<span class="f_green">必选</span>{else}<span class="f_gray">可选</span>{/if}</td>
+<td>{if $vtruename}<img src="{DT_STATIC}member/ok.png" width="20" title="已认证"/>{elseif $vcheck}<img src="{DT_STATIC}member/tm.png" width="20" title="审核中"/>{else}<img src="{DT_STATIC}member/ko.png" width="20" title="未认证"/>{/if}</td>
+<td><a href="?action=truename" class="t">{if $vtruename || $vcheck}认证详情{else}立即认证{/if}</a></td>
+<td></td>
+</tr>
+{/if}
+{if $MOD[vbank] && $MG[vbank]}
+{php $vcheck = vcheck('bank');}
+<tr align="center">
+<td>银行认证</td>
+<td>{$bank}</td>
+<td>{if $MG[vbank] == 2}<span class="f_green">必选</span>{else}<span class="f_gray">可选</span>{/if}</td>
+<td>{if $vbank}<img src="{DT_STATIC}member/ok.png" width="20" title="已认证"/>{elseif $vcheck}<img src="{DT_STATIC}member/tm.png" width="20" title="审核中"/>{else}<img src="{DT_STATIC}member/ko.png" width="20" title="未认证"/>{/if}</td>
+<td><a href="?action=bank" class="t">{if $vbank || $vcheck}认证详情{else}立即认证{/if}</a></td>
+<td></td>
+</tr>
+{/if}
+{if $MOD[vcompany] && $MG[vcompany] && $MG[type]}
+{php $vcheck = vcheck('company');}
+<tr align="center">
+<td>公司认证</td>
+<td>{$company}</td>
+<td>{if $MG[vcompany] == 2}<span class="f_green">必选</span>{else}<span class="f_gray">可选</span>{/if}</td>
+<td>{if $vcompany}<img src="{DT_STATIC}member/ok.png" width="20" title="已认证"/>{elseif $vcheck}<img src="{DT_STATIC}member/tm.png" width="20" title="审核中"/>{else}<img src="{DT_STATIC}member/ko.png" width="20" title="未认证"/>{/if}</td>
+<td><a href="?action=company" class="t">{if $vcompany || $vcheck}认证详情{else}立即认证{/if}</a></td>
+<td></td>
+</tr>
+{/if}
+{if $MOD[vshop] && $MG[vshop] && $MG[homepage]}
+{php $vcheck = vcheck('shop');}
+<tr align="center">
+<td>商铺认证</td>
+<td>{$shop}</td>
+<td>{if $MG[vshop] == 2}<span class="f_green">必选</span>{else}<span class="f_gray">可选</span>{/if}</td>
+<td>{if $vshop}<img src="{DT_STATIC}member/ok.png" width="20" title="已认证"/>{elseif $vcheck}<img src="{DT_STATIC}member/tm.png" width="20" title="审核中"/>{else}<img src="{DT_STATIC}member/ko.png" width="20" title="未认证"/>{/if}</td>
+<td><a href="?action=shop" class="t">{if $vshop || $vcheck}认证详情{else}立即认证{/if}</a></td>
+<td></td>
+</tr>
+{/if}
+</table>
+</div>
+{/if}
+<script type="text/javascript">s('account');</script>
+{if $seconds}
+<script type="text/javascript">
+Dd('send_code').disabled = true;
+var i = {$seconds};
+var interval=window.setInterval(
+	function() {
+		if(i < 1) {
+			Dd('send_code').value = '下一步';
+			Dd('send_code').disabled = false;
+			clearInterval(interval);
+		} else {
+			Dd('send_code').value = '下一步('+i+'秒)';
+			i--;
+		}
+	},
+1000);
+</script>
+{/if}
+{template 'footer', 'member'}

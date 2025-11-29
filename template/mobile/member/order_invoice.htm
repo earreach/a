@@ -1,0 +1,150 @@
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">发票详情</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=update&step=detail&itemid={$I[oid]}" data-transition="none">订单详情</a>
+<a href="?action=invoice" data-direction="reverse">我的发票</a>
+</div>
+</div>
+
+{template 'goods', 'chip'}
+{if $invoice_status}
+<div class="ui-head"><i></i><b>发票详情</b></div>
+<div class="content">
+发票类型：{$I[type]}<br/>
+发票抬头：{$I[company]}<br/>
+纳税人识别号：{$I[taxid]}<br/>
+地址电话：{$I[address]}{if $I[telephone]} {$I[telephone]}{/if}<br/>
+开户行及账号：{$I[bank]}{if $I[account]} {$I[account]}{/if}<br/>
+发票金额：<span class="f_red">{$DT[money_sign]}{number_format($money, 2, '.', '')}<br/>
+</div>
+{/if}
+<div class="ui-head"><i></i><b>发票开具</b></div>
+{if $invoice_status == 2}
+<div class="content">
+申请时间：{timetodate($I[addtime], 5)}<br/>
+开票状态：<span class="f_green">已开票</span><br/>
+开票时间：{timetodate($I[updatetime], 5)}<br/>
+{if $I[url]}
+发票地址：<a href="{$I[url]}" class="b">点击下载</a><br/>
+{elseif $I[send_type]}
+快递名称：{$I[send_type]}<br/>
+{if $I[send_no]}
+快递单号：{$I[send_no]}<img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#copy-no" onclick="Dtoast('{$js_pageid}', '快递单号已复制');"/><br/>
+<div style="z-index:1000;position:absolute;top:-10000px;"><textarea id="copy-no">{$I[send_no]}</textarea></div>
+{load('clipboard.min.js')}
+<script type="text/javascript">
+var clipboard = new Clipboard('[data-clipboard-action]');
+$(function(){
+	$('#express').load(AJPath+'?action=express&moduleid=2&auth={$auth}');
+});
+</script>
+追踪结果：<div id="express" class="px12"><img src="image/loading.gif" align="absmiddle"/> 正在查询...</div>
+{/if}
+{/if}
+</div>
+{elseif $invoice_status == 1}
+<div class="content">
+申请时间：{timetodate($I[addtime], 5)}<br/>
+开票状态：<span class="f_green">已申请，商家处理中</span><br/>
+</div>
+{else}
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div class="ui-form">
+<p>发票类型<i>*</i><b id="dtype"></b></p>
+<div>
+<select name="post[type]" id="type" onchange="TP();">
+<option value="">请选择</option>
+{loop $TYPES $v}<option value="{$v}"{if $type==$v} selected{/if}>{$v}</option>{/loop}
+</select>
+</div>
+<p>发票抬头<i>*</i><b id="dcompany"></b></p>
+<div><input type="text" size="50" name="post[company]" value="{$company}" id="company"/></div>
+<p>纳税人识别号<i>*</i><b id="dtaxid"></b></p>
+<div><input type="text" size="50" name="post[taxid]" value="{$taxid}" id="taxid"/></div>
+<p>注册地址<i data-fd="1">*</i><b id="daddress"></b></p>
+<div><input type="text" size="100" name="post[address]" value="{$address}" id="address"/></div>
+<p>公司电话<i data-fd="1">*</i><b id="dtelephone"></b></p>
+<div><input type="text" size="50" name="post[telephone]" value="{$telephone}" id="telephone"/></div>
+<p>开户银行<i data-fd="1">*</i><b id="dbank"></b></p>
+<div><input type="text" size="50" name="post[bank]" value="{$bank}" id="bank"/></div>
+<p>银行帐号<i data-fd="1">*</i><b id="daccount"></b></p>
+<div><input type="text" size="50" name="post[account]" value="{$account}" id="account"/></div>
+<div class="blank-20"></div>
+<div><input type="submit" name="submit" value="申请开票" class="btn-blue"/></div>
+<div class="blank-20"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	var f,l;
+	f = 'type';
+	l = Dd(f).value.length;
+	if(l < 4) {
+		Dmsg('请选择发票类型', f);
+		return false;
+	}
+	f = 'company';
+	l = Dd(f).value.length;
+	if(l < 2) {
+		Dmsg('请填写发票抬头', f);
+		return false;
+	}
+	f = 'taxid';
+	l = Dd(f).value.length;
+	if(l < 16) {
+		Dmsg('请填写纳税人识别号', f);
+		return false;
+	}
+	if(Dd('type').value.indexOf('专') != -1) {
+		f = 'address';
+		l = Dd(f).value.length;
+		if(l < 10) {
+			Dmsg('请填写公司注册地址', f);
+			return false;
+		}
+		f = 'telephone';
+		l = Dd(f).value.length;
+		if(l < 7) {
+			Dmsg('请填写公司电话', f);
+			return false;
+		}
+		f = 'bank';
+		l = Dd(f).value.length;
+		if(l < 4) {
+			Dmsg('请填写开户银行', f);
+			return false;
+		}
+		f = 'account';
+		l = Dd(f).value.length;
+		if(l < 10) {
+			Dmsg('请填写银行帐号', f);
+			return false;
+		}
+	}
+	return confirm('您确认以上信息核对无误，申请开票吗？');
+}
+function TP() {
+	if(Dd('type').value.indexOf('专') == -1) {
+		$('[data-fd]').attr('class', 'dsn');
+	} else {
+		$('[data-fd]').attr('class', 'f_red');
+	}
+}
+{if $invoice_status<1}TP();{/if}
+s('order');m('action_invoice');
+</script>
+{/if}

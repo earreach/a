@@ -1,0 +1,18 @@
+{if isset($MODULE[22]) && isset($MENU[$MODULE[22]['moduledir']])}
+<div class="main_head"><div><span class="f_r"><a href="{userurl($username, 'file='.$MODULE[22]['moduledir'], $domain)}"><img src="{DT_STATIC}home/image/more.gif" title="更多"/></a></span><strong>{$mv[name]}</strong></div></div>
+<div class="main_body">
+<!--{php $tags=tag("moduleid=22&condition=status=3 and username='$username'&pagesize=".$mv['pagesize']."&order=edittime desc&template=null");}-->
+	{if $tags}
+	<div class="list-txt">
+	<ul>
+	{loop $tags $t}
+	<li>&middot; <a href="{if $homeurl}{$t[linkurl]}{else}{userurl($username, 'file='.$MODULE[22]['moduledir'].'&itemid='.$t[itemid], $domain)}{/if}">{$t[title]}</a><i>{timetodate($t[edittime], 3)}</i></li>
+	{/loop}
+	</ul>
+	</div>
+	{else}	
+	<div class="list-none">暂无记录</div>
+	{/if}
+</ul>
+</div>
+{/if}

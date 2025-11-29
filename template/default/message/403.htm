@@ -1,0 +1,11 @@
+{template 'header'}
+<div class="b10"></div>
+<div class="m">
+	<div style="height:480px;background:url('{DT_STATIC}image/msg-403.png') no-repeat right center;">
+		<div style="padding:148px 512px 0 248px;font-size:16px;">
+			<h1>无访问权限</h1>
+			<div class="f_gray">您无当前页面访问权限，请{if $_userid}<a href="{$MODULE[2][linkurl]}account.php?action=group" class="b">升级</a>您的会员组{else}<a href="{$MODULE[2][linkurl]}{$DT[file_login]}" class="b">登录</a>或<a href="{$MODULE[2][linkurl]}{$DT[file_register]}" class="b">注册</a>{/if}</div>
+		</div>
+	</div>
+</div>
+{template 'footer'}

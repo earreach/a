@@ -1,0 +1,169 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right">
+{if $action=='add' ||  $action=='result'}
+<a href="{if $report && $forward}{$forward}{else}{$mob}{/if}" data-transition="slideup" data-direction="reverse"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{else}
+<a href="{$mob}index.php?action=add" rel="external"><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></a>
+{/if}
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+{if $action == 'result'}
+{if $code}
+<div class="ui-ko">
+	<p>{if $code == 'ko'}提交失败！请重试{else}{$code}{/if}</p>
+	<input type="button" value="返回列表" class="btn-green" onclick="Go('{$url}');"/><br/>
+	<input type="button" value="继续提交" class="btn" onclick="Go('index.php?action=add');"/>
+</div>
+{else}
+<div class="ui-ok">
+	<p>提交成功！感谢您的反馈</p>
+	<input type="button" value="返回列表" class="btn-green" onclick="Go('{$url}');"/><br/>
+	<input type="button" value="继续提交" class="btn" onclick="Go('index.php?action=add');"/>
+</div>
+{/if}
+{elseif $action == 'add'}
+{load('webuploader.min.js')}
+<div class="ui-form">
+<form action="{$mob}index.php" method="post" data-ajax="false" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="report" value="{$report}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="post[mid]" value="{$mid}"/>
+<input type="hidden" name="post[tid]" value="{$itemid}"/>
+<input type="hidden" name="post[rid]" value="{$rid}"/>
+<p>{if $report}举报{else}留言{/if}类型</p>
+<div>
+<select name="post[type]" id="type">
+<option value="">请选择</option>
+{loop $TYPE $k $v}
+<option value="{$v}">{$v}</option>
+{/loop}
+</select>
+</div>
+<p>{if $report}举报{else}留言{/if}内容<i>*</i><b id="dcontent"></b></p>
+<div><textarea name="post[content]" id="content-{$js_pageid}">{$content}</textarea></div>
+{if $MOD[guestbook_thumb]}
+<p>上传图片</p>
+<div>{template 'upload-album', 'chip'}</div>
+{/if}
+{if $MOD[guestbook_video]}
+<p>上传视频</p>
+<div>{template 'upload-video', 'chip'}</div>
+{/if}
+<p>与您联系</p>
+<div>
+<label><input type="radio" name="my" value="1" id="my_1" onclick="$('#gb_contact').show(100);"/> 需要</label>&nbsp;&nbsp;&nbsp;&nbsp;
+<label><input type="radio" name="my" value="0" id="my_0" checked onclick="$('#gb_contact').hide(100);"/> 不需要</label>
+</div>
+<section id="gb_contact" style="display:none;">
+<p>姓名</p>
+<div><input type="text" name="post[truename]" id="truename" value="{$truename}" style="width:150px;"/></div>
+<p>匿名</p>
+<div>
+<label><input type="radio" name="post[hidden]" value="1" id="hd_1" checked/> 是</label>&nbsp;&nbsp;&nbsp;&nbsp;
+<label><input type="radio" name="post[hidden]" value="0" id="hd_0"/> 否</label>
+</div>
+<p>电话</p>
+<div><input type="tel" name="post[telephone]" id="telephone" value="{$telephone}"/></div>
+<p>邮箱</p>
+<input type="email" name="post[email]" size="30" id="email" value="{$email}"/>
+{if $DT[im_qq]}
+<p>QQ</p>
+<div><input type="tel" name="post[qq]" id="qq" value="{$qq}" style="width:50%;"/></div>
+{/if}
+{if $DT[im_wx]}
+<p>微信</p>
+<div><input type="text" name="post[wx]" id="wx" value="{$wx}" style="width:50%;"/></div>
+{/if}
+{if $DT[im_ali]}
+<p>阿里旺旺</p>
+<div><input type="text" name="post[ali]" id="ali" value="{$ali}" style="width:50%;"/></div>
+{/if}
+{if $DT[im_skype]}
+<p>Skype</p>
+<div><input type="text" name="post[skype]" id="skype" value="{$skype}" style="width:50%;"/></div>
+{/if}
+</section>
+{if $MOD[guestbook_captcha]}
+<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+<div>{template 'captcha', 'chip'}</div>
+{/if}
+<div class="blank-16"></div>
+<input type="submit" name="submit" class="btn-green" value="提 交"/>
+{if $report && $forward}
+<div class="blank-16"></div>
+<input type="button" value="取 消" class="btn" onclick="Go('{$forward}');"/>
+{/if}
+<div class="blank-32"></div>
+</div>
+{else}
+<div class="ui-form-search">
+<form action="{$mob}index.php">
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+{if $lists}
+<style type="text/css">.gcontent {background:#FFFFFF;padding:16px;font-size:14px;line-height:180%;}</style>
+{loop $lists $k $v}
+<div class="list-user">
+<img src="{if $v[hidden]}{useravatar('')}{else}{useravatar($v[username])}{/if}" width="48" height="48" class="avatar"/>
+<ul>
+<li><span>{if $v[reply]}已回复{else}未回复{/if}{if $MOD[guestbook_ip]}&nbsp; &nbsp;{/if}</span><b>{if $v[hidden]}匿名{else}{$v[truename]}{/if}</b></li>
+<li><b class="ui-ico-time">{timetoread($v[addtime], 5)}</b>{if $MOD[guestbook_ip]}<b class="ui-ico-area ui-fr">IP属地 {ip2area($v[ip], $MOD[guestbook_ip])}</b>{/if}</li>
+</ul>
+</div>
+<div class="content" data-content="{$js_pageid}">
+{$v[content]}
+{if $v[reply]}
+<br/><span style="color:#D9251D;font-size:12px;">网站 <span title="{$v[editdate]}">{timetoread($v[edittime])}</span> 回复</span><br/>
+{$v[reply]}
+{/if}
+</div>
+
+<div class="main blank-10"></div>
+{/loop}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{else}
+<div class="content">
+<br/><br/><br/><br/>
+<center>{if $kw}未找到与“<span class="f_red">{$kw}</span>”相关的留言，请调整关键词<a href="{$mob}" class="b">重新搜索</a>{else}暂时没有留言&nbsp;&nbsp;&nbsp;&nbsp;<a href="{$mob}index.php?action=add" class="b">来抢个沙发吧</a>{/if}</center>
+<br/><br/><br/><br/>
+</div>
+{/if}
+{/if}
+{if $action == 'add'}
+<script type="text/javascript">
+function check() {
+	var l;
+	var f;
+	f = 'content-{$js_pageid}';
+	l = Dd(f).value.length;
+	if(l < 5) {
+		Dmsg('内容最少5字，当前已输入'+l+'字', f);
+		return false;
+	}
+	{if $MOD[guestbook_captcha]}
+	f = 'captcha';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写验证码', f);
+		return false;
+	}
+	{/if}
+	return true;
+}
+{if $report}
+$(function(){
+$('#type').val('不良信息');
+Dd('content-{$js_pageid}').value = Dd('content-{$js_pageid}').value+"\n-------------------------------\n举报理由：\n";
+});
+{/if}
+</script>
+{/if}
+{template 'footer'}

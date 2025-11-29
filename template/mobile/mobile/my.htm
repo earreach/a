@@ -1,0 +1,74 @@
+{template 'header'}
+<div class="member-info">
+	<div class="member-info-avatar">
+	{if $_userid}
+	<a href="{$MODULE[2][mobile]}avatar.php" rel="external"><img src="{useravatar($_username, 'large')}"/></a>
+	{elseif $oauth_user}
+	<a href="{$MODULE[2][mobile]}oauth.php?action=bind" rel="external"><img src="{DT_PATH}api/oauth/{$oauth_site}/icon.png"/></a>
+	{else}
+	<a href="{$MODULE[2][mobile]}{$DT[file_login]}" rel="external"><img src="{useravatar('', 'large')}"/></a>
+	{/if}
+	</div>
+	<div class="member-info-user">
+	{if $_userid}
+	<a href="{$MODULE[2][mobile]}{if $_cid}child.php{/if}" rel="external"><p>{if $_truename}{$_truename}{elseif $_passport}{$_passport}{else}{$_username}{/if}</p><b>{$_company}</b></a>
+	{elseif $oauth_user}
+	<p>{$oauth_user}</p><a href="{$MODULE[2][mobile]}oauth.php?action=bind" rel="external"><b>绑定帐号</b></a> &nbsp; <a href="javascript:;" onclick="Dsheet('{$js_pageid}','<a href=&#34;?action=oauth&#34; rel=&#34;external&#34;><span style=&#34;color:red&#34;>退出登录</span></a>', '取消', '确定要退出本次登录吗？');"><b>退出登录</b></a>
+	{else}
+	<a href="{$MODULE[2][mobile]}{$DT[file_login]}" rel="external"><p>未登录</p><b>请登录或注册</b></a>
+	{/if}
+	</div>
+	<div class="member-info-icon"><a href="{$MODULE[2][mobile]}account.php" rel="external"><img src="{DM_SKIN}icon-setting-wh.png" width="24" height="24"/></a></div>
+</div>
+<div class="member-stats">
+	<ul>
+		<li><a href="{$MODULE[2][mobile]}record.php?action=index" rel="external"><b>{$DT[money_sign]}{$_money}</b>账户余额</a></li>
+		<li><a href="{$MODULE[2][mobile]}credit.php?action=index" rel="external"><b>{$_credit}</b>会员积分</a></li>
+		<li><a href="{$MODULE[2][mobile]}message.php?action=index" rel="external"><b>{if $_message>99}99+{else}{$_message}{/if}</b>站内信件</a></li>
+		<li><a href="{$MODULE[2][mobile]}im.php?action=index" rel="external"><b>{if $_chat>99}99+{else}{$_chat}{/if}</b>站内交谈</a></li>
+	</ul>
+</div>
+<div class="gird-4" style="margin:0 10px;">
+	<ul>
+		<li><a href="{$MODULE[2][mobile]}{if $_cid}child.php{/if}" rel="external"><img src="{DM_SKIN}my-member.png" width="24" height="24"/><span>会员中心</span></a></li>
+		{if $DT[max_cart]>0}<li><a href="{$MODULE[2][mobile]}order.php?action=index" rel="external"><img src="{DM_SKIN}my-order.png" width="24" height="24"/><span>我的订单</span></a></li>{/if}
+		<li><a href="{$MODULE[2][mobile]}{if $_cid}child.php{else}{$DT[file_my]}{/if}" rel="external"><img src="{DM_SKIN}my-info.png" width="24" height="24"/><span>信息管理</span></a></li>
+		<li><a href="{$MODULE[2][mobile]}{if $_cid}child.php{else}biz.php{/if}" rel="external"><img src="{DM_SKIN}my-biz.png" width="24" height="24"/><span>商户后台</span></a></li>
+		<li><a href="{$MODULE[2][mobile]}favorite.php?action=index" rel="external"><img src="{DM_SKIN}my-favorite.png" width="24" height="24"/><span>我的收藏</span></a></li>
+		<li><a href="{$MODULE[2][mobile]}friend.php?action=index" rel="external"><img src="{DM_SKIN}my-friend.png" width="24" height="24"/><span>我的好友</span></a></li>
+		<li><a href="{$EXT[sitemap_mob]}" rel="external"><img src="{DM_SKIN}my-sitemap.png" width="24" height="24"/><span>栏目地图</span></a></li>
+		{if $DT[max_cart]>0}
+		{else}
+		<li><a href="{DT_MOB}api/about.php"><img src="{DM_SKIN}my-about.png" width="24" height="24"/><span>关于我们</span></a></li>
+		{/if}
+		<li><a href="{DT_MOB}more.php"><img src="{DM_SKIN}my-more.png" width="24" height="24"/><span>更多功能</span></a></li>
+	</ul>
+</div>
+<div class="px12 f_gray t_c">
+<a href="{DT_MOB}api/about.php" class="b">关于我们</a> &nbsp; | &nbsp;  
+<a href="{DT_MOB}about/agreement.html" class="b">用户协议</a> &nbsp; | &nbsp;  
+<a href="{DT_MOB}about/privacy.html" class="b">隐私政策</a>
+</div> 
+{if $DT[telephone]}
+<div class="blank-16"></div>
+<a href="tel:{$DT[telephone]}" rel="external"><div class="px12 f_gray t_c">客服电话：{$DT[telephone]}</div></a>
+{/if}
+{if $DT[appno] && in_array($DT_MBS, array('app','cms'))}
+<div class="blank-16"></div>
+<a href="https://beian.miit.gov.cn/" rel="external"><div class="px12 f_gray t_c">{$DT[appno]}</div></a>
+{elseif $DT[icpno]}
+<div class="blank-16"></div>
+<a href="https://beian.miit.gov.cn/" rel="external"><div class="px12 f_gray t_c">{$DT[icpno]}</div></a>
+{/if}
+<div class="blank-32"></div>
+{if !$wh}
+<script type="text/javascript">
+$(function(){
+	$(document).on('pagebeforeload', function(e) {
+		$('[name="theme-color"]').attr('content', '{$DT[color_mb]}');
+	});
+	$('[name="theme-color"]').attr('content', '#3A82F6');
+});
+</script>
+{/if}
+{template 'footer'}

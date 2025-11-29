@@ -1,0 +1,66 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="javascript:;" onclick="Dsheet('{$js_pageid}','<a href=&#34;?action=delete&#34;><span style=&#34;color:red&#34;>删除</span></a>', '取消', '确定要删除个人头像吗？');">删除头像</a>
+<a href="index.php" data-direction="reverse">会员中心</a>
+</div>
+</div>
+
+<div style="padding:64px 0;">
+<div style="background:url('{useravatar($_username, 'large')}&reload={$DT_TIME}') no-repeat center center;background-size:128px 128px;width:128px;height:128px;border-radius:50%;margin:0 auto;" id="avatar"><div id="avatar-picker" style="width:100%;height:100%;"></div></div>
+<div style="color:#999999;text-align:center;font-size:12px;padding:64px 0;">轻触上图上传或更换头像</div>
+</div>
+{load('webuploader.min.js')}
+<script type="text/javascript">
+var tm = {DT_TIME};
+var fileu = WebUploader.create({
+	auto: true,
+    server: '?action=upload',
+    pick: '#avatar-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+fileu.on('beforeFileQueued', function(file) {
+	var exts = fileu.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+fileu.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+fileu.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? '上传成功' : L['uploading']+p+'%');
+});
+fileu.on( 'uploadSuccess', function(file, data) {
+    if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#avatar').css("background", "url('{useravatar($_username, 'large')}&reload="+(++tm)+"') no-repeat center center");
+	}
+});
+fileu.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+fileu.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+{template 'footer', 'member'}

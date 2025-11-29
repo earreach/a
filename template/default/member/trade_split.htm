@@ -1,0 +1,79 @@
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div class="bd">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="20"><input type="checkbox" onclick="checkall(this.form);calculate();"/></th>
+<th width="80">图片</th>
+<th>商品信息</th>
+<th width="120">单价</th>
+<th width="100">数量</th>
+<th width="160">买家留言</th>
+</tr>
+{loop $lists $k $v}	
+<tr align="center">
+<td>{if $v[pid]}<input type="checkbox" name="itemids[]" value="{$v[itemid]}" id="check_{$v[itemid]}"/>{/if}</td>
+<td><a href="javascript:_preview('{$v[thumb]}');"><img src="{if $v[thumb]}{$v[thumb]}{else}{DT_STATIC}image/nopic60.png{/if}" width="60" height="60" onerror="this.src=errimg;"/></a></td>
+<td align="left" valign="top" class="f_gray lh18"><a href="{$v[linkurl]}" target="_blank" class="t">{$v[title]}</a><br/>{$v[par]}{if isset($v[sku]) && $v[sku]}<br/>仓储货位：{$v[sku][location]} 库存：{$v[sku][amount]}{/if}</td>
+<td>{$DT[money_sign]}{$v[price]}</td>
+<td>{$v[number]}</td>
+<td><textarea style="width:160px;height:40px;color:#666666;">{$v[note]}</textarea></td>
+</tr>
+{/loop}	
+</table>
+</div>
+
+<div class="t2">拆分订单</div>
+<table cellpadding="10" cellspacing="1" class="tb">	
+<tr>
+<td class="tl">联系买家</td>
+<td class="tr">{if $DT[im_web]}{im_web($O[buyer])}&nbsp;{/if}<a href="{userurl($O[buyer], 'file=contact')}" target="_blank" class="t">{$O[buyer]}</a></td>
+</tr>	
+<tr>
+<td class="tl">下单时间</td>
+<td class="tr">{$O[adddate]}</td>
+</tr>
+
+{if isset($O[money])}
+<tr>
+<td class="tl">订单总额：</td>
+<td class="tr">{$DT[money_sign]}{$O[money]}</td>
+</tr>
+{/if}
+{if $O[fee_name] && $O[fee]}
+<tr>
+<td class="tl">{$O[fee_name]}：</td>
+<td class="tr">{$DT[money_sign]}{$O[fee]}</td>
+</tr>
+{/if}
+{if isset($O[discount])}
+<tr>
+<td class="tl">优惠金额：</td>
+<td class="tr"><a href="{$MOD[linkurl]}{if $O[seller]==$_username}promo.php?action=coupon&itemid={$O[cid]}{else}coupon.php?action=my&itemid={$O[cid]}{/if}" target="_blank">-{$DT[money_sign]}{$O[discount]}</a></td>
+</tr>
+{/if}
+<tr>
+<td class="tl">实付金额：</td>
+<td class="tr f_red px14">{$DT[money_sign]}{$O[total]}</td>
+</tr>
+<tr>
+<td class="tl"> </td>
+<td class="tr">
+<input type="submit" name="submit" value=" 确 定 " class="btn_g"/>&nbsp;&nbsp;<input type="button" value=" 返 回 " class="btn" onclick="history.back(-1);"/>
+</td>
+</tr>
+</table>
+</form>
+<script type="text/javascript">
+function check() {
+	if($('#dform :checkbox:checked').length < 1) {
+		alert('请至少选择1个需要拆离的订单');
+		return false;
+	}
+	return confirm('您确认将选中订单拆离当前订单吗？\n\n此操作将不可撤销');
+}
+</script>
+<script type="text/javascript">s('trade');m('action');</script>

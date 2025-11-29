@@ -1,0 +1,229 @@
+{template 'header', 'member'}
+{if $job == 'item'}
+<div class="ui-form-search">
+<form action="?" id="search">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="from" value="{$from}"/>
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="pid" value="{$pid}"/>
+<input type="hidden" name="username" value="{$username}"/>
+<input type="search" name="kw" id="kw" value="{$kw}" placeholder="关键词" title="请输入关键词"/>
+</form>
+</div>
+{if $lists}
+{loop $lists $v}
+<div class="list-img" onclick="S('{$v[itemid]}','{$v[alt]}','{$v[linkurl]}','{$v[thumb]}','{$v[level]}','{$v[style]}');">
+<img src="{if $v[thumb]}{$v[thumb]}{else}{DT_STATIC}image/nopic50.png{/if}" width="48" height="48" alt=""  onerror="this.src='{DT_STATIC}image/nopic50.png';"/>
+<ul>
+<li><strong>{$v[title]}</strong></li>
+<li>{if $mid > 4}<span class="ui-ico-time">{$v[adddate]}</span>{/if}</li>
+</ul>
+</div>
+{/loop}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<script type="text/javascript">
+function S(itemid, title, linkurl, thumb, introduce, level, style) {
+	try {
+		{if $from == 'special'}
+		parent.Dd('tid').value=itemid;
+		parent.Dd('mid').value={$mid};
+		parent.Dd('title').value=title;
+		parent.Dd('linkurl').value=linkurl;
+		parent.Dd('thumb').value=thumb;
+		parent.Dd('introduce').value=Dd('introduce_'+itemid).innerHTML;
+		parent.color_select(style);
+		parent.$('#level').val(level);
+		{elseif $from == 'relate'}
+		parent.Dd('id').value=itemid;
+		parent.Dd('dform_add').submit();
+		{elseif $from == 'promo'}
+		var ids = parent.Dd('itemids').value;
+		if(ids) {
+			if(ids.indexOf(',') == -1) {
+				parent.Dd('itemids').value=ids+','+itemid;
+			} else {
+				if((','+ids+',').indexOf(','+itemid+',') == -1) parent.Dd('itemids').value=ids+','+itemid;
+			}
+		} else {
+			parent.Dd('itemids').value=itemid;
+		}
+		{else}
+		parent.Dd('key_id').value=itemid;
+		{/if}
+	} catch(e) {}
+	try {parent.Dwidget('{$pid}', '');} catch(e) {}
+}
+</script>
+{else}
+<div class="list-none">{if $kw}未搜索到信息{else}暂无信息{/if}</div>
+{/if}
+
+{elseif $job == 'stock'}
+<div class="ui-form-search">
+<form action="?" id="search">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="from" value="{$from}"/>
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="key" value="{$key}"/>
+<input type="hidden" name="pid" value="{$pid}"/>
+<input type="search" name="kw" id="kw" value="{$kw}" placeholder="关键词" title="请输入关键词"/>
+</form>
+</div>
+{if $lists}
+{loop $lists $v}
+<div class="list-img" onclick="S('{$v[itemid]}','{$v[alt]}','{$v[thumb]}','{$v[price]}','{$v[unit]}','{$v[amount]}','{$v[skuid]}','{$v[brand]}');">
+<img src="{if $v[thumb]}{$v[thumb]}{else}{DT_STATIC}image/nopic50.png{/if}" width="48" height="48" alt=""  onerror="this.src='{DT_STATIC}image/nopic50.png';"/>
+<ul>
+<li><strong>{$v[title]}</strong></li>
+<li><span class="ui-fr">{$v[skuid]}</span><span class="ui-ico-info">{$DT[money_sign]}{$v[price]}</span></li>
+</ul>
+</div>
+{/loop}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<script type="text/javascript">
+function S(itemid,title,thumb, price, unit, amount, skuid, brand) {
+	try {
+		{if $key == 'skuid'}
+		parent.Dd('skuid').value=skuid;
+		//parent.addAlbum(thumb);
+		if(parent.Dd('amount').value.length<1) parent.Dd('amount').value=amount;
+		if(parent.Dd('unit').value.length<1) parent.Dd('unit').value=unit;
+		if(parent.Dd('price').value.length<1) parent.Dd('price').value=price;
+		if(parent.Dd('p1').value.length<1) parent.Dd('p1').value=price;
+		if(parent.Dd('title').value.length<1) parent.Dd('title').value=title;
+		if(parent.Dd('brand').value.length<1) parent.Dd('brand').value=brand;
+		if(parent.Dd('content').length < 5) parent.stock_content(itemid);
+		{else}
+		parent.Dd('stockid-{$key}').value=itemid;
+		parent.Dd('thumb-{$key}').src=thumb;
+		parent.Dd('price-{$key}').innerHTML='{$DT[money_sign]}'+price;
+		parent.Dd('amount-{$key}').innerHTML=amount;
+		parent.Dd('skuid-{$key}').innerHTML=skuid;
+		{if $key == '0-0-0'}
+			parent.Dd('amount').value=amount;
+			parent.Dd('unit').value=unit;
+			parent.Dd('price').value=price;
+			parent.Dd('p1').value=price;
+			if(parent.Dd('title').value.length<1) parent.Dd('title').value=title;
+			if(parent.Dd('brand').value.length<1) parent.Dd('brand').value=brand;
+			if(parent.Dd('content').length < 5) parent.stock_content(itemid);
+		{/if}
+		{/if}
+	} catch(e) {}
+	try {parent.Dwidget('{$pid}', '');} catch(e) {}
+}
+</script>
+{else}
+<div class="list-none">{if $kw}未搜索到库存{else}暂无库存{/if}</div>
+{/if}
+
+{elseif $job == 'topic'}
+<div class="ui-form-search">
+<form action="?" id="search">
+<input type="hidden" name="moduleid" value="{$moduleid}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="from" value="{$from}"/>
+<input type="hidden" name="fid" value="{$fid}"/>
+<input type="hidden" name="pid" value="{$pid}"/>
+<input type="search" name="kw" id="kw" value="{$kw}" placeholder="关键词" title="请输入关键词"/>
+</form>
+</div>
+{if $lists}
+	<div class="list-set">
+	<ul>
+	{loop $lists $k $v}
+	<li><div><span>{$v[item]}讨论</span><a href="javascript:;" onclick="S('{$v[alt]}');">#{$v[title]}#</a></div></li>
+	{/loop}
+	</ul>
+	</div>
+	{if $pages}<div class="pages">{$pages}</div>{/if}
+	<script type="text/javascript">
+	function S(title) {
+		try {
+			parent.Dd('{$fid}').value=title;
+			parent.me_into(title, '{$fid}');
+			parent.Dwidget('{$pid}', '');
+		} catch(e) {}
+	}
+	</script>
+{else}
+	<div class="list-none">{if $kw}未搜索到话题{else}暂无话题{/if}</div>
+{/if}
+
+
+{elseif $job == 'friend'}
+<!--[好友开始]-->
+{if $DT[follow]}
+<div class="list-tab">
+	<ul>
+		<li{if $tabid==0} class="on"{/if}><a href="?action={$action}&job={$job}&moduleid={$moduleid}&from={$from}&fid={$fid}&key={$key}&tabid=0"><span>我的好友</span></a></li>
+		<li{if $tabid==1} class="on"{/if}><a href="?action={$action}&job={$job}&moduleid={$moduleid}&from={$from}&fid={$fid}&key={$key}&tabid=1"><span>我的关注</span></a></li>
+		<li{if $tabid==2} class="on"{/if}><a href="?action={$action}&job={$job}&moduleid={$moduleid}&from={$from}&fid={$fid}&key={$key}&tabid=2"><span>我的粉丝</span></a></li>
+	</ul>
+</div>
+{/if}
+{if $lists}
+	{loop $lists $k $v}
+	<div class="list-img">	
+	<input type="hidden" id="v_{$v[itemid]}" value="{if $key=='passport'}{$v[fpassport]}{else}{$v[fusername]}{/if}"/>
+	<a href="{$v[linkurl]}"><img src="{useravatar($v[fusername], 'large')}" width="60" height="60" class="avatar"/></a>
+	<ul>
+	<li><input type="checkbox" id="c_{$v[itemid]}" onclick="_send({$v[itemid]});" class="ui-fr"/><label for="c_{$v[itemid]}"><strong>{$v[fpassport]}</strong></label></li>
+	<li><span>{if $tabid == 0}{if $v[alias]}{$v[alias]} {/if}{if $v[truename]}{$v[truename]} {/if}{/if}{$v[note]}</span></li>
+	</ul>
+	</div>
+	{/loop}
+	{if $pages}<div class="pages">{$pages}</div>{/if}
+	<script type="text/javascript">
+	var itemids = [{loop $lists $i $t}{if $i},{/if}'{$t[itemid]}'{/loop}];
+	var max = {$MOD[maxtouser]};
+	function _send(id) {
+		var v = Dd('v_'+id).value;
+		if(parent.Dd('{$fid}').value && parent.Dd('{$fid}').value.indexOf(' ') == -1) parent.Dd('{$fid}').value = parent.Dd('{$fid}').value+' ';
+		if(Dd('c_'+id).checked) {
+			if(max && substr_count(parent.Dd('{$fid}').value, ' ') >= max) {
+				Dd('c_'+id).checked = false;
+				return alert('最多可以选择'+max+'人');
+			}
+			if(parent.Dd('{$fid}').value.indexOf(v) == -1) parent.Dd('{$fid}').value = parent.Dd('{$fid}').value+v+' ';
+		} else {
+			if(parent.Dd('{$fid}').value.indexOf(v) != -1) parent.Dd('{$fid}').value = parent.Dd('{$fid}').value.replace(v+' ', '');
+		}
+	}
+	function _check() {
+		for(var i = 0; i < itemids.length; i++) {
+			itemid = itemids[i];
+			if(Dd('c_0').checked) {
+				if(max && substr_count(parent.Dd('{$fid}').value, ' ') >= max) {
+					break;
+				} else {
+					Dd('c_'+itemid).checked = true;
+					_send(itemid);
+				}
+			} else {
+				Dd('c_'+itemid).checked = false;
+				_send(itemid);
+			}
+		}
+	}
+	if(parent.Dd('{$fid}').value) {
+		s = parent.Dd('{$fid}').value+' ';
+		for(var i = 0; i < itemids.length; i++) {
+			itemid = itemids[i];
+			f = Dd('v_'+itemid).value+' ';
+			if(s.indexOf(f) != -1) Dd('c_'+itemid).checked = true;
+		}
+	}
+	</script>
+{else}
+	<div class="list-none">{if $kw}未搜索到{$name}{else}暂无{$name}{/if}</div>
+{/if}
+<!--[好友结束]-->
+
+{else}
+
+{/if}
+{template 'footer', 'member'}

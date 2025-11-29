@@ -1,0 +1,176 @@
+{template 'header'}
+
+<div class="quote-view-wrapper" style="max-width:900px;margin:20px auto;padding:15px;border:1px solid #ddd;background:#fff;">
+
+  <div style="text-align:right;">
+    <button onclick="window.print();" style="padding:5px 12px;">打印本页</button>
+  </div>
+
+  <h1 style="font-size:22px;margin:10px 0 20px;">设备维修报价回执</h1>
+
+  <!-- 基本信息 -->
+  <h3>一、基本信息</h3>
+  <table cellpadding="6" cellspacing="0" border="0" style="width:100%;">
+    <tr>
+      <td style="width:120px;">报价编号：</td>
+      <td>{$item[itemid]}</td>
+    </tr>
+    <tr>
+      <td>提交时间：</td>
+      <td>{timetodate($item[addtime], 5)}</td>
+    </tr>
+    <tr>
+      <td>审核状态：</td>
+      <td><span style="color:green;">{$status_text}</span></td>
+    </tr>
+    <tr>
+      <td>预约到店时间：</td>
+      <td>{$appoint_time_str}</td>
+    </tr>
+  </table>
+
+  <hr style="margin:15px 0;"/>
+
+  <!-- 客户信息 -->
+  <h3>二、客户信息</h3>
+  <table cellpadding="6" cellspacing="0" border="0" style="width:100%;">
+    <tr>
+      <td style="width:120px;">客户姓名：</td>
+      <td>{$item[first_name]} {$item[last_name]}</td>
+    </tr>
+    <tr>
+      <td>邮箱：</td>
+      <td>{$item[email]}</td>
+    </tr>
+    <tr>
+      <td>联系电话：</td>
+      <td>{if $item[mobile]}{$item[mobile]}{else}<span class="f_gray">未填写</span>{/if}</td>
+    </tr>
+  </table>
+
+  <hr style="margin:15px 0;"/>
+
+  <!-- 维修门店 -->
+  <h3>三、维修门店</h3>
+  <table cellpadding="6" cellspacing="0" border="0" style="width:100%;">
+    <tr>
+      <td style="width:120px;">门店名称：</td>
+      <td>
+        {if $item[company_name]}
+          {$item[company_name]}
+        {else}
+          <span class="f_gray">未选择门店</span>
+        {/if}
+      </td>
+    </tr>
+    <tr>
+      <td>所在地区：</td>
+      <td>{if $area_str}{$area_str}{else}<span class="f_gray">无</span>{/if}</td>
+    </tr>
+  </table>
+
+  <hr style="margin:15px 0;"/>
+
+  <!-- 设备 & 故障明细 -->
+  <h3>四、设备与故障明细</h3>
+  <table cellpadding="6" cellspacing="0" border="1" bordercolor="#ddd" style="width:100%;border-collapse:collapse;">
+    <tr style="background:#f9f9f9;">
+      <th>设备名称</th>
+      <th width="80">型号ID</th>
+      <th>故障列表</th>
+    </tr>
+    {if $devices}
+      {loop $devices $catid $dev}
+      <tr>
+        <td>{$dev[name]}</td>
+        <td align="center">{$catid}</td>
+        <td>
+          {if $dev[faults]}
+            <ul style="margin:0;padding-left:18px;">
+              {loop $dev[faults] $f}
+              <li>
+                故障编号：{$f[num]}
+                {if $f[name]}，名称：{$f[name]}{/if}
+                {if $f[price]}，参考价格：{$f[price]} 円{/if}
+              </li>
+              {/loop}
+            </ul>
+          {else}
+            <span class="f_gray">无故障数据</span>
+          {/if}
+        </td>
+      </tr>
+      {/loop}
+    {else}
+      <tr>
+        <td colspan="3" align="center">设备数据解析失败</td>
+      </tr>
+    {/if}
+  </table>
+
+  <!-- 颜色 & 故障说明 -->
+  <h3 style="margin-top:15px;">五、颜色与故障说明</h3>
+  <table cellpadding="6" cellspacing="0" border="0" style="width:100%;">
+    <tr>
+      <td style="width:120px;">设备颜色：</td>
+      <td>{if $item[color]}{$item[color]}{else}<span class="f_gray">未选择</span>{/if}</td>
+    </tr>
+    <tr>
+      <td valign="top">故障补充说明：</td>
+      <td>
+        {if $item[fault_desc]}
+          <div style="max-height:200px;overflow:auto;">{nl2br($item[fault_desc])}</div>
+        {else}
+          <span class="f_gray">用户未填写</span>
+        {/if}
+      </td>
+    </tr>
+  </table>
+
+  <!-- 图片 -->
+  <h3 style="margin-top:15px;">六、设备图片</h3>
+  <div>
+    {if $images}
+      {loop $images $img}
+        <a href="{$img}" target="_blank">
+          <img src="{$img}" style="max-width:150px;max-height:150px;margin-right:8px;margin-bottom:8px;border:1px solid #ddd;padding:2px;"/>
+        </a>
+      {/loop}
+    {else}
+      <span class="f_gray">未上传图片</span>
+    {/if}
+  </div>
+
+  <hr style="margin:15px 0;"/>
+
+  <!-- 金额汇总 -->
+  <h3>七、报价金额</h3>
+  <table cellpadding="6" cellspacing="0" border="0" style="width:100%;">
+    <tr>
+      <td style="width:150px;">故障原价合计：</td>
+      <td>{$item[total_fault_amount_str]} 円</td>
+    </tr>
+    <tr>
+      <td>优惠金额：</td>
+      <td>
+        {$item[discount_amount_str]} 円
+        <span class="f_gray">
+          （其中优惠券：{$item[coupon_amount_str]} 円，人工优惠：{$item[manual_discount_str]} 円）
+        </span>
+      </td>
+    </tr>
+    <tr>
+      <td>最终报价金额：</td>
+      <td><strong style="font-size:16px;color:#d00;">{$item[final_amount_str]} 円</strong></td>
+    </tr>
+  </table>
+
+
+  <div style="margin-top:15px;color:#666;font-size:12px;">
+    * 本报价仅作为维修参考费用，实际价格以到店检测结果为准。<br/>
+    * 如对报价有疑问，请联系预约门店进行确认。
+  </div>
+
+</div>
+
+{template 'footer'}

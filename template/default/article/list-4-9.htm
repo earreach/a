@@ -1,0 +1,258 @@
+{template 'header'}
+<!--<script type="text/javascript">var module_id= {$moduleid},item_id={$itemid},content_id='content',img_max_width={$MOD[max_width]};</script>-->
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}css/base.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<!--<link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">-->
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}css/list26.css"/>
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}css/bootstrap.min.css"/>
+<!--<link rel="stylesheet" type="text/css" href="{DT_SKIN}css/bootstrap.min.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>-->
+<link href="http://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+<!--<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+
+<!--<script src="{DT_SKIN}js/jquery.min.js"></script>-->
+
+<link href="{DT_SKIN}css/style01.css" type="text/css" rel="stylesheet">
+
+<style>
+
+
+
+
+
+</style>
+
+<!--<div class="w-160 h-300 fb-apple">-->
+
+</div>
+
+
+<div class="m">
+	<div class="nav"><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')}</div>
+</div>
+
+
+<div class="m  ">
+	<div class="">
+		{if $FD || $CP}
+		<form action="{$MOD[linkurl]}search.php" id="search">
+			<input type="hidden" name="catid" value="{$catid}"/>
+			<div class="sort-f">
+				{if $FD}{template 'fields_search', 'chip'}{/if}
+				{if $CP}{template 'property_search', 'chip'}{/if}
+			</div>
+		</form>
+		<script type="text/javascript">$(function(){if($('.sort-f').html().indexOf('sort')==-1){$('.sort-f').hide();}});</script>
+		{/if}
+
+		<!--		<div class="catlist">
+                    {php $cols = 5;}
+                    {if $page == 1}{ad($moduleid,$catid,'',6)}{/if}
+                    {if $tags}{template 'list-'.$module, 'tag'}{/if}
+            </div> -->
+
+		<div class="p20 ml-10">
+			<button id="15">提交</button>
+			<input id="16" type="text">
+
+			<div class="df jcc h-50 lh-50 aic ptb-20">
+				<img src="{$icon}" class="h100" alt="{$seo_title}">
+				<h1 class="h-50 ti-10">{$seo_title}</h1>
+			</div>
+			<div class="df h-600">
+				<div id="content" class=" w-600">{template 'content', 'chip'}</div>
+				{if $images[0]}<img src="{$images[0]}" class="f1  " alt="{$seo_title}" title="{$seo_title}">{/if}
+			</div>
+			<h2>シリーズから修理メニュー・料金表を見る</h2>
+
+
+
+			<!--			<img src="{DT_SKIN}article/13.png" class="w100" alt="ご希望の機種項目をタップすると料金表が切替ります">-->
+
+
+
+
+
+
+
+
+			<select  id="choose">
+				<option value="-1">--请选择省11111份--</option>
+				<option value="0">iphone</option>
+				<option value="1">ipad</option>
+				<option value="2">iwatch</option>
+				<option value="3">ipod</option>
+			</select>
+			<select id="ch">
+				<option >--请选择城市--</option>
+			</select>
+
+
+			<div class="table m0a pt-20 ">
+				<p class="fs14 fw-800 red2 ">※事前WEB予約をされてご来店された後、お会計時にアンケート回答をして頂きますと通常料金から2,200円引きさせていただきます。
+				<p class="fs14 fw-800 red2  ">※各種割引をご希望のお客様は、受付時に店舗スタッフまでお伝え下さい。</p>
+				<p class="fs14 fw-800 red2  ">※表示料金は税込表示です。</p>
+				<p class="fs14 fw-800 red2  ">※修理不可の場合は、修理費用の発生は致しませんのでご安心下さいませ。</p>
+				<p class="fs14 fw-800 red2 ">※別途作業料金などの追加料金は頂きません。</p>
+
+				<p class="fs14 fw-800 red2">※実際の修理内容によっては修理料金が変動する可能性があるので詳細の修理料金は各店舗までお問い合わせ下さい</p>
+			</div>
+
+
+
+
+
+
+
+
+
+
+
+
+			<!--				<div class="blue8 line1 mt-20 mb-20"></div>-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			<h4 class="tac">iPhoneバッテリー交換、修理サービスをご利用いただいた</h4>
+			<h2 class="tac blue8">[お客様の声]</h2>
+			<!--				<div class="blue8 line1 mt-20 mb-20"></div>-->
+			<p class="pt-20 pb-20 fs16 lh-30 gray2 tac">道内シェアNo.1のスマートクリアグループは様々な端末の修理を承っております。</p>
+			<p class="pt-20 pb-20 fs16 lh-30 gray2 tac">バッテリー修理を実際に当店でサービスを体験していただいた「お客様の声」をご紹介します。</p>
+
+			<div class="">
+				{php $cols = 3;}
+				{if $page == 1}{ad($moduleid,$catid,'',6)}{/if}
+				{if $tags }<?$tags=array_slice($tags,0,3);?>{/if}
+				{if $tags }{template 'list-'.$module.'01', 'tag'}{/if}
+			</div>
+
+
+
+
+
+
+
+
+		</div>
+	</div>
+
+
+</div>
+
+
+{template 'xuanwo', 'chip'}
+{template 'liucheng', 'chip'}
+{template 'pay', 'chip'}
+
+
+
+
+
+
+
+
+<!--<? var_dump($ab);?>-->
+
+<script>
+
+
+
+	function create(key)
+	{
+		var arr = arr
+		var result = [];
+		if (arr.hasOwnProperty(key)) {
+			// alert(11115555111)
+			// off()
+
+				for (var i = 0; i < arr[key][1].length; i++) {
+					result.push('<option value="'+arr[key][1][i][0]+'" class="bghui" disabled>');
+					// alert(result)
+					// off()
+					result.push(arr[key][1][i][0]);
+					result.push('</option>');
+					for (var j = 0 ;j< arr[key][1][i][1].length;j++){
+						result.push('<option value="'+arr[key][1][i][1][j]+'">');
+						result.push(arr[key][1][i][1][j]);
+						result.push('</option>');
+					}
+				}
+		}
+		// alert(result)
+		// off()
+		return result.join('');
+	}
+
+	$('select[id="choose"]').on('change', function()
+	{
+		// alert(1111)
+		// off()
+		var result = [];
+		var choose = document.getElementById("choose").value;
+		document.getElementById("ch").options.length = 0;//使用options.length=0清空第二个select数据
+		// alert(this.value);
+		var options = create(this.value);
+		// alert(options)
+		// off()
+		$('select[id="ch"]').html(options);
+	});
+
+
+
+
+$("#15").click(function (){
+	$.ajax({
+		url: "http://b.com/api/json.php?file=anli", //要请求的后端地址
+		type: "GET", //数据发送的方式(POST或者GET)
+		data: JSON.stringify ({val1: "1", val2: "2"}), //需要传递的参数
+		dataType: "json", //后端返回的数据格式
+		success: function (result) {//ajax请求成功后触发的方法
+			console.log(result); //result为响应内容
+			// console.log(result.obj.enabled)
+			$("#16").val("okk");
+			alert("ajax请求ok");
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			/*弹出jqXHR对象的信息*/
+			console.log(jqXHR.responseText);
+			console.log(jqXHR.status);
+			console.log(jqXHR.readyState);
+			console.log(jqXHR.statusText);
+			/*弹出其他两个参数的信息*/
+			console.log(textStatus);
+			console.log(errorThrown);
+		}
+	});
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+<script src="{DT_SKIN}js/slide.js"></script>
+
+
+
+
+
+{if $content}{load('content.js')}{/if}
+{template 'footer'}

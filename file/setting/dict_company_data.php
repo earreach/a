@@ -1,0 +1,3 @@
+<?php exit;?>
+userid,会员ID,
+content,公司介绍,

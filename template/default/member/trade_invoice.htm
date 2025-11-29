@@ -1,0 +1,223 @@
+{template 'goods', 'chip'}
+{if strpos($DT_MBS, 'IE') === false}
+{load('clipboard.min.js')}
+<script type="text/javascript">var clipboard = new Clipboard('[data-clipboard-action]');</script>
+{/if}
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div class="t2">发票详情</div>
+<table cellspacing="1" cellpadding="10" class="tb">
+<tr>
+<td class="tl">发票类型</td>
+<td class="tr"><input type="text" size="70" value="{$I[type]}" id="type"/>{if strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#type" onclick="Dtoast('发票类型已复制');"/>{/if}</td>
+</tr>
+<tr>
+<td class="tl">发票抬头</td>
+<td class="tr"><input type="text" size="70" value="{$I[company]}" id="company"/>{if strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#company" onclick="Dtoast('发票抬头已复制');"/>{/if}</td>
+</tr>
+<tr>
+<td class="tl">纳税人识别号</td>
+<td class="tr"><input type="text" size="70" value="{$I[taxid]}" id="taxid"/>{if strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#taxid" onclick="Dtoast('纳税人识别号已复制');"/>{/if}</td>
+</tr>
+<tr>
+<td class="tl">地址电话</td>
+<td class="tr"><input type="text" size="70" value="{$I[address]}{if $I[telephone]} {$I[telephone]}{/if}" id="addr"/>{if strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#addr" onclick="Dtoast('地址电话已复制');"/>{/if}</td>
+</tr>
+<tr>
+<td class="tl">开户行及账号</td>
+<td class="tr"><input type="text" size="70" value="{$I[bank]}{if $I[account]} {$I[account]}{/if}" id="bank"/>{if strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#bank" onclick="Dtoast('开户行及账号已复制');"/>{/if}</td>
+</tr>
+<tr>
+<td class="tl">发票金额</td>
+<td class="tr"><input type="text" size="70" value="{$I[amount]}" id="amount"/>{if strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#amount" onclick="Dtoast('发票金额已复制');"/>{/if}</td>
+</tr>
+</table>
+<div class="t2">发票开具</div>
+<table cellspacing="1" cellpadding="10" class="tb">
+<tr>
+<td class="tl">联系买家</td>
+<td class="tr">{if $DT[im_web]}{im_web($O[buyer])}&nbsp;{/if}<a href="{userurl($O[buyer], 'file=contact')}" target="_blank" class="t">{$O[buyer]}</a></td>
+</tr>
+<tr>
+<td class="tl">申请时间</td>
+<td class="tr">{timetodate($I[addtime], 5)}</td>
+</tr>
+{if $I[url]}
+<tr>
+<td class="tl">开票状态</td>
+<td class="tr f_green">已上传</td>
+</tr>
+<tr>
+<td class="tl">开票时间</td>
+<td class="tr">{timetodate($I[updatetime], 5)}</td>
+</tr>
+<tr>
+<td class="tl">电子发票</td>
+<td class="tr"><a href="javascript:;" onclick="_preview('{$I[url]}');" class="t">查看发票</a> &nbsp; <a href="{DT_PATH}api/attach.php?url={urlencode($I['url'])}&name={urlencode($I['company'].'-'.$I['type'].'-'.$I['oid'].'.'.file_ext($I['url']))}" target="_blank" class="t">下载发票</a></td>
+</tr>
+{if $I[note]}
+<tr>
+<td class="tl">我的备注</td>
+<td class="tr">{$I[note]}</td>
+</tr>
+{/if}
+{elseif $I[send_type]}
+<tr>
+<td class="tl">开票状态</td>
+<td class="tr f_green">已快递</td>
+</tr>
+<tr>
+<td class="tl">开票时间</td>
+<td class="tr">{timetodate($I[updatetime], 5)}</td>
+</tr>
+<tr>
+<td class="tl">快递名称</td>
+<td class="tr">{$I[send_type]}</td>
+</tr>
+{if $I[send_no]}
+<tr>
+<td class="tl">快递单号</td>
+<td class="tr">{$I[send_no]}{if strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#copy-no" onclick="Dtoast('快递单号已复制');"/>
+<div style="z-index:1000;position:absolute;top:-10000px;"><textarea id="copy-no">{$I[send_no]}</textarea></div>
+{load('clipboard.min.js')}
+<script type="text/javascript">var clipboard = new Clipboard('[data-clipboard-action]');</script>
+{/if}
+<script type="text/javascript">
+$(function(){
+	$('#express').load(AJPath+'?action=express&moduleid=2&auth={$auth}');
+});
+</script>
+</td>
+</tr>
+<tr>
+<td class="tl">追踪结果</td>
+<td class="tr" style="line-height:200%;"><div id="express"><img src="{DT_STATIC}member/loading.gif" align="absmiddle"/> 正在查询...</div></td>
+</tr>
+{/if}
+{if $I[note]}
+<tr>
+<td class="tl">我的备注</td>
+<td class="tr">{$I[note]}</td>
+</tr>
+{/if}
+{else}
+<tr>
+<td class="tl"><span class="f_red">*</span> 发票类型</td>
+<td class="tr">
+	<input type="radio" name="type" value="1" id="type1" onclick="TP(1);"/><label for="type1"> 电子</label>&nbsp;&nbsp;
+	<input type="radio" name="type" value="0" id="type0" onclick="TP(0);"/><label for="type0"> 纸质</label> <span id="dtype" class="f_red"></span>
+</td>
+</tr>
+<tr data-1="1">
+<td class="tl"><span class="f_red">*</span> 发票上传</td>
+<td class="tr">
+<input name="fileurl" type="text" size="70" id="fileurl" readonly/>
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dfile({$moduleid}, Dd('fileurl').value, 'fileurl', 'pdf|zip|rar');"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="_preview(Dd('fileurl').value);"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('fileurl').value='';"/>
+</span>
+<span id="dfileurl" class="f_red"></span><br/>
+<span class="f_gray">请上传pdf格式电子发票，如果有多张发票请合并为一个pdf文件或打包为zip、rar格式</span>
+</td>
+</tr>
+<tr data-1="1">
+<td class="tl">买家邮箱</td>
+<td class="tr"><input type="text" size="70" readonly value="{$I[buyer_email]}" id="email"/>{if strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#email" onclick="Dtoast('买家邮箱已复制');"/>{/if}</td>
+</tr>
+<tr data-1="1">
+<td class="tl">买家手机</td>
+<td class="tr"><input type="text" size="70" readonly value="{$I[buyer_mobile]}" id="mob"/>{if strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#mob" onclick="Dtoast('买家手机已复制');"/>{/if}</td>
+</tr>
+<tr data-0="1">
+<td class="tl"><span class="f_red">*</span> 快递类型</td>
+<td class="tr f_gray">
+<select name="send_type" id="send_type">
+<option value="">请选择</option>
+{loop $send_types $v}
+<option value="{$v}">{$v}</option>
+{/loop}
+</select>
+{if $send_type}
+&nbsp;&nbsp;
+上次使用 <a href="javascript:" onclick="javascript:$('#send_type').val('{$send_type}');" class="t">{$send_type}</a>
+{/if}
+<span id="dsend_type" class="f_red"></span>
+</td>
+</tr>
+<tr data-0="1">
+<td class="tl">快递单号</td>
+<td class="tr"><input type="text" size="30" name="send_no" value="" id="send_no"/> <span id="dsend_no" class="f_red"></span></td>
+</tr>
+<tr data-0="1">
+<td class="tl">邮寄地址</td>
+<td class="tr"><input type="text" size="70" readonly value="{$I[buyer_address]}" id="buyer_address"/>{if strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#buyer_address" onclick="Dtoast('邮寄地址已复制');"/>{/if}</td>
+</tr>
+<tr data-0="1">
+<td class="tl">买家姓名</td>
+<td class="tr"><input type="text" size="70" readonly value="{$I[buyer_name]}" id="buyer_name"/>{if strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#buyer_name" onclick="Dtoast('买家姓名已复制');"/>{/if}</td>
+</tr>
+<tr data-0="1">
+<td class="tl">买家手机</td>
+<td class="tr"><input type="text" size="70" readonly value="{$I[buyer_mobile]}" id="buyer_mobile"/>{if strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#buyer_mobile" onclick="Dtoast('买家手机已复制');"/>{/if}</td>
+</tr>
+{if $DT[postcode]}
+<tr data-0="1">
+<td class="tl">邮政编码</td>
+<td class="tr"><input type="text" size="70" readonly value="{$I[buyer_postcode]}" id="buyer_postcode"/>{if strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#buyer_postcode" onclick="Dtoast('邮政编码已复制');"/>{/if}</td>
+</tr>
+{/if}
+<tr>
+<td class="tl">我的备注</td>
+<td class="tr"><input type="text" size="70" name="note" value="" id="note"/>&nbsp;<span id="dnote" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"> </td>
+<td class="tr">
+<input type="submit" name="submit" value=" 保 存 " class="btn_g"/>
+&nbsp;&nbsp;<input type="button" value=" 取 消 " class="btn" onclick="history.back(-1);"/>
+<script type="text/javascript">
+$(function(){	
+	{if strpos($I[type], '电子') !== false}TP(1);{else}TP(0);{/if}
+});
+</script>
+</td>
+</tr>
+{/if}
+</table>
+</form>
+<script type="text/javascript">
+function check() {
+	var f,l;
+	if(Dd('type1').checked) {
+		f = 'fileurl';
+		l = Dd(f).value.length;
+		if(l < 18) {
+			Dmsg('请上传发票', f);
+			return false;
+		}
+	} else {
+		f = 'send_type';
+		l = Dd(f).value.length;
+		if(l < 2) {
+			Dmsg('请选择快递类型', f);
+			return false;
+		}
+	}
+	return confirm('您确认以上信息核对无误，保存发票信息吗？');
+}
+function TP(id) {
+	if(id) {
+		$('#type1').attr('checked', 'checked');
+		$('[data-1]').show();
+		$('[data-0]').hide();
+	} else {
+		$('#type0').attr('checked', 'checked');
+		$('[data-0]').show();
+		$('[data-1]').hide();
+	}
+}
+s('trade');m('action_invoice');
+</script>

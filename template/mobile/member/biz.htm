@@ -1,0 +1,87 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{DT_MOB}my.php" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="index.php" data-transition="none">会员中心</a>
+<a href="{$DT[file_my]}" data-transition="none">信息管理</a>
+</div>
+</div>
+
+<div class="gird-4">
+	<ul>
+		{if $MG[trade_order]}
+		<li><a href="trade.php" rel="external"><img src="{DM_SKIN}my-trade.png" width="24" height="24"/><span>订单管理</span></a></li>
+		{/if}
+		{if $MG[group_order]}
+		{loop $MODULE $m}
+		{if $m[module] == 'group'}
+		<li><a href="group.php?mid={$m[moduleid]}&action=index" rel="external"><img src="{DM_SKIN}my-group.png" width="24" height="24"/><span>{$m[name]}订单</span></a></li>
+		{/if}
+		{/loop}
+		{/if}
+		{if $MG[agent]}
+		<li><a href="agent.php" rel="external"><img src="{DM_SKIN}my-agent.png" width="24" height="24"/><span>代理管理</span></a></li>
+		{/if}
+		{if $MG[stock_limit]>-1}
+		<li><a href="stock.php" rel="external"><img src="{DM_SKIN}my-stock.png" width="24" height="24"/><span>库存管理</span></a></li>
+		{/if}
+		{if $MG[promo_limit]>-1}
+		<li><a href="promo.php" rel="external"><img src="{DM_SKIN}my-promo.png" width="24" height="24"/><span>优惠促销</span></a></li>
+		{/if}
+		{if $MG[child_limit]>-1}
+		<li><a href="child.php" rel="external"><img src="{DM_SKIN}my-child.png" width="24" height="24"/><span>子账号</span></a></li>
+		{/if}
+		{if $MG[vdeposit]}
+		<li><a href="deposit.php" rel="external"><img src="{DM_SKIN}my-deposit.png" width="24" height="24"/><span>保证金</span></a></li>
+		{/if}
+		{if $MG[spread] && $EXT[spread_enable]}
+		<li><a href="spread.php" rel="external"><img src="{DM_SKIN}my-spread.png" width="24" height="24"/><span>排名推广</span></a></li>
+		{/if}
+		{if $MG[ad] && $EXT[ad_enable]}
+		<li><a href="ad.php?status=3" rel="external"><img src="{DM_SKIN}my-ad.png" width="24" height="24"/><span>广告预定</span></a></li>
+		{/if}
+		{if $MG[sms] && $DT[sms]}
+		<li><a href="sms.php" rel="external"><img src="{DM_SKIN}my-sms.png" width="24" height="24"/><span>手机短信</span></a></li>
+		{/if}
+		{if $MG[alert_limit]>-1}
+		<li><a href="alert.php?status=3" rel="external"><img src="{DM_SKIN}my-alert.png" width="24" height="24"/><span>贸易提醒</span></a></li>
+		{/if}
+		{if $MG[mail]}
+		<li><a href="mail.php" rel="external"><img src="{DM_SKIN}my-mail.png" width="24" height="24"/><span>邮件订阅</span></a></li>
+		{/if}
+		{if $MG[homepage]}
+		{if $MG[home]}
+		<li><a href="home.php" rel="external"><img src="{DM_SKIN}my-home.png" width="24" height="24"/><span>商铺设置</span></a></li>
+		{/if}
+		{if $MG[style]}
+		<li><a href="style.php" rel="external"><img src="{DM_SKIN}my-style.png" width="24" height="24"/><span>模板设置</span></a></li>
+		{/if}
+		{if $MG[stats_view] && $DT[stats]}
+		<li><a href="stats.php" rel="external"><img src="{DM_SKIN}my-stats.png" width="24" height="24"/><span>流量统计</span></a></li>
+		{/if}
+		{if ($MG[news_limit]>-1)}
+		<li><a href="news.php?status=3" rel="external"><img src="{DM_SKIN}my-news.png" width="24" height="24"/><span>公司新闻</span></a></li>
+		{/if}
+		{if ($MG[page_limit]>-1)}
+		<li><a href="page.php?status=3" rel="external"><img src="{DM_SKIN}my-page.png" width="24" height="24"/><span>公司单页</span></a></li>
+		{/if}
+		{if ($MG[honor_limit]>-1)}
+		<li><a href="honor.php?status=3" rel="external"><img src="{DM_SKIN}my-honor.png" width="24" height="24"/><span>荣誉资质</span></a></li>
+		{/if}
+		{if ($MG[link_limit]>-1)}
+		<li><a href="link.php?status=3" rel="external"><img src="{DM_SKIN}my-link.png" width="24" height="24"/><span>友情链接</span></a></li>
+		{/if}
+		{/if}
+	</ul>
+</div>
+{template 'footer'}

@@ -1,0 +1,1 @@
+document.write('<a href="http://b.com/api/redirect.php?aid=4" target="_blank"><img src="static/image/a2.jpg" width="116" height="212" alt=""/></a>');

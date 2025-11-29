@@ -1,0 +1,30 @@
+/*
+	DESTOON Copyright (C)2008-2099 www.destoon.com
+	This is NOT a freeware,Use is subject to license.txt
+*/
+.downinfo {padding:10px 10px 10px 10px;margin:0 10px 0 10px;border-top:#EEEEEE 1px solid;}
+.downinfo li{line-height:26px;}
+.downlist {color:#666666;padding:10px;}
+.downlist li {height:32px;line-height:32px;}
+
+.down-url {padding:16px 0;}
+.down-url ul {width:88px;margin:0 auto;}
+.down-url li {margin:16px 0;}
+.down-url div {width:88px;height:48px;line-height:48px;border:#DDDDDD 1px solid;border-radius:24px;background:#FFFFFF url('ico-download.gif') no-repeat 24px center;padding-left:48px;font-size:16px;}
+.down-url div:hover {border:#009933 1px solid;color:#009933;}
+
+.down-list {padding:0 24px 0 16px;}
+.down-list .dl-icon {width:32px;height:32px;text-align:center;}
+.down-list .dl-title {font-size:14px;}
+.down-list .dl-title div {height:32px;line-height:32px;overflow:hidden;}
+.down-list .dl-size {width:120px;color:#999999;}
+.down-list .dl-date {width:80px;text-align:right;color:#999999;}
+
+.album-list {overflow:hidden;padding:0 0 16px 0;}
+.album-list p {margin:0;border-bottom:#EEEEEE 1px solid;line-height:48px;padding:0 16px;}
+.album-list p b {font-size:18px;}
+.album-list p span {float:right;color:#999999;}
+.album-list li {width:398px;height:36px;line-height:36px;overflow:hidden;float:left;padding:0 12px;background:#F6F6F6;margin:16px 0 0 16px;font-size:14px;border-radius:6px;}
+.album-list li:hover {background:#EEEEEE;color:#333333;}
+.album-list li i {float:right;font-size:12px;color:#999999;font-style:normal;}
+.album-list .on {background:#F6F6F6 url('../../image/yes.png') no-repeat 389px center;width:378px;padding:0 32px 0 12px;}

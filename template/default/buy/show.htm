@@ -1,0 +1,122 @@
+{template 'header'}
+{load('album.js')}
+<script type="text/javascript">var module_id= {$moduleid},item_id={$itemid},content_id='content',img_max_width={$MOD[max_width]};</script>
+<div class="m">	
+	<div class="nav">{if $MOD[ip]}<div><b class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</b></div>{/if}<a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')}</div>
+</div>
+<div class="m bd-b">
+	<table width="100%" cellpadding="0" cellspacing="0">
+	<tr>
+	<td valign="top">
+		<table width="100%" cellpadding="0" cellspacing="0">
+		<tr>
+		<td colspan="5"><h1 class="title_trade" id="title">{$title}</h1></td>
+		</tr>
+		<tr>		
+		<td width="16">&nbsp;</td>
+		<td width="416" valign="top">
+			<div id="mid_div" onmouseover="SAlbum();" onmouseout="HAlbum();" onclick="VAlbum();"><img src="{str_replace('.thumb.', '.middle.', $albums[0])}" width="400" height="300" id="mid_pic"/><span id="zoomer"></span><span class="ab_zoom"></span></div>
+			{if $video}<div class="ab_play" onclick="APlay('{$video}');"></div><div id="ab-video" class="ab_video"></div><div class="ab_hide" onclick="AHide();"></div>{/if}
+			<div class="tbs">
+				<div class="tbsl"><img src="{DT_SKIN}ab-prev-0.png" width="20" height="56" id="tbsp" onclick="PAlbum();"/></div>
+				<div class="tbsm">
+					<div id="thumbs" style="width:{$pics_width}px;height:56px;">{loop $albums $k $v}<img src="{$v}" onmouseover="if(this.src.indexOf('nopic.thumb.png')==-1)Album({$k});" class="{if $k}ab_im{else}ab_on{/if}" id="tbs_{$k}"/>{/loop}</div>
+				</div>
+				<div class="tbsr"><img src="{DT_SKIN}ab-next-{if $pics>5}1{else}0{/if}.png" width="20" height="56" id="tbsn" onclick="NAlbum();"/></div>
+			</div>			
+		</td>
+		<td width="16">&nbsp;</td>
+		<td valign="top">
+			<div id="big_div" style="display:none;"><img src="" id="big_pic"/></div>		
+			<table width="100%" cellpadding="6" cellspacing="6">
+			<tr>
+			<td>价格</td>
+			<td class="f_price">{if $price}{$price}不限{/if}</td>
+			</tr>
+			<tr>
+			<td>数量</td>
+			<td>{if $amount}{$amount}{else}不限{/if}</td>
+			</tr>
+			<tr>
+			<td>包装</td>
+			<td>{if $pack}{$pack}{else}不限{/if}</td>
+			</tr>
+			<tr>
+			<td>报价</td>
+			<td>{if $messages>0}<span class="px16">{$messages}+</span>{else}<span class="f_grey">暂无</span>{/if}</td>
+			</tr>
+			{if $MOD[hits]}
+			<tr>
+			<td>浏览</td>
+			<td><span id="hits">{$hits}</span></td>
+			</tr>
+			{/if}
+			{if $n1 && $v1}
+			<tr>
+			<td>{$n1}</td>
+			<td>{$v1}</td>
+			</tr>
+			{/if}
+			{if $n2 && $v2}
+			<tr>
+			<td>{$n2}</td>
+			<td>{$v2}</td>
+			</tr>
+			{/if}
+			{if $n3 && $v3}
+			<tr>
+			<td>{$n3}</td>
+			<td>{$v3}</td>
+			</tr>
+			{/if}
+			<tr>
+			<td>地区</td>
+			<td>{area_pos($areaid, '')}</td>
+			</tr>
+			<tr>
+			<td>过期</td>
+			<td>{if $todate}{$todate}{else}长期有效{/if}{if $expired} <span class="f_red">已过期</span>{/if}</td>
+			</tr>
+			<tr>
+			<td width="60">更新</td>
+			<td>{$editdate}</td>
+			</tr>
+			{if $username && !$expired}
+			<tr>
+			<td colspan="2"><input type="button" value="发送报价" class="btn-act" onclick="Go('{$MOD[linkurl]}{rewrite('price.php?itemid='.$itemid)}');"/></td>
+			</tr>
+			{/if}
+			</table>
+		</td>
+		<td width="16">&nbsp;</td>
+		</tr>
+	</table>
+	</td>
+	<td valign="top" class="contact-td">		
+		<div class="contact-body" id="contact">{template 'contact', 'chip'}</div>
+	</td>
+	</tr>
+	</table>
+</div>
+
+<div class="m">
+	<div class="head-txt"><strong>详细说明</strong></div>
+	{if $CP}{template 'property_show', 'chip'}{/if}
+	<div class="content c_b" id="content">{$content}</div>
+
+	<div class="tool">
+	{if $MOD[show_like]}<i class="like" onclick="Dlike({$moduleid}, {$itemid}, 0);">点赞 <b id="like-{$moduleid}-{$itemid}-0">{$likes}</b></i>{/if}
+	{if $MOD[show_hate]}<i class="hate" onclick="Dhate({$moduleid}, {$itemid}, 0);">反对 <b id="hate-{$moduleid}-{$itemid}-0">{$hates}</b></i>{/if}
+	{if $MOD[show_report]}<i class="report" onclick="Dreport({$moduleid}, {$itemid}, 0);">举报</i>{/if}
+	{if $MOD[show_favorite]}<i class="favorite" onclick="Dfavor({$moduleid}, {$itemid});">收藏 <b>{$favorites}</b></i>{/if}
+	{if $MOD[fee_award]}<a href="{$MODULE[2][linkurl]}award.php?mid={$moduleid}&itemid={$itemid}" target="_blank"><i class="award">打赏 <b>{$awards}</b></i></a>{/if}
+	{if $could_comment}<a href="{$EXT[comment_url]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}" target="_blank"><i class="comment">评论 <b>{$comments}</b></i></a>{/if}
+	{if $MOD[show_share]}<a href="{DT_PATH}api/share.php?mid={$moduleid}&itemid={$itemid}" target="_blank"><i class="share">分享 <b>{$shares}</b></i></a>{/if}
+	</div>
+
+	<div class="head-txt"><span><a href="{$MOD[linkurl]}{$CAT[linkurl]}">更多<i>&gt;</i></a></span><strong>同类{$MOD[name]}</strong></div>
+	<div class="list-thumb"><!--{tag("moduleid=$moduleid&length=20&condition=status=3 and thumb<>''&catid=$catid&areaid=$cityid&itemid=$itemid&pagesize=8&order=edittime desc&width=130&height=130&cols=8&template=thumb-table")}--></div>
+</div>
+{if $video}{load('player.js')}{/if}
+{if $content}{load('content.js')}{/if}
+{template 'footer'}

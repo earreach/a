@@ -1,0 +1,27 @@
+<img src="{DT_PATH}api/weixin/qrcode.php" style="width:148px;width:148px;"/>
+<div style="padding:0 0 16px 12px;color:#666666;font-size:12px;line-height:24px;">微信扫码关注公众号<br/>回复文字<span class="f_green">验证码</span>获取</div>
+<input name="wxcode" id="wxcode" type="text" size="6" placeholder="微信验证码" class="input-captcha"/> <span id="cwxcode"></span>
+<script type="text/javascript">
+function checkwxcode(s) {
+	s = $.trim(s);
+	if(!is_wxcode(s)) return;
+	$.post(AJPath, 'action=wxcode&wxcode='+s,
+		function(data) {
+			if(data == '0') {
+				Dd('cwxcode').innerHTML = '&nbsp;&nbsp;<img src="{DT_STATIC}image/check-ok.png" align="absmiddle"/>';
+			} else {
+				Dd('wxcode').focus;
+				Dd('cwxcode').innerHTML = '&nbsp;&nbsp;<img src="{DT_STATIC}image/check-ko.png" align="absmiddle"/>';
+			}
+		}
+	);
+}
+function is_wxcode(v) {
+	return v.match(/^[0-9]{6}$/);
+}
+$(function() {
+	$('#wxcode').bind('keyup blur', function() {
+		checkwxcode($('#wxcode').val());
+	});
+});
+</script>

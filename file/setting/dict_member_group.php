@@ -1,0 +1,5 @@
+<?php exit;?>
+groupid,会员组ID,
+groupname,会员组名称,
+vip,VIP级别,
+listorder,排序,

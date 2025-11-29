@@ -1,0 +1,58 @@
+<input type="text" name="post[video]" value="{$video}" id="video" onblur="$('#player').html('');"/>
+<div class="ui-form-file-upload"><div id="video-picker"></div></div>
+<div class="ui-form-video" id="player" onclick="Dplay();"></div>
+{load('player.js')}
+<script type="text/javascript">
+var filev = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=file',
+    pick: '#video-picker',
+    accept: {
+		title: 'video',
+		extensions: 'mp4,mov,3gp,mp3', 
+		mimeTypes: 'video/*'
+    },
+	fileNumLimit: 1,
+    resize: false
+});
+filev.on('beforeFileQueued', function(file) {
+	var exts = filev.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+filev.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+filev.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+filev.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#video').val(data.url);
+		$('#player').html('');
+	}
+});
+filev.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+filev.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+function Dplay() {
+	var url = Dd('video').value;
+	if(url.length > 5) {
+		if($('#player').html().indexOf(url) == -1) {
+			var h = parseInt(($(document).width()-48)*9/16);
+			$('#player').css('height', h+'px');
+			$('#player').html(player(url,'100%',h,1));
+		}
+	} else {
+		Dtoast('{$js_pageid}', '视频地址为空');
+	}
+}
+</script>

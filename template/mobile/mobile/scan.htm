@@ -1,0 +1,90 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right"><a href="javascript:;" onclick="Dscan();"><img src="{DM_SKIN}icon-scan{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div class="ui-form">
+	<form action="?" method="post" data-ajax="false" id="dform">
+	<div style="color:#999999;font-size:12px;padding:6px 0;">扫描结果：</div>
+	<div><textarea name="content" id="content">{$content}</textarea></div>
+	<div>
+		<input type="button" value="复制结果" class="btn-green" onclick="Dtoast(js_pageid, '扫描结果已复制');" data-clipboard-action="copy" data-clipboard-target="#content" style="width:96px;height:32px;line-height:32px;font-size:12px;"/>
+		{if $url && $DT_MBS == 'weixin'}<input type="button" value="打开网址" class="btn" onclick="Go('{$url}');" style="width:96px;height:32px;line-height:32px;font-size:12px;margin:0 0 0 10px;"/>{/if}
+	</div>
+</div>
+{load('clipboard.min.js')}
+<script type="text/javascript">var clipboard = new Clipboard('[data-clipboard-action]');</script>
+{if $DT_MBS == 'weixin' || $DT_MBS == 'wxmini'}
+<?php
+	$WX = cache_read('weixin.php');
+	$signPackage = '';
+	if($WX['appid'] && $WX['appsecret']) {
+		include DT_ROOT.'/api/weixin/jssdk.php';
+		$jssdk = new JSSDK($WX['appid'], $WX['appsecret']);
+		$signPackage = $jssdk->GetSignPackage();
+	}
+?>
+<script src="//res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+<script type="text/javascript">
+function Dscan() {
+	wx.scanQRCode({
+	  needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+	  scanType: ["qrCode"], // 可以指定扫二维码还是一维码，默认二者都有
+	  success: function (res) {
+		$('#content').val(res.resultStr);
+		$('#dform').submit();
+	  }
+	});
+}
+wx.config({
+	debug: false,
+	appId: '<?php echo $signPackage["appId"];?>',
+	timestamp: <?php echo $signPackage["timestamp"];?>,
+	nonceStr: '<?php echo $signPackage["nonceStr"];?>',
+	signature: '<?php echo $signPackage["signature"];?>',
+	jsApiList: ['scanQRCode']
+});
+</script>
+{elseif $DT_MBS == 'alipay'}
+<script src="https://gw.alipayobjects.com/as/g/h5-lib/alipayjsapi/3.1.1/alipayjsapi.inc.min.js"></script>
+<script type="text/javascript">
+function Dscan() {
+	ap.scan(function(res){
+		$('#content').val(res.code);
+		$('#dform').submit();
+    });
+}
+</script>
+{elseif $DT_MBS == 'app'}
+{load('jsbridge-mini.js')}
+<script type="text/javascript">
+function Dscan() {
+	jsBridge.requestPermissions([ "ReadPhotos" ]);
+	jsBridge.scan({
+		needResult: true
+	}, function(code) {
+		if(code) {
+			$('#content').val(code);
+			$('#dform').submit();
+		} else {
+			Dtoast(js_pageid, "扫码失败或取消了扫码");
+		}
+	});
+}
+</script>
+{else}
+<script type="text/javascript">
+function Dscan() {
+	Dtoast(js_pageid, '请在APP或微信或支付宝中打开');
+}
+</script>
+{/if}
+{if $action == 'auto'}
+<script type="text/javascript">Dscan();</script>
+{/if}
+{template 'footer'}

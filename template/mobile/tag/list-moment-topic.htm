@@ -1,0 +1,4 @@
+{loop $tags $i $t}
+<div><b>#</b><a href="{$t[moburl]}"{if $target} target="{$target}"{/if} title="{$t[alt]}">{$t[title]}</a></div>
+<p>{numtoread($t[item])}浏览 &nbsp; {numtoread($t[item])}讨论</p>
+{/loop}

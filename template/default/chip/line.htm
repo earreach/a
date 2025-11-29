@@ -1,0 +1,33 @@
+var destoon_userid = {$_userid},destoon_username = '{$_username}',destoon_message = {$_message},destoon_chat = {$_chat},destoon_cart = get_cart(),destoon_member = destoon_guest = '';
+
+{if $_userid}
+destoon_member += '<a href="{$MODULE[2][linkurl]}" onmouseover="Dcard(\'member\',this);"><img src="{DT_SKIN}user.png" align="absmiddle"/>{if $_truename}{$_truename}{elseif $_passport}{$_passport}{else}{$_username}{/if}</a> &nbsp;|&nbsp; <a href="{$MODULE[21][linkurl]}quote_my.php">我的报价</a> &nbsp;|&nbsp; <a href="{$MODULE[2][linkurl]}">会员中心</a> &nbsp;|&nbsp; {if $DT[max_cart]>0}<a href="{$MODULE[2][linkurl]}order.php">我的订单</a> &nbsp;|&nbsp; {/if}<a href="{$MODULE[2][linkurl]}message.php" onmouseover="Dcard(\'message\',this);">站内信<span class="head_t" id="destoon_message">{if $_message}<b>{if $_message>99}99+{else}{$_message}{/if}</b>{if $_sound}'+sound('message_{$_sound}')+'{/if}{/if}</span></a>{if $DT[im_web]} &nbsp;|&nbsp; <a href="{$MODULE[2][linkurl]}im.php" onmouseover="Dcard(\'chat\',this);">新交谈<span class="head_t" id="destoon_chat">{if $_chat}<b>{if $_chat>99}99+{else}{$_chat}{/if}</b>{if $_sound}'+sound('chat_new')+'{/if}{/if}</span></a>{/if} &nbsp;|&nbsp; <a href="{$MODULE[2][linkurl]}logout.php">退出登录</a>';
+
+{else}
+destoon_guest = '<img src="{DT_SKIN}user.png" align="absmiddle"/><a href="{$MODULE[21][linkurl]}quote_login.php">我的报价</a> &nbsp;|&nbsp; <a href="{$MODULE[2][linkurl]}{$DT[file_login]}" id="destoon-login">会员登录</a> &nbsp;|&nbsp; <a href="{$MODULE[2][linkurl]}{$DT[file_register]}">免费注册</a> &nbsp;|&nbsp; <a href="{$MODULE[2][linkurl]}send.php">忘记密码</a>';
+
+
+
+
+	{if $EXT[oauth]}
+	var oauth_site = '{get_cookie('oauth_site')}';
+	var oauth_user = '{get_cookie('oauth_user')}';
+	destoon_member += (oauth_user && oauth_site) ? '<img src="{DT_PATH}api/oauth/'+oauth_site+'/ico.png" align="absmiddle"/><strong>'+oauth_user+'</strong> &nbsp;|&nbsp; <a href="{$MODULE[2][linkurl]}oauth.php?action=bind">绑定帐号</a> &nbsp;|&nbsp; <a href="javascript:" onclick="oauth_logout();">退出登录</a>' : destoon_guest;
+	{else}
+	destoon_member += destoon_guest;
+	{/if}
+{/if}
+$('#destoon_member').html(destoon_member);
+{if $DT[city]}
+$('#destoon_city').html('{$city_name}');
+{/if}
+{if $DT[max_cart]>0}
+$('#destoon_cart').html(destoon_cart > 0 ? '<b>'+(destoon_cart > 99 ? '99+' : destoon_cart)+'</b>' : '');
+{/if}
+{if $_message && strpos($DT_MBS, 'IE') === false}
+Dnotification('new_message', '{$MODULE[2][linkurl]}message.php', '{useravatar($_username, 'large')}', '站内信 ({$_message})', '收到新的站内信件，点击查看');
+{/if}
+{if $_chat && strpos($DT_MBS, 'IE') === false}
+Dnotification('new_chat', '{$MODULE[2][linkurl]}im.php', '{useravatar($_username, 'large')}', '新交谈 ({$_chat})', '收到新的对话请求，点击交谈');
+{/if}
+{if $_userid && $DT[pushtime]}window.setInterval('PushNew()',{$DT[pushtime]}*1000);{/if}

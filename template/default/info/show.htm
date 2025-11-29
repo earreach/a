@@ -1,0 +1,77 @@
+{template 'header'}
+{load('album.js')}
+<script type="text/javascript">var module_id= {$moduleid},item_id={$itemid},content_id='content',img_max_width={$MOD[max_width]};</script>
+<div class="m">
+	<div class="nav">{if $MOD[ip]}<div><b class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</b></div>{/if}<a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')}</div>
+</div>
+<div class="m m3">
+	<div class="m3l">
+		<h1 class="title" id="title">{$title}</h1>
+		<div class="info_main">		
+			<table width="100%">
+			<tr>
+			<td width="414" valign="top">
+				<div id="mid_div" onmouseover="SAlbum();" onmouseout="HAlbum();" onclick="VAlbum();"><img src="{str_replace('.thumb.', '.middle.', $albums[0])}" width="400" height="300" id="mid_pic"/><span id="zoomer"></span><span class="ab_zoom"></span></div>
+				{if $video}<div class="ab_play" onclick="APlay('{$video}');"></div><div id="ab-video" class="ab_video"></div><div class="ab_hide" onclick="AHide();"></div>{/if}
+				<div class="tbs">
+					<div class="tbsl"><img src="{DT_SKIN}ab-prev-0.png" width="20" height="56" id="tbsp" onclick="PAlbum();"/></div>
+					<div class="tbsm">
+						<div id="thumbs" style="width:{$pics_width}px;height:56px;">{loop $albums $k $v}<img src="{$v}" onmouseover="if(this.src.indexOf('nopic.thumb.png')==-1)Album({$k});" class="{if $k}ab_im{else}ab_on{/if}" id="tbs_{$k}"/>{/loop}</div>
+					</div>
+					<div class="tbsr"><img src="{DT_SKIN}ab-next-{if $pics>5}1{else}0{/if}.png" width="20" height="56" id="tbsn" onclick="NAlbum();"/></div>
+				</div>
+			</td>
+			<td width="16"> </td>
+			<td valign="top">
+			<div id="big_div" style="display:none;"><img src="" id="big_pic"/></div>
+			<ul>
+			<li><strong>区域</strong>：{area_pos($areaid, '')}</li>
+			<li><strong>留言</strong>：{if $messages>0}<span class="px16">{$messages}+</span>{else}<span class="f_grey">暂无</span>{/if}</li>
+			{if $MOD[hits]}<li><strong>浏览</strong>：<span id="hits">{$hits}</span></li>{/if}
+			{if $n1 && $v1}<li><strong>{$n1}</strong>：{$v1}</li>{/if}
+			{if $n2 && $v2}<li><strong>{$n2}</strong>：{$v2}</li>{/if}
+			{if $n3 && $v3}<li><strong>{$n3}</strong>：{$v3}</li>{/if}
+			<li><strong>更新</strong>：{$editdate}</li>
+			<li><strong>到期</strong>：{if $todate}{$todate}{else}长期有效{/if}{if $expired} <span class="f_red">已过期</span>{/if}</li>
+			{if $MOD[show_message] && $username && !$expired}
+			<li><input type="button" value="留言咨询" class="btn-act" onclick="Go('{$MOD[linkurl]}{rewrite('message.php?itemid='.$itemid)}');"/></li>
+			{/if}
+			</ul>
+			</td>
+			</tr>
+			</table>
+		</div>
+		{if $content}
+		<div class="head-txt"><strong>详细说明</strong></div>
+		<div class="content" id="content">{$content}</div>
+		{/if}
+		{if $CP}{template 'property_show', 'chip'}{/if}
+
+	<div class="tool">
+	{if $MOD[show_like]}<i class="like" onclick="Dlike({$moduleid}, {$itemid}, 0);">点赞 <b id="like-{$moduleid}-{$itemid}-0">{$likes}</b></i>{/if}
+	{if $MOD[show_hate]}<i class="hate" onclick="Dhate({$moduleid}, {$itemid}, 0);">反对 <b id="hate-{$moduleid}-{$itemid}-0">{$hates}</b></i>{/if}
+	{if $MOD[show_report]}<i class="report" onclick="Dreport({$moduleid}, {$itemid}, 0);">举报</i>{/if}
+	{if $MOD[show_favorite]}<i class="favorite" onclick="Dfavor({$moduleid}, {$itemid});">收藏 <b>{$favorites}</b></i>{/if}
+	{if $MOD[fee_award]}<a href="{$MODULE[2][linkurl]}award.php?mid={$moduleid}&itemid={$itemid}" target="_blank"><i class="award">打赏 <b>{$awards}</b></i></a>{/if}
+	{if $could_comment}<a href="{$EXT[comment_url]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}" target="_blank"><i class="comment">评论 <b>{$comments}</b></i></a>{/if}
+	{if $MOD[show_share]}<a href="{DT_PATH}api/share.php?mid={$moduleid}&itemid={$itemid}" target="_blank"><i class="share">分享 <b>{$shares}</b></i></a>{/if}
+	</div>
+
+	</div>
+	<div class="m3r">
+		<div class="contact-body" id="contact">{template 'contact', 'chip'}</div>		
+		{if $MOD[page_srelate]}
+		{if $username}
+		<div class="head-sub"><span><a href="{userurl($username, 'file='.$MOD['moduledir'])}" target="_blank">更多<i>&gt;</i></a></span><strong>该企业最新{$MOD[name]}</strong></div>
+		<div class="list-txt"><!--{tag("moduleid=$moduleid&condition=status=3 and username='$username'&itemid=$itemid&pagesize=".$MOD[page_srelate]."&order=addtime desc")}--></div>
+		{else}
+		<div class="head-sub"><span><a href="{$MOD[linkurl]}{$CAT[linkurl]}">更多<i>&gt;</i></a></span><strong>同类{$MOD[name]}</strong></div>
+		<div class="list-txt"><!--{tag("moduleid=$moduleid&condition=status=3&catid=$catid&areaid=$cityid&itemid=$itemid&pagesize=".$MOD[page_srelate]."&order=addtime desc")}--></div>
+		{/if}
+		{/if}
+	</div>
+	<div class="b10 c_b"></div>
+</div>
+{if $video}{load('player.js')}{/if}
+{if $content}{load('content.js')}{/if}
+{template 'footer'}

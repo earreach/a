@@ -1,0 +1,15 @@
+<div class="side_head"><div><strong>{$sv[name]}</strong></div></div>
+<div class="side_body">
+<form action="{$MODULE[4][linkurl]}index.php" onsubmit="return check_kw();">
+<input type="hidden" name="homepage" value="{$username}"/>
+<input type="text" name="kw" value="{$kw}" placeholder="{$L[kw]}" size="25" id="kw" class="inp"/>
+<div style="padding:10px 0 0 0;">
+<select name="file">
+{loop $MENU $k $v}
+{if !in_array($k, array('contact', 'introduce'))}<option value="{$k}"{if $file==$k} selected{/if}>{$v[name]}</option>{/if}
+{/loop}
+</select>&nbsp;
+<input type="submit" value=" 搜 索 " class="sbm"/>
+</div>
+</form>
+</div>

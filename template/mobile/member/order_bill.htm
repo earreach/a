@@ -1,0 +1,117 @@
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">线下支付</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=update&step=detail&itemid={$itemid}" data-transition="none">取消支付</a>
+<a href="?action=update&step=detail&itemid={$itemid}" data-transition="none">订单详情</a>
+<a href="?action=index" data-direction="reverse">订单列表</a>
+</div>
+</div>
+
+{template 'goods', 'chip'}
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div class="ui-head"><i></i><b>线下支付</b></div>
+<div class="content">
+联系卖家：<a href="{userurl($O[seller], 'file=contact')}">{$O[seller]}</a><br/>
+下单时间：{$O[adddate]}<br/>
+应付金额：<span class="f_red px16">{$DT[money_sign]}{number_format($money, 2, '.', '')}</span><br/>
+开户银行：{$S[bank]}<br/>
+{if $S[branch]}
+开户网点：{$S[branch]}<br/>
+{/if}
+收款户名：{$S[company]}<br/>
+收款帐号：{$S[account]}<br/>
+{if $O[bill]}
+付款凭证：已上传，请等待卖家审核<br/>
+<br/><img src="{$O[bill]}"/><br/>
+{else}
+注意事项：<br/>
+<span class="f_gray px12">如果卖家收款信息不完整，请联系对方确认之后再打款</span><br/>
+<span class="f_red px12">线下支付的订单无法通过平台退款，需自行承担交易风险</span>
+{/if}
+</div>
+{if $O[bill]}
+{else}
+<div class="ui-form">
+<p>上传凭证<i>*</i><b id="dbill"></b></p>
+<div>
+<input type="text" name="bill" value="" id="bill" placeholder="限制为jpg|jpeg|png"/>
+<div class="ui-form-file-upload"><div id="file-picker"></div></div>
+<script type="text/javascript">
+var fileu = WebUploader.create({
+	auto: true,
+	server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=file',
+	pick: '#file-picker',
+	accept: {
+		title: 'Files',
+		extensions: 'jpg,jpeg,png', 
+		mimeTypes: '*/*'
+	},
+	resize: false
+});
+fileu.on('beforeFileQueued', function(file) {
+	var exts = fileu.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+fileu.on('fileQueued', function(file) {
+	Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+fileu.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+fileu.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#bill').val(data.url);
+	}
+});
+fileu.on( 'uploadError', function(file, data) {
+	Dtoast('{$js_pageid}',data.message, '', 5);
+});
+fileu.on('uploadComplete', function(file) {
+	$('#toast-{$js_pageid}').hide();
+});
+</script>
+</div>
+{if $DT[sms]}
+	<div class="blank-20"></div>
+	<div class="ui-list-txt">
+		<p><i class="ui-ico-info ui-fr"><a href="sms.php">可用短信{$_sms}条</a></i><input type="checkbox" name="sendsms" value="1" checked="checked"/> 短信通知卖家审核</p>
+	</div>
+{/if}
+<div class="blank-20"></div>
+<div><input type="submit" name="submit" value="确认上传" class="btn-green"/></div>
+<div class="blank-20"></div>
+</div>
+{/if}
+<script type="text/javascript">
+function check() {
+	if(Dd('bill').value.length < 16) {
+		Dmsg('请上传付款凭证', 'bill');
+		return false;
+	}
+	{if $O[status] == 7}
+	return confirm('请确认已经收到货物并已付款，提交后需要卖家审核，审核后订单完成，请确认');
+	{else}
+	return confirm('您确认已经线下支付了吗？提交后需卖家审核到款后发货');
+	{/if}
+}
+</script>
+</form>

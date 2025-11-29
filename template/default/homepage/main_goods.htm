@@ -1,0 +1,26 @@
+{if isset($MODULE[16]) && isset($MENU[$MODULE[16]['moduledir']])}
+<div class="main_head"><div><span class="f_r"><a href="{userurl($username, 'file='.$MODULE[16]['moduledir'], $domain)}"><img src="{DT_STATIC}home/image/more.gif" title="更多"/></a></span><strong>{$mv[name]}</strong></div></div>
+<div class="main_body">
+<!--{php $tags=tag("moduleid=16&condition=status>2 and username='$username' and elite=1&pagesize=".$mv['pagesize']."&order=edittime desc&fields=itemid,title,linkurl,thumb,edittime,price,orders&template=null");}-->
+{if $tags}
+<div id="goods" style="height:324px;overflow:hidden;">
+<table cellpadding="0" cellspacing="0" width="100%">
+{loop $tags $i $t}
+{if $i%4==0}<tr align="center">{/if}
+<td valign="top" width="25%" height="324">
+<div class="thumb">
+	<a href="{if $homeurl}{$t[linkurl]}{else}{userurl($username, 'file='.$MODULE[16]['moduledir'].'&itemid='.$t['itemid'], $domain)}{/if}"><img src="{$t[thumb]}" width="200" height="200" alt="{$t[alt]}"/></a>
+	<div><a href="{if $homeurl}{$t[linkurl]}{else}{userurl($username, 'file='.$MODULE[16]['moduledir'].'&itemid='.$t['itemid'], $domain)}{/if}" title="{$t[alt]}">{$t[title]}</a></div>
+	<b><s>{$DT[money_sign]}</s>{$t[price]}<em>{$t[orders]}已售</em></b>
+</div>
+</td>
+{if $i%4==3}</tr>{/if}
+{/loop}
+</table>
+</div>
+{else}	
+<div class="list-none">暂无记录</div>
+{/if}
+</div>
+{if $tags}{load('marquee.js')}<script type="text/javascript">$(function(){new dmarquee(324, 15, 2000, 'goods');});</script>{/if}
+{/if}

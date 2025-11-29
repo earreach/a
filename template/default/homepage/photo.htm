@@ -1,0 +1,160 @@
+{template 'header', $template}
+<div class="dsn" id="pos_show"><a href="{$COM[linkurl]}">首页</a> <i>&gt;</i> <a href="{$MENU[$menuid][linkurl]}">{$MENU[$menuid][name]}</a>{if $itemid} <i>&gt;</i> {$title}{/if}</div>
+<div class="main_head"><div>{if $itemid}<span class="f_r"><a href="{$MENU[$menuid][linkurl]}"><img src="{DT_STATIC}image/ico-list-img.png" width="16" height="16" title="返回列表" align="absmiddle"/></a></span>{/if}<strong>{$MENU[$menuid][name]}</strong></div></div>
+<div class="main_body">
+{if $itemid}
+	{if $pass}
+	{if $view}
+		{load('photo.css')}
+		<style type="text/css">
+		#side,#split {display:none;}
+		.photo_info_i {clear:both;padding: 16px 6px 24px 0;}
+		</style>
+		<div class="photo_l">
+			<div class="photo_info">
+				<div class="b10"></div>
+				<div class="photo_info_r"><span class="count_b">共{$items}图</span></div>
+				<h1 class="title" id="title">{$title}</h1>
+				<div class="photo_info_i">
+				<span onclick="Go('{userurl($username, 'file='.$file.'&itemid='.$itemid, $domain)}');" class="f_r c_p"><img src="{DT_STATIC}image/ico-list-mix.png" width="16" height="16" title="返回图集" align="absmiddle"/></span>
+				<i class="ui-ico-time">{$adddate}</i>
+				{if $MOD[hits]}<i class="ui-ico-hits"><span id="hits">{$hits}</span></i>{/if}
+				</div>
+			</div>
+			<div class="photo_all" oncontextmenu="return false">
+			<table width="100%">
+			{loop $T $i $t}
+			{if $i%6==0}<tr align="center">{/if}
+			<td width="16.66%" valign="top">
+			<a href="{$t[linkurl]}"><img src="{$t[thumb]}" width="160" alt="{$t[introduce]}" class="thumb_a" onmouseover="this.className='thumb_b';" onmouseout="this.className='thumb_a';"/></a>
+			<div>({$t[number]}) {$t[title]}</div>
+			</td>
+			{if $i%6==5}</tr>{/if}
+			{/loop}
+			</table>
+			</div>
+		</div>
+		{if $pages}<div class="pages">{$pages}</div>{/if}
+	{else}
+		{load('photo.css')}
+		{load('jquery.slide.css')}
+		{load('jquery.slide.js')}
+		<style type="text/css">
+		#side,#split {display:none;}
+		.jqslide .pic {width:1160px;}
+		.jqslide .pic .big {width:1160px;}
+		.jqslide .pic .big img {max-width:1120px;}
+		.photo_info_i {clear:both;padding: 16px 6px 24px 0;}
+		</style>
+		<div class="photo_f">
+			<p>{$MOD[name]}浏览完毕</p>
+			<div onclick="Go('{$linkurl}');">重新浏览</div>
+			<div onclick="Go('{$MENU[$menuid][linkurl]}');">返回列表</div>
+		</div>
+		<div class="photo_l">
+			<div class="photo_info">
+				<div class="b10"></div>
+				<div class="photo_info_r"><span class="count_a">{$page}</span> <span class="count_b">/ {$items}</span></div>
+				<h1 class="title" id="title">{$title}</h1>
+				<div class="photo_info_i">
+				<span onclick="Go('{userurl($username, 'file='.$file.'&itemid='.$itemid.'&view=1', $domain)}');" class="f_r c_p"><img src="{DT_STATIC}image/ico-list-img.png" width="16" height="16" title="全部展开" align="absmiddle"/></span>
+				<i class="ui-ico-time">{$adddate}</i>
+				{if $MOD[hits]}<i class="ui-ico-hits"><span id="hits">{$hits}</span></i>{/if}
+				{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}
+				</div>
+			</div>
+		</div>
+		<div class="jqslide">
+			<div class="pic">
+				<div class="big">
+					<img id="photo" src="{DT_SKIN}spacer.gif"/>
+					<div id="pload"></div>
+				</div>
+				<div class="prev"><a href="javascript:void(0);" hidefocus="true" id="prevbtn" class="prevbtn" title="上一张 支持键盘←方向键"></a></div>
+				<div class="next"><a href="javascript:void(0);" hidefocus="true" id="nextbtn" class="nextbtn" title="下一张 支持键盘→方向键"></a></div>
+			</div>
+			<div id="pintro" class="photo_intro"></div>
+			<div class="plist">
+				<div class="scd">
+					<ul id="photolist">			
+					</ul>
+				</div>
+				<div class="scb" id="scb"></div>
+				<a href="javascript:void(0);" class="scl" id="scprev" hidefocus="true"></a>
+				<a href="javascript:void(0);" class="scr" id="scnext" hidefocus="true"></a>
+			</div>
+			<ul id="photoinfo" style="display:none;">
+			{loop $T $k $t}
+			<li>
+			<p>{$t[introduce]}</p>
+			<i title="bimg">{$t[big]}</i>
+			<i title="simg"><span>{$k+1}/{$items}</span><a href="javascript:void(0)" title="{$t[introduce]}" hidefocus="true"><img src="{$t[middle]}" width="100" height="75" alt=""/></a></i>
+			</li>
+			{/loop}
+			</ul>
+		</div>
+		</div>
+		<div class="main_head"><div><strong>详细信息</strong></div></div>
+		<div class="main_body">
+			{if $CP}{template 'property_show', 'chip'}{/if}
+			<div class="content" id="content">{$content}</div>
+		</div>
+		<script type="text/javascript">
+		var load_page = {$page};var load_item = {$items};
+		function PhotoLast() {
+			$('.photo_f').css('margin', '200px 0 0 370px');
+			$('.photo_f').fadeIn(300);
+		}
+		</script>
+	{/if}
+	{else}
+	<br/><br/><br/><br/>
+		<form method="post" action="{DT_PATH}index.php">
+		<input type="hidden" name="homepage" value="{$username}"/>
+		<input type="hidden" name="file" value="{$file}"/>
+		<input type="hidden" name="itemid" value="{$itemid}"/>
+		<table width="300" cellpadding="10" align="center">
+		<tr style="display:none;">
+		<td><input name="iebug" type="text" size="30"/></td>
+		</tr>
+		{if $open == 2}
+		<tr>
+		<td class="px14"><img src="{DT_SKIN}ico_lock.gif" width="16" height="16" align="absmiddle"/> <strong>请输入访问密码</strong></td>
+		</tr>
+		{elseif $open == 1}
+		<tr>
+		<td class="px14"><img src="{DT_SKIN}ico_lock.gif" width="16" height="16" align="absmiddle"/> <strong>请回答，{$question}？</strong></td>
+		</tr>
+		{/if}
+		<tr>
+		<td><input name="key" type="text" size="30"/>&nbsp;&nbsp;<span class="f_red">{$error}</span></td>
+		</tr>
+		<tr>
+		<td><input type="submit" name="submit" value=" 确 定 " class="sbm"/></td>
+		</tr>
+		</table>
+		</form>
+	<br/><br/><br/><br/><br/>
+	{/if}
+{else}
+	{if $lists}
+	<table cellpadding="0" cellspacing="0" width="100%">
+	{loop $lists $k $v}
+	{if $k%4==0}<tr align="center">{/if}
+	<td valign="top" width="25%">
+	<div class="thumb">
+		<a href="{$v[linkurl]}"><img src="{$v[thumb]}" width="200" height="150" alt="{$v[alt]}" title="{$v[alt]}"/></a>
+		<div><a href="{$v[linkurl]}" title="{$v[alt]}">{$v[title]}</a></div>
+		<b><span class="px12">{timetodate($v[addtime], 3)}</span><em>{$v[items]}图</em></b>
+	</div>
+	</td>
+	{if $k%4==3}</tr>{/if}
+	{/loop}
+	</table>
+	{else}
+	<div class="list-none">暂无记录</div>
+	{/if}
+	{if $pages}<div class="pages">{$pages}</div>{/if}
+{/if}
+</div>
+{template 'footer', $template}

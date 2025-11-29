@@ -1,0 +1,124 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$COM[company]}</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="{DT_MOB}api/share.php?mid={$moduleid}&itemid={$itemid}" data-transition="slideup">分享好友</a>
+<a href="{$MOD[mobile]}" data-direction="reverse">{$MOD[name]}首页</a>
+<a href="{DT_MOB}{rewrite('channel.php?mid='.$moduleid)}" data-transition="none">{$MOD[name]}分类</a>
+<a href="{DT_MOB}channel.php" data-direction="reverse">切换频道</a>
+</div>
+</div>
+
+{if $could_contact}
+<div class="gird-4">
+	<ul>
+		{if $DT[im_web]}
+		<li><a href="{$MODULE[2][mobile]}chat.php?touser={$COM[username]}" rel="external"><img src="{DT_STATIC}image/share-chat.png" width="48" height="48"/><span>在线交谈</span></a></li>
+		{/if}
+		<li><a href="{$MODULE[2][mobile]}message.php?action=send&touser={$COM[username]}" rel="external"><img src="{DT_STATIC}image/share-message.png" width="48" height="48"/><span>发送私信</span></a></li>
+		<li><a href="{$MODULE[2][mobile]}friend.php?action=add&username={$COM[username]}" rel="external"><img src="{DT_STATIC}image/share-friend.png" width="48" height="48"/><span>添加好友</span></a></li>
+		{if $COM[telephone]}
+		<li><a href="tel:{$COM[telephone]}"><img src="{DT_STATIC}image/share-tel.png" width="48" height="48"/><span>拨打电话</span></a></li>
+		{elseif $COM[mobile] && $DT[im_mob]}
+		<li><a href="tel:{$COM[mobile]}"><img src="{DT_STATIC}image/share-tel.png" width="48" height="48"/><span>拨打电话</span></a></li>
+		{/if}
+		{if $COM[mobile] && $DT[im_mob]}
+		<li><a href="sms:{$COM[mobile]}"><img src="{DT_STATIC}image/share-sms.png" width="48" height="48"/><span>发送短信</span></a></li>
+		{/if}
+		{if $COM[mail]}
+		<li><a href="mailto:{$COM[mail]}"><img src="{DT_STATIC}image/share-email.png" width="48" height="48"/><span>发送邮件</span></a></li>
+		{/if}
+		{if $COM[qq] && $DT[im_qq]}
+		<li><a href="http://wpa.qq.com/msgrd?v=3&uin={$COM[qq]}&site=qq&menu=yes" target="_blank" rel="external"><img src="{DT_STATIC}image/share-qq.png" width="48" height="48"/><span>QQ交谈</span></a></li>
+		{/if}
+		{if $COM[wx] && $DT[im_wx]}
+		<li><a href="{DT_MOB}api/wx.php?wid={$COM[wx]}&username={$COM[username]}" rel="external"><img src="{DT_STATIC}image/share-wx.png" width="48" height="48"/><span>微信交谈</span></a></li>
+		{/if}
+		{if $COM[gzh] && $DT[im_wx]}
+		<li><a href="{DT_MOB}api/wx.php?gzh={$COM[gzh]}&username={$COM[username]}" rel="external"><img src="{DT_STATIC}image/share-gzh.png" width="48" height="48"/><span>微信公众号</span></a></li>
+		{/if}
+		{if $COM[ali] && $DT[im_ali]}
+		<li><a href="http://amos.alicdn.com/msg.aw?v=2&uid={$COM[ali]}&site=cnalichn&s=6&charset=UTF-8" target="_blank" rel="external"><img src="{DT_STATIC}image/share-ali.png" width="48" height="48"/><span>阿里旺旺</span></a></li>
+		{/if}
+		{if $COM[skype] && $DT[im_skype]}
+		<li><img src="{DT_STATIC}image/share-skype.png" width="48" height="48" onclick="prompt('长按号码可以复制', '{$COM[skype]}');"/><span>Skype通话</span></li>
+		{/if}
+		{if $COM[address]}
+		<li><a href="{DT_MOB}api/address.php?auth={encrypt($COM[address].'|'.$COM[company].'|'.$COM[lng].','.$COM[lat], DT_KEY.'MAP')}" rel="external"><img src="{DT_STATIC}image/share-map.png" width="48" height="48"/><span>地图导航</span></a></li>
+		{/if}
+	</ul>
+</div>
+{/if}
+{if !$could_contact}
+<div class="content bd-t">
+	{if $_userid}
+	<br/><br/><center>请先 <a href="{$MODULE[2][mobile]}grade.php" rel="external" class="b">升级</a> 会员级别后查看联系方式</center><br/><br/>
+	{else}
+	<br/><br/><center>请先 <a href="{$MODULE[2][mobile]}{$DT[file_login]}" rel="external" class="b">登录</a> 或 <a href="{$MODULE[2][mobile]}{$DT[file_register]}" rel="external" class="b">注册</a> 后查看联系方式</center><br/><br/>
+	{/if}
+</div>
+{/if}
+<div class="content bd-t">
+{if $COM[shop] && $COM[vshop]}
+店铺名称：{$COM[shop]}<br/>
+{/if}
+公司名称：{$COM[company]}<br/>
+
+{if $could_contact}
+{if $COM[address]}
+公司地址：{$COM[address]}<br/>
+{/if}
+{if $COM[postcode]}
+邮政编码：{$COM[postcode]}<br/>
+{/if}
+{if $COM[telephone]}
+公司电话：{$COM[telephone]}<br/>
+{/if}
+{if $COM[fax]}
+公司传真：{$COM[fax]}<br/>
+{/if}
+{if $COM[homepage]}
+公司网址：<a href="{$COM[homepage]}" rel="external" target="_blank" class="b">{$COM[homepage]}</a><br/>
+{/if}
+{if $COM[truename]}
+联 系 人：{$COM[truename]} （{if $COM[gender]==1}先生{else}女士{/if}）<br/>
+{/if}
+{if $COM[department]}
+部门(职位)：{$COM[department]}{if $COM[career]} （{$COM[career]}）{/if}<br/>
+{/if}
+{if $COM[mobile] && $DT[im_mob]}
+手机号码：{$COM[mobile]}<br/>
+{/if}
+{/if}
+
+{if $COM[type]}公司类型：{$COM[type]}<br/>{/if}
+{if $COM[mode]}经营模式：{$COM[mode]}<br/>{/if}
+{if $COM[size]}公司规模：{$COM[size]}<br/>{/if}
+{if $COM[capital]}注册资本：{$COM[capital]}万{$COM[regunit]}<br/>{/if}
+{if $COM[regyear]}注册年份：{$COM[regyear]}<br/>{/if}
+{if $COM[sell]}销售产品：{$COM[sell]}<br/>{/if}
+{if $COM[buy]}采购产品：{$COM[buy]}<br/>{/if}
+</div>
+{if $content}
+<div class="content bd-t" data-content="{$js_pageid}">{$content}</div>
+{/if}
+<div class="tool">
+{if $MOD[show_like]}<div class="like" onclick="Dlike({$moduleid}, {$itemid}, 0);">点赞 <b id="like-{$moduleid}-{$itemid}-0">{$likes}</b></div>{/if}
+{if $MOD[show_hate]}<div class="hate" onclick="Dhate({$moduleid}, {$itemid}, 0);">反对 <b id="hate-{$moduleid}-{$itemid}-0">{$hates}</b></div>{/if}
+{if $MOD[show_report]}<div class="report" onclick="Dreport({$moduleid}, {$itemid}, 0);">举报</div>{/if}
+{if $MOD[show_favorite]}<div class="favorite" onclick="Dfavor({$moduleid}, {$itemid});">收藏 <b>{$favorites}</b></div>{/if}
+{if $MOD[fee_award]}<div class="award" onclick="Go('{$MODULE[2][mobile]}award.php?mid={$moduleid}&itemid={$itemid}');">打赏 <b>{$awards}</b></div>{/if}
+{if $could_comment}<div class="comment" onclick="Go('{$EXT[comment_mob]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}');">评论 <b>{$comments}</b></div>{/if}
+{if $MOD[show_share]}<div class="share" onclick="Go('{DT_MOB}api/share.php?mid={$moduleid}&itemid={$itemid}');">分享 <b>{$shares}</b></div>{/if}
+</div>
+{template 'footer'}

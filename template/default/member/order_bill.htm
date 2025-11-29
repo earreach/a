@@ -1,0 +1,95 @@
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+{template 'goods', 'chip'}
+<div class="t2">线下支付</div>
+<table cellspacing="1" cellpadding="10" class="tb">
+<tr>
+<td class="tl">联系卖家</td>
+<td class="tr">{if $DT[im_web]}{im_web($O[seller])}&nbsp;{/if}<a href="{userurl($O[seller], 'file=contact')}" target="_blank" class="t">{$O[seller]}</a></td>
+</tr>
+<tr>
+<td class="tl">下单时间</td>
+<td class="tr">{$O[adddate]}</td>
+</tr>
+<tr>
+<td class="tl">应付金额</td>
+<td class="tr f_red">{$DT[money_sign]}{number_format($money, 2, '.', '')}</td>
+</tr>
+<tr>
+<td class="tl">开户银行</td>
+<td class="tr">{$S[bank]}</td>
+</tr>
+{if $S[branch]}
+<tr>
+<td class="tl">开户网点</td>
+<td class="tr">{$S[branch]}</td>
+</tr>
+{/if}
+<tr>
+<td class="tl">收款户名</td>
+<td class="tr">{$S[company]}</td>
+</tr>
+<tr>
+<td class="tl">收款帐号</td>
+<td class="tr">{$S[account]}</td>
+</tr>
+{if $O[bill]}
+<tr>
+<td class="tl">温馨提示</td>
+<td class="tr"><a href="javascript:;" onclick="_preview('{$O[bill]}');" class="t">付款凭证</a>已上传，请等待卖家审核</td>
+</tr>
+<tr>
+<td class="tl"></td>
+<td class="tr"><input type="button" value=" 返 回 " class="btn" onclick="history.back(-1);"/></td>
+</tr>
+{else}
+<tr>
+<td class="tl">注意事项</td>
+<td class="tr lh20">
+<span class="f_gray">如果卖家收款信息不完整，请联系对方确认之后再打款</span><br/>
+<span class="f_red">线下支付的订单无法通过平台退款，需自行承担交易风险</span>
+</td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 付款凭证</td>
+<td class="tr"><input name="bill" type="text" size="70" id="bill" value="{$O[bill]}" readonly/>	
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dthumb({$moduleid},0,0, Dd('bill').value, true, 'bill');"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="_preview(Dd('bill').value);"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('bill').value='';"/>
+</span>
+<span id="dbill" class="f_red"></span>
+</td>
+</tr>
+{if $DT[sms]}
+<tr>
+<td class="tl"></td>
+<td class="tr"><label><input type="checkbox" name="sendsms" value="1" checked/> 短信通知卖家审核</label> (<a href="sms.php" target="_blank" class="t">我的可用短信 <strong class="f_blue">{$_sms}</strong> 条</a>)</td>
+</tr>
+{/if}
+<tr>
+<td class="tl"> </td>
+<td class="tr">
+<input type="submit" name="submit" value=" 确认上传 " class="btn_g"/>
+&nbsp;&nbsp;<input type="button" value=" 取消支付 " class="btn" onclick="history.back(-1);"/>
+</td>
+</tr>
+{/if}
+</table>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('bill').value.length < 16) {
+		Dmsg('请上传付款凭证', 'bill');
+		return false;
+	}
+	{if $O[status] == 7}
+	return confirm('请确认已经收到货物并已付款，提交后需要卖家审核，审核后订单完成，请确认');
+	{else}
+	return confirm('您确认已经线下支付了吗？提交后需卖家审核到款后发货');
+	{/if}
+}
+</script>
+<script type="text/javascript">s('order');m('action');</script>

@@ -1,0 +1,11 @@
+<?php exit;?>
+itemid,ID,
+username,会员名,
+company,公司名,
+ip,IP,
+content,商铺设置,
+homepage,菜单侧栏主页设置,
+addtime,提交时间,
+editor,编辑,
+edittime,审核时间,
+note,审核结果,

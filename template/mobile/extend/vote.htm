@@ -1,0 +1,79 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{if $typeid}{$TYPE[$typeid][typename]}{else}投票调查{/if}</div>
+<div class="head-bar-right"><a href="javascript:Dmenu('{$ext}-{$js_pageid}');"><img src="{DM_SKIN}icon-action{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div id="{$ext}-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="{$mob}index.php">
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+<div class="list-set">
+<ul>
+{loop $_TP[0] $v0}
+<li{if $typeid==$v0[typeid]} style="background:#F6F6F6;"{/if}><div><a href="{$mob}{list_url($v0[typeid])}">{$v0[typename]}</a></div></li>
+{if isset($_TP[1][$v0[typeid]])}
+{loop $_TP[1][$v0[typeid]] $v1}
+<li{if $typeid==$v1[typeid]} style="background:#F6F6F6;"{/if}><div><a href="{$mob}{list_url($v1[typeid])}">&nbsp;&nbsp;&nbsp;&nbsp;{$v1[typename]}</a></div></li>
+{/loop}
+{/if}
+{/loop}
+</ul>
+</div>
+<div class="blank-36 bd-b"></div>
+</div>
+{if $itemid}
+<style type="text/css">
+.vote_show {padding:16px 24px;}
+.vote_form {padding:16px 24px;line-height:32px;}
+.vote_form label {display:inline;}
+</style>
+<div class="title"><h1>{$title}</h1></div>
+<div class="info"><i class="ui-ico-time">{$adddate}</i><i class="ui-ico-hits">{$hits}</i><i class="ui-ico-info ui-fr">{$votes}票</i></div>
+<div class="vote_show">
+<div class="px12 f_grey"> &nbsp; 有效期：{$fromdate} 至 {$todate}</div>
+<div class="blank-16"></div>
+<table cellpadding="6" cellspacing="1" width="100%" bgcolor="#EEEEEE">
+{loop $V $k $v}
+<tr bgcolor="#FFFFFF" align="center">
+<td>{$v[title]}</td>
+<td>{$v[percent]}</td>
+<td>{$v[votes]}</td>
+</tr>
+{/loop}
+</table>
+</div>
+<div class="vote_form">{load('vote_'.$itemid.'.htm')}</div>	
+<div class="content" data-content="{$js_pageid}">{if $linkto}<a href="{$linkto}" target="_blank" rel="external">{$linkto}</a><br/>{/if}{$content}</div>
+<script type="text/javascript">
+$(function(){
+	$('#vote_{$itemid}').attr('action', '{$mob}index.php');
+	$('#vote_{$itemid}').attr('target', '_self');
+	$('#vote_title_{$itemid}').hide();
+	$('.btn').hide();
+	if($('#captcha').length) $('#captcha').css('padding', '6px 10px');
+});
+</script>
+{else}
+{if $lists}
+<div id="list-{$js_pageid}" class="main">
+{loop $lists $v}
+<div class="ui-list-txt">
+<a href="{str_replace($url, $mob, $v[linkurl])}"><strong>{$v[title]}</strong></a>
+<p><i class="ui-ico-info ui-fr">{$v[votes]}票</i><i class="ui-ico-time">{$v[adddate]}</i></p>
+</div>
+{/loop}
+</div>
+<div id="load-{$js_pageid}" class="ui-load"></div>
+{else}
+{template 'empty', 'chip'}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{/if}
+{template 'footer'}

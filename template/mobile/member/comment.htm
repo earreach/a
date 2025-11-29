@@ -1,0 +1,224 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right"><a href="javascript:Dmenu('search-{$js_pageid}');"><img src="{DM_SKIN}icon-search{$wh}.png" width="24" height="24"/></a><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=index" data-transition="none">评论管理</a>
+<a href="?action=my" data-transition="none">我的评论</a>
+<a href="index.php" data-direction="reverse">会员中心</a>
+</div>
+</div>
+
+<style type="text/css">
+.quote{border:1px solid #EEEEEE;background:#FFFFFF;padding:10px;margin-bottom:10px;}
+.quote_title {font-size:12px;}
+.quote_time {font-size:12px;color:#999999;}
+.quote_floor {float:right;font-size:10px;color:#999999;}
+.quote_content {clear:both;}
+.comment_ajax {display:none;}
+.comment_ajax textarea{width:100%;height:96px;}
+.comment_ajax div {padding:8px 0;color:#FF0000;font-size:12px;}
+.comment_ajax div input {width:72px;height:32px;line-height:32px;margin-right:10px;font-size:14px;}
+</style>
+{if $action == 'my'}
+<div class="ui-form-search" id="search-{$js_pageid}"{if !$kw} style="display:none;"{/if}>
+<form action="?">
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<input type="checkbox" name="itemid[]" value="{$v[itemid]}" class="dsn" id="checkbox-{$v[itemid]}"/>
+{if $v[username] && !$v[hidden]}
+<img src="{useravatar($v[username], 'large')}" width="48" height="48" alt="" class="avatar"/>
+{/if}
+<ul>
+<li><em class="check" id="check-{$v[itemid]}"></em><strong>{if $v[passport]}{$v[passport]}{else}{$v[username]}{/if}</strong></li>
+<li><s class="ui-ico-time" title="{$v[adddate]}">{timetoread($v[addtime], 5)}</s>{if $v[level]==2}<span class="fb_red">置顶</span>{elseif $v[level]==1}<span class="fb_orange">精选</span>{/if}<span class="ui-fr"><img src="{DM_SKIN}star{$v[star]}.png" style="padding-top:6px;width:40px;"/></span></li>
+</ul>
+</div>
+<div class="content">
+{if $v[quotation]}{$v[quotation]}{else}{$v[content]}{/if}
+{if $v[reply]}
+<br/><span class="px12 f_gray">{if $v[replyer]==$v[item_username]}<span class="f_blue">作者</span>{else}<span class="f_red">网站</span>{/if} <span title="{$v[replydate]}">{timetoread($v[replytime], 5)}</span> 回复： </span>
+<br/>{nl2br($v[reply])}
+{/if}
+<div class="comment_ajax" id="form-{$v[itemid]}"></div>
+</div>
+<div class="ui-tool">
+<i class="ui-ico-like">支持 {$v[likes]}</i>
+<i class="ui-ico-hate">反对 {$v[hates]}</i>
+<i class="ui-ico-quote">回复 {$v[quotes]}</i>
+<i class="ui-ico-report">举报 {$v[reports]}</i>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无评论</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<div id="foot-bar" class="dsn">
+<div class="foot-bar-fix"></div>
+<div class="foot-bar btns">
+<input type="submit" name="submit" value="删除评论" class="btn-red" onclick="if(confirm('确定要删除选中评论吗？')){this.form.action='?action=delete'}else{return false;}"/>
+</div>
+</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	if($('#foot-bar input').length == 0) $('.check').hide();
+	$('.list-img em').click(function() {
+		if($(this).attr('class') == 'sheet') {
+			//
+		} else {
+			var id = $(this).attr('id').replace('check-', '');
+			if($('#checkbox-'+id).attr('checked')) {
+				$('#checkbox-'+id).attr('checked', false);
+				$(this).attr('class', 'check');
+			} else {
+				$('#checkbox-'+id).attr('checked', true);
+				$(this).attr('class', 'checked');
+			}
+			if($('.checked').length > 0) {
+				$('#foot-bar').fadeIn(300);
+			} else {
+				$('#foot-bar').fadeOut(300);
+			}
+		}
+	});
+});
+</script>
+{else}
+<div class="ui-form-search" id="search-{$js_pageid}"{if !$kw} style="display:none;"{/if}>
+<form action="?">
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<input type="checkbox" name="itemid[]" value="{$v[itemid]}" class="dsn" id="checkbox-{$v[itemid]}"/>
+{if $v[username] && !$v[hidden]}
+<a href="{userurl($v[username], 'file=contact')}"><img src="{useravatar($v[username], 'large')}" width="48" height="48" alt="" class="avatar"/></a>
+{else}
+<img src="{useravatar('')}" width="48" height="48" class="avatar"/>
+{/if}
+<ul>
+<li><em class="check" id="check-{$v[itemid]}"></em><strong>
+{if $v[username]}
+	{if $v[hidden]}
+	匿名
+	{else}
+	{if $v[passport]}{$v[passport]}{else}{$v[username]}{/if}
+	{/if}
+{else}
+	游客
+{/if}
+</strong></li>
+<li><s class="ui-ico-time" title="{$v[adddate]}">{timetoread($v[addtime], 5)}</s>{if $v[level]==2}<span class="fb_red">置顶</span>{elseif $v[level]==1}<span class="fb_orange">精选</span>{/if}<span class="ui-fr"><img src="{DM_SKIN}star{$v[star]}.png" style="padding-top:6px;width:40px;"/></span></li>
+</ul>
+</div>
+<div class="content">
+{if $v[quotation]}{$v[quotation]}{else}{$v[content]}{/if}
+{if $v[reply]}
+<br/><span class="px12 f_gray">{if $v[replyer]==$v[item_username]}<span class="f_blue">作者</span>{else}<span class="f_red">网站</span>{/if} <span title="{$v[replydate]}">{timetoread($v[replytime], 5)}</span> 回复： </span>
+<br/>{nl2br($v[reply])}
+{else}
+<br/><a href="javascript:;" onclick="RE({$v[itemid]});" class="b px12">回复</a>
+{/if}
+<div class="comment_ajax" id="form-{$v[itemid]}"></div>
+</div>
+<div class="ui-tool">
+<i class="ui-ico-like">支持 {$v[likes]}</i>
+<i class="ui-ico-hate">反对 {$v[hates]}</i>
+<i class="ui-ico-quote">回复 {$v[quotes]}</i>
+<i class="ui-ico-report">举报 {$v[reports]}</i>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无评论</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<div id="foot-bar" class="dsn">
+<div class="foot-bar-fix"></div>
+<div class="foot-bar btns">
+<input type="submit" value="设置精选" class="btn-green" onclick="this.form.action='?action=level&level=1'"/>
+<input type="submit" value="设置置顶" class="btn" onclick="this.form.action='?action=level&level=2'"/>
+<input type="submit" value="取消设置" class="btn" onclick="this.form.action='?action=level&job=cancel'"/>
+<input type="submit" value="删除评论" class="btn" onclick="if(confirm('确定要取消选中评论吗？')){this.form.action='?action=delete'}else{return false;}"/>
+<input type="submit" value="删除回复" class="btn" onclick="if(confirm('确定要取消选中回复吗？')){this.form.action='?action=delete&job=reply'}else{return false;}"/>
+</div>
+</div>
+</form>
+<script type="text/javascript">
+var cid = 0;
+function RE(id) {
+	if(id == cid) return;
+	cid = id;
+	$('.comment_ajax').html('');
+	$('.comment_ajax').hide();
+	$('#form-'+cid).html('<textarea id="text-'+cid+'" placeholder="回复内容："></textarea><div><input type="button" value="回 复" class="btn-green" onclick="RP();"/><input type="button" value="取 消" class="btn" onclick="RC();"/><span id="dtext-'+cid+'"></span></div>');
+	$('#form-'+cid).slideDown();
+}
+function RC() {
+	$('#form-'+cid).html('');
+	$('#form-'+cid).slideUp();
+	cid = 0;
+}
+function RP() {
+	var v = $('#text-'+cid).val();
+	var l = v.length;
+	if(l < {$EXT[comment_min]} || l > {$EXT[comment_max]}) {
+		Dmsg('回复限制为{$EXT[comment_min]}-{$EXT[comment_max]}字，当前已输入'+l+'字', 'text-'+cid);
+	}
+	$.post('?', 'action=reply&itemid='+cid+'&content='+encodeURIComponent(v), function(data) {
+		if(data == 'ok') {
+			Dtoast('{$js_pageid}', '回复成功');
+			setTimeout(function() { window.location.reload(); }, 1000);
+		} else if(data == 'max') {
+			Dtoast('{$js_pageid}', '内容过长');
+		} else if(data == 'min') {
+			Dtoast('{$js_pageid}', '内容过短');
+		} else if(data == 'bad') {
+			Dtoast('{$js_pageid}', '内容非法');
+		} else {
+			Dtoast('{$js_pageid}', '回复失败');
+		}
+	});
+}
+$(function(){
+	if($('#foot-bar input').length == 0) $('.check').hide();
+	$('.list-img em').click(function() {
+		if($(this).attr('class') == 'sheet') {
+			//
+		} else {
+			var id = $(this).attr('id').replace('check-', '');
+			if($('#checkbox-'+id).attr('checked')) {
+				$('#checkbox-'+id).attr('checked', false);
+				$(this).attr('class', 'check');
+			} else {
+				$('#checkbox-'+id).attr('checked', true);
+				$(this).attr('class', 'checked');
+			}
+			if($('.checked').length > 0) {
+				$('#foot-bar').fadeIn(300);
+			} else {
+				$('#foot-bar').fadeOut(300);
+			}
+		}
+	});
+});
+</script>
+{/if}
+{template 'footer', 'member'}

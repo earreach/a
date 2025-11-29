@@ -1,0 +1,11 @@
+{template 'header'}
+<div class="b10"></div>
+<div class="m">
+	<div style="height:480px;background:url('{DT_STATIC}image/msg-403.png') no-repeat right center;">
+		<div style="padding:148px 512px 0 248px;font-size:16px;">
+			<h1>无访问权限</h1>
+			<div class="f_gray">抱歉，<a href="{$MOD[linkurl]}{$GRP[linkurl]}" class="b">{$GRP[title]}{$MOD[seo_name]}</a>仅成员可以{if $action=='show'}查看帖子{elseif $action=='post'}发帖{elseif $action=='reply'}回复{else}访问{/if} 请{if $_userid}<a href="{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&job=join&action=add&gid={$gid}" class="b">加入本圈</a>{else}<a href="{$MODULE[2][linkurl]}{$DT[file_login]}" class="b">登录</a>或<a href="{$MODULE[2][linkurl]}{$DT[file_register]}" class="b">注册</a>{/if}</div>
+		</div>
+	</div>
+</div>
+{template 'footer'}

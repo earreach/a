@@ -1,0 +1,10 @@
+<?php exit;?>
+uuid,设备标识,
+userid,会员ID,
+username,会员名,
+ua,客户端,
+os,系统,
+vn,APP版本号,
+bd,品牌,
+ip,IP,
+lasttime,上次绑定时间,

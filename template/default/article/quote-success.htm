@@ -1,0 +1,23 @@
+{template 'header'}
+
+<div class="quote-success">
+  <h2>提交成功！</h2>
+  <p>预约成功！我们会在2个小时内发送预约回执给您。</p>
+  <p>页面将在 <span id="sec">3</span> 秒后自动返回首页。</p>
+  <p><a href="{$MODULE[1][linkurl]}">返回首页</a></p>
+</div>
+
+<script>
+  var s = 3;
+  var span = document.getElementById('sec');
+  setInterval(function() {
+    s--;
+    if(s <= 0) {
+      window.location.href = '{$MODULE[1][linkurl]}';
+    } else {
+      span.innerHTML = s;
+    }
+  }, 1000);
+</script>
+
+{template 'footer'}

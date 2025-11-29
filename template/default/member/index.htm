@@ -1,0 +1,115 @@
+{template 'header', 'member'}
+{load('member.css')}
+{load('member/index.css')}
+{if $_groupid == 4}
+	<div class="warn">尊敬的会员，您的帐号<span class="f_red">正在审核中</span>，本站部分功能和服务可能受到一定的使用限制</div>
+{elseif $MG[type] && !$_edittime}
+	<div class="warn">贵公司尚未完善详细资料！完善的商业信息有助于获得别人的信任，结交潜在的商业伙伴，获取商业机会<a href="edit.php?tab=2"><div>立即完善</div></a></div>
+{elseif $MOD[vmember] && !$validated && $_groupid > 4}
+	<div class="warn">尊敬的会员，依据《网络安全法》，您需要完成 <a href="validate.php" class="t">实名认证</a> 后方可继续使用全部会员功能<a href="validate.php"><div>立即认证</div></a></div>
+{elseif $vip && $days < 30 && $days > 0}
+	<div class="warn">尊敬的{$MG[groupname]}，您的{VIP}服务将在 <b class="f_red">{$days}</b> 天后到期，为了不影响您的正常使用，请您尽快<a href="account.php?action=vip" class="t">续费</a><a href="account.php?action=vip"><div>立即续费</div></a></div>
+{/if}
+<table cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td width="120" valign="top" align="center">
+<div class="iavatar">
+	<a href="avatar.php" title="修改头像"><img src="{useravatar($_username, 'large')}" width="96" height="96"/></a>
+	<a href="validate.php"><i class="member-v{$validate}" title="{valid_name($validate)}"></i></a>
+	<div>
+	{if $_online}
+	<a href="account.php?action=line" title="在线，点击隐身"><i class="online"></i> 在线</a>
+	{else}
+	<a href="account.php?action=line" title="隐身，点击上线"><i class="offline"></i> 隐身</a>
+	{/if}
+	</div>
+</div>
+</td>
+<td valign="top">
+<div class="iuser">
+<ul>
+	<li><a href="account.php" title="账户详情"><b class="px18">欢迎，{if $_truename}{$_truename}{elseif $_passport}{$_passport}{else}{$_username}{/if}</b></a> &nbsp; <a href="edit.php" title="修改资料"><img src="{DT_STATIC}member/ico-edit.png" width="16" height="16" align="absmiddle"/></a></li>
+	<li><a href="account.php?action={if $MG[vip]}vip{else}group{/if}" title="{if $MG[vip]}续费{else}升级{/if}"><span{if $MG[vip]} style="color:#CE994F;"{/if}>{$MG[groupname]}</span></a> &nbsp; <a href="credit.php?action=grade"><img src="{DT_STATIC}image/grade-{$_gradeid}.png" width="24" alt=""/></a> &nbsp; {if $MG[vip]}<span class="f_gray">{timetodate($totime, 3)}到期，剩余{$days}天</span> &nbsp; <a href="account.php?action=vip" class="t">续费</a>{elseif $_groupid>4}<a href="account.php?action=group" class="t">升级</a>{/if}</li>
+	<li>{if $enterprise}<a href="{$linkurl}" target="_blank" title="公司主页">{$_company}</a> &nbsp; &nbsp; {/if}<a href="{userurl($username, 'file=space', $domain)}" target="_blank" class="t">个人空间</a> &nbsp; &nbsp; <a href="account.php" class="t">账户详情</a></li>
+</ul>
+</div>
+</td>
+<td valign="top" width="256">
+<div class="inum">
+	<b>账户余额</b>
+	<a href="record.php"><p><span class="imoney">{$DT[money_sign]}{$my_money}</span></p></a>
+	<a href="charge.php?action=pay" target="_blank"><div class="btn_g">充值</div></a>
+</div>
+</td>
+</tr>
+</table>
+<div class="istats">
+<ul>
+<a href="credit.php?action=index"><li><i>{numtoread($_credit)}</i><span>{$DT[credit_name]}</span></li></a>
+{if $DT[follow]}
+<a href="follow.php?action=index"><li><i>{numtoread($_follows)}</i><span>关注</span></li></a>
+<a href="follow.php?action=fans"><li><div><i>{numtoread($_fans)}</i><span>粉丝</span></div></li></a>
+{/if}
+{if isset($MODULE[20])}
+<a href="{$DT[file_my]}?mid=20"><li><i>{numtoread($_moments)}</i><span>{$MODULE[20][name]}</span></li></a>
+{/if}
+{if $MG[sms] && $DT[sms]}
+<a href="sms.php"><li><div><i>{numtoread($_sms)}</i><span>短信</span></div></li></a>
+{/if}
+{if $MG[friend_limit]>-1}
+<a href="friend.php"><li><div><i>{php echo numtoread($db->count($DT_PRE.'friend', "userid=$_userid", 'CACHE'));}</i><span>好友</span></div></li></a>
+{/if}
+{if $MG[favorite_limit]>-1}
+<a href="favorite.php"><li><div><i>{php echo numtoread($db->count($DT_PRE.'favorite', "userid=$_userid", 'CACHE'));}</i><span>收藏</span></div></li></a>
+{/if}
+{if $DT[history_module]}
+<a href="history.php"><li><div><i>{php echo numtoread($db->count($DT_PRE.'history', "username='$_username'", 'CACHE'));}</i><span>足迹</span></div></li></a>
+{/if}
+</ul>
+</div>
+<div class="ihead ihead-op">常用操作</div>
+<div class="igird">
+<ul>
+<a href="{$DT[file_my]}"><li><img src="{DT_STATIC}member/icon-post.png" width="32" height="32"/><span>发布信息</span></li></a>
+<a href="order.php"><li><img src="{DT_STATIC}member/icon-order.png" width="32" height="32"/><span>我的订单</span></li></a>
+{if $MG[favorite_limit]>-1}<a href="favorite.php"><li><img src="{DT_STATIC}member/icon-favorite.png" width="32" height="32"/><span>我的收藏</span></li></a>{/if}
+{if $DT[history_module]}<a href="history.php"><li><img src="{DT_STATIC}member/icon-time.png" width="32" height="32"/><span>浏览历史</span></li></a>{/if}
+{if $MG[biz]}<a href="biz.php"><li><img src="{DT_STATIC}member/icon-shop.png" width="32" height="32"/><span>商户后台</span></li></a>{/if}
+{if $MG[ask]}<a href="ask.php"><li><img src="{DT_STATIC}member/icon-ask.png" width="32" height="32"/><span>我的客服</span></li></a>{/if}
+</ul>
+</div>
+<div class="ihead ihead-sys">公告栏</div>
+<div class="isys"><!--{tag("table=announce&condition=(totime=0 or totime>$DT_TODAY-86400)&areaid=$cityid&pagesize=3&datetype=3&order=listorder desc,addtime desc&target=_blank")}--></div>
+<div class="ihead ihead-note">我的便笺</div>
+<div class="inote">
+	<form method="post" action="?">
+	<input type="hidden" name="action" value="note"/>
+	<textarea name="note" id="note" onfocus="$('#save-note').show();">{$mynote}</textarea>
+	<div id="save-note"><input type="submit" name="submit" value=" 保 存 " class="btn_g"/> &nbsp; [可记录一些文字备忘，限5000字]</div>
+	</form>
+</div>
+{if isset($MODULE[20])}
+<script type="text/javascript">
+function MMsize() {
+	var w0 = $(window).width() - 1200;
+	var w1 = w0 < 300 ? 0 : (w0 > 640 ? 640 : w0);
+	if(w1 > 0) {
+		$('.side-mm').css('width', w1+'px');
+		setTimeout(function() {
+			$('#side-mm').css('height', $('#main').height()+'px');
+		}, 300);
+	} else {
+		$('.side-mm').hide();
+	}
+}
+$(function(){
+	MMsize();
+	$(window).resize(function() {
+		MMsize();
+	});
+});
+</script>
+</td>
+<td valign="top" class="side-mm"><iframe src="{$MODULE[20][linkurl]}widget.php?typeid=2" width="100%" height="100%" border="0" vspace="0" hspace="0" marginwidth="0" marginheight="0" framespacing="0" frameborder="0" scrolling="auto" id="side-mm"></iframe>
+{/if}
+{template 'footer', 'member'}

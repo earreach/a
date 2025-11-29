@@ -1,0 +1,48 @@
+{if $share_icon == 'auto'}<div class="share_icon"><img src="{DT_PATH}apple-touch-icon-precomposed.png"/></div>{/if}
+<div class="back2top"><a href="javascript:$('html, body').animate({scrollTop:0}, 200);void(0);">&nbsp;</a></div>
+{if $foot}
+<div class="foot-bar-fix"></div>
+<div class="foot-bar">
+<ul>
+<li class="icon-home{if $foot=='home'}-on{/if}"><a href="{$COM[linkurl]}" data-ajax="false"><span>首页</span></a></li>
+<li class="icon-channel{if $foot=='channel'}-on{/if}"><a href="{userurl($username, 'file=channel', $domain)}" data-transition="none"><span>频道</span></a></li>
+<li class="icon-time{if $foot=='news'}-on{/if}"><a href="{userurl($username, 'file=news', $domain)}" data-transition="none"><span>新闻</span></a></li>
+<li class="icon-message{if $foot=='contact'}-on{/if}"><a href="{userurl($username, 'file=contact', $domain)}" data-transition="none"><span>联系</span></a></li>
+<li class="icon-my{if $foot=='introduce'}-on{/if}"><a href="{userurl($username, 'file=introduce', $domain)}" data-transition="none"><span>关于</span></a></li>
+</ul>
+</div>
+{/if}
+{if $api_stats && $stats}
+{php include load('api/stats/'.$HOME['stats_type'].'/show.inc');}
+{/if}
+{if $api_kf && $kf}
+{php include load('api/kf/'.$HOME['kf_type'].'/show.inc');}
+{/if}
+<script type="text/javascript">
+var js_page = {$page},js_pageid = '{$js_pageid}';
+$(function(){
+	Dhistory(js_pageid);
+	{if $js_pull}
+	Dpull(js_pageid);
+	{/if}
+	{if $js_load}
+	Dload(js_pageid, '{$js_load}');
+	{/if}
+	{if $js_album}
+	Dalbum(js_pageid);
+	{/if}
+	{if $js_item}
+	Ditem(js_pageid);
+	{/if}
+	{if $destoon_task}
+	Dtask('{$destoon_task}', {$DT[stats]});
+	{else}
+	{if $DT[stats]}
+	{php include load('api/stats.inc');}
+	{/if}
+	{/if}
+});
+</script>
+</div>
+</body>
+</html>

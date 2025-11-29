@@ -1,0 +1,61 @@
+{template 'header'}
+{load('member/panel.css')}
+{load('panel.js')}
+<div class="m">	
+	<div class="nav">
+	<div>
+	{if $is_admin}
+	<a href="{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&job=manage&gid={$gid}&pid={$page}" target="manage" class="b">管理本圈</a>
+	{else}
+	{if $is_fans}
+	<a href="{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&job=join&action=quit&gid={$gid}" class="b" onclick="return confirm('确定要退出{$GRP[title]}{$MOD[seo_name]}吗？');">退出本圈</a>
+	{else}
+	<a href="{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&job=join&action=add&gid={$gid}" class="b">加入本圈</a>
+	{/if}
+	{/if}
+	</div>
+	<a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')} <i>&gt;</i> <a href="{$MOD[linkurl]}{$GRP[linkurl]}">{$GRP[title]}{$MOD[seo_name]}</a></div>
+</div>
+
+<div class="m">
+	<div class="group_info">
+		<div class="group_title">
+		<span class="f_r">
+		圈主：<a href="{userurl($GRP[username], 'file=space&mid='.$moduleid)}" target="_blank">{$GRP[passport]}</a>&nbsp; &nbsp; 
+		{if $GRP[managers]}
+		<select onchange="if(this.value)window.open(this.value);">
+		<option value="">版主列表</option>
+		{loop $GRP[managers] $manager}
+		<option value="{$MOD[linkurl]}goto.php?action=master&catid={$gid}&name={urlencode($manager)}">{$manager}</option>
+		{/loop}
+		</select>
+		{else}
+		暂无版主
+		{/if}
+		</span>
+		{if $GRP[thumb]}<img src="{$GRP[thumb]}" alt=""/>{/if}
+		<strong id="title">{$GRP[title]}{$MOD[seo_name]}</strong> &nbsp; &nbsp;  &nbsp; &nbsp; 
+		<i class="ui-ico-comm">{$GRP[post]} 主题</i> &nbsp; &nbsp; 
+		<a href="{$MOD[linkurl]}{rewrite('fans.php?gid='.$gid)}" title="全部成员"><i class="ui-ico-user">{$GRP[fans]} 粉丝</i></a>
+		</div>
+		{if $GRP[content]}
+		<div class="group_introduce c_b">{nl2br($GRP[content])}</div>
+		{/if}
+	</div>
+</div>
+<div class="m">
+	<div class="group_type">
+		<div class="f_r">
+		{if $MOD[chat] && $GRP[chat]}<a href="javascript:;" onclick="Dchat('{$MOD[linkurl]}{rewrite('chat.php?gid='.$gid)}');"><b class="club-btn-chat">群聊</b></a>{/if}
+		<a href="javascript:;" onclick="Dwidget('{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&action=add&gid={$gid}', '{$GRP[title]}{$MOD[seo_name]} 发帖', 1220);"><b class="club-btn-post">发帖</b></a>
+		</div>
+		{loop $TYPE $k $v}
+		<a href="{$MOD[linkurl]}{if $k}{rewrite('list.php?catid='.$gid.'&typeid='.$k)}{else}{$GRP[linkurl]}{/if}" class="group_type_{if $typeid==$k}1{else}2{/if}">{$v}</a>
+		{/loop}
+	</div>
+</div>
+<div class="m">
+	{if $page == 1}{ad($moduleid,$catid,'',6)}{/if}
+	{if $tags}{template 'list-'.$module, 'tag'}{/if}
+</div>
+{template 'footer'}

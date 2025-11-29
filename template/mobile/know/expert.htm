@@ -1,0 +1,62 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$MOD[name]}专家</div>
+<div class="head-bar-right">
+{if $itemid}
+<a href="{$MODULE[2][mobile]}{$DT[file_my]}?mid={$moduleid}&action=add&askto={$username}" rel="external"><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></a>
+{else}
+<a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a>
+{/if}
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="{$MOD[mobile]}" data-direction="reverse">{$MOD[name]}首页</a>
+<a href="{DT_MOB}{rewrite('channel.php?mid='.$moduleid)}" data-transition="none">{$MOD[name]}分类</a>
+<a href="{DT_MOB}channel.php" data-direction="reverse">切换频道</a>
+</div>
+</div>
+
+{if $itemid}
+	<div class="list-img">
+	<a href="{userurl($username, 'file=space&mid='.$moduleid)}"><img src="{useravatar($username, 'large')}" width="60" height="60" alt="" class="avatar"/></a>
+	<ul>
+	<li><em class="f_r">{$passport}</em><a href="{userurl($username, 'file=space&mid='.$moduleid)}"><strong>{$title}</strong></a></li>
+	<li><span>{$major}</span></li>
+	</ul>
+	</div>
+	<div class="content">
+		被提问：{$ask}<br/>
+		人气：{$hits}<br/>
+		回答：{$answer}<br/>
+		被采纳：{$best}<br/>
+		采纳率：{$rate}<br/>
+		{$content}
+		<div class="blank-36"></div>
+		<a href="{$MODULE[2][mobile]}{$DT[file_my]}?mid={$moduleid}&action=add&askto={$username}" rel="external"><div class="btn-green"/>向TA提问</div></a>
+		<div class="blank-36"></div>
+	</div>
+{else}
+	{if $lists}
+	{loop $lists $v}
+	<div class="list-img">
+	<a href="{$MOD[mobile]}{rewrite('expert.php?itemid='.$v['itemid'])}"><img src="{useravatar($v[username], 'large')}" width="60" height="60" alt="" class="avatar"/></a>
+	<ul>
+	<li><em class="f_r">{$v[answer]}回答</em><a href="{$MOD[mobile]}{rewrite('expert.php?itemid='.$v['itemid'])}"><strong>{$v[title]}</strong></a></li>
+	<li><span>{$v[major]}</span></li>
+	</ul>
+	</div>
+	{/loop}
+	{else}
+	{template 'empty', 'chip'}
+	{/if}
+	{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{/if}
+{template 'footer'}

@@ -1,0 +1,80 @@
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+{template 'goods', 'chip'}
+<div class="t2">订单支付</div>
+<table cellspacing="1" cellpadding="10" class="tb">
+<tr>
+<td class="tl">联系卖家</td>
+<td class="tr">{if $DT[im_web]}{im_web($O[seller])}&nbsp;{/if}<a href="{userurl($O[seller], 'file=contact')}" target="_blank" class="t">{$O[seller]}</a></td>
+</tr>
+<tr>
+<td class="tl">下单时间</td>
+<td class="tr">{$O[adddate]}</td>
+</tr>
+<tr>
+<td class="tl">应付金额</td>
+<td class="tr f_red">{$DT[money_sign]}{number_format($money, 2, '.', '')}</td>
+</tr>
+<tr id="mymoney" style="display:none;">
+<td class="tl">帐户余额</td>
+<td class="tr f_blue">{$DT[money_sign]}{$_money}</td>
+</tr>
+<tr id="payword" style="display:none;">
+<td class="tl"><span class="f_red">*</span> 支付密码</td>
+<td class="tr">{template 'payword', 'chip'} <span id="dpassword" class="f_red"></span></td>
+</tr>
+<tr id="paytype" style="display:none;">
+<td class="tl"><span class="f_red">*</span> 支付方式</td>
+<td class="tr">{template 'paylist', 'chip'}</td>
+</tr>
+{if $DT[sms]}
+<tr>
+<td class="tl"></td>
+<td class="tr"><label><input type="checkbox" name="sendsms" value="1" checked="checked"/> 短信通知卖家发货</label> (<a href="sms.php" target="_blank" class="t">我的可用短信 <strong class="f_blue">{$_sms}</strong> 条</a>)</td>
+</tr>
+{/if}
+<tr>
+<td class="tl"> </td>
+<td class="tr">
+{if $could_pay}
+<input type="submit" name="submit" value=" 立即支付 " class="btn_g"/>
+{if $could_bill}
+&nbsp;&nbsp;<input type="button" value=" 线下支付 " class="btn" onclick="Go('?itemid={$itemid}&action={$action}&step=bill');"/>
+{else}
+&nbsp;&nbsp;<input type="button" value=" 取消支付 " class="btn" onclick="history.back(-1);"/>
+{/if}
+{else}
+<input type="button" value=" 库存不足 " class="btn" onclick="alert('抱歉，商品库存不足，请重新选择');"/>
+{/if}
+</td>
+</tr>
+</table>
+</form>
+<script type="text/javascript">
+var money = {$money};
+function check() {
+	if(money > {$_money}) {
+		Go('charge.php?action=pay&reason=trade|{$itemid}&amount='+money+'&bank='+$('#bank').val());
+		return false;
+	}
+	if(money > {$DT[quick_pay]}){
+		if(Dd('password').value.length < 6) {
+			Dmsg('请填写支付密码', 'password');
+			return false;
+		}
+	}
+	return confirm('您确认此订单，并立即支付吗？');
+}
+window.setInterval(
+	function() {
+		if(money > {$_money} || {$_money} < 0.01) {
+			$('#mymoney').hide();$('#paytype').show();$('#payword').hide();
+		} else {
+			$('#mymoney').show();$('#paytype').hide();if(money > {$DT[quick_pay]}){$('#payword').show();}else{$('#payword').hide();}
+		}
+	}, 
+500);
+</script>
+<script type="text/javascript">s('order');m('action');</script>

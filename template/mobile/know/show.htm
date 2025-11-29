@@ -1,0 +1,142 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title"><input type="search" name="kw" value="{$kw}" placeholder="{$MOD[name]}搜索" readonly onclick="Go('{DT_MOB}api/search.php?mid={$moduleid}');"/></div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div class="ui-viewer" id="viewer-{$js_pageid}"></div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="{DT_MOB}api/share.php?mid={$moduleid}&itemid={$itemid}" data-transition="slideup">分享好友</a>
+<a href="{$MOD[mobile]}" data-direction="reverse">{$MOD[name]}首页</a>
+<a href="{DT_MOB}{rewrite('channel.php?mid='.$moduleid)}" data-transition="none">{$MOD[name]}分类</a>
+<a href="{DT_MOB}channel.php" data-direction="reverse">切换频道</a>
+<a href="{$MODULE[2][mobile]}{$DT[file_my]}?mid={$moduleid}&action=add&cid={$catid}" rel="external">我要提问</a>
+{if $could_answer}<a href="{$MODULE[2][mobile]}{$DT[file_my]}?mid={$moduleid}&action=add&job=answer&itemid={$itemid}" rel="external">我来回答</a>{/if}
+</div>
+</div>
+
+<style type="text/css">
+.userinfo-v0,.userinfo-v1,.userinfo-v2 {margin:32px 0 0 32px;}
+</style>
+<div class="title"><h1>{$title}</h1></div>
+<div class="info"><i class="ui-ico-info">{$PROCESS[$process]}</i>{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}<i class="ui-ico-comm ui-fr"><span id="answer">{$answer}</span>回答</i>{if $MOD[hits]}<i class="ui-ico-hits ui-fr"><span id="hits">{$hits}</span>点击</i>{/if}</div>
+{if $page == 1}
+<div class="list-user">
+{if $hidden}
+<img src="{useravatar('')}" width="48" height="48" class="avatar"/>
+{else}
+<a href="{userurl($username, 'file=space&mid='.$moduleid)}" rel="external"><img src="{useravatar($username)}" width="48" height="48" class="avatar"/></a><i class="userinfo-v{$member[validate]}"></i>
+{/if}
+<ul>
+<li>
+<span>
+{if $credit}
+<i class="ui-ico-user">悬赏{$credit}{$DT[credit_name]}</i>
+{/if}
+</span>{if $hidden}匿名{else}<a href="{userurl($username, 'file=space&mid='.$moduleid)}" rel="external" class="b">{$passport}</a> <img src="{DT_STATIC}image/grade-{$member[gradeid]}.png" width="24" alt="" style="float:none;"/>{/if}</li>
+<li><em title="{$editdate}">{timetoread($edittime, 5)}</em></li>
+</ul>
+</div>
+<div class="content" data-content="{$js_pageid}">
+{$content}
+{if $addition}
+<br/><strong>问题补充：</strong>
+<br/>{nl2br($addition)}
+{/if}
+{if $process == 1 || $process == 2}
+<br/><i class="ui-ico-time">离问题结束还有{sectoread($totime-$DT_TIME)}</i>
+{elseif $process == 3}
+<br/><i class="ui-ico-time" title="{timetodate($updatetime, 5)}">{timetoread($updatetime, 5)} 已解决</i>
+{/if}
+</div>
+
+<div class="tool">
+{if $MOD[show_like]}<div class="like" onclick="Dlike({$moduleid}, {$itemid}, 0);">点赞 <b id="like-{$moduleid}-{$itemid}-0">{$likes}</b></div>{/if}
+{if $MOD[show_hate]}<div class="hate" onclick="Dhate({$moduleid}, {$itemid}, 0);">反对 <b id="hate-{$moduleid}-{$itemid}-0">{$hates}</b></div>{/if}
+{if $MOD[show_report]}<div class="report" onclick="Dreport({$moduleid}, {$itemid}, 0);">举报</div>{/if}
+{if $MOD[show_favorite]}<div class="favorite" onclick="Dfavor({$moduleid}, {$itemid});">收藏 <b>{$favorites}</b></div>{/if}
+{if $MOD[fee_award]}<div class="award" onclick="Go('{$MODULE[2][mobile]}award.php?mid={$moduleid}&itemid={$itemid}');">打赏 <b>{$awards}</b></div>{/if}
+{if $could_comment}<div class="comment" onclick="Go('{$EXT[comment_mob]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}');">评论 <b>{$comments}</b></div>{/if}
+{if $MOD[show_share]}<div class="share" onclick="Go('{DT_MOB}api/share.php?mid={$moduleid}&itemid={$itemid}');">分享 <b>{$shares}</b></div>{/if}
+</div>
+
+<div class="main blank-10"></div>
+
+{if $user_status == 3 && $best}
+<a name="H{$best[itemid]}"></a>
+<div class="list-user">
+{if $best[hidden]}
+<img src="{useravatar('')}" width="48" height="48" class="avatar"/>
+{else}
+<a href="{userurl($best[username], 'file=space&mid='.$moduleid.'&typeid=1')}" rel="external"><img src="{useravatar($best[username])}" width="48" height="48" class="avatar"/></a><i class="userinfo-v{$best[member][validate]}"></i>
+{/if}
+<ul>
+<li><span class="fb_green">最佳答案</span>{if $best[hidden]}匿名{else}<a href="{userurl($best[username], 'file=space&mid='.$moduleid.'&typeid=1')}" rel="external" class="b">{$best[passport]}</a> <img src="{DT_STATIC}image/grade-{$best[member][gradeid]}.png" width="24" alt="" style="float:none;"/>{/if}{if $best[expert]} <b class="fb_green">专家</b>{/if}</li>
+<li><em title="{timetodate($best[addtime], 5)}">{timetoread($best[addtime], 5)}</em>
+</li>
+</ul>
+</div>
+{/if}
+<div class="content" data-content="{$js_pageid}" id="A_{$best[itemid]}">
+{if $best}
+	{if $user_status == 3}
+		{$best[content]}
+	{else}
+		{template 'content', 'chip'}
+	{/if}
+{else}
+暂无最佳答案{if $could_answer}&nbsp;&nbsp;&nbsp;&nbsp;<a href="{$MODULE[2][mobile]}{$DT[file_my]}?mid={$moduleid}&action=add&job=answer&itemid={$itemid}" rel="external" class="b">我来回答</a>{/if}
+{/if}
+</div>
+{if $best}
+<div class="ui-tool">
+{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($best[ip], $MOD[ip])}</i>{/if}
+<i class="ui-ico-like" onclick="Dlike({$moduleid}, 0, {$aid});">支持 <span id="like-{$moduleid}-0-{$aid}">{$best[likes]}</span></i>
+<i class="ui-ico-hate" onclick="Dhate({$moduleid}, 0, {$aid});">反对 <span id="hate-{$moduleid}-0-{$aid}">{$best[hates]}</span></i>
+<i class="ui-ico-report" onclick="Ranswer({$aid});">举报</i>
+</div>
+{/if}
+{/if}
+{if $lists}
+{loop $lists $k $v}
+<a name="H{$v[itemid]}"></a>
+<div class="list-user">
+{if $v[hidden]}
+<img src="{useravatar('')}" width="48" height="48" class="avatar"/>
+{else}
+<a href="{userurl($v[username], 'file=space&mid='.$moduleid.'&typeid=1')}" rel="external"><img src="{useravatar($v[username])}" width="48" height="48" class="avatar"/></a><i class="userinfo-v{$v[member][validate]}"></i>
+{/if}
+<ul>
+<li><span>{$v[floor]}楼</span>{if $v[hidden]}匿名{else}{if $v[username]}<a href="{userurl($v[username], 'file=space&mid='.$moduleid.'&typeid=1')}" rel="external" class="b">{$v[passport]}</a> <img src="{DT_STATIC}image/grade-{$v[member][gradeid]}.png" width="24" alt="" style="float:none;"/>{else}{ip2area($item[ip])}访客{/if}{/if}</li>
+<li><em title="{timetodate($v[addtime], 5)}">{timetoread($v[addtime], 5)}</em></li>
+</ul>
+</div>
+<div class="content" data-content="{$js_pageid}" id="A_{$v[itemid]}">{$v[content]}</div>
+<div class="ui-tool">
+{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($v[ip], $MOD[ip])}</i>{/if}
+<i class="ui-ico-like" onclick="Dlike({$moduleid}, 0, {$v[itemid]});">支持 <span id="like-{$moduleid}-0-{$v[itemid]}">{$v[likes]}</span></i>
+<i class="ui-ico-hate" onclick="Dhate({$moduleid}, 0, {$v[itemid]});">反对 <span id="hate-{$moduleid}-0-{$v[itemid]}">{$v[hates]}</span></i>
+<i class="ui-ico-report" onclick="Ranswer({$v[itemid]});">举报</i>
+</div>
+{/loop}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{if $could_answer}
+<div class="foot-bar-fix"></div>
+<div class="foot-bar">
+	<div class="foot-bar-txt"><textarea onfocus="Go('{$MODULE[2][mobile]}{$DT[file_my]}?mid={$moduleid}&action=add&job=answer&itemid={$itemid}');">回答：{$title}</textarea></div>
+</div>
+{/if}
+<script style="text/javascript">
+function Ranswer(id) {
+	Dreport({$moduleid}, 0, id, Dd('A_'+id) ? '{$MOD[name]}回答举报，答案ID:'+id+'\n回答内容:\n'+Dd('A_'+id).innerHTML : '');
+}
+</script>
+{template 'footer'}

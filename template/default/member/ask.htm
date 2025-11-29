@@ -1,0 +1,275 @@
+{template 'header', 'member'}
+<div class="menu">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="tab" id="add"><a href="?action=add"><span>提交问题</span></a></td>
+<td class="tab" id="home"><a href="?action=index"><span>问题列表</span></a></td>
+{if $support}
+<td class="tab" id="support"><a href="?action=support"><span>客服专员</span></a></td>
+{/if}
+</tr>
+</table>
+</div>
+{if $action == 'add'}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl"> <span class="f_red">*</span> 分类</td>
+<td class="tr">{$type_select} <span id="dtypeid" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"> <span class="f_red">*</span> 标题</td>
+<td class="tr"><input type="text" size="70" name="title" id="title" value="{$title}"/> <span id="dtitle" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"> <span class="f_red">*</span> 内 容</td>
+<td class="tr">
+<textarea name="content" id="content" class="dsn">{$content}</textarea>
+{deditor($moduleid, 'content', 'Simple', '90%', 300)}<br/><span id="dcontent" class="f_red"></span></td>
+</tr>
+</table>
+<div class="sbt"><input type="submit" name="submit" value=" 提 交 " class="btn_g"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value=" 取 消 " class="btn" onclick="history.back(-1);"/></td></div>
+</form>
+{load('clear.js')}
+<script type="text/javascript">
+function check() {
+	var len;
+	if(Dd('typeid').value == 0) {
+		Dmsg('请选择分类', 'typeid');
+		return false;
+	}
+	len = Dd('title').value.length;
+	if(len < 2 || len > 60) {
+		Dmsg('标题不能少于2个字多于60个字，当前已输入'+len+'个字', 'title');
+		return false;
+	}
+	len = EditorLen();
+	if(len < 5 || len > 5000) {
+		Dmsg('内容不能少于5个字多于5000个字，当前已输入'+len+'个字', 'content');
+		return false;
+	}
+	return true;
+}
+</script>
+<script type="text/javascript">s('ask');m('add');</script>
+{elseif $action == 'show'}
+<style>
+.td1 {width:162px;text-align:center;background:#F8F8F8;padding:10px 0;}
+.td1 img {width:64px;height:64px;border-radius:50%;}
+.td1 div {line-height:24px;font-size:12px;font-weight:bold;}
+.td1 div b {color:#D9251D;}
+.td1 p {margin:0;line-height:24px;color:#666666;}
+.td2 {border-bottom:#EEEEEE 1px solid;}
+.td2 h2 {margin:0;height:32px;line-height:32px;overflow:hidden;padding:0 12px 10px 12px;font-size:16px;}
+.td2 .c0{border-top:#F8F8F8 1px solid;border-bottom:#F8F8F8 1px solid;border-radius:6px;line-height:32px;color:#666666;background:#F8F8F8;padding:0 16px;}
+.td2 .c0 div{float:right;}
+.td2 .c1{padding:12px;line-height:180%;font-size:14px;}
+.td2 .c1 p {margin:0;}
+.td2 .c1 img {max-width:98%;}
+.td2 .c3{padding:2px 0 0 0;font-size:14px;}
+.td2 .c3 label{margin-right:16px;}
+.td2 .c3 span{color:#999999;font-size:12px;}
+.td2 .c3 div {padding:8px 0;}
+</style>
+<table cellspacing="1" cellpadding="10" class="tb">
+<tr>
+<td class="td1" valign="top">
+<img src="{useravatar($_username, 'large')}"/>
+<div>我的提问</div>
+<p title="{$adddate}">{timetoread($addtime)}</p>
+</td>
+<td class="td2" valign="top" style="border-top:#EEEEEE 1px solid;">
+<h2>{$title}</h2>
+<div class="c0">
+{if $star}<div><img src="{DT_STATIC}image/star{$star}.gif" title="{$stars[$star]}"/></div>{/if}
+分类：{$TYPE[$typeid][typename]} &nbsp; &nbsp; &nbsp; 
+状态：{$dstatus[$status]} &nbsp; &nbsp; &nbsp; 
+{if $star && $status > 2}<a href="?action=add&itemid={$itemid}" class="b">继续提问</a>{/if}
+</div>
+<div class="c1">{$content}</div>
+</td>
+</tr>
+
+{if $lists}
+{loop $lists $k $v}
+<tr>
+<td class="td1" valign="top">
+{if $v[editor]}
+<img src="{DT_PATH}apple-touch-icon-precomposed.png"/>
+<div><b>客服回复</b></div>
+<p title="{timetodate($v[addtime], 5)}">{timetoread($v[addtime], 5)}</p>
+{else}
+<img src="{useravatar($_username, 'large')}"/>
+<div>我的追问</div>
+<p title="{timetodate($v[addtime], 5)}">{timetoread($v[addtime], 5)}</p>
+{/if}
+</td>
+<td class="td2" valign="top"><div class="c1">{$v[content]}</div></td>
+</tr>
+{/loop}
+{/if}
+{if $pages}<div class="pages">{$pages}</div>{/if}
+{if $star < 1}
+{if $status > 1}
+<tr>
+<td class="td1" valign="top">
+<div>问题是否解决？</div>
+</td>
+<td class="td2" valign="top">
+<div class="c3">
+<label><input type="radio" name="ask" value="1" onclick="$('#reply').hide();$('#star').show();$('#tips').html('请为此次服务打分');"/> 是</label>
+<label><input type="radio" name="ask" value="0" onclick="$('#reply').show();$('#star').hide();$('#tips').html('请继续提问');"/> 否</label>
+<span id="tips"></span>
+</div>
+</td>
+</tr>
+<form method="post" action="?" onsubmit="return check_star();">
+<input type="hidden" name="action" value="star"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<tr id="star" style="display:none;">
+<td class="td1" valign="top">
+<div style="padding:6px 0 0 0;">我的评分</div>
+</td>
+<td class="td2" valign="top">
+<div class="c3">
+<div><label><input type="radio" name="star" value="1" id="star_1"/> <img src="{DT_STATIC}image/star1.gif"/>  {$stars[1]}</label></div>
+<div><label><input type="radio" name="star" value="2" id="star_2"/> <img src="{DT_STATIC}image/star2.gif"/>  {$stars[2]}</label></div>
+<div><label><input type="radio" name="star" value="3" id="star_3"/> <img src="{DT_STATIC}image/star3.gif"/>  {$stars[3]}</label></div>
+<div><label><input type="radio" name="star" value="4" id="star_4"/> <img src="{DT_STATIC}image/star4.gif"/>  {$stars[4]}</label></div>
+<div><label><input type="radio" name="star" value="5" id="star_5"/> <img src="{DT_STATIC}image/star5.gif"/>  {$stars[5]}</label></div>
+<div><span>评分之后，此问题将结束且无法继续提问</span></div>
+<div><input type="submit" name="submit" value=" 评分 " class="btn_g"/> <span id="dstars" class="f_red"></span></div>
+</div>
+</td>
+</tr>
+</form>
+{/if}
+<tr id="reply">
+<td class="td1" valign="top">
+<img src="{useravatar($_username, 'large')}"/>
+<div></div>
+</td>
+<td class="td2" valign="top">
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="reply"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<textarea name="content" id="content" class="dsn"></textarea>
+{deditor($moduleid, 'content', 'Simple', '90%', 200)}<br/> 
+<input type="submit" name="submit" value=" 继续提问 " class="btn_g"/> <span id="dcontent" class="f_red"></span>
+</form>
+</td>
+</tr>
+{/if}
+</table>
+{load('clear.js')}
+<script type="text/javascript">
+function check_star() {
+	if(checked_count('star') < 1) {
+		Dmsg('请选择评分', 'stars');
+		return false;
+	}
+	return confirm('确定要提交选中评分吗？评分之后，此问题将结束且无法继续提问');
+}
+function check() {
+	var len = EditorLen();
+	if(len < 5 || len > 5000) {
+		Dmsg('内容不能少于5个字多于5000个字，当前已输入'+len+'个字', 'content');
+		return false;
+	}
+	return true;
+}
+</script>
+<script type="text/javascript">s('ask');m('home');</script>
+{elseif $action == 'support'}
+<table cellspacing="1" cellpadding="10" class="tb">
+{if $user[truename]}
+<tr>
+<td class="tl">姓名</td>
+<td class="tr">{$user[truename]} （{if $user[gender]==1}先生{else}女士{/if}）</td>
+</tr>
+{/if}
+{if $user[telephone]}
+<tr>
+<td class="tl">电话</td>
+<td class="tr">{$user[telephone]}</td>
+</tr>
+{/if}
+{if $user[mobile]}
+<tr>
+<td class="tl">手机</td>
+<td class="tr">{$user[mobile]}</td>
+</tr>
+{/if}
+{if $user[fax]}
+<tr>
+<td class="tl">传真</td>
+<td class="tr">{$user[fax]}</td>
+</tr>
+{/if}
+{if $user[mail]}
+<tr>
+<td class="tl">邮件</td>
+<td class="tr">{$user[mail]}</td>
+</tr>
+{/if}
+<tr>
+<td class="tl">聊天</td>
+<td class="tr">
+{if $user[username] && $DT[im_web]}{im_web($user[username])}&nbsp;{/if}
+{if $user[qq] && $DT[im_qq]}{im_qq($user[qq])}&nbsp;{/if}
+{if $user[wx] && $DT[im_wx]}{im_wx($user[wx], $user[username])}&nbsp;{/if}
+{if $user[ali] && $DT[im_ali]}{im_ali($user[ali])}&nbsp;{/if}
+{if $user[skype] && $DT[im_skype]}{im_skype($user[skype])}&nbsp;{/if}
+</td>
+</tr>
+</table>
+<script type="text/javascript">s('ask');m('support');</script>
+{else}
+<form action="?">
+<div class="tt">
+<input type="text" size="50" name="kw" value="{$kw}" title="关键词" placeholder="关键词"/>&nbsp;
+{$type_select}&nbsp;
+{$status_select}&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 搜 " class="btn" onclick="Go('?action=index');"/>
+</div>
+</form>
+<div class="nav">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="{if $status==-1}nav_2{else}nav_1{/if}"><a href="?action={$action}">全部</a></td>
+{loop $dstatus $k $v}
+<td class="{if $status==$k}nav_2{else}nav_1{/if}"><a href="?action={$action}&status={$k}">{strip_tags($v)}</a></td>
+{/loop}
+</tr>
+</table>
+</div>
+<div class="ls">
+<table cellspacing="0" cellpadding="10" class="tb">
+<tr>
+<th width="120">分类</th>
+<th>标题</th>
+<th width="150">提问时间</th>
+<th width="150">最后更新</th>
+<th width="120">状态</th>
+<th width="120">评分</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><a href="?typeid={$v[typeid]}">{$v[type]}</a></td>
+<td align="left"><a href="?action=show&itemid={$v[itemid]}" class="t">{$v[title]}</a></td>
+<td title="{$v[adddate]}">{timetoread($v[addtime])}</td>
+<td title="{$v[editdate]}">{timetoread($v[edittime])}</td>
+<td>&nbsp;{$v[dstatus]}&nbsp;</td>
+<td><img src="{DT_STATIC}image/star{$v[star]}.gif" title="{strip_tags($v[dstar])}"/></td>
+</tr>
+{/loop}
+</table>
+</div>
+{if $pages}<div class="pages">{$pages}</div>{/if}
+<script type="text/javascript">s('ask');m('home');</script>
+{/if}
+{template 'footer', 'member'}

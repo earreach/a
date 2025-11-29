@@ -1,0 +1,32 @@
+/*
+	DESTOON Copyright (C)2008-2099 www.destoon.com
+	This is NOT a freeware,Use is subject to license.txt
+*/
+html{overflow-x:hidden;overflow-y:auto;-webkit-user-select:none;}
+.bar{width:48px;background:#000000;text-align:center;}
+.barfix{width:48px;height:250px;position:fixed;z-index:9;left:0;top:0;}
+.barfix div{padding:16px 0;height:16px;overflow:hidden;cursor:pointer;}
+.barfix div span{display:none;}
+.barfix div .on{background:#2E2E2E;}
+.barfix div:hover{background:#2E2E2E;}
+.barfix div:hover span{display:block;z-index:10;position:absolute;width:32px;height:36px;padding:6px 8px;line-height:18px;text-align:center;background:#2B579A;color:#FFFFFF;margin:-35px 0 0 48px;opacity:0.9;}
+.barfix-on{background:#2E2E2E;}
+.barmain{background:#2E2E2E;}
+.barmain div{padding-bottom:200px;}
+.barmain a:link,.barmain a:visited,.barmain a:active{text-decoration:none;color:#FFFFFF;}
+.barmain a:hover{background:#4A4A4A;}
+dl{margin:0;width:100%;overflow:hidden;}
+dt{background:url('arrow-u.png') no-repeat right center;cursor:pointer;padding-left:32px;line-height:48px;height:48px;color:#FFFFFF;font-size:14px;letter-spacing:1px;}
+dt:hover{background:#666666 url('arrow-u.png') no-repeat right center;}
+.dt-d{background:url('arrow-d.png') no-repeat right center;cursor:pointer;padding-left:32px;line-height:48px;height:48px;}
+.dt-d:hover{background:#666666 url('arrow-d.png') no-repeat right center;}
+.dt-o{border-left:#4A4A4A 2px solid;cursor:pointer;padding-left:32px;line-height:48px;height:48px;}
+dd{line-height:48px;height:48px;margin-left:0;}
+dd a{width:100%;padding-left:42px;display:block;font-size:13px;}
+.dd-on{line-height:48px;height:48px;margin-left:0;background:#4A4A4A;}
+.ico-list,.ico-help,.ico-tool,.ico-user,.ico-coin {font-style:normal;font-weight:normal;font-size:14px;color:#FFFFFF;display:inline-block;height:16px;line-height:16px;padding-left:20px;margin-left:-16px;letter-spacing:1px;}
+.ico-list {background:url('ico-list.png') no-repeat 0 center;}
+.ico-help {background:url('ico-help.png') no-repeat 0 center;}
+.ico-tool {background:url('ico-tool.png') no-repeat 0 center;}
+.ico-user {background:url('ico-user.png') no-repeat 0 center;}
+.ico-coin {background:url('ico-coin.png') no-repeat 0 center;}

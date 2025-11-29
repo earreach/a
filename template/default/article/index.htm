@@ -1,0 +1,41 @@
+{template 'header'}
+<div class="b10"></div>
+<div class="m m3">
+	<div class="m3l">
+		<div class="top-l">
+		{if $MOD[page_islide]}
+			<!--{tag("moduleid=$moduleid&condition=status=3 and level=2 and thumb!=''&areaid=$cityid&order=".$MOD[order]."&pagesize=".$MOD[page_islide]."&width=440&height=330&target=_blank&template=slide")}-->
+		{/if}
+		</div>
+		<div class="top-r">
+			<div class="headline">
+			<!--{tag("moduleid=$moduleid&condition=status=3 and level=5&areaid=$cityid&order=".$MOD[order]."&pagesize=1&target=_blank&template=list-hl")}-->
+			</div>
+			<div class="subline">
+			<!--{tag("moduleid=$moduleid&condition=status=3 and level=1&areaid=$cityid&order=".$MOD[order]."&pagesize=8&datetype=2&target=_blank")}-->
+			</div>
+		</div>
+
+		{if $MOD[page_icat]}
+		<div class="cate-list">
+		{loop $maincat $i $c}
+		<div class="cate-box">
+			<div class="head-txt"><span><a href="{$MOD[linkurl]}{$c[linkurl]}">更多<i>&gt;</i></a></span><strong>{$c[catname]}</strong></div>
+			<div class="list-txt"><!--{tag("moduleid=$moduleid&catid=".$c[catid]."&condition=status=3&areaid=$cityid&order=".$MOD[order]."&pagesize=".$MOD[page_icat]."&datetype=2&target=_blank")}--></div>
+		</div>
+		{/loop}
+		</div>
+		{/if}
+
+	</div>
+	<div class="m3r">
+		<div class="head-sub"><strong>点击排行</strong></div>
+		<div class="list-rank"><!--{tag("moduleid=$moduleid&condition=status=3 and addtime>$DT_TODAY-1800*86400&areaid=$cityid&order=hits desc&key=hits&pagesize=9&template=list-rank")}--></div>
+		<div class="head-sub"><strong>评论排行</strong></div>
+		<div class="list-rank"><!--{tag("moduleid=$moduleid&condition=status=3 and addtime>$DT_TODAY-1800*86400&areaid=$cityid&order=comments desc&key=comments&pagesize=9&template=list-rank")}--></div>
+		<div class="head-sub"><strong>点赞排行</strong></div>
+		<div class="list-rank"><!--{tag("moduleid=$moduleid&condition=status=3 and addtime>$DT_TODAY-1800*86400&areaid=$cityid&order=likes desc&key=likes&pagesize=9&template=list-rank")}--></div>
+		<div class="b10"></div>
+	</div>
+</div>
+{template 'footer'}

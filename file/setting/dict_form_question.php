@@ -1,0 +1,10 @@
+<?php exit;?>
+qid,ID,
+fid,表单ID,
+type,添加方式,
+name,选项名称,
+value,备选值,
+required,输入限制,
+extend,扩展代码,
+note,填写说明,
+listorder,排序,

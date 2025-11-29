@@ -1,0 +1,116 @@
+{php $JS = array('jquery.slide');}
+{php $CSS = array('jquery.slide');}
+{template 'header'}
+<script type="text/javascript">
+var module_id= {$moduleid},item_id={$itemid},content_id='content',img_max_width={$MOD[max_width]};
+var load_page = {$page};var load_item = {$items};
+if(isIE) {
+	document.write('<style type="text/css">');
+	document.write(".jqslide .pic .prevbtn{cursor:url('{DT_SKIN}prev.cur'),default;}");
+	document.write(".jqslide .pic .nextbtn{cursor:url('{DT_SKIN}next.cur'),default;}");
+	document.write('</style>');
+}
+</script>
+<div class="m">	
+	<div class="nav"><div onclick="View(Dd('photo').src);" class="c_p"><img src="{DT_SKIN}ico-full.png" width="16" height="16" title="查看原图" align="absmiddle"/></div><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')}</div>
+</div>
+<div class="m">
+	<div class="photo_f">
+		<p>{$MOD[name]}浏览完毕</p>
+		<div onclick="Go('{$linkurl}');">重新浏览</div>
+		<div onclick="$('html,body').animate({scrollTop:$('rec').offset().top}, 500);">推荐{$MOD[name]}</div>
+	</div>
+	<div class="photo_l">
+		<div class="photo_info">
+			<div class="photo_info_r"><span class="count_a">{$page}</span> <span class="count_b">/ {$items}</span></div>
+			<h1 class="title" id="title">{$title}</h1>
+			<div class="photo_info_i">
+			<span onclick="Go('{$MOD[linkurl]}{rewrite('view.php?itemid='.$itemid)}');" class="f_r c_p"><img src="{DT_STATIC}image/ico-list-img.png" width="16" height="16" title="全部展开" align="absmiddle"/></span>
+			<i class="ui-ico-time">{$adddate}</i>
+			{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}
+			{if $MOD[hits]}<i class="ui-ico-hits" id="hits">{$hits}</i>{/if}
+			{if $could_comment}<a href="{$EXT[comment_url]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}"><i class="ui-ico-comm">{$comments}</i></a>{/if}
+			</div>
+		</div>
+	</div>
+	<div class="jqslide">
+		<div class="pic">
+			<div class="big">
+				<img id="photo" src="{DT_SKIN}spacer.gif"/>
+				<div id="pload"></div>
+			</div>
+			<div class="prev"><a href="javascript:void(0);" hidefocus="true" id="prevbtn" class="prevbtn" title="上一张 支持键盘←方向键"></a></div>
+			<div class="next"><a href="javascript:void(0);" hidefocus="true" id="nextbtn" class="nextbtn" title="下一张 支持键盘→方向键"></a></div>
+		</div>
+		<div id="pintro" class="photo_intro"></div>
+		<div class="plist">
+			<div class="scd">
+				<ul id="photolist">			
+				</ul>
+			</div>
+			<div class="scb" id="scb"></div>
+			<a href="javascript:void(0);" class="scl" id="scprev" hidefocus="true"></a>
+			<a href="javascript:void(0);" class="scr" id="scnext" hidefocus="true"></a>
+		</div>
+		<ul id="photoinfo" style="display:none;">
+		{loop $T $k $t}
+		<li>
+		<p>{$t[introduce]}</p>
+		<i title="bimg">{$t[big]}</i>
+		<i title="simg"><span>{$k+1}/{$items}</span><a href="javascript:void(0)" title="{$t[introduce]}" hidefocus="true"><img src="{$t[middle]}" width="100" height="75" alt=""/></a></i>
+		</li>
+		{/loop}
+		</ul>
+	</div>
+</div>
+{if $album}
+{php $tags = albumlist($item);}
+{if $tags[2] > 1}
+<div class="m">
+<div class="album-list">
+	<p><span>{$tags[1]}/{$tags[2]}</span><b>专辑：{$album}</b></p>
+	<ul>
+	{loop $tags[0] $t}
+	<a href="{$MOD[linkurl]}{$t[linkurl]}"><li{if $t[itemid]==$itemid} class="on"{/if}>{if $t[itemid]!=$itemid}<i>{$t[items]}图</i>{/if}{$t[title]}</li></a>
+	{/loop}
+	</ul>
+</div>
+</div>
+{/if}
+{/if}
+
+<div class="m m3">
+	<div class="m3l">
+		{if $CP}{template 'property_show', 'chip'}{/if}
+		<div class="content c_b" id="content">{if $content}{$content}{else}暂无图片简介{/if}</div>
+		{if $keytags}
+		<div class="tags">
+		{loop $keytags $t}
+		<a href="{$MOD[linkurl]}{rewrite('search.php?kw='.urlencode($t))}" target="_blank">{$t}</a>
+		{/loop}
+		</div>
+		{/if}
+	</div>
+	<div class="m3r">
+		{if $MOD[show_user] && $username}{template 'userinfo', 'chip'}{/if}
+	</div>
+	<div class="c_b"></div>
+</div>
+
+<div class="m">
+
+	<div class="tool">
+	{if $MOD[show_like]}<i class="like" onclick="Dlike({$moduleid}, {$itemid}, 0);">点赞 <b id="like-{$moduleid}-{$itemid}-0">{$likes}</b></i>{/if}
+	{if $MOD[show_hate]}<i class="hate" onclick="Dhate({$moduleid}, {$itemid}, 0);">反对 <b id="hate-{$moduleid}-{$itemid}-0">{$hates}</b></i>{/if}
+	{if $MOD[show_report]}<i class="report" onclick="Dreport({$moduleid}, {$itemid}, 0);">举报</i>{/if}
+	{if $MOD[show_favorite]}<i class="favorite" onclick="Dfavor({$moduleid}, {$itemid});">收藏 <b>{$favorites}</b></i>{/if}
+	{if $MOD[fee_award]}<a href="{$MODULE[2][linkurl]}award.php?mid={$moduleid}&itemid={$itemid}" target="_blank"><i class="award">打赏 <b>{$awards}</b></i></a>{/if}
+	{if $could_comment}<a href="{$EXT[comment_url]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}" target="_blank"><i class="comment">评论 <b>{$comments}</b></i></a>{/if}
+	{if $MOD[show_share]}<a href="{DT_PATH}api/share.php?mid={$moduleid}&itemid={$itemid}" target="_blank"><i class="share">分享 <b>{$shares}</b></i></a>{/if}
+	</div>
+
+	<div class="head-txt"><span><a href="{$MOD[linkurl]}{$CAT[linkurl]}">更多<i>&gt;</i></a></span><strong>推荐{$MOD[name]}</strong></div>
+	<div class="list-img list0" id="prec"><!--{tag("moduleid=$moduleid&condition=status=3 and open=3 and level>0 and items>0&catid=$catid&areaid=$cityid&itemid=$itemid&order=".$MOD[order]."&width=180&height=135&datetype=3&pagesize=6&template=list-photo")}--></div>
+</div>
+{if $content}{load('content.js')}{/if}
+{template 'footer'}

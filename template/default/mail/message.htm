@@ -1,0 +1,6 @@
+Hi, {$touser}：<br/>
+您在<a href="{DT_PATH}" target="_blank" style="color:#005590;">{$DT[sitename]}</a>收到了新的站内信（{$title}），内容如下：<br/><br/>
+{$content}<br/><br/>
+原始信件：<a href="{$MODULE[2][linkurl]}message.php?action=show&itemid={$itemid}" target="_blank"style="color:#005590;">{$MODULE[2][linkurl]}message.php?action=show&itemid={$itemid}</a><br/>
+{if $fromuser}发件会员：<a href="{userurl($fromuser)}" target="_blank" style="color:#005590;">{$fromuser}</a><br/>{/if}
+发送时间：{timetodate($addtime, 6)}<br/>

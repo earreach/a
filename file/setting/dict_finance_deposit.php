@@ -1,0 +1,8 @@
+<?php exit;?>
+itemid,ID,
+username,会员名,
+amount,金额,
+addtime,添加时间,
+editor,编辑,
+reason,原因,
+note,备注,

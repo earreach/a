@@ -1,0 +1,82 @@
+{template 'header', 'member'}
+<div class="menu">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="tab" id="action"><a href="?action=index"><span>浏览历史</span></a></td>
+<td class="tab" id="action_visit"><a href="?action=visit"><span>我的访客</span></a></td>
+</tr>
+</table>
+</div>
+<script type="text/javascript">var errimg = '{DT_STATIC}image/nopic50.png';</script>
+{if $action == 'visit'}
+<form action="?" id="search">
+<input type="hidden" name="action" value="{$action}"/>
+<div class="tt">
+<input type="text" size="30" name="kw" value="{$kw}" placeholder="关键词"/>&nbsp;
+{dcalendar('fromdate', $fromdate, '-', 1)} 至 {dcalendar('todate', $todate, '-', 1)}&nbsp;
+<input type="text" name="username" value="{$username}" size="10" title="会员名" placeholder="会员名"/>&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?action={$action}');"/>
+</div>
+</form>
+<form method="post">
+<div class="ls">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="60">图片</th>
+<th>标题</th>
+<th width="150">会员</th>
+<th width="150">访问时间</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><a href="{$v[linkurl]}" target="_blank"><img src="{$v[thumb]}" width="48" height="48" onerror="this.src=errimg;"/></a></td>
+<td align="left"><a href="{$v[linkurl]}" target="_blank" class="t">{$v[title]}</a></td>
+<td><a href="{userurl($v[username], 'file=space&mid='.$v[mid])}" target="_blank">{$v[username]}</a></td>
+<td class="f_gray c_p" onclick="Dq('date', this.title);" title="{timetodate($v[lasttime], 6)}">{timetoread($v[lasttime], 6)}</td>
+</tr>
+{/loop}
+</table>
+</form>
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('history');m('action_visit');</script>
+{else}
+<form action="?" id="search">
+<input type="hidden" name="action" value="{$action}"/>
+<div class="tt">
+<input type="text" size="30" name="kw" value="{$kw}" placeholder="关键词"/>&nbsp;
+{dcalendar('fromdate', $fromdate, '-', 1)} 至 {dcalendar('todate', $todate, '-', 1)}&nbsp;
+<input type="text" name="author" value="{$author}" size="10" title="会员" placeholder="会员"/>&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?action={$action}');"/>
+</div>
+</form>
+<form method="post">
+<div class="ls">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="20"><input type="checkbox" onclick="checkall(this.form);" title="全选/反选"/></th>
+<th width="60">图片</th>
+<th>标题</th>
+<th width="150">作者</th>
+<th width="150">浏览时间</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><input type="checkbox" name="itemid[]" value="{$v[itemid]}"/></td>
+<td><a href="{$v[linkurl]}" target="_blank"><img src="{$v[thumb]}" width="48" height="48" onerror="this.src=errimg;"/></a></td>
+<td align="left"><a href="{$v[linkurl]}" target="_blank" class="t">{$v[title]}</a></td>
+<td><a href="{userurl($v[author], 'file=space&mid='.$v[mid])}" target="_blank">{$v[author]}</a></td>
+<td class="f_gray c_p" onclick="Dq('date', this.title);" title="{timetodate($v[lasttime], 6)}">{timetoread($v[lasttime], 6)}</td>
+</tr>
+{/loop}
+</table>
+<div class="btns">
+<label><input type="checkbox" onclick="checkall(this.form);" title="全选/反选"/></label>
+<input type="submit" value=" 删除记录 " class="btn_r" onclick="if(confirm('确定要删除选中记录吗？')){this.form.action='?action=delete'}else{return false;}"/>&nbsp;&nbsp;
+</div>
+</form>
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('history');m('action');</script>
+{/if}
+{template 'footer', 'member'}

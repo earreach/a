@@ -1,0 +1,113 @@
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">订单详情</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+{if $O[status] == 0}<a href="?action=update&step=edit&confirm=1&itemid={$itemid}" data-transition="none">确认订单</a>{/if}
+{if $O[status] == 2}<a href="?action=update&step=send_goods&itemid={$itemid}" data-transition="none">订单发货</a>{/if}
+{if $MOD[contract]}<a href="?action=update&step=contract&itemid={$itemid}" data-transition="none">合同详情</a>{/if}
+{if $O[status] == 4 && $S[invoice] && $MOD[invoice_types]}<a href="?action=update&step=invoice&itemid={$itemid}" data-transition="none">发票详情</a>{/if}
+<a href="{userurl($O[buyer], 'file=space')}" rel="external">联系买家</a>
+<a href="?action=index" data-direction="reverse">订单列表</a>
+</div>
+</div>
+
+{template 'goods', 'chip'}
+<div class="ui-head"><i></i><b>我的备注</b></div>
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="note"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div class="list-btn">
+<textarea style="width:100%;height:60px;margin:16px 0;border:#F6F6F6 1px solid;" name="note" id="note" placeholder="订单备注，仅自己可见" onfocus="$('#btn-note').fadeIn(300);">{$O[seller_note]}</textarea>
+</div>
+<div class="list-btn2 dsn" id="btn-note">
+	<div><input type="submit" name="submit" value=" 保 存 " class="btn-green"/></div>
+	<div><input type="button" value=" 取 消 " class="btn" onclick="$('#btn-note').fadeOut(300)"/></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+if(Dd('note').value.length > 200) {
+	Dmsg('限制为200字以内', 'note');
+	return false;
+}
+return true;
+}
+</script>
+<div class="ui-head"><i></i><b>快递信息</b></div>
+<div class="content">
+{if $DT[postcode]}邮编：{$O[buyer_postcode]}<br/>{/if}
+地址：{$O[buyer_address]}<br/>
+姓名：{$O[buyer_name]}<br/>
+手机：{$O[buyer_mobile]}<br/>
+买家备注：{if $O[note]}{$O[note]}{else}无{/if}<br/>
+{if $O[send_time]}
+发货日期：{$O[send_time]}<br/>
+快递类型：{$O[send_type]}<br/>
+快递单号：{$O[send_no]}{if $O[send_type] && $O[send_no]} &nbsp; <a href="javascript:;" class="b" onclick="Ds('express_t');$('#express').load(AJPath+'?action=express&moduleid=2&auth={$auth}');">[快递追踪]</a>{/if}<br/>
+快递状态：{$dsend_status[$O[send_status]]}<br/>
+<div id="express_t" style="display:none;"><div id="express" style="font-size:12px;">正在查询...</div></div>
+{/if}
+</div>
+
+{if $logs}
+<div class="ui-head"><i></i><b>订单进程</b></div>
+<div class="content px12 f_gray">
+	{loop $logs $v}
+	{$v[adddate]} - {$v[title]}<br/>
+	{/loop}
+</div>
+{/if}
+
+<div class="ui-head"><i></i><b>订单详情</b></div>
+<div class="content">
+联系买家：<a href="{userurl($O[buyer], 'file=space')}" rel="external">{if $O[buyer_passport]}{$O[buyer_passport]}{else}{$O[buyer_passport]}{/if}</a><br/>
+下单时间：{$O[adddate]}<br/>
+最后更新：{$O[updatedate]}<br/>
+{if $O[send_time]}
+发货时间：{$O[send_time]}<br/>
+{/if}
+订单状态：{$dstatus[$O[status]]}<br/>
+{if $O[bill]}
+付款凭证：<a href="{$O[bill]}" class="b">查看凭证</a><br/>
+{/if}
+{if $O[inviter]}
+分销会员：<a href="agent.php?username={$O[inviter]}" class="b">{$O[inviter]}</a><br/>
+{/if} 
+{if $O[buyer_reason]}
+退款理由：{$O[buyer_reason]}<br/>
+{/if}
+{if $O[refund_reason]}
+操作原因：{$O[refund_reason]}<br/>
+{/if}
+{if $MOD[contract]}
+	合同状态：
+	{if $O[contract] == 2}
+	<span class="f_green">已签署</span> &nbsp; <a href="?action=update&step=contract&itemid={$itemid}" class="b">详情</a>
+	{elseif $O[contract] == 1}
+	<span class="f_blue">签署中</span> &nbsp; <a href="?action=update&step=contract&itemid={$itemid}" class="b">详情</a>
+	{else}
+	<span class="f_gray">待上传</span> &nbsp; <a href="?action=update&step=contract&itemid={$itemid}" class="b">上传</a>
+	{/if}
+{/if}
+{if $O[status] == 4 && $S[invoice] && $MOD[invoice_types]}
+	开票状态：
+	{if $O[invoice] == 2}
+	<span class="f_green">已开票</span> &nbsp; <a href="?action=update&step=invoice&itemid={$itemid}" class="b">详情</a>
+	{elseif $O[invoice] == 1}
+	<span class="f_blue">待开票</span> &nbsp; <a href="?action=update&step=invoice&itemid={$itemid}" class="b">开票</a>
+	{else}
+	<span class="f_gray">待申请</span>
+	{/if}
+{/if}
+</div>

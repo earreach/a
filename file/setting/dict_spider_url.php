@@ -1,0 +1,11 @@
+<?php exit;?>
+itemid,ID,
+sid,规则ID,
+title,标题,
+linkurl,链接地址,
+item,地址MD5,
+addtime,抓取时间,
+edittime,采集时间,
+posttime,发表时间,
+editor,编辑,
+status,状态,

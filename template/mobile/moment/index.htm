@@ -1,0 +1,54 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title"><input type="search" name="kw" value="{$kw}" placeholder="{$MOD[name]}搜索" readonly onclick="Go('{DT_MOB}api/search.php?mid={$moduleid}');"/></div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div class="ui-viewer" id="viewer-{$js_pageid}"></div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="{$MODULE[2][mobile]}{$DT[file_my]}?mid={$moduleid}&action=add">发布{$MOD[name]}</a>
+<a href="{DT_MOB}{rewrite('channel.php?mid='.$moduleid)}" data-transition="none">{$MOD[name]}分类</a>
+<a href="{$MOD[mobile]}{rewrite('topic.php?page=1')}">话题列表</a>
+<a href="{DT_MOB}channel.php" data-direction="reverse">切换频道</a>
+</div>
+</div>
+
+{load('moment.css')}
+{load('moment.js')}
+{load('player.js')}
+<script type="text/javascript">$(function(){Stabs('{$js_pageid}');});</script>
+<div class="list-menu" id="tabs-{$js_pageid}">
+	<ul>
+	<a href="{$MOD[mobile]}" data-transition="none"><li{if $typeid==0} class="on"{/if}>最新</li></a>
+	<a href="{$MOD[mobile]}{rewrite('index.php?typeid=1')}" data-transition="none"><li{if $typeid==1} class="on"{/if}>推荐</li></a>
+	<a href="{$MOD[mobile]}{rewrite('index.php?typeid=2')}" data-transition="none"><li{if $typeid==2} class="on"{/if}>关注</li></a>
+	<a href="{$MOD[mobile]}{rewrite('index.php?typeid=3')}" data-transition="none"><li{if $typeid==3} class="on"{/if}>好友</li></a>
+	<a href="{$MOD[mobile]}{rewrite('index.php?typeid=4')}" data-transition="none"><li{if $typeid==4} class="on"{/if}>热门</li></a>
+	<a href="{$MOD[mobile]}{rewrite('topic.php?page=1')}" data-transition="none"><li>话题</li></a>
+	<a href="{$MODULE[2][mobile]}{$DT[file_my]}?mid={$moduleid}&action=add"><li>发布</li></a>
+	</ul>
+</div>
+
+<div class="ui-filter">
+<a href="{$MOD[mobile]}search.php?elite=1&catid={$catid}&areaid={$areaid}"><i class="ui-filter-box ui-fr">推荐</i></a>
+<i class="ui-filter-dsc on">综合</i>
+<a href="{$MOD[mobile]}search.php?orderby=dlikes&catid={$catid}&areaid={$areaid}"><b>点赞</b></a>
+<a href="{$MOD[mobile]}search.php?orderby=dquotes&catid={$catid}&areaid={$areaid}"><b>转发</b></a>
+<a href="{$MOD[mobile]}search.php?orderby=dcomments&catid={$catid}&areaid={$areaid}"><b>评论</b></a>
+</div>
+
+{if $tags}
+<div id="list-{$js_pageid}" class="main">{template 'list-'.$module, 'tag'}</div>
+<div id="load-{$js_pageid}" class="ui-load"></div>
+{else}
+{template 'empty', 'chip'}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{template 'footer'}

@@ -1,0 +1,116 @@
+{if $user_status == 3}
+{if $member}
+{if $DT[follow]}
+{if followed($member[userid])}
+<div class="follow1" onclick="Dfollow('{$member[username]}');" id="follow-{$member[username]}" title="已关注，点击取消"><b>已关注</b><i>{numtoread($member[fans])}</i></div>
+{else}
+<div class="follow0" onclick="Dfollow('{$member[username]}');" id="follow-{$member[username]}" title="未关注，点击关注"><b>加关注</b><i>{numtoread($member[fans])}</i></div>
+{/if}
+{/if}
+<h3><a href="{$member[linkurl]}" rel="external">{if $member[shop] && $member[vshop]}{$member[shop]}{else}{$member[company]}{/if}</a></h3>
+{if $member[vip]}
+<div class="contact-vip"><b>{$member[groupname]}</b><span>第{vip_year($member[fromtime])}年</span></div>
+{else}
+<div class="contact-com"><b>{$member[groupname]}</b><span>第{vip_year($member[regtime])}年</span></div>
+{/if}
+<div class="contact-vd">
+	{if $member[validated]}
+	<div class="contact-v1">资料<b>通过{$member[validator]}认证</b></div>
+	{else}
+	<div class="contact-v0">资料<b>未认证</b></div>
+	{/if}
+	{if $member[deposit]>0.01}
+	<div class="contact-d1">保证金<b>{$DT[money_sign]}{$member[deposit]}</b></div>
+	{else}
+	<div class="contact-d0">保证金<b>未缴纳</b></div>
+	{/if}
+</div>
+
+<div class="gird-4">
+	<ul>
+		{if $DT[im_web]}
+		<li><a href="{$MODULE[2][mobile]}chat.php?touser={$member[username]}" rel="external"><img src="{DT_STATIC}image/share-chat.png" width="48" height="48"/><span>在线交谈</span></a></li>
+		{/if}
+		<li><a href="{$MODULE[2][mobile]}message.php?action=send&touser={$member[username]}" rel="external"><img src="{DT_STATIC}image/share-message.png" width="48" height="48"/><span>发送私信</span></a></li>
+		<li><a href="{$MODULE[2][mobile]}friend.php?action=add&username={$member[username]}" rel="external"><img src="{DT_STATIC}image/share-friend.png" width="48" height="48"/><span>添加好友</span></a></li>
+		{if $member[telephone]}
+		<li><a href="tel:{$member[telephone]}"><img src="{DT_STATIC}image/share-tel.png" width="48" height="48"/><span>拨打电话</span></a></li>
+		{elseif $member[mobile] && $DT[im_mob]}
+		<li><a href="tel:{$member[mobile]}"><img src="{DT_STATIC}image/share-tel.png" width="48" height="48"/><span>拨打电话</span></a></li>
+		{/if}
+		{if $member[mobile] && $DT[im_mob]}
+		<li><a href="sms:{$member[mobile]}"><img src="{DT_STATIC}image/share-sms.png" width="48" height="48"/><span>发送短信</span></a></li>
+		{/if}
+		{if $member[mail]}
+		<li><a href="mailto:{$member[mail]}"><img src="{DT_STATIC}image/share-email.png" width="48" height="48"/><span>发送邮件</span></a></li>
+		{/if}
+		{if $member[qq] && $DT[im_qq]}
+		<li><a href="http://wpa.qq.com/msgrd?v=3&uin={$member[qq]}&site=qq&menu=yes" target="_blank" rel="external"><img src="{DT_STATIC}image/share-qq.png" width="48" height="48"/><span>QQ交谈</span></a></li>
+		{/if}
+		{if $member[wx] && $DT[im_wx]}
+		<li><a href="{DT_MOB}api/wx.php?wid={$member[wx]}&username={$member[username]}" rel="external"><img src="{DT_STATIC}image/share-wx.png" width="48" height="48"/><span>微信交谈</span></a></li>
+		{/if}
+		{if $member[gzh] && $DT[im_wx]}
+		<li><a href="{DT_MOB}api/wx.php?gzh={$member[gzh]}&username={$member[username]}" rel="external"><img src="{DT_STATIC}image/share-gzh.png" width="48" height="48"/><span>微信公众号</span></a></li>
+		{/if}
+		{if $member[ali] && $DT[im_ali]}
+		<li><a href="http://amos.alicdn.com/msg.aw?v=2&uid={$member[ali]}&site=cnalichn&s=6&charset=UTF-8" target="_blank" rel="external"><img src="{DT_STATIC}image/share-ali.png" width="48" height="48"/><span>阿里旺旺</span></a></li>
+		{/if}
+		{if $member[skype] && $DT[im_skype]}
+		<li><img src="{DT_STATIC}image/share-skype.png" width="48" height="48" onclick="prompt('长按号码可以复制', '{$member[skype]}');"/><span>Skype通话</span></li>
+		{/if}
+		{if $member[address]}
+		<li><a href="{DT_MOB}api/address.php?auth={encrypt($member[address].'|'.$member[company].'|'.$member[lng].','.$member[lat], DT_KEY.'MAP')}" rel="external"><img src="{DT_STATIC}image/share-map.png" width="48" height="48"/><span>地图导航</span></a></li>
+		{/if}
+		<li><a href="{userurl($member[username], 'file=contact')}" rel="external"><img src="{DT_STATIC}image/share-more.png" width="48" height="48"/><span>更多</span></a></li>
+	</ul>
+</div>
+{else}
+<div class="gird-4">
+	<ul>		
+		{if $item[telephone]}
+		<li><a href="tel:{$item[telephone]}"><img src="{DT_STATIC}image/share-tel.png" width="48" height="48"/><span>拨打电话</span></a></li>
+		{elseif $item[mobile] && $DT[im_mob]}
+		<li><a href="tel:{$item[mobile]}"><img src="{DT_STATIC}image/share-tel.png" width="48" height="48"/><span>拨打电话</span></a></li>
+		{/if}
+		{if $item[mobile] && $DT[im_mob]}
+		<li><a href="sms:{$item[mobile]}"><img src="{DT_STATIC}image/share-sms.png" width="48" height="48"/><span>发送短信</span></a></li>
+		{/if}
+		{if $item[email]}
+		<li><a href="mailto:{$item[email]}"><img src="{DT_STATIC}image/share-email.png" width="48" height="48"/><span>发送邮件</span></a></li>
+		{/if}
+		{if $item[qq] && $DT[im_qq]}
+		<li><a href="http://wpa.qq.com/msgrd?v=3&uin={$item[qq]}&site=qq&menu=yes" target="_blank" rel="external"><img src="{DT_STATIC}image/share-qq.png" width="48" height="48"/><span>QQ交谈</span></a></li>
+		{/if}
+		{if $item[wx] && $DT[im_wx]}
+		<li><a href="{DT_MOB}api/wx.php?wid={$item[wx]}&username={$item[username]}" rel="external"><img src="{DT_STATIC}image/share-wx.png" width="48" height="48"/><span>微信交谈</span></a></li>
+		{/if}
+		{if $item[ali] && $DT[im_ali]}
+		<li><a href="http://amos.alicdn.com/msg.aw?v=2&uid={$item[ali]}&site=cnalichn&s=6&charset=UTF-8" target="_blank" rel="external"><img src="{DT_STATIC}image/share-ali.png" width="48" height="48"/><span>阿里旺旺</span></a></li>
+		{/if}
+		{if $item[skype] && $DT[im_skype]}
+		<li><img src="{DT_STATIC}image/share-skype.png" width="48" height="48" onclick="prompt('长按号码可以复制', '{$item[skype]}');"/><span>Skype通话</span></li>
+		{/if}
+		{if $item[address]}
+		<li><a href="{DT_MOB}api/address.php?auth={encrypt($item[address].'|'.$item[company], DT_KEY.'MAP')}" rel="external"><img src="{DT_STATIC}image/share-map.png" width="48" height="48"/><span>地图导航</span></a></li>
+		{/if}
+		<li><a href="{userurl($item[username], 'file=contact')}" rel="external"><img src="{DT_STATIC}image/share-more.png" width="48" height="48"/><span>更多</span></a></li>
+	</ul>
+</div>
+{/if}
+{elseif $user_status == 2}
+<div style="padding:32px;line-height:200%;">
+查看联系方式需支付 <b style="color:red;">{$fee}</b>{$fee_unit}<br/>
+{$fee_name}余额:{if $currency == 'money'}{$_money}{else}{$_credit}{/if}{$fee_unit} <a href="{$MODULE[2][mobile]}" rel="external" class="b">我的账户</a><br/>
+<a href="{$MODULE[2][mobile]}pay.php?mid={$mid}&itemid={$itemid}" rel="external"><div class="btn-green">立即支付</div></a><br/><br/>
+</div>
+{elseif $user_status == 1}
+<br/><br/><center>
+无权查看，请升级会员级别<br/>
+{if $DT[telephone]}咨询电话：<a href="tel:{$DT[telephone]}">{$DT[telephone]}</a><br/>{/if}
+</center><br/><br/>
+{elseif $user_status == 0}
+<br/><br/><center>请 <a href="{$MODULE[2][mobile]}{$DT[file_login]}" rel="external" class="b">登录</a> 或 <a href="{$MODULE[2][mobile]}{$DT[file_register]}" rel="external" class="b">注册</a> 后查看联系方式</center><br/><br/>
+{else}
+<div id="contact"><div style="height:128px;background:#FFFFFF url('{DM_SKIN}spinner.gif') no-repeat center center;background-size:16px 16px;"></div></div>
+{/if}

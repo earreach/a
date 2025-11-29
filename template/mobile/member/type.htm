@@ -1,0 +1,59 @@
+{template 'header', 'member'}
+{if $MG[type_limit] > -1}
+<style type="text/css">
+.i0 {width:32px;text-align:center;}
+.d0 {width:96px;overflow:hidden;}
+</style>
+<form method="post" action="?">
+<input type="hidden" name="item" value="{$item}"/>
+<input type="hidden" name="mid" value="{$mid}"/>
+<div class="ui-form" style="padding:10px 0;">
+<table cellspacing="10" width="100%">
+<tr class="px12">
+<th width="24"><input type="checkbox" onclick="checkall(this.form);" title="全选/反选"/></th>
+<th width="48">排序</th>
+<th>名称</th>
+{if $could_child}<th width="96">上级</th>{/if}
+</tr>
+{loop $lists[0] $k0 $v0}
+<tr>
+<td align="center"><input type="checkbox" name="itemid[]" value="{$v0[typeid]}"/></td>
+<td align="center"><input name="post[{$v0[typeid]}][listorder]" type="tel" value="{$v0[listorder]}" maxlength="3" class="i0"/></td>
+<td><input name="post[{$v0[typeid]}][typename]" type="text" value="{$v0[typename]}" maxlength="50" style="width:100%;color:{$v0[style]}"/><input name="post[{$v0[typeid]}][style]" type="hidden" value="{$v0[style]}"/></td>
+{if $could_child}<td><div class="d0">{$v0[parent_select]}</div></td>{/if}
+</tr>
+{if $could_child}
+{if isset($lists[1][$v0[typeid]])}
+	{loop $lists[1][$v0[typeid]] $k1 $v1}
+	<tr>
+	<td align="center"><input type="checkbox" name="itemid[]" value="{$v1[typeid]}"/></td>
+	<td align="center"><input name="post[{$v1[typeid]}][listorder]" type="tel" value="{$v1[listorder]}" maxlength="3" class="i0"/></td>
+	<td><input name="post[{$v1[typeid]}][typename]" type="text" value="{$v1[typename]}" maxlength="50" style="width:100%;color:{$v1[style]}"/><input name="post[{$v1[typeid]}][style]" type="hidden" value="{$v1[style]}"/></td>
+	<td><div class="d0">{$v1[parent_select]}</div></td>
+	</tr>
+	{/loop}
+{/if}
+{/if}
+{/loop}
+<tr>
+<td align="center"><img src="{DM_SKIN}icon-add.png" width="16" height="16"/></td>
+<td align="center"><input name="post[0][listorder]" type="tel" size="5" value="" maxlength="3" class="i0"/></td>
+<td><textarea name="post[0][typename]" style="width:100%;height:64px;float:left;" placeholder="允许批量添加，一行一个分类名称，按回车换行" title="允许批量添加，一行一个分类名称，按回车换行"></textarea><input name="post[0][style]" type="hidden" value=""/></td>
+{if $could_child}<td><div class="d0">{$parent_select}</div></td>{/if}
+</tr>
+</table>
+</div>
+{if $MG[type_limit]}<div class="limit">最多可定义 <strong class="f_red">{$MG[type_limit]}</strong> 个分类&nbsp;&nbsp;&nbsp;当前已定义 <strong class="f_blue">{count($types)}</strong> 个</div>{/if}
+
+<div class="foot-bar-fix"></div>
+<div class="foot-btn">
+	<ul>
+	<li><input type="submit" value="保 存" class="btn-green" onclick="this.form.action='?action=update';"/></li>
+	<li><input type="submit" value="删 除" class="btn" onclick="if($(':checkbox:checked').length){if(confirm('确定要删除'+$(':checkbox:checked').length+'个选中项吗？此操作将不可撤销')) {this.form.action='?action=delete';}else{return false;}}else{confirm('请选择要删除的项目');return false;}"/></li>
+	</ul>
+</div>
+</form>
+{else}
+<div class="list-none">抱歉，您没有权限自定义分类</div>
+{/if}
+{template 'footer', 'member'}

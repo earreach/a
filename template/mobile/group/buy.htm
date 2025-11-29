@@ -1,0 +1,209 @@
+{template 'header', 'member'}
+{load('cart.css')}
+{if $action == 'result'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">提交订单</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="{$MODULE[2][mobile]}deal.php?mid={$moduleid}" rel="external">我的订单</a>
+<a href="{$item[mobile]}" data-direction="reverse">商品详情</a>
+<a href="{$MOD[mobile]}" data-direction="reverse">返回{$MOD[name]}</a>
+</div>
+</div>
+
+{if $code < 10}
+<div class="ui-ok">
+	<p>订单提交成功！ </p>
+	<input type="button" value="支付订单" class="btn-green" onclick="Go('{$payurl}');"/>
+	<input type="button" value="继续购物" class="btn" onclick="Go('{$MOD[mobile]}');"/>
+	<meta http-equiv="refresh" content="6;URL={$payurl}"/>
+</div>
+{else}
+<div class="ui-ko">
+	<p>
+	{if $code == 10}
+	商品不存在
+	{elseif $code == 11}
+	商家不存在
+	{elseif $code == 12}
+	不能下单自己的商品
+	{elseif $code == 13}
+	商品未上架
+	{elseif $code == 14}
+	团购已结束
+	{elseif $code == 15}
+	商品价格错误
+	{else}
+	订单提交失败
+	{/if}
+	</p>
+	<input type="button" value="重新挑选" class="btn-green" onclick="Go('{$MOD[mobile]}');"/><br/>
+	{if $itemid}
+	<input type="button" value="查看商品" class="btn" onclick="Go('{$url}');"/>
+	{/if}
+</div>
+{/if}
+
+{else}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">确认订单</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="{$item[mobile]}" data-direction="reverse">取消订单</a>
+<a href="{$MODULE[2][mobile]}deal.php?mid={$moduleid}" rel="external">我的订单</a>
+<a href="{$item[mobile]}" data-direction="reverse">商品详情</a>
+<a href="{$MOD[mobile]}" data-direction="reverse">返回{$MOD[name]}</a>
+</div>
+</div>
+
+<form method="post" action="{$MOD[mobile]}buy.php" onsubmit="return check();" id="buy">
+<input type="hidden" name="itemid" value="{$itemid}"/>
+
+{if $t[logistic]}
+<input type="hidden" name="aid" value="{$address[0][itemid]}" id="aid"/>
+<div class="ui-form">
+<p>收货地址<i>*</i><b id="daid"><a href="{$MODULE[2][mobile]}address.php" class="b">管理</a></b></p>
+</div>
+<div class="my-addr" id="my-addr">
+	<ul>
+	{loop $address $k $v}
+	<li{if $k==0} class="on"{/if} id="addr-{$v[itemid]}" onclick="setaddr({$v[itemid]});"><b>{$v[truename]}</b> {$v[address]} {hide_str($v[mobile], 'mobile')}{if $v[typename]}<s>{$v[typename]}</s>{/if}</li>
+	{/loop}
+	</ul>
+</div>
+{if count($address) > 1}
+<div class="my-addr-more" id="my-addr-more" onclick="foldaddr(0);">更多地址</div>
+<div class="my-addr-fold" id="my-addr-fold" onclick="foldaddr(1);">收起地址</div>
+{/if}
+
+{else}
+<div class="ui-form">
+<p><span class="ui-ico-info">手机号码<i>*</i></span><b id="dmobile"></b></p>
+<div><input type="tel" name="mobile" id="mobile" value="{$_mobile}" style="width:50%;"/></div>
+<s>购买成功后将把订单号和密码发到您手机，凭短信到商家消费</s>
+</div>
+{/if}
+<div class="blank-16"></div>
+<div class="list-goods bd-b bd-t">
+<table cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td width="16"></td>
+<td class="c2"><a href="{$t[mobile]}"><img src="{if $t[thumb]}{$t[thumb]}{else}{DM_SKIN}60x60.png{/if}" width="60" height="60" alt="" onerror="this.src='{DM_SKIN}60x60.png';"/></a></td>
+<td>
+	<p><a href="{$t[mobile]}">{$t[title]}</a></p>
+	<div>
+	<table cellpadding="0" cellspacing="0" width="100%">
+	<tr>
+	<td><em>{$DT[money_sign]}<span id="price_{$t[itemid]}">{$t[price]}</span></em></td>
+	<td class="a1" onclick="alter('{$t[itemid]}', '-');">-</td>
+	<td class="a2"><input type="tel" name="number" value="1" id="number_{$t[itemid]}" onblur="calculate();"/></td>
+	<td class="a3" onclick="alter('{$t[itemid]}', '+');">+</td>
+	</tr>
+	</table>
+	</div>	
+	<s id="total_{$t[itemid]}">{$t[price]}</s>
+</td>
+</tr>
+</table>
+</div>
+<div class="list-pars bd-b">
+<input type="text" name="note" value="" maxlength="100" placeholder="备注：限100字以内" class="pars-note"/>
+</div>
+
+<div class="blank-36"></div>
+<div class="blank-36"></div>
+
+<div class="cart-foot-fix"></div>
+<div class="cart-foot">
+<table cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td class="c2">&nbsp; &nbsp;合计:<span style="color:red;font-size:20px;font-weight:bold;">{$DT[money_sign]}<span id="total_amount"></span></span></td>
+<td class="c3"><input type="submit" name="submit" value="提交订单" style="width:128px;"/></td>
+</tr>
+</table>
+</div>
+</form>
+{/if}
+<script type="text/javascript">
+function check() {
+	if(Dd('total_amount').innerHTML == '0.00') {
+		Dtoast('{$js_pageid}', '订单总额为0.00，请检查商品数量');
+		window.scroll(0, 0);
+		return false;
+	}
+	{if $t[logistic]}
+		if(Dd('aid').value == 0) {
+			Dtoast('{$js_pageid}', '请选择所在地区');
+			return false;
+		}
+	{else}
+		if(Dd('mobile').value.length < 11) {
+			Dmsg('请填写手机号码', 'mobile');
+			return false;
+		}
+	{/if}
+	return true;
+}
+function setaddr(id) {
+	$('#aid').val(id);
+	$('#my-addr .on').removeClass('on');
+	$('#addr-'+id).addClass('on');
+}
+function foldaddr(type) {
+	if(type) {
+		$('#my-addr').animate({'scrollTop':'0'}, 10);
+		if($('#my-addr li').first().attr('class') != 'on') {
+			var htm = $('#my-addr .on').prop('outerHTML');
+			$('#my-addr .on').remove();
+			$('#my-addr ul').prepend(htm);
+		}
+		$('#my-addr').css({'max-height':'40px','overflow':'hidden'});$('#my-addr-more').show();$('#my-addr-fold').hide();
+	} else {
+		$('#my-addr').css({'max-height':'200px','overflow-y':'auto'});$('#my-addr-more').hide();$('#my-addr-fold').show();
+	}
+}
+function alter(i, t) {
+	if(t == '+') {
+		if(Dd('number_'+i).value >= 99) return;
+		Dd('number_'+i).value =  parseInt(Dd('number_'+i).value) + 1;
+	} else {
+		if(Dd('number_'+i).value <= 0) return;
+		Dd('number_'+i).value =  parseInt(Dd('number_'+i).value) - 1;
+	}
+	calculate();
+}
+function calculate() {
+	var itemids = [{$itemid}];
+	var _good = itemid = 0;
+	for(var i = 0; i < itemids.length; i++) {
+		itemid = itemids[i];
+		var num, good;
+		num = parseInt(Dd('number_'+itemid).value);
+		if(isNaN(num) || num < 0) Dd('number_'+itemid).value = num = 1;
+		good = parseFloat(Dd('price_'+itemid).innerHTML)*num;
+		Dd('total_'+itemid).innerHTML = good.toFixed(2);
+		_good += good;
+	}
+	Dd('total_amount').innerHTML = _good.toFixed(2);
+}
+calculate();
+</script>
+{template 'footer', 'member'}

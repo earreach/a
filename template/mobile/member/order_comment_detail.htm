@@ -1,0 +1,125 @@
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">评价详情</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=update&step=detail&itemid={$itemid}" data-transition="none">订单详情</a>
+<a href="?action=index" data-direction="reverse">订单列表</a>
+</div>
+</div>
+
+<div class="ui-viewer" id="viewer-{$js_pageid}"></div>
+{load('mall.css')}
+{load('mall.js')}
+{load('player.js')}
+{template 'goods', 'chip'}
+<div style="display:none;" id="explain">
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="oid" value="0" id="oid"/>
+<div class="ui-form">
+<p>我的解释<i>*</i><b id="dcontent"></b></p>
+<div><textarea name="content" id="content"></textarea></div>
+<div class="blank-20"></div>
+<div><input type="submit" name="submit" value="确 定" class="btn-blue"/></div>
+<div class="blank-20"></div>
+<div><input type="button" value="取 消" class="btn" onclick="$('#explain').slideUp(300);"/></div>
+<div class="blank-20"></div>
+</div>
+</form>
+</div>
+<div class="ui-head"><i></i><b>卖家评价</b></div>
+<div class="content">
+	{loop $lists $k $v}
+	{if $k > 0}
+	<div class="blank-20 bd-b"></div>
+	<div class="blank-20"></div>
+	{/if}
+	商品名称：<a href="{$v[linkurl]}">{$v[title]}</a><br/>
+	{if $comments[$k][buyer_star]}
+	卖家评分：<img src="{DM_SKIN}star{$comments[$k][buyer_star]}.png" width="60" height="12" alt="" align="absmiddle"/> {$STARS[$comments[$k][buyer_star]]}
+	{if !$comments[$k][seller_reply]}
+	&nbsp;&nbsp;<a href="javascript:;" onclick="E({$v[itemid]});" class="b">[解释]</a>
+	{/if}<br/>
+	卖家评价：<br/>
+	{nl2br($comments[$k][buyer_comment])}<br/>
+	评价时间：{timetodate($comments[$k][buyer_ctime], 6)}<br/>
+	{if $comments[$k][seller_reply]}
+	我的解释：<br/>
+	<span style="color:#D9251D;">{nl2br($comments[$k][seller_reply])}</span><br/>
+	解释时间：{timetodate($comments[$k][seller_rtime], 6)}<br/>
+	{/if}
+	{else}
+	卖家评价：暂未评价<br/>
+	{/if}
+	{/loop}
+</div>
+<div class="ui-head"><i></i><b>我的评价</b></div>
+<div class="content">
+	{loop $lists $k $v}
+	{if $k > 0}
+	<div class="blank-20 bd-b"></div>
+	<div class="blank-20"></div>
+	{/if}
+	商品名称：<a href="{$v[linkurl]}">{$v[title]}</a><br/>
+	{if $comments[$k][seller_star]}
+	商品评分：<img src="{DM_SKIN}star{$comments[$k][seller_star]}.png" width="60" height="12" alt="" align="absmiddle"/> {$STARS[$comments[$k][seller_star]]}<br/>
+	物流服务：<img src="{DM_SKIN}star{$comments[$k][seller_star_express]}.png" width="60" height="12" alt="" align="absmiddle"/> {$STARS[$comments[$k][seller_star_express]]}<br/>
+	商家态度：<img src="{DM_SKIN}star{$comments[$k][seller_star_service]}.png" width="60" height="12" alt="" align="absmiddle"/> {$STARS[$comments[$k][seller_star_service]]}<br/>
+	买家评价：<br/>
+	{nl2br($comments[$k][seller_comment])}<br/>
+	{if $comments[$k][seller_thumbs] || $comments[$k][seller_video]}
+	<div class="comment-r">
+	<ul id="thumbs-{$v[itemid]}">			
+	{if $comments[$k][seller_video]}<li><img src="{DT_STATIC}image/play.gif" onclick="comment_thumb_show({$v[itemid]}, this);" data-video="{$comments[$k][seller_video]}"/></li>{/if}
+	{loop $comments[$k][seller_thumbs] $t}
+	{if $t}<li><img src="{$t}" onclick="comment_thumb_show({$v[itemid]}, this);"/></li>{/if}
+	{/loop}
+	</ul>
+	</div>
+	<p id="thumbshow-{$v[itemid]}" onclick="comment_thumb_next({$v[itemid]});"></p>
+	{/if}
+	评价时间：{timetodate($comments[$k][seller_ctime], 6)}<br/>
+	{if $comments[$k][buyer_reply]}
+	卖家解释：<br/>
+	<span style="color:#D9251D;">{nl2br($comments[$k][buyer_reply])}</span><br/>
+	解释时间：{timetodate($comments[$k][buyer_rtime], 6)}<br/>
+	{/if}
+	{else}
+	买家评价：暂未评价<br/>
+	{/if}
+	{/loop}
+</div>
+<script type="text/javascript">
+function check() {
+	if(Dd('content').value.length < 2) {
+		alert('解释内容不能少于2字');
+		return false;
+	}
+	if(Dd('content').value.length > 500) {
+		alert('解释内容不能超过500字');
+		return false;
+	}
+	return confirm('您确认提交此解释吗？提交后解释内容将不可更改');
+}
+function S() {
+	Inner('chars', Dd('content').value.length);
+}
+function E(oid) {
+	$('#explain').hide();
+	$("html, body").animate({scrollTop:$('#explain').offset().top}, 200);
+	$('#oid').val(oid);
+	$('#explain').slideDown(300);
+}
+</script>

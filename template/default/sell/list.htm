@@ -1,0 +1,85 @@
+{template 'header'}
+<div class="m">	
+	<div class="nav"><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')}</div>
+</div>
+<div class="m m2">
+	<div class="m2l">
+		<form action="{$MOD[linkurl]}search.php" id="search">
+		<input type="hidden" name="catid" value="{$catid}"/>
+		<div class="sort-f">
+		<div class="sort">
+			<div class="sort-k">行业</div>
+			<div class="sort-v">
+				<ul>
+				{loop $maincat $k $v}
+				<li{if $v[catid]==$catid} class="on"{/if}><a href="{$MOD[linkurl]}{$v[linkurl]}">{set_style($v[catname],$v[style])}</a>{if !$cityid} <i>({$v[item]})</i>{/if}</li>
+				{/loop}
+				</ul>
+			</div>
+		</div>
+		<div class="sort">
+			<div class="sort-k">地区</div>
+			<div class="sort-v">
+				<ul>
+				{php $mainarea = get_mainarea(0);}
+				{loop $mainarea $k $v}
+				<li><a href="{$MOD[linkurl]}{rewrite('search.php?catid='.$catid.'&areaid='.$v['areaid'])}">{$v[areaname]}</a></li>
+				{/loop}
+				</ul>
+			</div>
+		</div>
+		{if $TYPE}
+		<div class="sort">
+			<div class="sort-k">类别</div>
+			<div class="sort-v">
+				<ul>
+				{loop $TYPE $k $v}
+				<li><a href="javascript:;" onclick="Dq('typeid',{$k});">{$v}</a></li>
+				{/loop}
+				</ul>
+			</div>
+		</div>
+		{/if}
+		{if $FD}{template 'fields_search', 'chip'}{/if}
+		{if $CP}{template 'property_search', 'chip'}{/if}
+		</div>
+		</form>
+
+		<form method="post">
+		<div class="sell_tip" id="sell_tip" style="display:none;" title="双击关闭" ondblclick="Dh(this.id);">
+			<div>
+				<p>您可以</p>
+				<input type="submit" value="对比选中" onclick="this.form.action='{$MOD[linkurl]}compare.php';" class="tool-btn"/> 或 
+				<input type="submit" value="批量询价" onclick="this.form.action='{$MOD[linkurl]}inquiry.php';" class="tool-btn"/>
+			</div>
+		</div>
+		<div class="img_tip" id="img_tip" style="display:none;">&nbsp;</div>
+		<div class="tools">
+			<table>
+			<tr height="30">
+			<td width="25" align="center"><input type="checkbox" onclick="checkall(this.form);"/></td>
+			<td>
+				<input type="submit" value="对比选中" onclick="this.form.action='{$MOD[linkurl]}compare.php';" class="tool-btn"/>&nbsp; &nbsp;
+				<input type="submit" value="批量询价" onclick="this.form.action='{$MOD[linkurl]}inquiry.php';" class="tool-btn"/>
+			</td>
+			<td align="right">
+			<img src="{DT_STATIC}image/ico-list-img.png" width="16" height="16" title="图片列表" align="absmiddle" class="c_p" onclick="Dq('list', 1);"/>&nbsp;
+			<img src="{DT_STATIC}image/ico-list-mix-on.png" width="16" height="16" title="图文列表" align="absmiddle" class="c_p" onclick="Dq('list', 0);"/>&nbsp;
+			</td>
+			</tr>
+			</table>
+		</div>
+		{if $page == 1}{ad($moduleid,$catid,'',6)}{/if}
+		{if $tags}{template 'list-'.$module, 'tag'}{/if}
+		</form>
+	</div>
+	<div class="m2r">
+		<div class="sponsor">{ad($moduleid,$catid,$kw,7)}</div>
+		<div class="head-sub"><strong>搜索排行</strong></div>
+		<div class="list-rank">
+			<!--{tag("moduleid=$moduleid&table=keyword&condition=moduleid=$moduleid and status=3 and updatetime>$DT_TODAY-86400*30&pagesize=9&order=week_search desc&key=week_search&template=list-search-rank")}-->
+		</div>
+	</div>
+	<div class="b10 c_b"></div>
+</div>
+{template 'footer'}

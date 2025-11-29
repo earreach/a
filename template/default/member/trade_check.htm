@@ -1,0 +1,251 @@
+{load('mall.css')}
+{load('mall.js')}
+{load('webuploader.min.js')}
+{load('player.js')}
+{load('url2video.js')}
+{template 'goods_service', 'chip'}
+
+<div class="t2">服务详情</div>
+<table cellspacing="1" cellpadding="10" class="tb">
+<tr>
+<td class="tl">联系买家</td>
+<td class="tr">{if $DT[im_web]}{im_web($O[buyer])} &nbsp; {/if}<a href="javascript:;" onclick="Dwidget('message.php?action=send&touser={$O[buyer]}', '发送信件');"><img src="{DT_STATIC}image/msg.gif" title="发送站内信" align="absmiddle"/></a> &nbsp; <a href="{userurl($O[buyer], 'file=contact')}" target="_blank" class="t">{$O[buyer]}</a></td>
+</tr>
+<tr>
+<td class="tl">申请时间</td>
+<td class="tr">{timetoread($O[addtime], 5)}</td>
+</tr>
+<tr>
+<td class="tl">服务类型</td>
+<td class="tr">{$dservice[$O[typeid]]}</td>
+</tr>
+<tr>
+<td class="tl">申请原因</td>
+<td class="tr">{$O[buyer_title]}</td>
+</tr>
+{if $O[buyer_reason]}
+<tr>
+<td class="tl">补充说明</td>
+<td class="tr">{nl2br($O[buyer_reason])}</td>
+</tr>
+{/if}
+{if $O[buyer_thumbs] || $O[buyer_video]}
+<tr>
+<td class="tl">申请凭据</td>
+<td class="tr">
+<div class="comment-r" style="width:auto;">
+	<ul id="thumbs-{$v[itemid]}0">
+	{if $O[buyer_video]}<li><img src="{DT_STATIC}image/play.gif" onclick="comment_thumb_show({$v[itemid]}0, this);" data-video="{$O[buyer_video]}"/></li>{/if}
+	{loop $O[buyer_thumbs] $t}
+	{if $t}<li><img src="{$t}" onclick="comment_thumb_show({$v[itemid]}0, this);"/></li>{/if}
+	{/loop}
+	</ul>
+	<p id="thumbshow-{$v[itemid]}0" onclick="comment_thumb_next({$v[itemid]}0);"></p>
+</div>
+</td>
+</tr>
+{/if}
+<tr>
+<td class="tl">服务状态</td>
+<td class="tr">{$dservice_status[$O[status]]}</td>
+</tr>
+</table>
+
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div class="t2">受理申请</div>
+<table cellspacing="1" cellpadding="10" class="tb">	
+<tr>
+<td class="tl"><span class="f_red">*</span> 受理结果</td>
+<td class="tr" id="typeid">
+<label><input type="radio" name="post[typeid]" value="0" id="typeid-0" onclick="TP(0);" checked/> 拒绝</label> &nbsp;&nbsp;  
+<label><input type="radio" name="post[typeid]" value="1" id="typeid-1" onclick="TP(1);"/> 同意</label> &nbsp;&nbsp;  
+</td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 服务类型</td>
+<td class="tr f_blue">{$dservice[$O[typeid]]}</td>
+</tr>
+{if $O[typeid] < 2}
+<tr>
+<td class="tl"><span class="f_red">*</span> 退款金额</td>
+<td class="tr f_red">{$DT[money_sign]}{$O[amount]}</td>
+</tr>
+{/if}
+<tbody id="tb-1">
+{if $O[typeid]}
+<tr>
+<td class="tl"><span class="f_red">*</span> 寄回地址</td>
+<td class="tr">
+	<select name="aid" id="aid">
+	<option value="0">请选择地址</option>
+	{loop $address $v}
+	<option value="{$v[itemid]}">{if $v[typename]}{$v[typename]} {/if}{$v[truename]} {$v[mobile]} {$v[street]}</option>
+	{/loop}
+	</select> &nbsp; 
+	<a href="address.php" class="t">管理地址</a> &nbsp; 
+	<span id="daid" class="f_red"></span>
+</td>
+</tr>
+{/if}
+<tr>
+<td class="tl">备注事项</td>
+<td class="tr">
+<textarea rows="8" cols="80" name="post[note]" id="note"></textarea>
+<br/><span class="f_gray">例如 保留原包装、赠品一并退回等</span> <span id="dnote" class="f_red"></span></td>
+</tr>
+</tbody>
+<tbody id="tb-0">
+<tr>
+<td class="tl"><span class="f_red">*</span> 操作原因</td>
+<td class="tr">
+	<select name="post[reason]" id="reason">
+	<option value="">请选择常见原因</option>
+	<option value="申请原因不客观" selected>申请原因不客观</option>
+	<option value="超出服务有效期">超出服务有效期</option>
+	<option value="超出服务范围">超出服务范围</option>
+	<option value="已发货">已发货</option>
+	<option value="其他">其他</option>
+	</select>
+	<span id="dreason" class="f_red"></span>
+</td>
+</tr>
+<tr>
+<td class="tl">补充说明</td>
+<td class="tr">
+<textarea rows="8" cols="80" name="post[content]" id="content"></textarea>
+<br/><span class="f_gray">请客观、如实填写，以便买家接受 限1000字</span> <span id="dcontent" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">图片凭证</td>
+<td class="tr">
+<div id="thumbs">
+{loop $thumbs $k $v}
+<div class="thumbs">
+<input type="hidden" name="post[thumbs][]" id="thumb{$k}" value="{$v}"/>
+<div><img src="{if $v}{$v}{else}{DT_STATIC}image/upload-image.png{/if}" width="100" height="100" id="showthumb{$k}" title="上传/预览图片" alt="" onerror="this.src='{DT_STATIC}image/upload-image.png';" onclick="if(this.src.indexOf('upload-image.png') == -1){_preview(Dd('showthumb{$k}').src, 1);}else{Dalbum({$k},{$moduleid},{$MOD[thumb_width]},{$MOD[thumb_height]}, Dd('thumb{$k}').value, true);}"/></div>
+<p><img src="{DT_STATIC}image/ico-upl.png" width="11" height="11" title="上传" onclick="Dalbum({$k},{$moduleid},{$MOD[thumb_width]},{$MOD[thumb_height]}, Dd('thumb{$k}').value, true);"/><img src="{DT_STATIC}image/ico-del.png" width="11" height="11" title="删除" onclick="delAlbum({$k});"/></p>
+</div>
+{/loop}
+</div>
+<div class="dsn" id="thumbtpl">
+<div class="thumbs">
+<input type="hidden" name="post[thumbs][]" id="thumb-99" value="" autocomplete="off"/>
+<div><img src="{DT_STATIC}image/upload-image.png" id="showthumb-99" title="上传/预览图片" alt="" onclick="if(this.src.indexOf('upload-image.png') == -1){_preview(Dd('showthumb-99').src, 1);}else{Dalbum(-99,{$moduleid},{$MOD[thumb_width]},{$MOD[thumb_height]}, Dd('thumb-99').value, true);}"/></div>
+<p><img src="{DT_STATIC}image/ico-upl.png" width="11" height="11" title="上传" onclick="Dalbum(-99,{$moduleid},{$MOD[thumb_width]},{$MOD[thumb_height]}, Dd('thumb{if $thumbs}{$k}{else}0{/if}').value, true);"/><img src="{DT_STATIC}image/ico-del.png" width="11" height="11" title="删除" onclick="delAlbum(-99);"/></p>
+</div>
+</div>
+<div class="thumbs" id="thumbmuti" title="批量上传图片，按Ctrl键多选">
+<div id="file-picker"><img src="{DT_STATIC}image/upload-muti.png" alt=""/></div>
+<p>批量上传<span id="file-progress"></span></p>
+</div>
+<span id="dthumb" class="f_red"></span>
+<script type="text/javascript">
+var album_max = parseInt({$DT[thumb_max]});
+if(album_max < 5 || album_max > 99) album_max = 9;
+{if strpos($DT_MBS, 'IE') === false}
+	var fileu = WebUploader.create({
+		auto: true,
+		server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=album&width={$MOD[thumb_width]}&height={$MOD[thumb_height]}',
+		pick: '#file-picker',
+		accept: {
+			title: 'image',
+			extensions: 'jpg,jpeg,png,gif,bmp',
+			mimeTypes: 'image/*'
+		},
+		fileNumLimit: album_max,
+		resize: false
+	});
+	fileu.on('beforeFileQueued', function(file) {
+		var exts = fileu.options.accept[0].extensions;
+		if((','+exts).indexOf(','+ext(file.name)) == -1) {
+			alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+			return false;
+		}
+	});
+	fileu.on('fileQueued', function(file) {
+		$('#file-progress').html('0%');
+	});
+	fileu.on('uploadProgress', function(file, percentage) {
+		var p = parseInt(percentage * 100);
+		if(p >= 100) p = 100;
+		$('#file-progress').html(p+'%');
+	});
+	fileu.on( 'uploadSuccess', function(file, data) {
+		if(data.error) {
+			Dmsg(data.message, 'thumb');
+		} else {
+			addAlbum(data.url, album_max);
+			newAlbum(album_max);
+		}
+	});
+	fileu.on( 'uploadError', function(file, data) {
+		Dmsg(data.message, 'thumb');
+	});
+	fileu.on('uploadFinished', function(file) {
+		$('#file-progress').html('');
+		if($("#thumbs input[value!='']").length >= album_max) $('#thumbmuti').hide();
+	});
+	$(function(){
+		if($("#thumbs input[value!='']").length >= album_max) window.setTimeout(function(){$('#thumbmuti').hide();}, 3000);
+		newAlbum(album_max);
+	});
+{else}
+	$(function(){
+		$('#thumbmuti').hide();
+		newAlbum(album_max);
+	});
+{/if}
+</script>
+</td>
+</tr>
+<tr>
+<td class="tl">视频凭证</td>
+<td class="tr">{template 'upload-video', 'chip'}</td>
+</tr>
+</tbody>
+<tr>
+<td class="tl"> </td>
+<td class="tr">
+<input type="submit" name="submit" value=" 确 定 " class="btn_g"/>&nbsp;&nbsp;<input type="button" value=" 返 回 " class="btn" onclick="history.back(-1);"/>
+</td>
+</tr>
+</table>
+</form>
+<script type="text/javascript">
+function check() {
+	var agree = Dd('typeid-1').checked ? 1 : 0;
+	{if $O[typeid]}
+	if(agree && $('#aid').val() < 1) {
+		Dmsg('请选择寄回地址', 'aid');
+		return false;
+	}
+	{/if}
+	if(!agree && !$('#reason').val()) {
+		Dmsg('请选择操作原因', 'reason');
+		return false;
+	}
+	var len = $('#content').val().length;
+	if(len > 1000) {
+		Dmsg('补充说明不能多于1000个字，当前已输入'+len+'个字', 'content');
+		return false;
+	}
+	return confirm('您确认要'+(agree ? '同意' : '拒绝')+'此申请吗？');
+}
+function TP(i) {
+	if(i) {
+		$('#tb-1').show();
+		$('#tb-0').hide();
+	} else {
+		$('#tb-0').show();
+		$('#tb-1').hide();
+	}
+}
+$(function(){
+	TP(0);
+});
+s('trade');m('action_service');
+</script>

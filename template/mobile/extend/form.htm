@@ -1,0 +1,277 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{if $typeid}{$TYPE[$typeid][typename]}{else}表单问卷{/if}</div>
+<div class="head-bar-right"><a href="javascript:Dmenu('{$ext}-{$js_pageid}');"><img src="{DM_SKIN}icon-action{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div id="{$ext}-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="{$mob}index.php">
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+<div class="list-set">
+<ul>
+{loop $_TP[0] $v0}
+<li{if $typeid==$v0[typeid]} style="background:#F6F6F6;"{/if}><div><a href="{$mob}{list_url($v0[typeid])}">{$v0[typename]}</a></div></li>
+{if isset($_TP[1][$v0[typeid]])}
+{loop $_TP[1][$v0[typeid]] $v1}
+<li{if $typeid==$v1[typeid]} style="background:#F6F6F6;"{/if}><div><a href="{$mob}{list_url($v1[typeid])}">&nbsp;&nbsp;&nbsp;&nbsp;{$v1[typename]}</a></div></li>
+{/loop}
+{/if}
+{/loop}
+</ul>
+</div>
+<div class="blank-36 bd-b"></div>
+</div>
+{if $itemid}
+{if $action == 'result'}
+	{if $code < 10}
+	<div class="ui-ok">
+		<p>提交成功，感谢您的参与！</p>
+		<input type="button" value="返回列表" class="btn-green" onclick="Go('{$mob}');"/><br/>
+		<input type="button" value="继续提交" class="btn" onclick="Go('{$uri}');"/>
+	</div>
+	{else}
+	<div class="ui-ko">
+		<p>
+		{if $code == 10}
+		{$L[form_title]}不存在
+		{elseif $code == 11}
+		已提交过
+		{elseif $code == 12}
+		已过期
+		{elseif $code == 13}
+		未开始
+		{elseif $code == 14}
+		请先登录
+		{elseif $code == 15}
+		当前会员组无权限
+		{else}
+		提交失败
+		{/if}
+		</p>
+		{if $code == 14}
+		<input type="button" value="立即登录" class="btn-green" onclick="Go('{$MODULE[2][mobile]}{$DT[file_login]}?forward={urlencode($uri)}');"/><br/>
+		<input type="button" value="注册会员" class="btn" onclick="Go('{$MODULE[2][mobile]}{$DT[file_register]}?forward={urlencode($uri)}');"/>
+		{else}
+		<input type="button" value="网站首页" class="btn-green" onclick="Go('{DT_MOB}');"/><br/>
+		<input type="button" value="返回列表" class="btn" onclick="Go('{$mob}');"/>
+		{/if}
+	</div>
+	{/if}
+{else}
+<div class="title"><h1>{$title}</h1></div>
+<div class="info"><i class="ui-ico-time">{$fromdate} 至 {$todate}</i><i class="ui-ico-hits ui-fr">{$hits}</i></div>
+{if $content}<div class="content" data-content="{$js_pageid}">{$content}</div>{/if}
+{if $lists}
+{load('webuploader.min.js')}
+<form action="{$mob}index.php" method="post" onsubmit="return check();">		
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="item" value="{$item}"/>
+<div class="ui-form">
+{loop $lists $k $v}
+<p>{$v[name]}{if $v[min]}<i>*</i><b id="dq_{$v[qid]}"></b>{/if}</p>
+<div>
+	{if $v[type] == 'text'}
+	<input type="text" name="a[{$v[qid]}]" id="q_{$v[qid]}" value="{$v[value]}"{$v[extend]}/>
+	{elseif $v[type] == 'textarea'}
+	<textarea name="a[{$v[qid]}]" id="q_{$v[qid]}"{$v[extend]}>{$v[value]}</textarea>
+	{elseif $v[type] == 'select'}
+	<select name="a[{$v[qid]}]" id="q_{$v[qid]}"{$v[extend]}>
+	<option value="">请选择</option>
+	{loop $v[option] $kk $vv}
+	<option value="{$vv[name]}"{if $vv[on]} selected{/if}>{$vv[name]}</option>
+	{/loop}
+	</select>
+	{elseif $v[type] == 'checkbox'}
+	<ul id="q_{$v[qid]}"{$v[extend]}>
+	{loop $v[option] $kk $vv}
+	<li class="f_3"><label><input type="checkbox" name="a[{$v[qid]}][]" value="{$vv[name]}" id="q_{$v[qid]}_{$kk}" {if $vv[on]} checked{/if}/> {$vv[name]}{if $vv[name] == '其他'} <input type="text" name="o[{$v[qid]}]" id="other_{$v[qid]}" size="10" onfocus="Dd('q_{$v[qid]}_{$kk}').checked=true;"/>{/if}{if $vv[img]}<div><img src="{$vv[img]}"/></div>{/if}</label>		
+	</li>
+	{/loop}
+	</ul>
+	{elseif $v[type] == 'radio'}
+	<ul id="q_{$v[qid]}"{$v[extend]}>
+	{loop $v[option] $kk $vv}
+	<li class="f_3"><label><input type="radio" name="a[{$v[qid]}]" value="{$vv[name]}" id="q_{$v[qid]}_{$kk}" {if $vv[on]} checked{/if}/> {$vv[name]}{if $vv[name] == '其他'} <input type="text" name="o[{$v[qid]}]" id="other_{$v[qid]}" size="10" onfocus="Dd('q_{$v[qid]}_{$kk}').checked=true;"/>{/if}{if $vv[img]}<div><img src="{$vv[img]}"/></div>{/if}</label></li>
+	{/loop}
+	</ul>
+	{elseif $v[type] == 'date'}
+	<input type="date" name="a[{$v[qid]}]" value="{str_replace(' ', 'T', $v[value])}" id="q_{$v[qid]}"/>
+	{elseif $v[type] == 'time'}
+	<input type="datetime-local" name="a[{$v[qid]}]" value="{str_replace(' ', 'T', $v[value])}" id="q_{$v[qid]}" step="1"/>
+	{elseif $v[type] == 'area'}
+	{ajax_area_select('a['.$v[qid].']', '请选择', $v[value])}
+	{elseif $v[type] == 'file'}
+	<div><input type="url" name="a[{$v[qid]}]" id="q_{$v[qid]}" value="{$v[value]}" readonly/></div>
+	<div class="ui-form-file-upload"><div id="q{$v[qid]}-picker"></div></div>
+	<script type="text/javascript">
+	var file_q{$v[qid]} = WebUploader.create({
+		auto: true,
+		server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=file',
+		pick: '#q{$v[qid]}-picker',
+		accept: {
+			title: 'Files',
+			extensions: '{$v[extends]}', 
+			mimeTypes: '*/*'
+		},
+		resize: false
+	});
+	file_q{$v[qid]}.on('beforeFileQueued', function(file) {
+		var exts = file_q{$v[qid]}.options.accept[0].extensions;
+		if((','+exts).indexOf(','+ext(file.name)) == -1) {
+			alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+			return false;
+		}
+	});
+	file_q{$v[qid]}.on('fileQueued', function(file) {
+		Dtoast('{$js_pageid}',L['uploading'], '', 30);
+	});
+	file_q{$v[qid]}.on('uploadProgress', function(file, percentage) {
+		var p = parseInt(percentage * 100);
+		$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+	});
+	file_q{$v[qid]}.on( 'uploadSuccess', function(file, data) {
+		if(data.error) {
+			Dtoast('{$js_pageid}',data.message, '', 5);
+		} else {
+			$('#q_{$v[qid]}').val(data.url);
+		}
+	});
+	file_q{$v[qid]}.on( 'uploadError', function(file, data) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	});
+	file_q{$v[qid]}.on('uploadComplete', function(file) {
+		$('#toast-{$js_pageid}').hide();
+	});
+	</script>
+	{/if}
+</div>
+{if $v[note]}
+<s>{$v[note]}</s>
+{/if}
+{/loop}
+{if $verify == 1 && !$error}
+<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+<div>{template 'captcha', 'chip'}</div>
+{/if}
+{if $verify == 2 && !$error}
+<p>验证问题<i>*</i><b id="danswer"></b></p>
+<div>{template 'question', 'chip'}</div>
+{/if}
+<div class="blank-16"></div>
+<input type="submit" name="submit" class="btn-green" value="提 交"/>
+<div class="blank-32"></div>
+</div>
+{load('clear.js')}
+<script type="text/javascript">
+function check() {
+	var l;
+	var f;
+	{loop $lists $k $v}
+	{if $v[min]}
+	f = 'q_{$v[qid]}';
+	{if $v[type] == 'text' || $v[type] == 'textarea'}
+	l = Dd(f).value.length;
+	if(l < {$v[min]}) {
+		Dmsg('{$v[name]}最少{$v[min]}字', f);
+		return false;
+	}
+	{if $v[max]}
+	if(l > {$v[max]}) {
+		Dmsg('{$v[name]}最多{$v[max]}字', f);
+		return false;
+	}
+	{/if}
+	{elseif $v[type] == 'select'}
+	l = Dd(f).value.length;
+	if(l == 0) {
+		Dmsg('请选择{$v[name]}', f);
+		return false;
+	}
+	{elseif $v[type] == 'checkbox'}
+	l = checked_count(f);
+	if(l < {$v[min]}) {
+		Dmsg('{$v[name]}最少选择{$v[min]}项', f, 1);
+		return false;
+	}
+	{if $v[max]}
+	if(l > {$v[max]}) {
+		Dmsg('{$v[name]}最多选择{$v[max]}项', f, 1);
+		return false;
+	}
+	{/if}
+	{elseif $v[type] == 'radio'}
+	l = checked_count(f);
+	if(l == 0) {
+		Dmsg('请选择{$v[name]}', f, 1);
+		return false;
+	}
+	{elseif $v[type] == 'date'}
+	l = Dd(f).value.length;
+	if(l != 10) {
+		Dmsg('请选择{$v[name]}', f);
+		return false;
+	}
+	{elseif $v[type] == 'time'}
+	l = Dd(f).value.length;
+	if(l < 10) {
+		Dmsg('请选择{$v[name]}', f);
+		return false;
+	}
+	{elseif $v[type] == 'area'}
+	l = $("input[name='a[{$v[qid]}]']").val();
+	if(l < 1) {
+		Dmsg('请选择{$v[name]}', f);
+		return false;
+	}
+	{elseif $v[type] == 'file'}
+	l = Dd(f).value.length;
+	if(l < 15) {
+		Dmsg('请上传{$v[name]}', f);
+		return false;
+	}
+	{/if}
+	{/if}
+	{/loop}
+	{if $verify == 1}
+	f = 'captcha';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写验证码', f);
+		return false;
+	}
+	{/if}
+	{if $verify == 2}
+	f = 'answer';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请回答验证问题', f);
+		return false;
+	}
+	{/if}
+	return true;
+}
+</script>
+{/if}
+{/if}
+{else}
+{if $lists}
+<div id="list-{$js_pageid}" class="main">
+{loop $lists $v}
+<div class="ui-list-txt">
+<a href="{str_replace($url, $mob, $v[linkurl])}"><strong>{$v[title]}</strong></a>
+<p><i class="ui-ico-hits ui-fr">{$v[hits]}</i><i class="ui-ico-time">{$v[adddate]}</i></p>
+</div>
+{/loop}
+</div>
+<div id="load-{$js_pageid}" class="ui-load"></div>
+{else}
+{template 'empty', 'chip'}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{/if}
+{template 'footer'}

@@ -1,0 +1,150 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right">
+{if $action=='edit'}
+<a href="?action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{else}
+<a href="javascript:Dmenu('search-{$js_pageid}');"><img src="{DM_SKIN}icon-search{$wh}.png" width="24" height="24"/></a>
+{/if}
+<a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a>
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=index" data-transition="none">我的关注</a>
+<a href="?action=fans" data-transition="none">我的粉丝</a>
+<a href="javascript:;" onclick="Dwidget('{$js_pageid}', 'type.php?item={$type}', '{if $type=='fans'}粉丝{else}关注{/if}分类');">{if $type=='fans'}粉丝{else}关注{/if}分类</a>
+<a href="index.php" data-direction="reverse">会员中心</a>
+</div>
+</div>
+
+<div class="ui-widget" id="widget-{$js_pageid}"></div>
+
+{if $action == 'fans'}
+<div class="ui-form-search" id="search-{$js_pageid}"{if !$kw} style="display:none;"{/if}>
+<form action="?">
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+<div class="list-tab">
+	<ul>
+		<li><a href="?action=index"><span>我的关注</span></a></li>
+		<li class="on"><a href="?action=fans"><span>我的粉丝</span></a></li>
+	</ul>
+</div>
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<input type="checkbox" name="itemid[]" value="{$v[itemid]}" class="dsn" id="checkbox-{$v[itemid]}"/>
+<a href="{userurl($v[username], 'file=space')}" rel="external"><img src="{useravatar($v[username], 'large')}" width="60" height="60" alt="" class="avatar"/></a>
+<ul>
+<li><em class="check" id="check-{$v[itemid]}"></em><a href="{userurl($v[username], 'file=space')}" rel="external"><b>{$v[passport]}</b></a>{if $v[status]} &nbsp; <span class="fb_red">互关</span>{/if}</li>
+<li><span class="ui-fr">{$v[member][fans]}粉丝</span><span>{if $v[member][sign]}{$v[member][sign]}{else}没有留下签名~~{/if}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无粉丝</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<div id="foot-bar" class="dsn">
+<div class="foot-bar-fix"></div>
+<div class="foot-bar btns">
+<input type="submit" name="submit" value="删除粉丝" class="btn-red" onclick="if(confirm('确定要删除选中粉丝吗？')){this.form.action='?action=delete'}else{return false;}"/>
+</div>
+</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	if($('#foot-bar input').length == 0) $('.check').hide();
+	$('.list-img em').click(function() {
+		if($(this).attr('class') == 'sheet') {
+			//
+		} else {
+			var id = $(this).attr('id').replace('check-', '');
+			if($('#checkbox-'+id).attr('checked')) {
+				$('#checkbox-'+id).attr('checked', false);
+				$(this).attr('class', 'check');
+			} else {
+				$('#checkbox-'+id).attr('checked', true);
+				$(this).attr('class', 'checked');
+			}
+			if($('.checked').length > 0) {
+				$('#foot-bar').fadeIn(300);
+			} else {
+				$('#foot-bar').fadeOut(300);
+			}
+		}
+	});
+});
+</script>
+{else}
+<div class="ui-form-search" id="search-{$js_pageid}"{if !$kw} style="display:none;"{/if}>
+<form action="?">
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+<div class="list-tab">
+	<ul>
+		<li class="on"><a href="?action=index"><span>我的关注</span></a></li>
+		<li><a href="?action=fans"><span>我的粉丝</span></a></li>
+	</ul>
+</div>
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<input type="checkbox" name="itemid[]" value="{$v[itemid]}" class="dsn" id="checkbox-{$v[itemid]}"/>
+<a href="{userurl($v[fusername], 'file=space')}"><img src="{useravatar($v[fusername], 'large')}" width="60" height="60" alt="" class="avatar"/></a>
+<ul>
+<li><em class="check" id="check-{$v[itemid]}"></em><a href="{userurl($v[fusername], 'file=space')}" rel="external"><b>{$v[fpassport]}</b></a>{if $v[status]} &nbsp; <span class="fb_red">互关</span>{/if}</li>
+<li><span class="ui-fr">{$v[member][fans]}粉丝</span><span>{if $v[member][sign]}{$v[member][sign]}{else}没有留下签名~~{/if}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无关注</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<div id="foot-bar" class="dsn">
+<div class="foot-bar-fix"></div>
+<div class="foot-bar btns">
+<input type="submit" name="submit" value="取消关注" class="btn-red" onclick="if(confirm('确定要取消选中关注吗？')){this.form.action='?action=delete'}else{return false;}"/>
+</div>
+</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	if($('#foot-bar input').length == 0) $('.check').hide();
+	$('.list-img em').click(function() {
+		if($(this).attr('class') == 'sheet') {
+			//
+		} else {
+			var id = $(this).attr('id').replace('check-', '');
+			if($('#checkbox-'+id).attr('checked')) {
+				$('#checkbox-'+id).attr('checked', false);
+				$(this).attr('class', 'check');
+			} else {
+				$('#checkbox-'+id).attr('checked', true);
+				$(this).attr('class', 'checked');
+			}
+			if($('.checked').length > 0) {
+				$('#foot-bar').fadeIn(300);
+			} else {
+				$('#foot-bar').fadeOut(300);
+			}
+		}
+	});
+});
+</script>
+{/if}
+{template 'footer', 'member'}

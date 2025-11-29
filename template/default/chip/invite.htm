@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="{DT_CHARSET}"/>
+<title>Loading...</title>
+</head>
+<body onload="document.getElementById('invite').submit();">
+<form action="message.php" method="post" id="invite">
+<input type="hidden" name="action" value="send" />
+<input type="hidden" name="touser" value="{$apply[apply_username]}" />
+<input type="hidden" name="title" value="{$title}" />
+<textarea name="content" style="display:none;">
+{$resume[truename]}，您好：<br/><br/>
+本公司已经收到您向 <a href="{$joburl}" target="_blank">{$job[title]}</a> 投递的简历，现邀请您面试。<br/><br/>
+面试时间：<br/>
+联系人：{$job[truename]}<br/>
+电话：{$job[telephone]}<br/>
+邮件：{$job[email]}<br/>
+{if $job[mobile]}手机：{$job[mobile]}<br/>{/if}
+{if $job[address]}地址：{$job[address]}<br/>{/if}
+{if $job[qq]}QQ：{$job[qq]}<br/>{/if}
+{if $job[wx]}微信：{$job[wx]}<br/>{/if}
+</textarea>
+</form>
+</body>
+</html>

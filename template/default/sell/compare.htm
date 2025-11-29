@@ -1,0 +1,119 @@
+{template 'header'}
+<style type="text/css">
+.compare {border-top:#EEEEEE 1px solid;width:1220px;overflow:hidden;}
+.compare tr {text-align:center;}
+.compare tr:hover {background:#F6F6F6;}
+.compare th {width:60px;font-weight:normal;border:#EEEEEE 1px solid;border-top:none;letter-spacing:1px;background:#F6F6F6;}
+.compare td {width:172px;padding:16px 10px;border-right:#EEEEEE 1px solid;border-bottom:#EEEEEE 1px solid;}
+.compare div {height:18px;line-height:18px;overflow:hidden;}
+</style>
+<div class="m">
+	<div class="nav"><div>{if $tags}<a href="?action=remove" class="b" onclick="return confirm('确定要清空所有对比项吗？');">清空</a>{/if}</div><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> 产品对比</div>
+	{if $tags}
+	<div class="compare">
+	<table cellpadding="0" cellspacing="0">
+	<tr>
+	<th>移除</th>
+	{loop $tags $k $v}
+	<td><a href="?action=remove&itemid={$v[itemid]}" class="b" onclick="return confirm('确定要移除此项吗？');">移除</a></td>
+	{/loop}
+	</tr>
+	<tr>
+	<th>图片</th>
+	{loop $tags $k $v}
+	<td><a href="{$v[linkurl]}" target="_blank"><img src="{imgurl($v[thumb])}" width="100" height="100" alt=""/></a></td>
+	{/loop}
+	</tr>
+	<tr>
+	<th>标题</th>
+	{loop $tags $k $v}
+	<td><div><a href="{$v[linkurl]}" target="_blank" title="{$v[alt]}">{$v[title]}</a></div></td>
+	{/loop}
+	</tr>
+	<tr>
+	<th>品牌</th>
+	{loop $tags $k $v}
+	<td><div title="{$v[brand]}">{$v[brand]}</div></td>
+	{/loop}
+	</tr>
+	<tr>
+	<th>日期</th>
+	{loop $tags $k $v}
+	<td>{$v[editdate]}</td>
+	{/loop}
+	</tr>
+	<tr>
+	<th>公司</th>
+	{loop $tags $k $v}
+	<td><div><a href="{$v[userurl]}" target="_blank" title="{$v[company]}">{$v[company]}</a></div></td>
+	{/loop}
+	</tr>
+	<tr>
+	<th>会员</th>
+	{loop $tags $k $v}
+	<td>
+	{if $v[vip]}<img src="{DT_SKIN}vip_{$v[vip]}.gif" alt="{VIP}" title="{VIP}:{$v[vip]}级"/>{/if}&nbsp;
+	</td>
+	{/loop}
+	</tr>
+	<tr>
+	<th>地区</th>
+	{loop $tags $k $v}
+	<td>{area_pos($v[areaid], '', 2)}</td>
+	{/loop}
+	</tr>
+	<tr>
+	<th>价格</th>
+	{loop $tags $k $v}
+	<td>{if $v[price]>0}<strong class="f_price">{$DT[money_sign]}{$v[price]}</strong>/{$v[unit]}{else}面议{/if}</td>
+	{/loop}
+	</tr>
+	<tr>
+	<th>起订</th>
+	{loop $tags $k $v}
+	<td>{if $v[minamount]}{$v[minamount]} {$v[unit]}{else}未填写{/if}</td>
+	{/loop}
+	</tr>
+	<tr>
+	<th>总量</th>
+	{loop $tags $k $v}
+	<td>{if $v[amount]}{$v[amount]} {$v[unit]}{else}未填写{/if}</td>
+	{/loop}
+	</tr>
+	<tr>
+	<th>发货</th>
+	{loop $tags $k $v}
+	<td>{if $v[days]}{$v[days]}天内{else}未填写{/if}</td>
+	{/loop}
+	</tr>
+	<tr>
+	<th>联系</th>
+	{loop $tags $k $v}
+	<td>&nbsp;
+		{if $v[username] && $DT[im_web]}{im_web($v[username].'&mid='.$moduleid.'&itemid='.$v[itemid])} &nbsp; {/if}
+		{if $v[qq] && $DT[im_qq]}{im_qq($v[qq])} &nbsp; {/if}
+		{if $v[wx] && $DT[im_wx]}{im_wx($v[wx], $v[username])} &nbsp; {/if}
+		{if $v[ali] && $DT[im_ali]}{im_ali($v[ali])} &nbsp; {/if}
+		{if $v[skype] && $DT[im_skype]}{im_skype($v[skype])}</a> &nbsp; {/if}
+	</td>
+	{/loop}
+	</tr>
+	<tr>
+	<th>询价</th>
+	{loop $tags $k $v}
+	<td><a href="{$MOD[linkurl]}{rewrite('inquiry.php?itemid='.$v['itemid'])}" target="_blank"><img src="{DT_SKIN}inquiry.gif" title="询价" alt=""/></a></td>
+	{/loop}
+	</tr>
+	<tr>
+	<th>移除</th>
+	{loop $tags $k $v}
+	<td><a href="?action=remove&itemid={$v[itemid]}" class="b" onclick="return confirm('确定要移除此项吗？');">移除</a></td>
+	{/loop}
+	</tr>
+	</table>
+	</div>
+	{else}
+	<div class="list-none">暂无需要对比的产品，请先添加</div>
+	{/if}
+</div>
+{template 'footer'}

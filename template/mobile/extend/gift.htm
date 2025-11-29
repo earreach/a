@@ -1,0 +1,120 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{if $action == 'my'}我的订单{else}{if $typeid}{$TYPE[$typeid][typename]}{else}积分换礼{/if}{/if}</div>
+<div class="head-bar-right"><a href="javascript:Dmenu('{$ext}-{$js_pageid}');"><img src="{DM_SKIN}icon-action{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div id="{$ext}-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="{$mob}index.php">
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+<div class="list-set">
+<ul>
+<li><div><a href="{$mob}index.php?action=my">我的订单</a></div></li>
+<li><div><a href="{$MODULE[2][mobile]}credit.php" rel="external">{$DT[credit_name]}中心</a></div></li>
+{loop $_TP[0] $v0}
+<li{if $typeid==$v0[typeid]} style="background:#F6F6F6;"{/if}><div><a href="{$mob}{list_url($v0[typeid])}">{$v0[typename]}</a></div></li>
+{if isset($_TP[1][$v0[typeid]])}
+{loop $_TP[1][$v0[typeid]] $v1}
+<li{if $typeid==$v1[typeid]} style="background:#F6F6F6;"{/if}><div><a href="{$mob}{list_url($v1[typeid])}">&nbsp;&nbsp;&nbsp;&nbsp;{$v1[typename]}</a></div></li>
+{/loop}
+{/if}
+{/loop}
+</ul>
+</div>
+<div class="blank-36 bd-b"></div>
+</div>
+{if $action == 'result'}
+	{if $code < 10}
+	<div class="ui-ok">
+		<p>恭喜您，礼品兑换成功！ </p>
+		<input type="button" value="查看订单" class="btn-green" onclick="Go('{$mob}index.php?action=my');"/><br/>
+		<input type="button" value="继续兑换" class="btn" onclick="Go('{$mob}');"/>
+	</div>
+	{else}
+	<div class="ui-ko">
+		<p>
+		{if $code == 10}
+		礼品不存在
+		{elseif $code == 11}
+		此兑换还没有开始
+		{elseif $code == 13}
+		此兑换已经过期
+		{elseif $code == 14}
+		此兑换名额用尽，已经结束
+		{elseif $code == 15}
+		您的{$DT[credit_name]}不足
+		{elseif $code == 16}
+		您的会员组没有兑换礼品的权限
+		{elseif $code == 17}
+		您已经兑换过此礼品或超出兑换次数
+		{elseif $code == 18}
+		兑换频率过快，请改天再试
+		{else}
+		兑换失败
+		{/if}
+		</p>
+		<input type="button" value="返回列表" class="btn-green" onclick="Go('{$mob}');"/><br/>
+		<input type="button" value="查看礼品" class="btn" onclick="Go('{$uri}');"/>
+	</div>
+	{/if}
+{elseif $action == 'my'}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li><span class="f_r" style="color:red;">{$v[credit]}{$DT[credit_name]}</span><a href="{str_replace($url, $mob, $v[linkurl])}"><strong>{$v[title]}</strong></a></li>
+<li><span class="f_r">{$v[status]}</span><span>{$v[adddate]}</span></li>
+</ul>
+</div>
+{/loop}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{else}
+{if $itemid}
+<div class="ui-viewer" id="viewer-{$js_pageid}"></div>
+<div class="title"><h1>{$title}</h1></div>
+<div class="info"><i class="ui-ico-time">{if $left}{$fromdate} 至 {$todate}{else}已结束{/if}</i><i class="ui-ico-hits ui-fr">{$hits}</i></div>
+<div class="content" data-content="{$js_pageid}">
+会员权限：{if $gname}{$gname}{else}全部{/if}<br/>
+所需{$DT[credit_name]}：<strong class="f_red">{$credit}</strong><br/>
+剩余名额：<strong>{$left}</strong><br/>
+<div class="blank-16"></div>
+<div class="btn-green" onclick="Order();">立即兑换</div>
+<div class="blank-16"></div>
+{if $large}<img src="{$large}"/><br/>{/if}{$content}
+</div>
+<script type="text/javascript">
+{if isset($success)}Dtoast('{$js_pageid}','恭喜您，礼品兑换成功！');{/if}
+function Order() {
+	{if $process == 1}return confirm('抱歉，此兑换还没有开始');{/if}
+	{if $process == 2}if(confirm('确定要兑换吗？系统将扣除您{$credit}{$DT[credit_name]}')) Go('{$mob}index.php?action=order&itemid={$itemid}'){/if}
+	{if $process == 3}return confirm('抱歉，此兑换已经过期');{/if}
+	{if $process == 4}return confirm('抱歉，此兑换名额用尽，已经结束');{/if}
+}
+</script>
+{else}
+{if $lists}
+<div id="list-{$js_pageid}" class="main">
+{loop $lists $v}
+<div class="ui-list-mix">
+<a href="{str_replace($url, $mob, $v[linkurl])}"><img src="{if $v[thumb]}{str_replace('.thumb.', '.middle.', $v[thumb])}{else}{DM_SKIN}80x60.png{/if}" alt=""/></a>
+<ul>
+<li><a href="{str_replace($url, $mob, $v[linkurl])}"><strong>{$v[title]}</strong></a></li>
+<li><p><i class="ui-ico-info ui-fr">{$v[left]}库存</i><i class="ui-ico-price">{$v[credit]}{$DT[credit_name]}</i></p></li>
+</ul>
+</div>
+{/loop}
+</div>
+<div id="load-{$js_pageid}" class="ui-load"></div>
+{else}
+{template 'empty', 'chip'}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{/if}
+{/if}
+{template 'footer'}

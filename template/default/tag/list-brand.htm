@@ -1,0 +1,14 @@
+{loop $tags $k $t}
+<div class="list" id="item_{$t[itemid]}">
+	<table>
+	<tr align="center">
+		<td width="140"><div><a href="{$t[linkurl]}" target="_blank"><img src="{$t[thumb]}" width="120" alt="{$t[alt]}"/></a></div></td>
+		<td width="20"> </td>
+		<td align="left"><a href="{$t[linkurl]}" target="_blank" class="px14">{$t[title]}</a></td>
+		<td width="120" class="f_grey">{timetodate($t[edittime], 3)}</td>
+		<td width="100" class="f_grey">{area_pos($t[areaid], '', 1)}</td>
+	</tr>
+	</table>
+</div>
+{/loop}		
+{if $showpage && $pages}<div class="pages">{$pages}</div>{/if}

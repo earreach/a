@@ -1,0 +1,151 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="{$forward}" data-direction="reverse">取消询价</a>
+<a href="{$MOD[mobile]}" data-direction="reverse">{$MOD[name]}首页</a>
+<a href="{DT_MOB}{rewrite('channel.php?mid='.$moduleid)}" data-transition="none">{$MOD[name]}分类</a>
+<a href="{DT_MOB}channel.php" data-direction="reverse">切换频道</a>
+</div>
+</div>
+
+<form method="post" action="inquiry.php" data-ajax="false" id="inquiry_form" onsubmit="return inquiry_check();">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="itemids" value="{$itemids}"/>
+<div class="ui-form">
+<p>询价标题<i>*</i><b id="dtitle"></b></p>
+<div><input type="text" name="title" value="{$title}" id="title"/></div>
+<p>我想了解</p>
+<div>
+{loop $itype $k $v}
+<label><input type="checkbox" name="type[]" value="{$v}" {if $k<5} checked{/if}/> {$v}</label><br/>
+{/loop}
+</div>
+<p>快捷提问</p>
+<div>
+<select onchange="if(this.value)Dd('content').value+=this.value+'\n';">
+<option value="">请选择常用问题</option>
+{loop $iask $v}
+<option value="{$v}">{dsubstr($v, 40, '..')}</option>
+{/loop}
+</select>
+</div>
+<p>主要内容<i>*</i><b id="dcontent"></b></p>
+<div><textarea name="content" id="content"></textarea></div>
+<p>回复时间</p>
+<div><input type="date" name="date" value="{$date}"/> 前回复</div>
+<p>公司</p>
+<div><input type="text" name="company" id="company"{if $_userid} value="{$company}" disabled{/if}/></div>
+<p>姓名<i>*</i><b id="dtruename"></b></p>
+<div><input type="text" name="truename" id="truename" style="width:50%;"{if $_userid} value="{$truename}"{/if}/></div>
+<p>电话<i>*</i><b id="dtelephone"></b></p>
+<div><input type="tel" name="telephone" id="telephone"{if $_userid} value="{$telephone}"{/if}/></div>
+<p>邮箱</p>
+<div><input type="email" name="email" id="email"{if $_userid} value="{$email}"{/if}/></div>
+{if $DT[im_qq]}
+<p>QQ</p>
+<div><input type="tel" name="qq" id="qq" style="width:50%;"{if $_userid} value="{$qq}"{/if}/></div>
+{/if}
+{if $DT[im_wx]}
+<p>微信</p>
+<div><input type="text" name="wx" id="wx" style="width:50%;"{if $_userid} value="{$wx}"{/if}/></div>
+{/if}
+{if $DT[im_ali]}
+<p>阿里旺旺</p>
+<div><input type="text" name="ali" id="ali" style="width:50%;"{if $_userid} value="{$ali}"{/if}/></div>
+{/if}
+{if $DT[im_skype]}
+<p>Skype</p>
+<div><input type="text" name="skype" id="skype" style="width:50%;"{if $_userid} value="{$skype}"{/if}/></div>
+{/if}
+{if $_userid && $DT[sms]}
+<p>短信通知</p>
+<div><input type="checkbox" name="sendsms" value="1" checked="checked"/> 剩余{$_sms}条</a></div>
+{/if}
+{if $need_question}
+<p>验证问题<i>*</i><b id="danswer"></b></p>
+<div>{template 'question', 'chip'}</div>
+{/if}
+{if $need_captcha}
+<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+<div>{template 'captcha', 'chip'}</div>
+{/if}
+</div>
+
+<div class="blank-16"></div>
+{if $MG[inquiry_limit]}
+<div class="limit">
+今日可询价 <span class="f_b f_red">{$MG[inquiry_limit]}</span> 次<br/>
+当前已询价 <span class="f_b">{$limit_used}</span> 次<br/>
+还可以询价 <span class="f_b f_blue">{$limit_free}</span> 次<br/>
+</div>
+{/if}
+<div class="blank-16"></div>
+
+<div class="foot-bar-fix"></div>
+<div class="foot-btn">
+<ul>
+<li></li>
+<li><input type="submit" name="submit" value="立即发送" class="btn-blue"/></li>
+<li></li>
+</ul>
+</div>
+</form>
+{if !$_userid}{load('guest.js')}{/if}
+<script type="text/javascript">
+function inquiry_check() {
+	var l;
+	var f;
+	f = 'title';
+	l = Dd(f).value.length;
+	if(l < 2) {
+		Dmsg('标题最少2字，当前已输入'+l+'字', f);
+		return false;
+	}
+	f = 'content';
+	l = Dd(f).value.length;
+	if(l < 5) {
+		Dmsg('内容最少5字，当前已输入'+l+'字', f);
+		return false;
+	}
+	{if !$_userid}
+	f = 'truename';
+	l = Dd(f).value.length;
+	if(l < 2) {
+		Dmsg('请填写联系人', f);
+		return false;
+	}
+	f = 'telephone';
+	l = Dd(f).value.length;
+	if(l < 7) {
+		Dmsg('请填写联系电话', f);
+		return false;
+	}
+	{/if}
+	{if $need_captcha}
+	f = 'captcha';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', f);
+		return false;
+	}
+	{/if}
+	{if $need_question}
+	f = 'answer';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证问题', f);
+		return false;
+	}
+	{/if}
+}
+</script>
+{template 'footer'}

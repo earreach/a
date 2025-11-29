@@ -1,0 +1,22 @@
+{template 'header'}
+<div class="m">	
+	<div class="nav"><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> 秒杀</div>
+</div>
+<div class="m">
+	<div class="b10"></div>
+	<div class="tab-head">
+	<ul>
+		<li{if $typeid==0} class="on"{/if}><a href="{$MOD[linkurl]}{rewrite('sec.php?typeid=0')}"><span>正在秒杀</span></a></li>
+		<li{if $typeid==1} class="on"{/if}><a href="{$MOD[linkurl]}{rewrite('sec.php?typeid=1')}"><span>即将开始</span></a></li>
+	</ul>
+	</div>
+</div>
+<div class="m">
+{if $tags}
+	<div class="list-img list-sec">{template 'list-mall-sec', 'tag'}</div>
+{else}
+	<div class="list-none">暂无秒杀</div>
+{/if}
+</div>
+{if $pages}<div class="m"><div class="pages">{$pages}</div></div>{/if}
+{template 'footer'}

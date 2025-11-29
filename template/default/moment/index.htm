@@ -1,0 +1,45 @@
+{template 'header'}
+{load('member/panel.css')}
+{load('panel.js')}
+{load('moment.js')}
+{load('player.js')}
+<div class="b10"></div>
+<div class="m m5">
+	<div class="m5l">
+		<div id="userinfo">{if defined('TOHTML')}<div class="mm-load"></div>{else}{template 'userinfo', $module}{/if}</div>
+	</div>
+	<div class="m5m">
+		<div class="mm-type">
+			<a href="{$MOD[linkurl]}"><span{if $typeid==0} class="on"{/if}>最新</span></a>
+			<a href="{$MOD[linkurl]}{rewrite('index.php?typeid=1')}"><span{if $typeid==1} class="on"{/if}>推荐</span></a>
+			<a href="{$MOD[linkurl]}{rewrite('index.php?typeid=2')}"><span{if $typeid==2} class="on"{/if}>关注</span></a>
+			<a href="{$MOD[linkurl]}{rewrite('index.php?typeid=3')}"><span{if $typeid==3} class="on"{/if}>好友</span></a>
+			<a href="{$MOD[linkurl]}{rewrite('index.php?typeid=4')}"><span{if $typeid==4} class="on"{/if}>热门</span></a>
+		</div>
+		<!--{tag("moduleid=$moduleid&condition=$tag_condition&areaid=$cityid&order=$tag_order&page=$page&pagesize=$pagesize&showpage=$showpage&comment_url=".$EXT['comment_url']."&template=list-moment")}-->
+		{if !$showpage}<a href="{$MOD[linkurl]}{rewrite('index.php?page=2')}"><div class="mm-all">更多{$MOD[name]}</div></a>{/if}
+	</div>
+	<div class="m5r">
+		<div class="head-sub"><span><a href="{$MOD[linkurl]}{rewrite('topic.php?page=1')}">更多<i>&gt;</i></a></span><strong>话题</strong></div>
+		<div class="list-topic">
+		<!--{tag("moduleid=$moduleid&table=$table_topic&prefix=&condition=status=3 and level>0&pagesize=10&datetype=2&order=addtime desc&template=list-moment-topic")}-->
+		</div>
+		<div class="head-sub"><strong>分类</strong></div>
+		<div class="list-cate">
+		{php $child = get_maincat(0, $moduleid, 1);}
+		{loop $child $i $c}		
+			<p><a href="{$MOD[linkurl]}{$c[linkurl]}"><strong>{set_style($c[catname], $c[style])}</strong></a> <em>({$c[item]})</em></p>
+			{if $c[child]}
+			<div>
+			{php $sub = get_maincat($c[catid], $moduleid, 1);}
+			{loop $sub $j $s}<a href="{$MOD[linkurl]}{$s[linkurl]}">{set_style($s[catname], $s[style])}</a><i>|</i>{/loop}
+			</div>
+			{/if}
+		{/loop}
+		</div>
+		<div class="b10"></div>
+	</div>
+</div>
+<div id="destoon-usercard"></div>
+<script type="text/javascript">$(function(){Dusercard({$moduleid}, '.mm-head');});</script>
+{template 'footer'}

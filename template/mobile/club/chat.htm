@@ -1,0 +1,196 @@
+{template 'header', 'member'}
+{load('chat.css')}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title"><span id="name-{$js_pageid}">{$GRP[title]}{$MOD[seo_name]}群聊({$GRP[fans]}人)</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div class="ui-viewer" id="viewer-{$js_pageid}"></div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="{$MOD[mobile]}{rewrite('fans.php?gid='.$gid)}"><span>成员列表</span></a>
+<a href="{$MODULE[2][mobile]}im.php?action=group"><span>我的群聊</span></a>
+<a href="{$MODULE[2][mobile]}im.php?action=view&mid={$moduleid}&gid={$gid}"><span>聊天记录</span></a>
+<a href="javascript:;" onclick="chat_report('{$MOD[name]}:{$GRP[title]}(ID:{$gid})\n群聊内容：\n'+$('#chat-{$js_pageid}').html());"><span>违规举报</span></a>
+</div>
+</div>
+
+<div id="chat-{$js_pageid}" class="chat"><div class="chat-spin" onclick="window.location.reload();"></div></div>
+{if $faces}
+<div id="emoji-{$js_pageid}" class="emoji bd-b">
+{loop $faces $k $v}<i onclick="_into('word-{$js_pageid}',':{$k}{$v})');"><img src="{DT_PATH}file/face/{$k}.png"/></i>{/loop}
+<div><span><a href="javascript:chat_send();void(0);" class="b">发送</a></span><a href="javascript:$('#emoji-{$js_pageid}').slideUp('fast');void(0);" class="b">收起</a></div>
+</div>
+{/if}
+<div class="foot-bar-fix"></div>
+<div class="foot-bar">
+<table cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td width="48"><div class="chat-camera"><div id="file-picker"></div></div></td>
+{if $faces}<td width="48" onclick="$('#emoji-{$js_pageid}').slideToggle('fast');"><div class="chat-emoji"></div></td>{/if}
+<td><div class="chat-word bd-t bd-r bd-b bd-l"><input type="text" name="word" id="word-{$js_pageid}"/></div></td>
+<td width="68" onclick="chat_send();;"><div class="chat-send">发送</div></td>
+</tr>
+</table>
+</div>
+<form method="post" action="{DT_MOB}api/report.php" id="chat_report-{$js_pageid}">
+<input type="hidden" name="forward" value="{$DT_URL}"/>
+<input type="hidden" name="mid" value="{$moduleid}"/>
+<textarea style="display:none;" name="content" id="chat_report_content-{$js_pageid}"></textarea>
+</form>
+{load('webuploader.min.js')}
+<script type="text/javascript">
+var fileu = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=file',
+    pick: '#file-picker',
+	accept: {
+		title: 'Files',
+		extensions: '{str_replace('|', ',', $DT['uploadtype'])}', 
+		mimeTypes: '*/*'
+	},
+    resize: false
+});
+fileu.on('beforeFileQueued', function(file) {
+	var exts = fileu.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+fileu.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+fileu.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+fileu.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		alert(data.message);
+	} else {
+		chat_send(data.url);
+	}
+});
+fileu.on( 'uploadError', function(file, data) {
+	alert(data.message);
+});
+fileu.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+var chat_mid = {$moduleid};
+var chat_gid = {$gid};
+var chat_ban = {$chat_ban};
+var chat_poll = {$chat_poll}*1000;
+var chat_maxlen = {$MOD[chat_maxlen]};
+var chat_mintime = {$MOD[chat_mintime]};
+var chat_type = 0;
+var chat_name = '{$_username}';
+var chat_last = {$DT_TIME};
+var chat_time = 0;
+function unixtime(){return Math.round(new Date().getTime()/1000);}
+function chat_load(d){
+	$.post('chat.php', 'action=load&chatlast='+chat_last+'&gid='+chat_gid+'&first='+(d ? 1 : 0), function(data) {
+		if(data) {
+			eval("var chat_json="+data);
+			chat_last=chat_json.chat_last;
+			chat_nick=chat_json.chat_nick;
+			chat_msg=chat_json.chat_msg;
+			msglen=chat_msg.length;
+			if(msglen && d) {$('#chat-{$js_pageid}').append('<div class="chat-more"><a href="{$MODULE[2][mobile]}im.php?action=view&mid='+chat_mid+'&gid='+chat_gid+'" class="b">'+L['chat_record']+'</a></div>');}
+			for(var i=0;i<msglen;i++){
+				msghtm = '';
+				if(chat_msg[i].date) msghtm += '<div class="chat-date"><span>'+chat_msg[i].date+'</span></div>';
+				msghtm += '<table cellpadding="0" cellspacing="0" width="100%">';
+				msghtm += '<tr>';
+				if(chat_msg[i].self == 1) {
+					msghtm += '<td width="70"></td>';
+					msghtm += '<td valign="top"><div class="chat_nick1">'+chat_msg[i].nick+'</div><div class="chat_msg1">'+chat_msg[i].word+'</div></td>';
+					msghtm += '<td class="chat_arr11"></td>';
+					msghtm += '<td width="60" valign="top" align="center"><a href="'+chat_msg[i].home+'" target="_blank"><img src="'+chat_msg[i].head+'" class="chat_head"/></a></td>';
+				} else {
+					msghtm += '<td width="60" valign="top" align="center"><a href="'+chat_msg[i].home+'" target="_blank"><img src="'+chat_msg[i].head+'" class="chat_head"/></a></td>';
+					msghtm += '<td class="chat_arr00"></td>';
+					msghtm += '<td valign="top"><div class="chat_nick0">'+chat_msg[i].nick+'</div><div class="chat_msg0">'+chat_msg[i].word+'</div></td>';
+					msghtm += '<td width="70"></td>';
+				}
+				msghtm += '</tr>';
+				msghtm += '</table>';
+				$('#chat-{$js_pageid}').append(msghtm);
+			}
+			if(msglen) $('#chat-{$js_pageid}').animate({scrollTop:$('#chat-{$js_pageid}')[0].scrollHeight+1000}, 500);
+		}
+	});
+}
+function chat_send(msg){
+	var chat_word = msg ? msg : $.trim($('#word-{$js_pageid}').val());
+	var chat_len = chat_word.length;
+	if(chat_len < 1) {
+		Dtoast('{$js_pageid}', L['chat_msg_empty']);
+		return;
+	}
+	if(chat_len > chat_maxlen) {
+		Dtoast('{$js_pageid}', L['chat_len_p0']+chat_maxlen+L['chat_len_p1']+chat_len+L['chat_len_p2']);
+		return;
+	}
+	if(chat_mintime && (unixtime() -chat_time < chat_mintime)){
+		Dtoast('{$js_pageid}', L['chat_msg_fast']);
+		return;
+	}
+	chat_time = unixtime();
+	$.post('chat.php', 'action=send&gid='+chat_gid+'&font_s=&font_c=&font_b=&font_i=&font_u=&word='+encodeURIComponent(chat_word), function(data) {
+		if(data == 'ok') {
+			$('#word-{$js_pageid}').val('');
+		} else if(data == 'max') {
+			Dtoast('{$js_pageid}', L['chat_msg_long']);
+		} else if(data == 'bad') {
+			Dtoast('{$js_pageid}', L['chat_msg_bad']);
+		} else if(data == 'ban') {
+			Dtoast('{$js_pageid}', L['chat_msg_ban']);
+		} else {
+			Dtoast('{$js_pageid}', L['chat_msg_fail']);
+		}
+	});
+}
+function chat_view(src) {
+	Dviewer('{$js_pageid}', src, $('#chat-{$js_pageid}'));
+}
+function chat_report(c) {
+	if($('#chat_report-{$js_pageid}')) {
+		$('#chat_report_content-{$js_pageid}').val(c);
+		$('#chat_report-{$js_pageid}').submit();
+	}
+}
+$(function(){
+	var wh = $(window).height();
+	$('#chat-{$js_pageid}').height(wh - 116);
+	{if $DT_MOB=='ios'}
+		if(window.screen.width > 320) {
+			$('.head-bar').css('position', 'static');
+			$('.foot-bar').css('position', 'static');
+			$('.head-bar-fix').hide();
+			$('.foot-bar-fix').hide();
+		}
+		$('#word-{$js_pageid}').focus(function(e){
+			$('#emoji-{$js_pageid}').hide();
+			$('html, body').animate({scrollTop:100000}, 0);			
+		}).blur(function(e){
+			$('html, body').animate({scrollTop:0}, 0);
+		});
+	{/if}
+	$('#chat-{$js_pageid}').html('');
+	chat_last=0;
+	chat_load(1);
+	setInterval(function() {
+		chat_load();
+	}, chat_poll);
+	$('#word-{$js_pageid}').keyup(function(e){if(e.keyCode==13)chat_send();})
+});
+</script>
+{template 'footer', 'member'}

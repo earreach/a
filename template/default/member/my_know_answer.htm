@@ -1,0 +1,198 @@
+{template 'header', 'member'}
+<div class="menu{if isset($widget)} dsn{/if}">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="tab" id="add"><a href="?mid={$mid}&job={$job}&action=add"><span>我来回答</span></a></td>
+{if $_userid}
+<td class="tab" id="s3"><a href="?mid={$mid}&job={$job}"><span>已发布({$nums[3]})</span></a></td>
+<td class="tab" id="s2"><a href="?mid={$mid}&job={$job}&status=2"><span>审核中({$nums[2]})</span></a></td>
+<td class="tab" id="s1"><a href="?mid={$mid}&job={$job}&status=1"><span>未通过({$nums[1]})</span></a></td>
+<td class="tab"><a href="?mid={$mid}"><span>我的提问</span></a></td>
+{/if}
+</tr>
+</table>
+</div>
+{if $action=='add' || $action=='edit'}
+<iframe src="" name="send" id="send" style="display:none;"></iframe>
+<form method="post" action="?" id="dform" target="send" onsubmit="return check();">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<table cellpadding="6" cellspacing="1" class="tb">
+<tr>
+<td class="tl">问题原文：</td>
+<td class="tr"><a href="{$MOD[linkurl]}{$item[linkurl]}" target="_blank" class="t">{$item[title]}</a></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 答案内容：</td>
+<td class="tr"><textarea name="content" id="content" class="dsn">{$content}</textarea>
+{deditor($moduleid, 'content', 'Basic', '100%', 200)}
+<br/><span id="dcontent" class="f_red px12"></span>
+</td>
+</tr>
+<tr>
+<td class="tl">参考资料：</td>
+<td class="tr"><input type="text" name="url" size="60" id="url" value="{$url}"/></td>
+</tr>
+{if $_userid}
+<tr>
+<td class="tl">匿名设定：</td>
+<td class="tr"><label><input type="checkbox" name="hidden" value="1" id="hidden"{if $hidden} checked{/if}/> 如果不需要显示您的信息，您可以对回答设定匿名</label></td>
+</tr>
+{/if}
+{if $need_question}
+<tr>
+<td class="tl"><span class="f_red">*</span> 验证问题：</td>
+<td class="tr">{template 'question', 'chip'} <span id="danswer" class="f_red"></span></td>
+</tr>
+{/if}
+{if $need_captcha}
+<tr>
+<td class="tl"><span class="f_red">*</span> 验证码：</td>
+<td class="tr">{template 'captcha', 'chip'} <span id="dcaptcha" class="f_red"></span></td>
+</tr>
+{/if}
+{if !$_userid}
+<tr>
+<td class="tl"></td>
+<td class="tr">
+登录后回答可以获得{$DT[credit_name]}奖励，并可以查看和管理所有的回答。<a href="{$MODULE[2][linkurl]}{$DT[file_login]}" target="_top" class="t">登录</a> | <a href="{$MODULE[2][linkurl]}{$DT[file_register]}" target="_top" class="t">注册</a><br/>
+</td>
+</tr>
+{/if}
+{if $MOD[tip_answer]}
+<tr>
+<td class="tl">规则说明</td>
+<td class="ts">{$MOD[tip_answer]}</td>
+</tr>
+{/if}
+</table>
+<div class="sbt"><input type="submit" name="submit" value=" 提 交 " class="btn_g"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value=" 返 回 " class="btn" onclick="Go('{$MOD[linkurl]}{$item[linkurl]}');"/>
+</div>
+</table>
+</form>
+{load('clear.js')}
+<script type="text/javascript">s('mid_{$mid}');m('{if $action=='add'}{$action}{else}s{$status}{/if}');</script>
+
+
+{elseif $action == 'question'}
+<div class="tt">
+<form action="?">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="action" value="{$action}"/>
+&nbsp;{category_select('catid', '所有分类', $catid, $moduleid)}&nbsp;
+<input type="text" size="70" name="kw" value="{$kw}" title="关键词" placeholder="关键词"/>&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?mid={$mid}&job={$job}&action={$action}');"/>
+</form>
+</div>
+<div class="ls">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="30">状态</th>
+<th>待解决问题</th>
+<th>分类</th>
+<th>提问时间</th>
+<th>悬赏</th>
+{if $MOD[hits]}<th>浏览</th>{/if}
+<th>答案</th>
+<th width="80">回答</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><a href="{$v[linkurl]}" target="_blank"><img src="{DT_SKIN}know_{$v[process]}.gif" alt="{$PROCESS[$v[process]]}"/></a></td>
+<td align="left" title="{$v[alt]}">&nbsp;<a href="?mid={$mid}&job={$job}&action=add&itemid={$v[itemid]}" class="t">{$v[title]}</a></td>
+<td>&nbsp;&nbsp;<a href="{$v[caturl]}" target="_blank">{$v[catname]}</a>&nbsp;&nbsp;</td>
+<td class="f_gray" title="更新时间 {$v[editdate]}">{$v[adddate]}</td>
+<td class="f_gray">{$v[credit]}</td>
+{if $MOD[hits]}<td class="f_gray">{$v[hits]}</td>{/if}
+<td class="f_gray">{$v[answer]}</td>
+<td><a href="?mid={$mid}&job={$job}&action=add&itemid={$v[itemid]}" class="t">回答</a></td>
+</tr>
+{/loop}
+</table>
+</div>
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('mid_{$mid}');m('add');</script>
+
+{else}
+<div class="tt">
+<form action="?">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="status" value="{$status}"/>
+&nbsp;
+<input type="text" size="50" name="kw" value="{$kw}" title="关键词" placeholder="关键词"/>&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?mid={$mid}&job={$job}&status={$status}');"/>
+</form>
+</div>
+<div class="ls">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th>内容</th>
+<th width="150">回复时间</th>
+<th width="40">管理</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td align="left">&nbsp;&nbsp;<a href="{$v[linkurl]}" class="t" target="_blank" title="{$v[alt]}">{$v[title]}</a>&nbsp;&nbsp;</td>
+<td class="f_gray">{$v[adddate]}</td>
+<td>
+<a href="?mid={$mid}&job={$job}&action=edit&itemid={$v[itemid]}"><img width="16" height="16" src="{DT_STATIC}member/edit.png" title="修改" alt=""/></a>
+</td>
+</tr>
+{/loop}
+</table>
+</div>
+{if $answer_limit}
+<div class="limit">
+今日可回答 <span class="f_b f_red">{$answer_limit}</span> 次&nbsp;&nbsp;&nbsp;
+当前已回答 <span class="f_b">{$limit_used}</span> 次&nbsp;&nbsp;&nbsp;
+还可以回答 <span class="f_b f_blue">{$limit_free}</span> 次&nbsp;&nbsp;&nbsp;
+</div>
+{/if}
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('mid_{$mid}');m('s{$status}');</script>
+{/if}
+{if $action == 'add' || $action == 'edit'}
+<script type="text/javascript">
+function check() {
+	var l;
+	var f;
+	f = 'content';
+	l = EditorLen();
+	if(l < 5) {
+		Dmsg('内容应最少5字，当前已输入'+l+'字', f);
+		return false;
+	}
+	{if $need_captcha}
+	f = 'captcha';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', f);
+		return false;
+	}
+	{/if}
+	{if $need_question}
+	f = 'answer';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证问题', f);
+		return false;
+	}
+	{/if}
+}
+{if $action=='add'}
+$(function(){
+	if(window.self != window.top) {
+		$('.menu').hide();
+		$('.btn').val(' 取 消 ');
+		$('.btn').attr('onclick', 'parent.cDialog();');
+	}
+});
+{/if}
+</script>
+{/if}
+{template 'footer', 'member'}

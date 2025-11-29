@@ -1,0 +1,86 @@
+{template 'header', 'member'}
+<link rel="stylesheet" href="{DT_PATH}api/avatar/cropbox.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}" type="text/css"/>
+<script src="{DT_PATH}api/avatar/cropbox-min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<div class="menu">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="tab_on"><a href="?action=index"><span>会员头像</span></a></td>
+</tr>
+</table>
+</div>
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td valign="top" style="border-right:#DDDDDD 1px solid;padding-right:6px;" width="150" align="center">
+<img src="{useravatar($_username, 'large')}&reload={$DT_TIME}" width="128" height="128" title="大头像"/>
+{if $avatar}<br/><br/><a href="?action=delete" class="t" onclick="return confirm('确定要删除个人头像吗？');">删除头像</a>{/if}
+</td>
+<td width="650" height="400" valign="top">
+<div class="container">
+    <div class="imageBox">
+        <div class="thumbBox"></div>
+        <div class="spinner" style="display: none">Loading...</div>
+    </div>
+    <div class="action">
+	<table cellpadding="0" cellspacing="0">
+	<tr>
+	<td><p><input type="file" id="file" accept="image/*"/>选择图片</p></td>
+	<td><div id="btnZoomOut" title="缩小 支持鼠标滚轮下滚">-</div></td>
+	<td><div id="btnZoomIn" title="放大 支持鼠标滚轮上滚">+</div></td>
+	<td><div id="btnCrop">保存头像</div></td>
+	</tr>
+	</table>        
+    </div>
+    </div>
+</div>
+</td>
+</tr>
+</table>
+
+<script type="text/javascript">
+$(function(){
+	var options =
+	{
+		thumbBox: '.thumbBox',
+		spinner: '.spinner',
+		imgSrc: '{DT_PATH}api/avatar/default.png'
+	}
+	var cropper = $('.imageBox').cropbox(options);
+	$('#file').on('change', function(){
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			options.imgSrc = e.target.result;
+			cropper = $('.imageBox').cropbox(options);
+		}
+		reader.readAsDataURL(this.files[0]);
+		this.files = [];
+	})
+	$('#btnCrop').on('click', function(){
+		if($('.imageBox').css('background-image').indexOf('data:') == -1) {
+			Dtoast('请选择图片');
+			return;
+		}
+		Dtoast('上传中..', '', 30);
+		var img = cropper.getDataURL();
+		$.post('?', 'action=upload&image='+encodeURIComponent(img), function(data) {
+			if(data.error) {
+				alert(data.message);
+				Go('?reload={DT_TIME}');
+			} else {
+				Dtoast('保存成功');
+				Go('?reload={DT_TIME}');
+			}
+		}, 'json');
+	})
+	$('#btnZoomIn').on('click', function(){
+		cropper.zoomIn();
+	})
+	$('#btnZoomOut').on('click', function(){
+		cropper.zoomOut();
+	})
+});
+{if isset($reload)}
+Dd('myavatar').src=Dd('myavatar').src+'&reload={$DT_TIME}';
+{/if}
+s('edit');
+</script>
+{template 'footer', 'member'}

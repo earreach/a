@@ -1,0 +1,54 @@
+</td>
+{if $side_pos==1}
+<td width="10" id="split"></td>
+<td width="{$side_width}" valign="top" id="side">{template 'side', $template}</td>
+{/if}
+</tr>
+</table>
+</div>
+<div class="m">
+	<div class="foot" id="foot">
+		&copy;{timetodate($DT_TIME, 'Y')} {$COM[company]} 版权所有&nbsp;&nbsp;
+		技术支持：<a href="{DT_PATH}" target="_blank">{$DT[sitename]}</a>&nbsp;&nbsp;
+		{if $show_stats}访问量:{$COM[hits]}&nbsp;&nbsp;{/if}
+		{if $COM[icp]}<a href="https://beian.miit.gov.cn/" target="_blank">{$COM[icp]}</a>&nbsp;&nbsp;{/if}
+		{if $COM[wan]}<a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode={cutstr($COM[wan], '备', '号')}" target="_blank">{$COM[wan]}</a>&nbsp;&nbsp;{/if}
+		{if $api_stats && $stats}
+		{php include load('api/stats/'.$HOME['stats_type'].'/show.inc');}
+		{/if}
+	</div>
+</div>
+<div class="back2top"><a href="javascript:void(0);" title="返回顶部">&nbsp;</a></div>
+<script type="text/javascript">Dd('position').innerHTML = Dd('pos_show').innerHTML;</script>
+{if $api_kf && $kf}
+{php include load('api/kf/'.$HOME['kf_type'].'/show.inc');}
+{/if}
+<script type="text/javascript">
+var L0 = L1 = LI = 0;
+$(function(){
+	$('#menu ul li').each(function(i) {
+		if(i == 0) {
+			L0 = $(this).position().left;
+		} else {
+			L1 = $(this).position().left;
+			if(L1 < L0 + 10) {
+				LI = i;
+				return;
+			}
+		}
+	});
+	if(LI) {
+		$('#menu ul').children().eq(LI - 1).html('<a href="{userurl($username, 'file=channel', $domain)}"><span>更多频道</span></a>');
+		if($('#menu .menu_on').index() >= LI || {if $file == 'channel'}1{else}0{/if}) $('#menu ul').children().eq(LI - 1).attr('class', 'menu_on');
+	}
+	{if $destoon_task}
+	Dtask('{$destoon_task}', {$DT[stats]});
+	{else}
+	{if $DT[stats]}	
+	{php include load('api/stats.inc');}
+	{/if}
+	{/if}
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+{template 'header'}
+<div id="head-bar-{$js_pageid}"{if $thumb} class="dsn"{/if}>
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">
+	<div class="head-menu" id="head-menu-{$js_pageid}">
+	<ul>
+		<li name="top" class="on">信息</li>
+		<li name="title">详情</li>
+		<li name="contact">联系</li>
+		<li name="list">推荐</li>
+	</ul>
+	</div>
+</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+{if !$thumb}<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>{/if}
+</div>
+
+<div class="head-ico-left" id="ico-left-{$js_pageid}"><a href="javascript:;" onclick="if($('#back-{$js_pageid}').attr('href').indexOf('javascript:')==-1){Go($('#back-{$js_pageid}').attr('href'));}else{Dback();}" data-direction="reverse"><img src="{DM_SKIN}icon-back.png" width="16" height="16"/></a></div>
+<div class="head-ico-right" id="ico-right-{$js_pageid}"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet.png" width="16" height="16"/></a></div>
+
+<div class="ui-viewer" id="viewer-{$js_pageid}"></div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+{if $could_purchase}<a href="{$MODULE[2][mobile]}buy.php?mid={$moduleid}&itemid={$itemid}">立即购买</a>{else}<a href="{$MOD[mobile]}{rewrite('inquiry.php?itemid='.$itemid)}">发送询价</a>{/if}
+<a href="{DT_MOB}api/share.php?mid={$moduleid}&itemid={$itemid}" data-transition="slideup">分享好友</a>
+<a href="{$MOD[mobile]}" data-direction="reverse">{$MOD[name]}首页</a>
+<a href="{DT_MOB}{rewrite('channel.php?mid='.$moduleid)}" data-transition="none">{$MOD[name]}分类</a>
+<a href="{DT_MOB}channel.php" data-direction="reverse">切换频道</a>
+</div>
+</div>
+
+{load('mall.css')}
+{if $thumb}{template 'album', 'chip'}{/if}
+<div class="title" id="title-{$js_pageid}"><h1>{$title}</h1></div>
+<div class="info"><i class="ui-ico-time">{$editdate}</i>{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}{if $MOD[hits]}<i class="ui-ico-hits" id="hits">{$hits}</i>{/if}<i class="ui-ico-info ui-fr">{if $could_purchase}{$orders}已售{else}{$messages}询价{/if}</i></div>
+
+
+<div class="mall-info">
+<table width="100%" cellpadding="10" cellspacing="0">
+<tr>
+<td class="tl">价格</td>
+<td class="mall-price">{if $price>0}{$DT[money_sign]}<span id="mall-price" data-price="{$price}">{$price}</span>{else}面议{/if}</td>
+</tr>
+<tr>
+<td class="tl">发货</td>
+<td>
+{area_pos($areaid, '')}
+{if $days > 0}
+<span class="f_r f_grey px12">{if $days > 3}预售，{/if}付款后{if $days < 1}{ceil(24*$days)}小时{elseif $days==1}24小时{elseif $days==2}48小时{else}{$days}天{/if}内 &nbsp;</span>
+{/if}
+</td>
+</tr>
+{if $brand}
+<tr>
+<td class="tl">品牌</td>
+<td>{$brand}</td>
+</tr>
+{/if}
+{if $n1 && $v1}
+<tr>
+<td class="tl">{$n1}</td>
+<td>{$v1}</td>
+</tr>
+{/if}
+{if $n2 && $v2}
+<tr>
+<td class="tl">{$n2}</td>
+<td>{$v2}</td>
+</tr>
+{/if}
+{if $n3 && $v3}
+<tr>
+<td class="tl">{$n3}</td>
+<td>{$v3}</td>
+</tr>
+{/if}
+{if $amount>0}
+	{if $status == 3}
+		<tr>
+		<td class="tl">库存</td>
+		<td><span id="mall-amount">{$amount}</span>{$unit}<span class="f_r f_grey px12">{if $minamount>0}起订{$minamount}{$unit} &nbsp; {/if}{if $maxamount>0}限购{$maxamount}{$unit}{/if}</span></td>
+		</tr>
+	{else}
+		<tr>
+		<td></td>
+		<td><strong class="f_grey px16">该产品已下架</strong></td>
+		</tr>				
+	{/if}
+{else}
+	<tr>
+	<td></td>
+	<td><strong class="f_grey px16">该产品库存不足</strong></td>
+	</tr>
+{/if}
+</table>
+</div>
+
+<div class="ui-head" id="content-{$js_pageid}"><i></i><b>产品详情</b></div>
+<div class="content" data-content="{$js_pageid}">{$content}</div>
+
+<div class="tool">
+{if $MOD[show_like]}<div class="like" onclick="Dlike({$moduleid}, {$itemid}, 0);">点赞 <b id="like-{$moduleid}-{$itemid}-0">{$likes}</b></div>{/if}
+{if $MOD[show_hate]}<div class="hate" onclick="Dhate({$moduleid}, {$itemid}, 0);">反对 <b id="hate-{$moduleid}-{$itemid}-0">{$hates}</b></div>{/if}
+{if $MOD[show_report]}<div class="report" onclick="Dreport({$moduleid}, {$itemid}, 0);">举报</div>{/if}
+{if $MOD[show_favorite]}<div class="favorite" onclick="Dfavor({$moduleid}, {$itemid});">收藏 <b>{$favorites}</b></div>{/if}
+{if $MOD[fee_award]}<div class="award" onclick="Go('{$MODULE[2][mobile]}award.php?mid={$moduleid}&itemid={$itemid}');">打赏 <b>{$awards}</b></div>{/if}
+{if $could_comment}<div class="comment" onclick="Go('{$EXT[comment_mob]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}');">评论 <b>{$comments}</b></div>{/if}
+{if $MOD[show_share]}<div class="share" onclick="Go('{DT_MOB}api/share.php?mid={$moduleid}&itemid={$itemid}');">分享 <b>{$shares}</b></div>{/if}
+</div>
+<div class="ui-head" id="contact-{$js_pageid}"><i></i><b>联系方式</b></div>
+<div class="contact" data-contact="{$js_pageid}">{template 'contact', 'chip'}</div>
+<div id="list-{$js_pageid}" class="main">
+	<div class="blank-10"></div>
+	{if $username}
+	<!--{tag("moduleid=$moduleid&condition=status=3 and username='$username'&order=messages desc&pagesize=10&itemid=$itemid&template=list-sell")}-->
+	{else}
+	<!--{tag("moduleid=$moduleid&condition=status=3&catid=$catid&areaid=$cityid&order=messages desc&pagesize=10&itemid=$itemid&template=list-sell")}-->
+	{/if}
+</div>
+{if $could_purchase}
+<div class="foot-bar-fix"></div>
+<div class="foot-bar">
+	<div class="mall-foot">
+	<table cellpadding="0" cellspacing="0" width="100%">
+	<tr align="center">
+	<td width="48"><a href="{if $DT[im_web]}{$MODULE[2][mobile]}chat.php?touser={$username}&mid={$moduleid}&itemid={$itemid}{else}{userurl($username, 'file=contact')}{/if}" rel="external"><img src="{DM_SKIN}foot-message.png" style="width:20px;height:20px;"/><span>客服</span></a></td>
+	<td width="48"><a href="{userurl($username, 'file='.$MOD['moduledir'])}" rel="external"><img src="{DM_SKIN}foot-shop.png" style="width:20px;height:20px;"/><span>商铺</span></a></td>
+	<td width="48" id="destoon-cart"><a href="{$MODULE[2][mobile]}cart.php" rel="external"><img src="{DM_SKIN}foot-cart.png" style="width:20px;height:20px;"/><span>购物车</span></a>{if $_cart}<b>{$_cart}</b>{/if}</td>
+	<td width="10"></td>
+	<td><input type="button" value="加入购物车" class="btn-cart" onclick="Go('{$MODULE[2][mobile]}cart.php?action=add&mid={$moduleid}&itemid={$itemid}');"/></td>
+	<td width="10"></td>			
+	<td><input type="button" value="&nbsp;立即购买&nbsp;" class="btn-buy" onclick="Go('{$MODULE[2][mobile]}buy.php?mid={$moduleid}&itemid={$itemid}');"/></td>
+	<td width="10"></td>
+	</tr>
+	</table>
+	</div>
+</div>
+{else}
+<div class="foot-bar-fix main"></div>
+<div class="foot-btn">
+<ul>
+<li></li>
+<li><a href="{$MOD[mobile]}{rewrite('inquiry.php?itemid='.$itemid)}"><div class="btn-blue">发送询价</div></a></li>
+<li></li>
+</ul>
+</div>
+{/if}
+{load('player.js')}
+<script type="text/javascript">$(function(){Dscroll('{$js_pageid}');});</script>
+{template 'footer'}

@@ -1,0 +1,11 @@
+<form action="message.php" method="post" id="remind">
+<input type="hidden" name="action" value="send"/>
+<input type="hidden" name="forward" value="{$MOD[linkurl]}order.php?itemid={$itemid}"/>
+<input type="hidden" name="touser" value="{$O[seller]}"/>
+<input type="hidden" name="title" value="[发货提醒]订单(ID:{$itemid})已经付款，请尽快发货"/>
+<textarea name="content" style="display:none;">
+{$O[seller]}，您好：<br/>
+订单 <a href="{$MOD[linkurl]}trade.php?action=update&step=detail&itemid={$itemid}" target="_blank">{$O[title]} (ID:{$itemid})</a> 已经付款。请尽快发货！
+</textarea>
+</form>	
+<script type="text/javascript">s('order');m('action');Dd('remind').submit();</script>

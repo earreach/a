@@ -1,0 +1,234 @@
+{template 'header', 'member'}
+<div class="menu">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="tab" id="action_buy"><a href="?action=buy"><span>{$DT[credit_name]}购买</span></a></td>
+{if $MOD[credit_exchange]}
+<td class="tab" id="action_exchange"><a href="?action=exchange"><span>{$DT[credit_name]}兑换</span></a></td>
+{/if}
+<td class="tab" id="action"><a href="?action=index"><span>{$DT[credit_name]}记录</span></a></td>
+<td class="tab" id="action_grade"><a href="?action=grade"><span>{$DT[credit_name]}级别</span></a></td>
+{if $action == 'less'}
+<td class="tab" id="action_less"><a href="?action=less"><span>{$DT[credit_name]}不足</span></a></td>
+{/if}
+{if $EXT[gift_enable]}
+<td class="tab" id="action_gift"><a href="{$EXT[gift_url]}" target="_blank"><span>{$DT[credit_name]}换礼</span></a></td>
+{/if}
+</tr>
+</table>
+</div>
+{if $action == 'exchange'}
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="submit" value="1"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl">可用{$MOD[ex_name]}</td>
+<td class="tr"><strong class="f_blue">{$num}</strong></td>
+</tr>
+<tr>
+<td class="tl">兑换比率</td>
+<td class="tr"><span class="f_blue">1</span> {$MOD[ex_name]} 兑换 <span class="f_red">{$MOD[ex_rate]}</span> {$DT[credit_name]}</td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 兑换额度</td>
+<td class="tr"><input type="text" size="8" name="amount"/> <span id="damount" class="f_red"></span></td>
+</tr>
+</table>
+<div class="sbt"><input type="submit" value=" 确 定 " class="btn"/></div>
+</form>
+<script type="text/javascript">
+function check() {
+	m = parseInt(Dd('amount').value);
+	n = {$num};
+	if(m > 0 && m < n) {
+		return confirm('确定要兑换'+m+'{$MOD[ex_name]}吗？ 可换取'+(m*{$MOD[ex_rate]})+'{$DT[credit_name]}\n\n注意:兑换{$MOD[ex_name]}可能会降低您在论坛的会员级别');
+	} else {
+		Dd('amount').value = '';
+		Dmsg('请填写兑换额度', 'amount');
+		return false;
+	}
+}
+</script>
+<script type="text/javascript">s('credit');m('action_exchange');</script>
+{elseif $action == 'buy'}
+<style>
+.member-g {height:56px;margin-top:-16px;}
+.member-g li {height:32px;line-height:32px;display:inline;float:left;margin:0 0 24px 24px;color:#999999;font-size:16px;}
+.member-g .on {color:#333333;border-bottom:#333333 2px solid;}
+.member-p {height:140px;}
+.member-p li {height:66px;width:84px;display:inline;float:left;padding:24px 16px;color:#999999;font-size:16px;border:#EABD78 1px solid;background:#FFFFFF;border-radius:10px;margin:0 0 24px 24px;text-align:center;}
+.member-p li i {font-style:normal;color:#4F1D01;font-size:16px;}
+.member-p li b {display:block;line-height:56px;color:#E87C11;font-size:20px;}
+.member-p li span {display:none;}
+.member-p .on {background:#F2D7AE;}
+.member-p .on b {color:#4F1D01;}
+</style>
+
+{if $C}
+<div class="member-p">
+<ul>
+{loop $C $k $v}
+<a href="?action={$action}&type={$k}"><li{if $k==$type} class="on"{/if}><i>{$v}{$DT[credit_name]}</i><b>{$DT[money_sign]}{$P[$k]}</b></li></a>
+{/loop}
+</ul>
+</div>
+{/if}
+
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="type" value="{$type}"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl">应付总额</td>
+<td class="tr"><b style="font-size:16px;color:#E87C11;">{$DT[money_sign]}</b><b style="font-size:20px;color:#E87C11;" id="money">{$money}</b> {$DT[money_unit]}</td>
+</tr>
+<tr id="mymoney" style="display:none;">
+<td class="tl">账户余额</td>
+<td class="tr"><span class="f_blue">{$DT[money_sign]}{$_money}</span> {$DT[money_unit]}</td>
+</tr>
+<tr id="payword" style="display:none;">
+<td class="tl"><span class="f_red">*</span> 支付密码</td>
+<td class="tr">{template 'payword', 'chip'} <span id="dpassword" class="f_red"></span></td>
+</tr>
+<tr id="paytype" style="display:none;">
+<td class="tl"><span class="f_red">*</span> 支付方式</td>
+<td class="tr">{template 'paylist', 'chip'}</td>
+</tr>
+</table>
+<div class="sbt"><input type="submit" name="submit" value=" 立即购买 " class="btn_g"/></div>
+</form>
+<script type="text/javascript">
+function check() {
+	var money = {$money};
+	if(money > {$_money}) {
+		Go('charge.php?action=pay&reason=credit|{$type}&amount='+money+'&bank='+$('#bank').val());
+		return false;
+	}
+	if(money > {$DT[quick_pay]}){
+		if(Dd('password').value.length < 6) {
+			Dmsg('请填写支付密码', 'password');
+			return false;
+		}
+	}
+	return true;
+}
+window.setInterval(
+	function() {
+		var money = {$money};
+		if(money > {$_money} || {$_money} < 0.01) {
+			$('#mymoney').hide();$('#paytype').show();$('#payword').hide();
+		} else {
+			$('#mymoney').show();$('#paytype').hide();if(money > {$DT[quick_pay]}){$('#payword').show();}else{$('#payword').hide();}
+		}
+	}, 
+500);
+</script>
+<script type="text/javascript">s('credit');m('action_buy');</script>
+
+{elseif $action == 'less'}
+<div class="warn">抱歉！由于您的{$DT[credit_name]}不足，无法进行此操作</div>
+<table cellpadding="10" cellspacing="1" class="tb">
+<td class="tl">可用{$DT[credit_name]}</td>
+<td class="tr"><strong class="f_blue">{$_credit}</strong></td>
+</tr>
+<tr>
+<td class="tl"></td>
+<td class="tr">
+<a href="?action=buy" class="t">购买{$DT[credit_name]}</a> &nbsp;|&nbsp;
+{if $MOD[credit_exchange]}
+<a href="?action=exchange" class="t">兑换{$DT[credit_name]}</a> &nbsp;|&nbsp; 
+{/if}
+<a href="invite.php?action=code" class="t">推广赚{$DT[credit_name]}</a>
+</td>
+</tr>
+</table>
+<script type="text/javascript">s('credit');m('action_less');</script>
+
+{elseif $action == 'grade'}
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl">我的{$DT[credit_name]}</td>
+<td class="tr">{$_credit} {$DT[credit_unit]}</td>
+</tr>
+<tr>
+<td class="tl">我的级别</td>
+<td class="tr">{$GRADE[$_gradeid][name]} &nbsp; <img src="{DT_STATIC}image/grade-{$_gradeid}.png" width="24" alt=""/></td>
+</tr>
+{if $left > 0}
+<tr>
+<td class="tl">距离升级</td>
+<td class="tr">{$left} {$DT[credit_unit]}</td>
+</tr>
+{/if}
+</table>
+<div class="ls">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr align="center">
+<th width="161">级别名称</th>
+<th width="164">{$DT[credit_name]}</th>
+<th width="164">图标</th>
+<th></th>
+</tr>
+{loop $GRADE $k $v}
+<tr align="center">
+<td>{$v[name]}</td>
+<td>{if $k==1}少于{$v[credit]}{else}{$GRADE[$k-1][credit]+1}到{$v[credit]}{/if}</td>
+<td><img src="{DT_STATIC}image/grade-{$k}.png" width="24" alt=""/></td>
+<td></td>
+</tr>
+{/loop}
+</table>
+</div>
+<script type="text/javascript">s('credit');m('action_grade');</script>
+{else}
+<form action="?">
+<div class="tt">
+{$fields_select}&nbsp;
+<input type="text" size="30" name="kw" value="{$kw}" title="关键词" placeholder="关键词"/>&nbsp;
+<select name="type">
+<option value="0">类型</option>
+<option value="1" {if $type==1}selected{/if}>收入</option>
+<option value="2" {if $type==2}selected{/if}>支出</option>
+</select>
+&nbsp;
+{dcalendar('fromdate', $fromdate, '-', 1)} 至 {dcalendar('todate', $todate, '-', 1)}
+&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?action={$action}');"/>
+</div>
+</form>
+<div class="bd">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="150">流水号</th>
+<th>收入</th>
+<th>支出</th>
+<th>余额</th>
+<th width="130">发生时间</th>
+<th width="150">事由</th>
+<th width="150">备注</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td height="30">{$v[itemid]}</td>
+<td class="f_blue">{if $v[amount] > 0}{$v[amount]}{else}&nbsp;{/if}</td>
+<td class="f_red">{if $v[amount] < 0}{$v[amount]}{else}&nbsp;{/if}</td>
+<td>{if $v[balance]}{$v[balance]}{else}&nbsp;{/if}</td>
+<td class="f_gray">{$v[addtime]}</td>
+<td title="{$v[reason]}"><input type="text" size="20" value="{$v[reason]}"/></td>
+<td title="{$v[note]}"><input type="text" size="20" value="{$v[note]}"/></td>
+</tr>
+{/loop}
+<tr align="center">
+<td height="35"><strong>小计</strong></td>
+<td class="f_blue">{$income}</td>
+<td class="f_red">{$expense}</td>
+<td colspan="4">&nbsp;</td>
+</tr>
+</table>
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('credit');m('action');</script>
+{/if}
+{template 'footer', 'member'}

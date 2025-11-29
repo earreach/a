@@ -1,0 +1,9 @@
+<?php exit;?>
+itemid,ID,
+editor,编辑,
+openid,微信会员编码,
+type,类型,
+event,事件,
+addtime,发送时间,
+content,内容,
+misc,其他杂项,

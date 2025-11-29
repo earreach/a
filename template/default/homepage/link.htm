@@ -1,0 +1,20 @@
+{template 'header', $template}
+<div class="dsn" id="pos_show"><a href="{$COM[linkurl]}">首页</a> <i>&gt;</i> <a href="{$MENU[$menuid][linkurl]}">{$MENU[$menuid][name]}</a></div>
+<div class="main_head"><div><strong>{$MENU[$menuid][name]}</strong></div></div>
+<div class="main_body">
+	{if $lists}
+	<div class="list-mix">
+	<table cellpadding="6" cellspacing="0">
+	{loop $lists $k $v}
+	{if $k%4==0}<tr align="center">{/if}
+	<td width="25%"><p><a href="{gourl($v[linkurl])}" target="_blank" rel="nofollow">{$v[title]}</a></p></td>
+	{if $k%4==3}</tr>{/if}
+	{/loop}
+	</table>
+	</div>
+	{else}
+	<div class="list-none">暂无记录</div>
+	{/if}
+	{if $pages}<div class="pages">{$pages}</div>{/if}
+</div>
+{template 'footer', $template}

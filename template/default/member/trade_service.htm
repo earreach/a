@@ -1,0 +1,281 @@
+{load('mall.css')}
+{load('mall.js')}
+{load('player.js')}
+{if !in_array($O[status], array(1, 2))}
+<table cellpadding="0" cellspacing="0" align="center">
+<tr align="center" class="f_gray">
+<td>买家申请</td>
+<td>卖家审核</td>
+{if $O[typeid] == 3}
+<td>买家寄回</td>
+<td>卖家维修</td>
+<td>卖家发回</td>
+<td>买家收货</td>
+{elseif $O[typeid] == 2}
+<td>买家寄回</td>
+<td>卖家换货</td>
+<td>卖家发回</td>
+<td>买家收货</td>
+{elseif $O[typeid] == 1}
+<td>买家寄回</td>
+<td>卖家验货</td>
+<td>退款成功</td>
+{else}
+<td>退款成功</td>
+{/if}
+</tr>
+<tr height="64">
+<td><img src="{DT_STATIC}member/state_2.gif" id="state_1"/></td>
+<td><img src="{DT_STATIC}member/state_1.gif" id="state_2"/></td>
+<td><img src="{DT_STATIC}member/state_1.gif" id="state_3"/></td>
+{if $O[typeid] == 3 || $O[typeid] == 2}
+<td><img src="{DT_STATIC}member/state_1.gif" id="state_4"/></td>
+<td><img src="{DT_STATIC}member/state_1.gif" id="state_5"/></td>
+<td><img src="{DT_STATIC}member/state_1.gif" id="state_6"/></td>
+{elseif $O[typeid] == 1}
+<td><img src="{DT_STATIC}member/state_1.gif" id="state_4"/></td>
+<td><img src="{DT_STATIC}member/state_1.gif" id="state_5"/></td>
+{/if}
+</tr>
+</table>
+<br/>
+<script type="text/javascript">
+var s1 = Dd('state_2').src;
+var s2 = Dd('state_1').src;
+function Dstate(n) {
+	for(var i = 2; i <= n; i++) {
+		Dd('state_'+i).src = s2;
+	}
+}
+{if $O[status] == 3}
+	Dstate(2);
+{elseif $O[status] == 4}
+	Dstate(3);
+{elseif $O[status] == 5}
+	Dstate(4);
+{elseif $O[status] == 6}
+	Dstate(5);
+{elseif $O[status] == 7}
+	{if $O[typeid] == 3 || $O[typeid] == 2}
+	Dstate(6);
+	{elseif $O[typeid] == 1}
+	Dstate(5);
+	{else}
+	Dstate(3);
+	{/if}
+{/if}
+</script>
+{/if}
+{template 'goods_service', 'chip'}
+<div class="t2">服务详情</div>
+<table cellspacing="1" cellpadding="10" class="tb">
+<tr>
+<td class="tl">联系买家</td>
+<td class="tr">{if $DT[im_web]}{im_web($O[buyer])} &nbsp; {/if}<a href="javascript:;" onclick="Dwidget('message.php?action=send&touser={$O[buyer]}', '发送信件');"><img src="{DT_STATIC}image/msg.gif" title="发送站内信" align="absmiddle"/></a> &nbsp; <a href="{userurl($O[buyer], 'file=contact')}" target="_blank" class="t">{$O[buyer]}</a></td>
+</tr>
+
+<tr>
+<td class="tl">申请时间</td>
+<td class="tr">{$O[adddate]}</td>
+</tr>
+<tr>
+<td class="tl">最后更新</td>
+<td class="tr">{$O[updatedate]}</td>
+</tr>
+<tr>
+<td class="tl">服务类型</td>
+<td class="tr">{$dservice[$O[typeid]]}</td>
+</tr>
+<tr>
+<td class="tl">申请原因</td>
+<td class="tr">{$O[buyer_title]}</td>
+</tr>
+{if $O[buyer_reason]}
+<tr>
+<td class="tl">补充说明</td>
+<td class="tr">{nl2br($O[buyer_reason])}</td>
+</tr>
+{/if}
+{if $O[buyer_thumbs] || $O[buyer_video]}
+<tr>
+<td class="tl">申请凭据</td>
+<td class="tr">
+<div class="comment-r" style="width:auto;">
+	<ul id="thumbs-{$itemid}0">
+	{if $O[buyer_video]}<li><img src="{DT_STATIC}image/play.gif" onclick="comment_thumb_show({$itemid}0, this);" data-video="{$O[buyer_video]}"/></li>{/if}
+	{loop $O[buyer_thumbs] $t}
+	{if $t}<li><img src="{$t}" onclick="comment_thumb_show({$itemid}0, this);"/></li>{/if}
+	{/loop}
+	</ul>
+	<p id="thumbshow-{$itemid}0" onclick="comment_thumb_next({$itemid}0);"></p>
+</div>
+</td>
+</tr>
+{/if}
+<tr>
+<td class="tl">服务状态</td>
+<td class="tr">{$dservice_status[$O[status]]}</td>
+</tr>
+{if $O[seller_title]}
+<tr>
+<td class="tl">操作原因</td>
+<td class="tr">{$O[seller_title]}</td>
+</tr>
+{/if}
+{if $O[seller_reason]}
+<tr>
+<td class="tl">补充说明</td>
+<td class="tr">{nl2br($O[seller_reason])}</td>
+</tr>
+{/if}
+{if $O[seller_thumbs] || $O[seller_video]}
+<tr>
+<td class="tl">操作凭据</td>
+<td class="tr">
+<div class="comment-r" style="width:auto;">
+	<ul id="thumbs-{$itemid}1">
+	{if $O[seller_video]}<li><img src="{DT_STATIC}image/play.gif" onclick="comment_thumb_show({$itemid}1, this);" data-video="{$O[seller_video]}"/></li>{/if}
+	{loop $O[seller_thumbs] $t}
+	{if $t}<li><img src="{$t}" onclick="comment_thumb_show({$itemid}1, this);"/></li>{/if}
+	{/loop}
+	</ul>
+	<p id="thumbshow-{$itemid}1" onclick="comment_thumb_next({$itemid}1);"></p>
+</div>
+</td>
+</tr>
+{/if}
+{if $O[seller_note]}
+<tr>
+<td class="tl">备注事项</td>
+<td class="tr">{nl2br($O[seller_note])}</td>
+</tr>
+{/if}
+</table>
+
+{if $O[seller_address]}
+<div class="t2">寄回地址</div>
+<table cellspacing="1" cellpadding="10" class="tb">
+{if $DT[postcode]}
+<tr>
+<td class="tl">邮政编码</td>
+<td class="tr">{$O[seller_postcode]}{if $O[seller_postcode] && strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#seller_postcode" onclick="Dtoast('邮编已复制');"/>{/if}</td>
+</tr>
+{/if}
+<tr>
+<td class="tl">收件地址</td>
+<td class="tr">{$O[seller_address]}{if $O[seller_address] && strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#seller_address" onclick="Dtoast('地址已复制');"/>{/if}</td>
+</tr>
+<tr>
+<td class="tl">收件姓名</td>
+<td class="tr">{$O[seller_name]}{if $O[seller_name] && strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#seller_name" onclick="Dtoast('姓名已复制');"/>{/if}</td>
+</tr>
+<tr>
+<td class="tl">收件手机</td>
+<td class="tr">{$O[seller_mobile]}{if $O[seller_mobile] && strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#seller_mobile" onclick="Dtoast('手机已复制');"/>{/if}</td>
+</tr>
+{if $O[seller_send_time]}
+<tr>
+<td class="tl">发货日期</td>
+<td class="tr">{timetodate($O[seller_send_time], 3)}</td>
+</tr>
+<tr>
+<td class="tl">快递类型</td>
+<td class="tr">{$O[seller_send_type]}</td>
+</tr>
+<tr>
+<td class="tl">快递单号</td>
+<td class="tr">{$O[seller_send_no]}{if $O[seller_send_type] && $O[seller_send_no]}{if strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#seller_send_no" onclick="Dtoast('快递单号已复制');"/>{/if} &nbsp; <a href="javascript:;" class="t" onclick="Ds('express_seller');$('#seller_express').load(AJPath+'?action=express&moduleid=2&auth={$seller_auth}');">[快递追踪]</a>{/if}</td>
+</tr>
+<tr id="express_seller" style="display:none;">
+<td class="tl">追踪结果</td>
+<td class="tr" style="line-height:200%;"><div id="seller_express"><img src="{DT_STATIC}member/loading.gif" align="absmiddle"/> 正在查询...</div></td>
+</tr>
+<tr>
+<td class="tl">快递状态</td>
+<td class="tr">{$dsend_status[$O[seller_send_status]]}</td>
+</tr>
+{/if}
+</table>
+{/if}
+
+
+{if $O[buyer_address]}
+<div class="t2">收货地址</div>
+<table cellspacing="1" cellpadding="10" class="tb">
+{if $DT[postcode]}
+<tr>
+<td class="tl">邮政编码</td>
+<td class="tr">{$O[buyer_postcode]}{if $O[buyer_postcode] && strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#buyer_postcode" onclick="Dtoast('邮编已复制');"/>{/if}</td>
+</tr>
+{/if}
+<tr>
+<td class="tl">收件地址</td>
+<td class="tr">{$O[buyer_address]}{if $O[buyer_address] && strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#buyer_address" onclick="Dtoast('地址已复制');"/>{/if}</td>
+</tr>
+<tr>
+<td class="tl">收件姓名</td>
+<td class="tr">{$O[buyer_name]}{if $O[buyer_name] && strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#buyer_name" onclick="Dtoast('姓名已复制');"/>{/if}</td>
+</tr>
+<tr>
+<td class="tl">收件手机</td>
+<td class="tr">{$O[buyer_mobile]}{if $O[buyer_mobile] && strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#buyer_mobile" onclick="Dtoast('手机已复制');"/>{/if}</td>
+</tr>
+{if $O[buyer_send_time]}
+<tr>
+<td class="tl">发货日期</td>
+<td class="tr">{timetodate($O[buyer_send_time], 3)}</td>
+</tr>
+<tr>
+<td class="tl">快递类型</td>
+<td class="tr">{$O[buyer_send_type]}</td>
+</tr>
+<tr>
+<td class="tl">快递单号</td>
+<td class="tr">{$O[buyer_send_no]}{if $O[buyer_send_type] && $O[buyer_send_no]}{if strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#buyer_send_no" onclick="Dtoast('快递单号已复制');"/>{/if} &nbsp; <a href="javascript:;" class="t" onclick="Ds('express_buyer');$('#buyer_express').load(AJPath+'?action=express&moduleid=2&auth={$buyer_auth}');">[快递追踪]</a>{/if}</td>
+</tr>
+<tr id="express_buyer" style="display:none;">
+<td class="tl">追踪结果</td>
+<td class="tr" style="line-height:200%;"><div id="buyer_express"><img src="{DT_STATIC}member/loading.gif" align="absmiddle"/> 正在查询...</div></td>
+</tr>
+<tr>
+<td class="tl">快递状态</td>
+<td class="tr">{$dsend_status[$O[buyer_send_status]]}</td>
+</tr>
+{/if}
+</table>
+{/if}
+
+<table cellspacing="1" cellpadding="10" class="tb">
+<tr>
+<td class="tl"> </td>
+<td class="tr">
+{if $O[status] == 0}
+<input type="button" value=" 受 理 " class="btn_g" onclick="Go('?action=process&step=check&itemid={$O[itemid]}');"/> &nbsp; 
+{elseif $O[status] == 4}
+<input type="button" value=" 验 收 " class="btn_g" onclick="Go('?action=process&step=receive&itemid={$O[itemid]}');"/> &nbsp; 
+{elseif $O[status] == 5}
+<input type="button" value=" 发 回 " class="btn_g" onclick="Go('?action=process&step=send&itemid={$O[itemid]}');"/> &nbsp; 
+{/if}
+<input type="button" value=" 返 回 " class="btn" onclick="Go('?action=index');"/>
+</td>
+</tr>
+</table>
+{if strpos($DT_MBS, 'IE') === false}
+<div style="z-index:1000;position:absolute;top:-10000px;">
+<textarea id="seller_postcode">{$O[seller_postcode]}</textarea>
+<textarea id="seller_address">{$O[seller_address]}</textarea>
+<textarea id="seller_name">{$O[seller_name]}</textarea>
+<textarea id="seller_mobile">{$O[seller_mobile]}</textarea>
+<textarea id="seller_send_no">{$O[seller_send_no]}</textarea>
+<textarea id="buyer_postcode">{$O[buyer_postcode]}</textarea>
+<textarea id="buyer_address">{$O[buyer_address]}</textarea>
+<textarea id="buyer_name">{$O[buyer_name]}</textarea>
+<textarea id="buyer_mobile">{$O[buyer_mobile]}</textarea>
+<textarea id="buyer_send_no">{$O[buyer_send_no]}</textarea>
+</div>
+{load('clipboard.min.js')}
+<script type="text/javascript">var clipboard = new Clipboard('[data-clipboard-action]');</script>
+{/if}
+<script type="text/javascript">
+s('trade');m('action_service');
+</script>

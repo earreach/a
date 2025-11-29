@@ -1,0 +1,66 @@
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">审核凭证</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=update&step=detail&itemid={$itemid}" data-transition="none">订单详情</a>
+<a href="?action=index" data-direction="reverse">订单列表</a>
+</div>
+</div>
+
+{template 'goods', 'chip'}
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div class="ui-head"><i></i><b>审核凭证</b></div>
+<div class="content">
+联系买家：<a href="{userurl($O[buyer], 'file=contact')}">{$O[buyer]}</a><br/>
+下单时间：{$O[adddate]}<br/>
+订单总额：<span class="f_red px16">{$DT[money_sign]}{$O[amount]}</span><br/>
+付款凭证：<br/>
+<br/><img src="{$O[bill]}"/><br/>
+上传时间：{$O[updatedate]}<br/>
+</div>
+<div class="ui-form">
+<p>财务审核<i>*</i><b id="dtype"></b></p>
+<div>
+<label><input type="radio" name="type" value="1" id="type1"/> 已收到</label> <span class="f_gray">如果确认已经到账，请选已收到并提交，订单状态将修改为{if $O[status] == 7}交易成功{else}已付款{/if}</span><br/>
+<label><input type="radio" name="type" value="0" id="type0"/> 未收到</label> <span class="f_gray">如果长时间未到账，请选未收到并提交，系统将要求买家重新上传凭证</span>
+</div>
+{if $DT[sms]}
+	<div class="blank-20"></div>
+	<div class="ui-list-txt">
+		<p><i class="ui-ico-info ui-fr"><a href="sms.php">可用短信{$_sms}条</a></i><input type="checkbox" name="sendsms" value="1" checked="checked"/> 短信通知买家</p>
+	</div>
+{/if}
+<div class="blank-20"></div>
+<div><input type="submit" name="submit" value="确定" class="btn-green"/></div>
+<div class="blank-20"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('type1').checked) {
+		{if $O[status] == 7}
+		return confirm('请确认货款，货款收到并确认后，订单完成，请确认');			
+		{else}
+		return confirm('您确认已收到买家付款吗？\n\n此操作将不可撤销');
+		{/if}
+	} else if(Dd('type0').checked) {
+		return confirm('如果长时间未收到买家付款，请点确定\n\n如果需要再等待一段时间，请点取消');
+	} else {
+		Dmsg('请选择审核结果', 'type');
+		return false;
+	}
+}
+</script>

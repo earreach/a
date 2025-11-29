@@ -1,0 +1,381 @@
+{template 'header', 'member'}
+<div class="menu">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="tab" id="add"><a href="?mid={$mid}&action=add"><span>添加商品</span></a></td>
+<td class="tab" id="index"><a href="?mid={$mid}&action=index"><span>商品列表</span></a></td>
+<td class="tab" id="record"><a href="?mid={$mid}&action=record"><span>库存记录</span></a></td>
+<td class="tab" id="input"><a href="?mid={$mid}&action=update&type=0"><span>商品入库</span></a></td>
+<td class="tab" id="output"><a href="?mid={$mid}&action=update&type=1"><span>商品出库</span></a></td>
+<td class="tab" id="open"><a href="?mid={$mid}&action=open"><span>公用数据</span></a></td>
+<td class="tab"><a href="javascript:;" onclick="Dwidget('type.php?item=stock', '商品分类', 1000, 600);"><span>商品分类</span></a></td>
+</tr>
+</table>
+</div>
+{if $action=='add' || $action=='edit'}
+<iframe src="" name="send" id="send" style="display:none;"></iframe>
+<form method="post" id="dform" action="?" target="send" onsubmit="return check();">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl">商品分类</td>
+<td class="tr"><span id="type_box">{$type_select}</span>&nbsp; <a href="javascript:var type_item='stock-{$_userid}',type_name='post[typeid]',type_default='{$L[default_type]}',type_id={$typeid},type_interval=setInterval('type_reload()',500);Dwidget('type.php?item=stock', '商品分类', 1000, 600);" ><img src="{DT_STATIC}image/ico-add.png" width="11" height="11" title="管理分类"/></a></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 条形编码</td>
+<td class="tr"><input name="post[skuid]" type="text" id="skuid" size="60" value="{$skuid}"/> {tips('条形码是商品唯一编号，不可重复，建议用扫描枪扫描&#10;如果没有条形码，建议使用数字在保证不重复的条件下自定义')} <span id="dskuid" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 商品名称</td>
+<td class="tr"><input name="post[title]" type="text" id="title" size="60" value="{$title}"/>  {dstyle('post[style]', $style)} <span id="dtitle" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 商品图片</td>
+<td class="tr">
+<input type="hidden" name="post[thumb]" id="thumb" value="{$thumb}"/>
+<div class="thumbu">
+<div><img src="{if $thumb}{$thumb}{else}{DT_STATIC}image/upload-image.png{/if}" width="100" height="100" id="showthumb" title="预览图片" alt="" onclick="if(this.src.indexOf('upload-image.png') == -1){_preview(Dd('showthumb').src, 1);}else{Dalbum('',{$moduleid}, 200, 200, Dd('thumb').value, true);}"/></div>
+<p><img src="{DT_STATIC}image/ico-upl.png" width="11" height="11" title="上传" onclick="Dalbum('',{$moduleid}, 200, 200, Dd('thumb').value, true);"/><img src="{DT_STATIC}image/ico-del.png" width="11" height="11" title="删除" onclick="delAlbum('');"/></p>
+</div>
+<span id="dthumb" class="f_red"></span>
+</td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 商品售价</td>
+<td class="tr"><input name="post[price]" type="text" size="10" value="{$price}" id="price"/> / <input name="post[unit]" type="text" size="2" value="{if $unit}{$unit}{else}件{/if}" id="unit" placeholder="单位" title="计量单位"/> <span id="dprice" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">商品进价</td>
+<td class="tr"><input name="post[cost]" type="text" size="10" value="{$cost}" id="cost"/> <span id="dcost" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">库存数量</td>
+<td class="tr"><input name="post[amount]" type="text" size="10" value="{$amount}" id="amount"/> <span id="damount" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">仓储货位</td>
+<td class="tr"><input name="post[location]" type="text" size="20" value="{$location}"/></td>
+</tr>
+<tr>
+<td class="tl">商品品牌</td>
+<td class="tr"><input name="post[brand]" type="text" size="20" value="{$brand}"/></td>
+</tr>
+<tr>
+<td class="tl">主要参数</td>
+<td class="tr">
+<table cellpadding="6" cellspacing="1" bgcolor="#FFFFFF">
+<tr bgcolor="#F7F7F7" align="center">
+<td>参数名称</td>
+<td>参数值</td>
+</tr>
+<tr>
+<td><input name="post[n1]" type="text" size="10" value="{$n1}" id="n1"/></td>
+<td><input name="post[v1]" type="text" size="20" value="{$v1}" id="v1"/></td>
+</tr>
+<tr>
+<td><input name="post[n2]" type="text" size="10" value="{$n2}" id="n2"/></td>
+<td><input name="post[v2]" type="text" size="20" value="{$v2}" id="v2"/></td>
+</tr>
+<tr>
+<td><input name="post[n3]" type="text" size="10" value="{$n3}" id="n3"/></td>
+<td><input name="post[v3]" type="text" size="20" value="{$v3}" id="v3"/></td>
+</tr>
+<tr>
+<td class="f_gray">例如：规格</td>
+<td class="f_gray">例如：10cm*20cm</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="tl">商品介绍</td>
+<td class="tr"><textarea name="post[content]" id="content" class="dsn">{$content}</textarea>
+{deditor($moduleid, 'content', $group_editor, '100%', 300)}<br/><span id="dcontent" class="f_red"></span>
+</td>
+</tr>
+<tr>
+<td class="tl">备注信息</td>
+<td class="tr"><textarea name="post[note]" id="note" style="width:600px;height:36px;">{$note}</textarea></td>
+</tr>
+</table>
+<div class="sbt"><input type="submit" name="submit" value="{if $action == 'edit'}修 改{else}添 加{/if}" class="btn_g"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="取 消" class="btn" onclick="history.back(-1);"/></div>
+</form>
+<script type="text/javascript">
+function check() {
+	var l;
+	var f;
+	f = 'skuid';
+	l = Dd(f).value.length;
+	if(l < 2) {
+		Dmsg('请填写条形编码', f);
+		return false;
+	}
+	f = 'title';
+	l = Dd(f).value.length;
+	if(l < 1) {
+		Dmsg('请填写商品名称', f);
+		return false;
+	}
+	f = 'thumb';
+	l = Dd(f).value.length;
+	if(l < 10) {
+		Dmsg('请上传商品图片', f);
+		return false;
+	}
+	f = 'price';
+	l = Dd(f).value;
+	if(l < 0.01) {
+		Dmsg('请填写商品售价', f);
+		return false;
+	}
+	return true;
+}
+</script>
+{load('clear.js')}
+<script type="text/javascript">s('stock');m({if $action=='add'}'add'{else}'index'{/if});</script>
+{elseif $action=='update'}
+<form method="post" id="dform" action="?" onsubmit="return check();">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="type" value="{$type}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+{if $title}
+<tr>
+<td class="tl">商品名称</td>
+<td class="tr">{$title}</td>
+</tr>
+{/if}
+<tr>
+<td class="tl"><span class="f_red">*</span> {if $type}出库{else}入库{/if}数量</td>
+<td class="tr"><input name="amount" type="text" size="10" value="{$amount}" id="amount"/> <span id="damount" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">操作事由</td>
+<td class="tr"><input name="reason" type="text" size="20" value="{$reason}" id="reason"/>&nbsp;
+<select onchange="Dd('reason').value=this.value;">
+<option value="">常用事由</option>
+{if $type}
+<option value="商品售出">商品售出</option>
+<option value="库存修正">库存修正</option>
+{else}
+<option value="商品进货">商品进货</option>
+<option value="买家退货">买家退货</option>
+<option value="库存修正">库存修正</option>
+{/if}
+</select>
+</td>
+</tr>
+<tr>
+<td class="tl">备注信息</td>
+<td class="tr"><input name="note" type="text" size="60" value="{$note}"/></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 条形编码</td>
+<td class="tr"><input name="skuid" type="text" id="skuid" size="60" value="{$skuid}" placeholder="请用扫描枪扫描或填写"{if $skuid} disabled{/if}/> <span id="dskuid" class="f_red"></span></td>
+</tr>
+</table>
+<div class="sbt"><input type="submit" name="submit" value="{if $type}出 库{else}入 库{/if}" class="btn_{if $type}b{else}g{/if}"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="取 消" class="btn" onclick="history.back(-1);"/></div>
+</form>
+<script type="text/javascript">
+function check() {
+	var l;
+	var f;
+	f = 'amount';
+	l = parseInt(Dd(f).value);
+	if(l < 1) {
+		Dmsg('请填写数量', f);
+		return false;
+	}
+	f = 'skuid';
+	l = Dd(f).value.length;
+	if(l < 2) {
+		Dmsg('请填写条形编码', f);
+		return false;
+	}
+	return true;
+}
+{if !$skuid}Dd('skuid').focus();{/if}
+</script>
+<script type="text/javascript">s('stock');m({if $type}'output'{else}'input'{/if});</script>
+{elseif $action == 'record'}
+<form action="?" id="search">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div class="tt">
+{$fields_select}&nbsp;
+<input type="text" name="kw" value="{$kw}" size="30" placeholder="请输入关键词" title="请输入关键词"/>&nbsp;
+<select name="type">
+<option value="0">类型</option>
+<option value="1" {if $type==1}selected{/if}>入库</option>
+<option value="2" {if $type==2}selected{/if}>出库</option>
+</select>&nbsp;
+<span data-hide-1200="1">{dcalendar('fromdate', $fromdate, '-', 1)} 至 {dcalendar('todate', $todate, '-', 1)}&nbsp;</span>
+<input type="text" name="skuid" value="{$skuid}" size="10" placeholder="条形编码" title="条形编码"/>&nbsp;
+{$order_select}&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?mid={$mid}&action={$action}');"/>
+</div>
+</form>
+<div class="bd">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="160"><a href="javascript:;" onclick="Dq('order','{if $order==5}6{else}5{/if}');">发生时间 <img src="{DT_STATIC}image/ico-{if $order==6}asc{elseif $order==5}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th><a href="javascript:;" onclick="Dq('type',1,0);Dq('order','{if $order==1}2{else}1{/if}');">入库 <img src="{DT_STATIC}image/ico-{if $order==2}asc{elseif $order==1}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th><a href="javascript:;" onclick="Dq('type',2,0);Dq('order','{if $order==1}2{else}1{/if}');">出库 <img src="{DT_STATIC}image/ico-{if $order==2}asc{elseif $order==1}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th><a href="javascript:;" onclick="Dq('order','{if $order==3}4{else}3{/if}');">库存 <img src="{DT_STATIC}image/ico-{if $order==4}asc{elseif $order==3}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th>商品名称</th>
+<th>条形编码</th>
+<th width="130" data-hide-1200="1">操作人</th>
+<th width="180">事由</th>
+<th width="180" data-hide-1200="1">备注</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><a href="javascript:;" onclick="Dq('date',this.innerHTML);">{$v[addtime]}</a></td>
+<td class="f_blue">{if $v[amount] > 0}{$v[amount]}{else}&nbsp;{/if}</td>
+<td class="f_red">{if $v[amount] < 0}{$v[amount]}{else}&nbsp;{/if}</td>
+<td>{if $v[balance]}{$v[balance]}{else}&nbsp;{/if}</td>
+<td><a href="javascript:;" onclick="Dq('itemid','{$v[stockid]}');">{$v[title]}</a></td>
+<td><a href="javascript:;" onclick="Dq('skuid','{$v[skuid]}');">{$v[skuid]}</a></td>
+<td data-hide-1200="1"><a href="javascript:;" onclick="Dq('editor','{$v[editor]}');">{$v[editor]}</a></td>
+<td title="{$v[reason]}"><input type="text" size="20" value="{$v[reason]}"/></td>
+<td data-hide-1200="1" title="{$v[note]}"><input type="text" size="20" value="{$v[note]}"/></td>
+</tr>
+{/loop}
+<tr align="center">
+<td height="35"><strong>小计</strong></td>
+<td class="f_blue">{$income}</td>
+<td class="f_red">{$expense}</td>
+<td colspan="6">&nbsp;</td>
+</tr>
+</table>
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('stock');m('record');</script>
+{elseif $action == 'open'}
+<form action="?" id="search">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<div class="tt">
+{$fields_select}&nbsp;
+<input type="text" name="kw" value="{$kw}" size="30" placeholder="请输入关键词" title="请输入关键词"/>&nbsp;
+<span data-hide-1200="1">
+<select name="datetype">
+<option value="addtime"{if $datetype == 'addtime'} selected{/if}>添加时间</option>
+<option value="edittime"{if $datetype == 'edittime'} selected{/if}>更新时间</option>
+</select>&nbsp;
+{dcalendar('fromdate', $fromdate, '-', 1)} 至 {dcalendar('todate', $todate, '-', 1)}&nbsp;
+</span>
+<input type="text" name="skuid" value="{$skuid}" size="10" placeholder="条形编码" title="条形编码"/>&nbsp;
+{$order_select}&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?mid={$mid}&action={$action}');"/>
+</div>
+</form>
+<div class="ls">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="90">图片</th>
+<th>商品</th>
+<th><a href="javascript:;" onclick="Dq('order','{if $order==3}4{else}3{/if}');">价格 <img src="{DT_STATIC}image/ico-{if $order==4}asc{elseif $order==3}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th>单位</th>
+<th data-hide-1200="1">品牌</th>
+<th>条形编码</th>
+<th data-hide-1200="1" width="130"><a href="javascript:;" onclick="Dq('order','{if $order==1}2{else}1{/if}');">人气 <img src="{DT_STATIC}image/ico-{if $order==2}asc{elseif $order==1}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th width="40">复制</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><a href="javascript:_preview('{$v[thumb]}');"><img src="{if $v[thumb]}{$v[thumb]}{else}{DT_STATIC}image/nopic60.png{/if}" width="60" class="thumb"/></a></td>
+<td align="left">&nbsp;<a href="?mid={$mid}&action=add&itemid={$v[itemid]}" class="t" title="更新时间:{$v[editdate]}&#10;添加时间:{$v[adddate]}">{$v[title]}</a></td>
+<td title="进价: {$DT[money_sign]}{$v[cost]}&#10;利润: {$DT[money_sign]}{$v[profit]}" class="f_price">{$DT[money_sign]}{$v[price]}</td>
+<td><a href="javascript:;" onclick="Dq('fields',5,0);Dq('kw','='+this.innerHTML);">{$v[unit]}</a></td>
+<td data-hide-1200="1"><a href="javascript:;" onclick="Dq('fields',4,0);Dq('kw','='+this.innerHTML);">{$v[brand]}</a></td>
+<td><a href="javascript:;" onclick="Dq('skuid','{$v[skuid]}');">{if $v[skuid]}<img src="{DT_PATH}api/barcode.php?auth={encrypt($v[skuid], DT_KEY.'BARCODE')}"/>{/if}</a></td>
+<td data-hide-1200="1">{$v[amount]}</td>
+<td><a href="?mid={$mid}&action=add&itemid={$v[itemid]}"><img width="16" height="16" src="{DT_STATIC}member/copy.png" title="复制" alt=""/></a></td>
+</tr>
+{/loop}
+</table>
+</div>
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('stock');m('open');</script>
+{else}
+<form action="?" id="search">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<div class="tt">
+{$fields_select}&nbsp;
+<input type="text" name="kw" value="{$kw}" size="30" placeholder="请输入关键词" title="请输入关键词"/>&nbsp;
+{$type_select}&nbsp;
+<span data-hide-1200="1">
+<span data-hide-1400="1">
+<select name="datetype">
+<option value="addtime"{if $datetype == 'addtime'} selected{/if}>添加时间</option>
+<option value="edittime"{if $datetype == 'edittime'} selected{/if}>更新时间</option>
+</select>&nbsp;
+</span>
+{dcalendar('fromdate', $fromdate, '-', 1)} 至 {dcalendar('todate', $todate, '-', 1)}&nbsp;
+</span>
+<input type="text" name="skuid" value="{$skuid}" size="10" placeholder="条形编码" title="条形编码"/>&nbsp;
+{$order_select}&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?mid={$mid}&action={$action}');"/>
+</div>
+</form>
+<form method="post">
+<div class="ls">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="20"><input type="checkbox" onclick="checkall(this.form);" title="全选/反选"/></th>
+<th width="90">图片</th>
+<th data-hide-1200="1">分类</th>
+<th>商品</th>
+<th width="11"></th>
+<th width="100"><a href="javascript:;" onclick="Dq('order','{if $order==2}1{else}2{/if}');">库存 <img src="{DT_STATIC}image/ico-{if $order==2}asc{elseif $order==1}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th width="11"></th>
+<th>单位</th>
+<th><a href="javascript:;" onclick="Dq('order','{if $order==3}4{else}3{/if}');">价格 <img src="{DT_STATIC}image/ico-{if $order==4}asc{elseif $order==3}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th data-hide-1200="1" data-hide-1400="1">品牌</th>
+<th data-hide-1200="1" data-hide-1400="1">条形编码</th>
+<th>仓储货位</th>
+<th width="40">修改</th>
+<th width="40">复制</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><input type="checkbox" name="itemid[]" value="{$v[itemid]}"/></td>
+<td><a href="javascript:_preview('{$v[thumb]}');"><img src="{if $v[thumb]}{$v[thumb]}{else}{DT_STATIC}image/nopic60.png{/if}" width="60" class="thumb"/></a></td>
+<td data-hide-1200="1">&nbsp;<a href="javascript:;" onclick="Dq('typeid','{$v[typeid]}');">{$v[type]}</a>&nbsp;</td>
+<td align="left">&nbsp;<a href="?mid={$mid}&action=record&itemid={$v[itemid]}" class="t" title="更新时间:{$v[editdate]}&#10;添加时间:{$v[adddate]}">{$v[title]}</a></td>
+<td><a href="?mid={$mid}&action=update&type=1&itemid={$v[itemid]}"><img src="{DT_STATIC}image/ico-mns.png" width="11" height="11" title="出库"/></a></td>
+<td><a href="?mid={$mid}&action=record&itemid={$v[itemid]}">{$v[amount]}</a></td>
+<td><a href="?mid={$mid}&action=update&type=0&itemid={$v[itemid]}"><img src="{DT_STATIC}image/ico-add.png" width="11" height="11" title="入库"/></a></td>
+<td><a href="javascript:;" onclick="Dq('fields',5,0);Dq('kw','='+this.innerHTML);">{$v[unit]}</a></td>
+<td title="进价: {$DT[money_sign]}{$v[cost]}&#10;利润: {$DT[money_sign]}{$v[profit]}" class="f_price">{$DT[money_sign]}{$v[price]}</td>
+<td data-hide-1200="1" data-hide-1400="1"><a href="javascript:;" onclick="Dq('fields',4,0);Dq('kw','='+this.innerHTML);">{$v[brand]}</a></td>
+<td data-hide-1200="1" data-hide-1400="1"><a href="javascript:;" onclick="Dq('skuid','{$v[skuid]}');">{if $v[skuid]}<img src="{DT_PATH}api/barcode.php?auth={encrypt($v[skuid], DT_KEY.'BARCODE')}"/>{/if}</a></td>
+<td><a href="javascript:;" onclick="Dq('fields',3,0);Dq('kw','='+this.innerHTML);">{$v[location]}</a></td>
+<td><a href="?mid={$mid}&action=edit&itemid={$v[itemid]}"><img width="16" height="16" src="{DT_STATIC}member/edit.png" title="修改" alt=""/></a></td>
+<td><a href="?mid={$mid}&action=add&itemid={$v[itemid]}"><img width="16" height="16" src="{DT_STATIC}member/copy.png" title="复制" alt=""/></a></td>
+</tr>
+{/loop}
+</table>
+</div>
+<div class="btns">
+<label><input type="checkbox" onclick="checkall(this.form);" title="全选/反选"/></label>
+<input type="submit" value=" 删除选中 " class="btn_r" onclick="if(confirm('确定要删除选中库存吗？')){this.form.action='?mid={$mid}&action=delete'}else{return false;}"/>
+</div>
+</form>
+{if $MG[stock_limit]}
+<div class="limit">总共可发 <span class="f_b f_red">{$MG[stock_limit]}</span> 条&nbsp;&nbsp;&nbsp;当前已发 <span class="f_b">{$limit_used}</span> 条&nbsp;&nbsp;&nbsp;还可以发 <span class="f_b f_blue">{$limit_free}</span> 条</div>
+{/if}
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('stock');m('index');</script>
+{/if}
+{template 'footer', 'member'}

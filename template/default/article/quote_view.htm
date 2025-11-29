@@ -1,0 +1,319 @@
+{template 'header'}
+
+<style type="text/css">
+  .quote-view-wrapper {max-width:900px;margin:20px auto;padding:15px;border:1px solid #ddd;background:#fff;}
+  .quote-view-title {font-size:22px;margin:10px 0 20px;}
+  .quote-view-section {margin-top:15px;}
+  .quote-view-section h3 {margin:10px 0;}
+  .quote-view-table {width:100%;border-collapse:collapse;}
+  .quote-view-table td {padding:6px 4px;vertical-align:top;}
+  .quote-view-table td.tl {width:120px;color:#666;}
+  .quote-status-box {margin:10px 0;padding:8px 10px;border:1px solid #eee;background:#fafafa;font-size:12px;color:#555;}
+  .quote-actions {margin-top:15px;text-align:center;}
+  .quote-actions button {padding:6px 14px;margin:0 6px;cursor:pointer;}
+  .reject-mask {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.4);
+    display: none;
+    z-index: 999;
+  }
+  .reject-dialog {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+    padding: 12px 15px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80%;
+    overflow: auto;
+    z-index: 1000;
+  }
+  .reject-dialog h3 { margin: 0 0 8px; font-size: 16px; }
+  .reject-device { margin-top: 8px; padding-top: 6px; border-top: 1px dashed #eee; }
+  .reject-device-title { font-weight: bold; }
+  .reject-dialog textarea { width: 100%; box-sizing: border-box; }
+  @media print {
+    .quote-print-btn,
+    .quote-actions {display:none;}
+    body {background:#fff;}
+    .quote-view-wrapper {border:none;margin:0;padding:0;}
+    .reject-mask,
+    .reject-dialog { display:none!important; }
+  }
+</style>
+
+<div class="quote-view-wrapper">
+  <div style="clear:both;height: 40px">
+    <div style="text-align:left;float: left">
+      <button type="button" class="quote-print-btn"  onclick="window.location.href='{$MODULE[$moduleid][linkurl]}quote_my.php';" style="padding:5px 12px;">返回报价</button>
+    </div>
+
+    <div style="text-align:right;float: right">
+      <button type="button" class="quote-print-btn" onclick="window.print();" style="padding:5px 12px;">打印本页</button>
+    </div>
+  </div>
+
+
+  <h1 class="quote-view-title">设备维修报价回执</h1>
+
+  <!-- 审核状态 + 用户确认提示 -->
+  <div class="quote-status-box">
+    {if $item[status]==0} <p style="color: #0e84b5">报价已经提交</p>
+    {else}
+
+
+    <?php if($item['user_confirm_status'] == 1) { ?>
+    <div style="margin-top:4px;">
+      <span class="f_green">您已确认接受本次报价</span>
+      <?php if(!empty($item['user_confirm_time'])) { ?>
+      （<?php echo timetodate($item['user_confirm_time'], 5);?>）
+      <?php } ?>
+    </div>
+    <?php } else if($item['user_confirm_status'] == 2) { ?>
+    <div style="margin-top:4px;">
+      <span class="f_red">您暂不接受本次报价</span>
+      <?php if(!empty($item['user_confirm_time'])) { ?>
+      （<?php echo timetodate($item['user_confirm_time'], 5);?>）
+      <?php } ?>
+    </div>
+    <?php } else { ?>
+    <div style="margin-top:4px;">
+      <span class="f_blue">请您仔细确认下面的报价明细，并在页面底部选择“接受报价”或“暂不接受”。</span>
+    </div>
+    <?php } ?>
+    {/if}
+  </div>
+
+  <!-- 一、基本信息 -->
+  <div class="quote-view-section">
+    <h3>一、基本信息</h3>
+    <table class="quote-view-table">
+      <tr>
+        <td class="tl">报价编号：</td>
+        <td><?php echo $item['itemid'];?></td>
+      </tr>
+      <tr>
+        <td class="tl">提交时间：</td>
+        <td><?php echo timetodate($item['addtime'], 5);?></td>
+      </tr>
+      <tr>
+        <td class="tl">客户姓名：</td>
+        <td><?php echo htmlspecialchars($item['first_name'].$item['last_name']);?></td>
+      </tr>
+      <tr>
+        <td class="tl">联系方式：</td>
+        <td>
+          <?php if($item['email']) { ?>
+          邮箱：<?php echo htmlspecialchars($item['email']);?><br/>
+          <?php } ?>
+          <?php if($item['mobile']) { ?>
+          电话：<?php echo htmlspecialchars($item['mobile']);?>
+          <?php } ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="tl">预约门店：</td>
+        <td>
+          <?php if($item['company_name']) { ?>
+          <?php echo htmlspecialchars($item['company_name']);?>
+          <?php } else { ?>
+          <span class="f_gray">未选择门店</span>
+          <?php } ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="tl">门店地区：</td>
+        <td>
+          <?php if(!empty($item['areaid'])) { ?>
+          <?php echo area_pos($item['areaid'], '', 1);?>
+          <?php } else { ?>
+          <span class="f_gray">未填写</span>
+          <?php } ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="tl">门店地址：</td>
+        <td><?php echo htmlspecialchars($item['company_address']);?></td>
+      </tr>
+      <tr>
+        <td class="tl">门店电话：</td>
+        <td>
+          <?php if($item['company_telephone']) { ?>
+          电话：<?php echo htmlspecialchars($item['company_telephone']);?><br/>
+          <?php } ?>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="tl">预约到店时间：</td>
+        <td>
+          <?php if($item['appoint_time']) { ?>
+          <?php echo timetodate($item['appoint_time'], 5);?>
+          <?php } else { ?>
+          <span class="f_gray">未选择预约时间</span>
+          <?php } ?>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- 二、设备 & 故障明细 -->
+  <div class="quote-view-section">
+    <h3>二、设备 & 故障明细</h3>
+    <?php if(!empty($quote_devices)) { ?>
+    <?php foreach($quote_devices as $catid => $dev) { ?>
+    <div style="margin-bottom:12px;border-bottom:1px dashed #eee;padding-bottom:8px;">
+      <strong><?php echo htmlspecialchars($dev['name']);?></strong>
+      <?php if(!empty($dev['color'])) { ?>
+      <span style="margin-left:8px;color:#666;">颜色：<?php echo htmlspecialchars($dev['color']);?></span>
+      <?php } ?>
+      <?php if(!empty($dev['faults'])) { ?>
+      <table class="quote-view-table" style="margin-top:4px;">
+        <tr>
+          <td style="width:50%;">故障项目</td>
+
+          <td style="width:50%;">参考价格</td>
+        </tr>
+        <?php foreach($dev['faults'] as $f) { ?>
+        <tr>
+          <td><?php echo htmlspecialchars($f['name']);?></td>
+
+          <td><?php echo isset($f['price']) ? number_format($f['price'], 2) : '';?></td>
+        </tr>
+        <?php } ?>
+      </table>
+      <?php } ?>
+    </div>
+    <?php } ?>
+    <?php } else { ?>
+    <div class="f_gray">设备故障明细数据缺失。</div>
+    <?php } ?>
+  </div>
+
+  <!-- 三、金额汇总 -->
+  <div class="quote-view-section">
+    <h3>三、金额汇总</h3>
+    <table class="quote-view-table">
+      <tr>
+        <td class="tl">故障原价合计：</td>
+        <td><?php echo $item['total_fault_amount_str'];?> 円</td>
+      </tr>
+      <tr>
+        <td class="tl">优惠码抵扣金额：</td>
+        <td><?php echo $item['coupon_amount_str'];?> 円</td>
+      </tr>
+      <tr>
+        <td class="tl">人工优惠金额：</td>
+        <td><?php echo $item['manual_discount_str'];?> 円</td>
+      </tr>
+      <tr>
+        <td class="tl">总优惠金额：</td>
+        <td><?php echo $item['discount_amount_str'];?> 円</td>
+      </tr>
+      <tr>
+        <td class="tl">最终报价金额：</td>
+        <td><strong style="font-size:16px;color:#d00;"><?php echo $item['final_amount_str'];?> 円</strong></td>
+      </tr>
+    </table>
+  </div>
+
+
+
+  <!-- 四、用户确认操作 -->
+  <div class="quote-view-section quote-actions">
+    <?php if($item['user_confirm_status'] == 0 && $item['status'] == 1 ) { ?>
+    <form method="post" action="" id="quoteConfirmForm">
+      <input type="hidden" name="itemid" value="<?php echo $item['itemid'];?>"/>
+      <input type="hidden" name="token"  value="<?php echo htmlspecialchars($item['receipt_token']);?>"/>
+
+
+      <!-- 正常按钮：直接提交 -->
+      <button type="submit" name="do" value="confirm">接受报价</button>
+      <!-- 打开弹窗，不直接提交 -->
+      <button type="button" id="btnRejectOpen">暂不接受</button>
+
+      <!-- 蒙层 + 弹窗 -->
+      <div id="rejectMask" class="reject-mask"></div>
+      <div id="rejectDialog" class="reject-dialog" style="display:none;">
+        <h3>确认暂不接受本次报价</h3>
+        <p style="font-size:12px;color:#666;">
+          如果方便的话，请简单告诉我们不接受本次报价的原因（选填）。您也可以直接点击“确认暂不接受”。
+        </p>
+
+        <?php if(!empty($quote_devices)) { ?>
+        <?php foreach($quote_devices as $catid => $dev) { ?>
+        <div class="reject-device">
+          <div class="reject-device-title">
+            设备：<?php echo htmlspecialchars($dev['name']);?>
+            <?php if(!empty($dev['color'])) { ?>
+            <span style="margin-left:8px;color:#666;">颜色：<?php echo htmlspecialchars($dev['color']);?></span>
+            <?php } ?>
+          </div>
+          <div style="margin-top:4px;">
+            <textarea
+                    name="reject_reason[<?php echo $catid;?>]"
+                    rows="3"
+                    placeholder="可以简单写一下原因，例如：价格偏高、暂时不打算维修等（选填）"></textarea>
+          </div>
+        </div>
+        <?php } ?>
+        <?php } ?>
+
+        <div style="text-align:right;margin-top:10px;">
+          <button type="button" id="btnRejectCancel">取消</button>
+          <!-- 真正提交“暂不接受”的按钮 -->
+          <button type="submit" name="do" value="reject">确认暂不接受</button>
+        </div>
+      </div>
+
+    </form>
+    <?php } else if($item['user_confirm_status'] == 1) { ?>
+    <div class="f_green">您已确认接受本次报价，如需修改，请联系预约门店。</div>
+    <?php } else if($item['user_confirm_status'] == 2) { ?>
+    <div class="f_gray">您已标记为暂不接受本次报价，如需继续维修，请联系预约门店。</div>
+    <?php } ?>
+  </div>
+
+
+  <div style="margin-top:15px;color:#666;font-size:12px;">
+    * 本报价仅作为维修参考费用，实际价格以到店检测结果为准。<br/>
+    * 如对报价有疑问，请联系预约门店进行确认。
+  </div>
+
+</div>
+<script type="text/javascript">
+  (function() {
+    var btnOpen   = document.getElementById('btnRejectOpen');
+    var mask      = document.getElementById('rejectMask');
+    var dialog    = document.getElementById('rejectDialog');
+    var btnCancel = document.getElementById('btnRejectCancel');
+
+    if(!btnOpen || !dialog) return;
+
+    function showDialog() {
+      if(mask) mask.style.display = 'block';
+      dialog.style.display = 'block';
+    }
+    function hideDialog() {
+      if(mask) mask.style.display = 'none';
+      dialog.style.display = 'none';
+    }
+
+    btnOpen.onclick = showDialog;
+    if(btnCancel) btnCancel.onclick = hideDialog;
+    if(mask) mask.onclick = hideDialog;
+  })();
+</script>
+
+
+{template 'footer'}

@@ -1,0 +1,130 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="{$MOD[mobile]}" data-direction="reverse">{$MOD[name]}首页</a>
+<a href="{DT_MOB}{rewrite('channel.php?mid='.$moduleid)}" data-transition="none">{$MOD[name]}分类</a>
+<a href="{DT_MOB}channel.php" data-direction="reverse">切换频道</a>
+<a href="{$MODULE[2][mobile]}cart.php" data-transition="none">购物车{if $_cart}<b>{$_cart}</b>{/if}</a>
+</div>
+</div>
+
+<style type="text/css">
+.compare {border-top:#DDDDDD 1px solid;overflow-x:auto;background:#FFFFFF;width:1220px;}
+.compare tr {text-align:center;}
+.compare tr:hover {background:#F1F1F1;}
+.compare th {width:58px;font-weight:normal;border:#DDDDDD 1px solid;border-top:none;letter-spacing:1px;background:#F1F1F1;}
+.compare td {width:169px;padding:16px 10px;border-right:#DDDDDD 1px solid;border-bottom:#DDDDDD 1px solid;}
+.compare div {height:18px;line-height:18px;overflow:hidden;}
+</style>
+{if $tags}
+<div class="compare">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<th>移除</th>
+{loop $tags $k $v}
+<td><a href="?action=remove&itemid={$v[itemid]}" class="b" onclick="return confirm('确定要移除此项吗？');">移除</a></td>
+{/loop}
+</tr>
+<tr>
+<th>图片</th>
+{loop $tags $k $v}
+<td><a href="{$v[linkurl]}" target="_blank"><img src="{$v[thumb]}" width="100" height="100" alt=""/></a></td>
+{/loop}
+</tr>
+<tr>
+<th>商品</th>
+{loop $tags $k $v}
+<td><div><a href="{$v[linkurl]}" target="_blank" title="{$v[alt]}">{$v[title]}</a></div></td>
+{/loop}
+</tr>
+<tr>
+<th>价格</th>
+{loop $tags $k $v}
+<td><strong class="f_price">{$v[price]}</strong></td>
+{/loop}
+</tr>
+<tr>
+<th>品牌</th>
+{loop $tags $k $v}
+<td><div title="{$v[brand]}">{$v[brand]}</div></td>
+{/loop}
+</tr>
+<tr>
+<th>日期</th>
+{loop $tags $k $v}
+<td>{$v[editdate]}</td>
+{/loop}
+</tr>
+<tr>
+<th>公司</th>
+{loop $tags $k $v}
+<td><div><a href="{$v[userurl]}" target="_blank" title="{$v[company]}">{$v[company]}</a></div></td>
+{/loop}
+</tr>
+<tr>
+<th>会员</th>
+{loop $tags $k $v}
+<td>
+{if $v[vip]}<img src="{DT_SKIN}vip_{$v[vip]}.gif" alt="{VIP}" title="{VIP}:{$v[vip]}级"/>{/if}
+</td>
+{/loop}
+</tr>
+<tr>
+<th>地区</th>
+{loop $tags $k $v}
+<td>{area_pos($v[areaid], ' ', 2)}</td>
+{/loop}
+</tr>
+<tr>
+<th>销量</th>
+{loop $tags $k $v}
+<td>{$v[sales]}</td>
+{/loop}
+</tr>
+<tr>
+<th>评价</th>
+{loop $tags $k $v}
+<td>{$v[comments]}</td>
+{/loop}
+</tr>
+<tr>
+<th>联系</th>
+{loop $tags $k $v}
+<td>&nbsp;
+	{if $v[username] && $DT[im_web]}{im_web($v[username].'&mid='.$moduleid.'&itemid='.$v[itemid])}&nbsp;{/if}
+	{if $v[qq] && $DT[im_qq]}{im_qq($v[qq])}&nbsp;{/if}
+	{if $v[wx] && $DT[im_wx]}{im_wx($v[wx], $v[username])}&nbsp;{/if}
+	{if $v[ali] && $DT[im_ali]}{im_ali($v[ali])}&nbsp;{/if}
+	{if $v[skype] && $DT[im_skype]}{im_skype($v[skype])}</a>&nbsp;{/if}
+</td>
+{/loop}
+</tr>
+<tr>
+<th>购买</th>
+{loop $tags $k $v}
+<td><a href="{$MODULE[2][mobile]}buy.php?mid={$moduleid}&itemid={$v[itemid]}" class="b">购买</a></td>
+{/loop}
+</tr>
+<tr>
+<th>移除</th>
+{loop $tags $k $v}
+<td><a href="?action=remove&itemid={$v[itemid]}" class="b" onclick="return confirm('确定要移除此项吗？');">移除</a></td>
+{/loop}
+</tr>
+</table>
+</div>
+{else}
+<div class="list-none">暂无需要对比的商品，请先添加</div>
+{/if}
+{template 'footer'}

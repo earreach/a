@@ -1,0 +1,13 @@
+/*
+	DESTOON Copyright (C)2008-2099 www.destoon.com
+	This is NOT a freeware,Use is subject to license.txt
+*/
+.cate-list {background:#F6F6F6;overflow:hidden;width:900px;z-index:3;position:relative;}
+.cate-box {width:440px;background:#FFFFFF;margin:10px 10px 0 0;float:left;border-radius:10px;}
+
+.info_main {padding:10px 10px 0 10px;}
+.info_main li {padding:8px 0 8px 16px;font-size:14px;}
+
+.brand {padding:5px 0 5px 0;}
+.brand img {padding:3px;}
+.brand li {height:22px;line-height:22px;overflow:hidden;}

@@ -1,0 +1,11 @@
+<div class="ui-album" id="albums-{$js_pageid}">
+	{if $video}<b onclick="APlay('{$js_pageid}');"></b><p></p><i onclick="AHide('{$js_pageid}');"></i>{/if}
+	<em id="album-no-{$js_pageid}">1/{count($albums)}</em>
+	<div id="album-{$js_pageid}"></div>
+	<span id="album-item-{$js_pageid}">
+	{loop $albums $k $v}
+	{if strpos($v, 'nopic')===false}<img src="{str_replace('.thumb.', '.middle.', $v)}" alt="{$title}图{$k+1}"/>{/if}
+	{/loop}
+	</span>
+	{if $video}<pre>{DC::player($video, '100%', 300, 0, 0, ' playsinline -webkit-playsinline webkit-playsinline')}</pre>{/if}
+</div>

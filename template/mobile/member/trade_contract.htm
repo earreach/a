@@ -1,0 +1,166 @@
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">合同详情</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=update&step=detail&itemid={$C[oid]}" data-transition="none">订单详情</a>
+<a href="?action=contract" data-direction="reverse">我的合同</a>
+</div>
+</div>
+
+{template 'goods', 'chip'}
+{load('webuploader.min.js')}
+{if $C}
+<div class="content">
+合同编号：{$C[itemid]}<br/>
+甲方名称：{$C[buyer_company]}<br/>
+乙方名称：{$C[seller_company]}<br/>
+商品名称：{$C[title]}<br/>
+合同金额：{$DT[money_sign]}{$C[amount]}<br/>
+下单时间：{if $C[addtime]}{timetodate($C[addtime], 5)}{else}N/A{/if} &nbsp; <a href="javascript:;" class="b" onclick="$('#redo').toggle();">重签合同</a><br/>
+甲方签署：{if $C[buyer_time]}{timetodate($C[buyer_time], 5)}{else}N/A{/if}{if $C[buyer_contract]} &nbsp; <a href="{$C[buyer_contract]}" class="b">查看合同</a>{/if}<br/>
+乙方签署：{if $C[seller_time]}{timetodate($C[seller_time], 5)}{else}N/A{/if}{if $C[seller_contract]} &nbsp; <a href="{$C[seller_contract]}" class="b">查看合同</a>{/if}<br/>
+合同状态：{$cstatus[$C[status]]}<br/>
+</div>
+<div id="redo" class="dsn">
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div class="ui-form">
+<p>上传合同</p>
+<div>
+<input type="text" name="fileurl" value="" id="fileurl" placeholder="限制为pdf|jpg|jpeg|png"/>
+<div class="ui-form-file-upload"><div id="file-picker"></div></div>
+<script type="text/javascript">
+var fileu = WebUploader.create({
+	auto: true,
+	server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=file',
+	pick: '#file-picker',
+	accept: {
+		title: 'Files',
+		extensions: 'pdf,jpg,jpeg,png', 
+		mimeTypes: '*/*'
+	},
+	resize: false
+});
+fileu.on('beforeFileQueued', function(file) {
+	var exts = fileu.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+fileu.on('fileQueued', function(file) {
+	Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+fileu.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+fileu.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#fileurl').val(data.url);
+	}
+});
+fileu.on( 'uploadError', function(file, data) {
+	Dtoast('{$js_pageid}',data.message, '', 5);
+});
+fileu.on('uploadComplete', function(file) {
+	$('#toast-{$js_pageid}').hide();
+});
+</script>
+</div>
+<div class="blank-20"></div>
+<div><input type="submit" name="submit" value="重新签署" class="btn-blue"/></div>
+<div class="blank-20"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('fileurl').value.length < 15) {
+		Dmsg('请上传合同', 'fileurl');
+		return false;
+	}
+	return confirm('确定要重新签署吗？已上传的甲乙合同将被删除');
+}
+</script>
+</div>
+{else}
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div class="ui-form">
+<p>上传合同</p>
+<div>
+<input type="text" name="fileurl" value="" id="fileurl" placeholder="限制为pdf|jpg|jpeg|png"/>
+<div class="ui-form-file-upload"><div id="file-picker"></div></div>
+<script type="text/javascript">
+var fileu = WebUploader.create({
+	auto: true,
+	server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=file',
+	pick: '#file-picker',
+	accept: {
+		title: 'Files',
+		extensions: 'pdf,jpg,jpeg,png', 
+		mimeTypes: '*/*'
+	},
+	resize: false
+});
+fileu.on('beforeFileQueued', function(file) {
+	var exts = fileu.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+fileu.on('fileQueued', function(file) {
+	Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+fileu.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+fileu.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#fileurl').val(data.url);
+	}
+});
+fileu.on( 'uploadError', function(file, data) {
+	Dtoast('{$js_pageid}',data.message, '', 5);
+});
+fileu.on('uploadComplete', function(file) {
+	$('#toast-{$js_pageid}').hide();
+});
+</script>
+</div>
+<div class="blank-20"></div>
+<div><input type="submit" name="submit" value="确 定" class="btn-blue"/></div>
+<div class="blank-20"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('fileurl').value.length < 15) {
+		Dmsg('请上传合同', 'fileurl');
+		return false;
+	}
+	return true;
+}
+</script>
+{/if}

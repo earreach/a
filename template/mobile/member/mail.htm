@@ -1,0 +1,56 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=index" data-transition="none">邮件订阅</a>
+<a href="?action=list" data-transition="none">订阅列表</a>
+<a href="biz.php" data-direction="reverse">商户后台</a>
+</div>
+</div>
+
+{if $action == 'list'}
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li><a href="?action=show&itemid={$v[itemid]}"><strong>{$v[title]}</strong></a></li>
+<li><span class="f_r">{$TYPE[$v[typeid]][typename]}</span><span>{$v[adddate]}</span></li>
+</ul>
+</div>
+{/loop}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+
+{elseif $action == 'show'}
+<div class="title"><h1>{$r[title]}</h1></div>
+<div class="info">{$r[adddate]}</div>
+<div class="content">{$r[content]}</div>
+
+{else}
+<form method="post" action="?">
+<div class="ui-form">
+<div class="blank-16"></div>
+<div>
+{loop $TYPE $k $v}
+<label><input type="checkbox" name="typeids[]" value="{$v[typeid]}" {if in_array($v[typeid], $mytypeids)}checked{/if}/> {$v[typename]}</label><br/>
+{/loop}
+</div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" class="btn-green" value="订 阅"/>
+<div class="blank-16"></div>
+<input type="button" class="btn" value="退 订" onclick="Dsheet('{$js_pageid}','<a href=&#34;?action=cancel&#34;><span style=&#34;color:red&#34;>退订</span></a>', '取消', '确定要退订所有订阅吗？');"/>
+<div class="blank-32"></div>
+</div>
+</form>
+{/if}
+{template 'footer', 'member'}

@@ -1,0 +1,105 @@
+{template 'header'}
+<script type="text/javascript">var module_id= {$moduleid},item_id={$itemid},content_id='content',img_max_width={$MOD[max_width]};</script>
+<div class="m">	
+	<div class="nav"><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {$member[company]}</div>
+</div>
+<div class="m m3">
+	<div class="m3l">	
+	<h1 class="title bd-b" id="title">{$member[company]}</h1>
+	<div class="content c_b" id="content">
+	<img src="{$member[thumb]}" align="left" style="margin:6px 16px 16px 0;padding:6px;border:#C0C0C0 1px solid;"/>
+	{if $member[business]}<b>主营行业：</b>{$member[business]}<br/>{/if}
+	{if $member[type]}<b>公司类型：</b>{$member[type]}<br/>{/if}
+	{if $member[mode]}<b>经营模式：</b>{$member[mode]}<br/>{/if}
+	{if $member[size]}<b>公司规模：</b>{$member[size]}<br/>{/if}
+	{if $member[capital]}<b>注册资本：</b>{$member[capital]}万{$member[regunit]}<br/>{/if}
+	{if $member[regyear]}<b>注册年份：</b>{$member[regyear]}<br/>{/if}
+	{if $member[sell]}<b>销售产品：</b>{$member[sell]}<br/>{/if}
+	{if $member[buy]}<b>采购产品：</b>{$member[buy]}<br/>{/if}
+	{if $content}{$content}{else}该公司暂未填写详细介绍{/if}
+	</div>
+	<div class="tool c_b">
+	{if $MOD[show_like]}<i class="like" onclick="Dlike({$moduleid}, {$itemid}, 0);">点赞 <b id="like-{$moduleid}-{$itemid}-0">{$likes}</b></i>{/if}
+	{if $MOD[show_hate]}<i class="hate" onclick="Dhate({$moduleid}, {$itemid}, 0);">反对 <b id="hate-{$moduleid}-{$itemid}-0">{$hates}</b></i>{/if}
+	{if $MOD[show_report]}<i class="report" onclick="Dreport({$moduleid}, {$itemid}, 0);">举报</i>{/if}
+	{if $MOD[show_favorite]}<i class="favorite" onclick="Dfavor({$moduleid}, {$itemid});">收藏 <b>{$favorites}</b></i>{/if}
+	{if $MOD[fee_award]}<a href="{$MODULE[2][linkurl]}award.php?mid={$moduleid}&itemid={$itemid}" target="_blank"><i class="award">打赏 <b>{$awards}</b></i></a>{/if}
+	{if $could_comment}<a href="{$EXT[comment_url]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}" target="_blank"><i class="comment">评论 <b>{$comments}</b></i></a>{/if}
+	{if $MOD[show_share]}<a href="{DT_PATH}api/share.php?mid={$moduleid}&itemid={$itemid}" target="_blank"><i class="share">分享 <b>{$shares}</b></i></a>{/if}
+	</div>
+</div>
+<div class="m3r">
+	<div class="contact-body">
+		{if $DT[follow]}
+		<div class="contact-fw">
+		<span>联系方式</span>
+		{if followed($member[userid])}
+		<div class="follow1" onclick="Dfollow('{$member[username]}');" id="follow-{$member[username]}" title="已关注，点击取消"><b>已关注</b><i>{numtoread($member[fans])}</i></div>
+		{else}
+		<div class="follow0" onclick="Dfollow('{$member[username]}');" id="follow-{$member[username]}" title="未关注，点击关注"><b>加关注</b><i>{numtoread($member[fans])}</i></div>
+		{/if}
+		</div>
+		{/if}
+		<h3><a href="{$member[linkurl]}" target="_blank">{if $member[shop] && $member[vshop]}{$member[shop]}{else}{$member[company]}{/if}</a></h3>
+		{if $member[vip]}
+		<div class="contact-vip"><img src="{DT_SKIN}vip_{$member[vip]}.gif" alt="{VIP}" title="{VIP}:{$member[vip]}级" align="absmiddle"/> &nbsp; <b>{$member[groupname]}</b><span>第{vip_year($member[fromtime])}年</span></div>
+		{else}
+		<div class="contact-com"><b>{$member[groupname]}</b><span>第{vip_year($member[regtime])}年</span></div>
+		{/if}
+		<div class="contact-vd">
+			{if $member[validated]}
+			<div class="contact-v1">资料<b>通过{$member[validator]}认证</b></div>
+			{else}
+			<div class="contact-v0">资料<b>未认证</b></div>
+			{/if}
+			{if $member[deposit]>0.01}
+			<div class="contact-d1">保证金<b>{$DT[money_sign]}{$member[deposit]}</b></div>
+			{else}
+			<div class="contact-d0">保证金<b>未缴纳</b></div>
+			{/if}
+		</div>
+		{if $could_contact}
+		<ul>
+			{if $member[areaid]}<li><a href="{DT_PATH}api/address.php?auth={encrypt($member[address].'|'.$member[company].'|'.$member[lng].','.$member[lat], DT_KEY.'MAP')}" target="_blank"><b class="ui-ico-area">{area_pos($member[areaid], '-')}</b></a></li>{/if}
+			<li>
+			<b class="ui-ico-time">上次登录 {timetoread($member[logintime], 3)}</b>
+			{if online($member[userid])==1}
+			<span class="contact-ol" title="当前在线">&bull;</span>
+			{else}
+			<span class="contact-fl" title="当前离线">&bull;</span>
+			{/if}
+			</li>
+			{if $member[mail]}<li><b class="ui-ico-mail">{if $DT[anti_spam]}</b>{anti_spam($member[mail])}{else}{$member[mail]}</b>{/if}</li>{/if}
+			{if $member[telephone]}<li><b class="ui-ico-tel">{if $DT[anti_spam]}</b>{anti_spam($member[telephone])}{else}{$member[telephone]}</b>{/if}</li>{/if}
+			{if $member[mobile] && $DT[im_mob]}<li><b class="ui-ico-mob">{if $DT[anti_spam]}</b>{anti_spam($member[mobile])}{else}{$member[mobile]}</b>{/if}</li>{/if}
+			{if $member[truename]}<li><b class="ui-ico-user">{$member[truename]} ({gender($member[gender])}) &nbsp; {$member[career]}</b></li>{/if}
+		</ul>
+		<div class="contact-im">
+			{if $member[username] && $DT[im_web]}{im_web($member[username].'&mid='.$moduleid.'&itemid='.$itemid)}{/if}
+			<a href="{$MODULE[2][linkurl]}friend.php?action=add&username={$member[username]}" target="_blank"><img src="{DT_STATIC}image/friend-add.gif" width="16" height="16" align="absmiddle" title="加为好友"/></a>
+			<a href="{$MODULE[2][linkurl]}message.php?action=send&touser={$member[username]}" target="_blank"><img src="{DT_STATIC}image/msg.gif" width="16" height="16" align="absmiddle" title="发送私信"/></a>
+			{if $member[qq] && $DT[im_qq]}{im_qq($member[qq])}{/if}
+			{if $member[wx] && $DT[im_wx]}{im_wx($member[wx], $member[username])}{/if}
+			{if $member[gzh] && $DT[im_wx]}{im_gzh($member[gzh], $member[username])}{/if}
+			{if $member[ali] && $DT[im_ali]}{im_ali($member[ali])}{/if}
+			{if $member[skype] && $DT[im_skype]}{im_skype($member[skype])}{/if}
+		</div>
+		<div class="contact-btn">
+			{if $member[agent]}
+			<a href="{$MODULE[2][linkurl]}partner.php?action=add&username={$member[username]}" target="_blank"><span>申请代理</span></a>
+			{else}
+			<a href="{$MODULE[2][linkurl]}friend.php?action=add&username={$member[username]}" target="_blank"><span>加为好友</span></a>
+			{/if}
+			<a href="{$MODULE[2][linkurl]}message.php?action=send&touser={$member[username]}" target="_blank"><span>发送私信</span></a>
+		</div>
+		{else}
+			{if $_userid}
+			<br/><br/><center>请先 <a href="{$MODULE[2][linkurl]}grade.php" class="b">升级</a> 会员级别后查看联系方式</center><br/><br/>
+			{else}
+			<br/><br/><center>请先 <a href="{$MODULE[2][linkurl]}{$DT[file_login]}" class="b">登录</a> 或 <a href="{$MODULE[2][linkurl]}{$DT[file_register]}" class="b">注册</a> 后查看联系方式</center><br/><br/>
+			{/if}
+		{/if}
+	</div>
+</div>
+</div>
+{template 'footer'}

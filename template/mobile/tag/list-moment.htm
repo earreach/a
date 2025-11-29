@@ -1,0 +1,75 @@
+{php $tags = list_user($tags, 'validate,gradeid');}
+{loop $tags $k $t}
+{php $t[pics] = get_thumbs($t);}
+<div class="list-moment">
+	<div class="mm-list">
+		<a href="{userurl($t[username], 'file=space&mid='.$moduleid)}" rel="external"><img src="{useravatar($t[username])}" width="48" class="mm-head"/></a><i class="userinfo-v{$t[member][validate]}"></i>
+		<ul>
+			<li class="mm-user"><i id="sheet-{$t[itemid]}" onclick="mm_sheet({$moduleid}, {$t[itemid]}, {$t[userid]})"></i><a href="{userurl($t[username], 'file=space&mid='.$moduleid)}" rel="external"><b>{if $t[passport]}{$t[passport]}{else}{$t[username]}{/if}</b></a> <s><img src="{DT_STATIC}image/grade-{$t[member][gradeid]}.png" width="24" alt=""/></s></li>
+			<li class="mm-time"><span title="{timetodate($t[addtime], 5)}">{timetoread($t[addtime], 5)}</span></li>
+		</ul>
+	</div>
+
+	{if $t[topic]}<div class="mm-topic"><a href="{$MODULE[$moduleid][mobile]}{rewrite('topic.php?itemid='.$t['topicid'])}"><b>#{$t[topic]}#</b></a></div>{/if}
+	<div class="mm-text" id="content-{$t[itemid]}">{parse_face($t[introduce])}{if $t[more]}<i onclick="mm_more({$moduleid}, {$t[itemid]});">全文</i>{/if}</div>
+	{if $t[linkto]}<div class="mm-link"><a href="{gourl($t[linkto])}" rel="external"><i>网页链接</i></a></div>{/if}
+	{if $t[video]}<div class="mm-video">{if is_uri($t[video])}{player($t[video], '100%')}{else}<div onclick="$(this).html(player('{$t[video]}',-32,0,0));"></div>{/if}</div>{/if}
+	{if $t[pics]}
+	{if count($t[pics]) == 1}
+	<div class="mm-image" id="image-{$t[itemid]}"><img src="{cutstr($t[pics][0], '', '.thumb.')}" onclick="Dviewer(js_pageid, this.src, $('#image-{$t[itemid]}'));"/></div>
+	{else}
+	<div class="mm-pics">
+		<ul id="thumbs-{$t[itemid]}">
+		{if $t[pics]}
+		{loop $t[pics] $p}
+		{if $p}<li><img src="{$p}" onclick="mm_pic_show('{$t[itemid]}', this);"/></li>{/if}
+		{/loop}
+		{/if}
+		</ul>
+		<p id="thumbshow-{$t[itemid]}" onclick="Dviewer(js_pageid, $(this).find(':first-child').attr('src'), $('#thumbs-{$t[itemid]}'));"></p>
+	</div>
+	{/if}
+	{/if}
+	{if $t[quoteid]}
+	{php $q = get_quote($t['quoteid']);}
+	{if $q}
+		{if $q[open]==1}
+		<div class="mm-quote">
+			<div class="mm-user"><a href="{$MODULE[$moduleid][mobile]}{$q[linkurl]}" rel="external"><span></span></a><a href="{userurl($q[username], 'file=space&mid='.$moduleid)}" rel="external"><b>@{if $q[passport]}{$q[passport]}{else}{$q[username]}{/if}</b></a></div>
+			<div class="mm-time"><span title="{timetodate($q[addtime], 5)}">{timetoread($q[addtime], 5)}</span></div>
+			{if $q[topic]}<div class="mm-topic"><a href="{$MODULE[$moduleid][mobile]}{rewrite('topic.php?itemid='.$q['topicid'])}"><b>#{$q[topic]}#</b></a></div>{/if}
+			<div class="mm-text" id="content-{$q[itemid]}-{$t[itemid]}">{parse_face($q[introduce])}{if $q[more]}<i onclick="mm_more({$moduleid}, {$q[itemid]}, {$t[itemid]});">全文</i>{/if}</div>
+			{if $q[linkto]}<div class="mm-link"><a href="{gourl($q[linkto])}" rel="external"><i>网页链接</i></a></div>{/if}
+			{if $q[video]}<div class="mm-video">{if is_uri($q[video])}{player($q[video], '100%')}{else}<div onclick="$(this).html(player('{$q[video]}',-64,0,0));"></div>{/if}</div>{/if}
+			{if $q[pics]}
+			{if count($q[pics]) == 1}
+			<div class="mm-image" id="image-{$t[itemid]}-{$q[itemid]}"><img src="{cutstr($q[pics][0], '', '.thumb.')}" onclick="Dviewer(js_pageid, this.src, $('#image-{$t[itemid]}-{$q[itemid]}'));"/></div>
+			{else}
+			<div class="mm-pics">
+			<ul id="thumbs-{$t[itemid]}-{$q[itemid]}">
+			{if $q[pics]}
+			{loop $q[pics] $p}
+			{if $p}<li><img src="{$p}" onclick="mm_pic_show('{$t[itemid]}-{$q[itemid]}', this);"/></li>{/if}
+			{/loop}
+			{/if}
+			</ul>
+			<p id="thumbshow-{$t[itemid]}-{$q[itemid]}" onclick="Dviewer(js_pageid, $(this).find(':first-child').attr('src'), $('#thumbs-{$t[itemid]}-{$q[itemid]}'));"></p>
+			</div>
+			{/if}
+			{/if}
+		</div>
+		{else}
+		<div class="mm-lost">原文已隐藏</div>
+		{/if}
+	{else}
+		<div class="mm-lost">原文已删除</div>
+	{/if}
+	{/if}
+
+	<div class="mm-info">
+		<a href="{$MODULE[2][mobile]}{$DT[file_my]}?mid={$moduleid}&action=add&quoteid={if $t[quoteid]}{$t[quoteid]}{else}{$t[itemid]}{/if}" rel="external"><i class="ui-ico-quote">转发 <span>{$t[quotes]}</span></i></a>
+		<a href="{$comment_url}{rewrite('index.php?mid='.$moduleid.'&itemid='.$t['itemid'])}" rel="external"><i class="ui-ico-comm">评论 <span>{$t[comments]}</span></i></a>
+		<i class="ui-ico-like" onclick="Dlike({$moduleid}, {$t[itemid]}, 1);">点赞 <span id="like-{$moduleid}-{$t[itemid]}-1">{$t[likes]}</span></i>
+	</div>
+</div>
+{/loop}

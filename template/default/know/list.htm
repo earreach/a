@@ -1,0 +1,61 @@
+{template 'header'}
+{load('member/panel.css')}
+{load('panel.js')}
+<div class="m">	
+	<div class="nav">
+	<div class="know_show_btn"><a href="javascript:;" onclick="Dwidget('{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&cid={$catid}&action=add', '{$CAT[catname]} 提问', 1220);"><b class="know-btn">提问</b></a></div>
+	<a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')}
+	</div>
+</div>
+<div class="m m2">
+	<div class="m2l">
+		<form action="{$MOD[linkurl]}search.php" id="search">
+		<input type="hidden" name="catid" value="{$catid}"/>
+		<div class="sort-f">
+		<div class="sort">
+			<div class="sort-k">分类</div>
+			<div class="sort-v">
+				<ul>
+				{loop $maincat $k $v}
+				<li{if $v[catid]==$catid} class="on"{/if}><a href="{$MOD[linkurl]}{$v[linkurl]}">{set_style($v[catname],$v[style])}</a>{if !$cityid} <i>({$v[item]})</i>{/if}</li>
+				{/loop}
+				</ul>
+			</div>
+		</div>
+		{if $TYPE}
+		<div class="sort">
+			<div class="sort-k">类别</div>
+			<div class="sort-v">
+				<ul>
+				{loop $TYPE $k $v}
+				<li><a href="javascript:;" onclick="Dq('typeid',{$k});">{$v}</a></li>
+				{/loop}
+				</ul>
+			</div>
+		</div>
+		{/if}
+		{if $FD}{template 'fields_search', 'chip'}{/if}
+		{if $CP}{template 'property_search', 'chip'}{/if}
+		</div>
+		</form>
+
+		<div class="b10 c_b"></div>
+		<div class="know-list">
+		{if $page == 1}{ad($moduleid,$catid,'',6)}{/if}
+		{if $tags}{template 'list-'.$module, 'tag'}{/if}
+		</div>
+	</div>
+	<div class="m2r">
+		<div class="sponsor">{ad($moduleid,$catid,$kw,7)}</div>
+		<div class="head-sub"><strong>搜索排行</strong></div>
+		<div class="list-rank">
+			<!--{tag("moduleid=$moduleid&table=keyword&condition=moduleid=$moduleid and status=3 and updatetime>$DT_TODAY-86400*30&pagesize=9&order=week_search desc&key=week_search&template=list-search-rank")}-->
+		</div>
+		<div class="head-sub"><strong>等待回答</strong></div>
+		<div class="list-txt">
+			<!--{tag("moduleid=$moduleid&condition=status=3 and process=1&catid=$catid&order=".$MOD[order]."&pagesize=10")}-->
+		</div>
+	</div>
+	<div class="b10 c_b"></div>
+</div>
+{template 'footer'}

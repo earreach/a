@@ -1,0 +1,4 @@
+<?php exit;?>
+qid,ID,
+question,问题,
+answer,答案,

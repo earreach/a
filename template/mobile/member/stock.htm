@@ -1,0 +1,428 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a>{if $action=='index' || !$action || $action=='record' || $action=='open'}<a href="javascript:Dmenu('search-{$js_pageid}');"><img src="{DM_SKIN}icon-search{$wh}.png" width="24" height="24"/></a>{/if}</div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right">
+{if $action=='add' || $action=='edit' || $action=='update'}
+<a href="?mid={$mid}&action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{else}
+<a href="?mid={$mid}&action=add"><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></a>
+{/if}
+<a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a>
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?mid={$mid}&action=add" data-transition="none">添加商品</a>
+<a href="?mid={$mid}&action=index" data-transition="none">库存管理</a>
+<a href="?mid={$mid}&action=update&type=0" data-transition="none">商品入库</a>
+<a href="?mid={$mid}&action=update&type=1" data-transition="none">商品出库</a>
+{if $mid}<a href="{$DT[file_my]}?mid={$mid}" data-direction="reverse">商品管理</a>{/if}
+<a href="biz.php" data-direction="reverse">商户后台</a>
+</div>
+</div>
+
+{if $action=='add' || $action=='edit'}
+{load('webuploader.min.js')}
+<form method="post" action="?" id="dform" onsubmit="return check();">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="post[style]" value="{$style}"/>
+<div class="ui-form">
+<p>商品分类<b id="dtypeid"></b></p>
+<div>{$type_select}</div>
+<p>条形编码<i>*</i><b id="dskuid"></b></p>
+<div><input type="text" name="post[skuid]" id="skuid" value="{$skuid}"/>{if in_array($DT_MBS, array('app','cms','web')) || $wx_jssdk}<div class="ui-form-scan" onclick="App_Scan('#skuid');"></div>{/if}</div>
+<p>商品名称<i>*</i><b id="dtitle"></b></p>
+<div><input type="text" name="post[title]" id="title" value="{$title}"/></div>
+<p>商品图片<i>*</i><b id="dthumb"></b></p>
+<div>
+<input type="hidden" name="post[thumb]" id="thumb"/>
+<div class="ui-form-album-show" id="album" onclick="album_action();"></div>
+<div class="ui-form-album-upload"><div id="album-picker"></div></div>
+<script type="text/javascript">
+function album_action(id) {
+	Dsheet('{$js_pageid}','<a href="javascript:album_delete('+id+');void(0);"><span style="color:red;">删除图片</span></a>', '取消', '确定要删除图片吗？');
+}
+function album_delete(id) {
+	$('#thumb').val('');
+	$('#album').html('');
+	$('#album').hide();
+	$('.ui-form-album-upload').show();	
+}
+function album_show(id, url) {
+	$('#thumb').val(url);
+	$('#album').html('<img src="'+url+'"/>');
+	$('#album').show();
+}
+var albumu = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=album&width=200&height=200',
+    pick: '#album-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+albumu.on('beforeFileQueued', function(file) {
+	var exts = albumu.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+albumu.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+albumu.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+albumu.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		album_show(0, data.url);
+		if($('#thumb').val()) $('.ui-form-album-upload').hide();
+	}
+});
+albumu.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+albumu.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+{if $thumb}
+$(function(){
+	{if $thumb}album_show(0, '{$thumb}');{/if}
+	{if $thumb}$('.ui-form-album-upload').hide();{/if}
+});
+{/if}
+</script>
+</div>
+<p>商品售价<i>*</i><b id="dprice"></b></p>
+<div><input name="post[price]" type="number" value="{$price}" id="price" style="width:40%"> /  <input name="post[unit]" type="text" value="{if $unit}{$unit}{else}件{/if}" id="unit" title="计量单位" style="width:20%"/></div>
+<p>商品进价</p>
+<div><input name="post[cost]" type="number" value="{$cost}" id="cost" style="width:30%"></div>
+<p>库存数量</p>
+<div><input name="post[amount]" type="number" value="{$amount}" id="amount" style="width:30%"></div>
+<p>仓储货位</p>
+<div><input name="post[location]" type="text" id="location" value="{$location}"/></div>
+<p>商品品牌</p>
+<div><input name="post[brand]" type="text" id="brand" value="{$brand}"/></div>
+<p>主要参数</p>
+<div>
+<table cellspacing="1">
+<tr>
+<th>参数名称</th>
+<th>参数值</th>
+</tr>
+<tr>
+<td style="width:35%;"><input name="post[n1]" type="text" value="{$n1}" id="n1"/></td>
+<td style="width:50%;"><input name="post[v1]" type="text" value="{$v1}" id="v1"/></td>
+</tr>
+<tr>
+<td style="width:35%;"><input name="post[n2]" type="text" value="{$n2}" id="n2"/></td>
+<td style="width:50%;"><input name="post[v2]" type="text" value="{$v2}" id="v2"/></td>
+</tr>
+<tr>
+<td style="width:35%;"><input name="post[n3]" type="text" value="{$n3}" id="n3"/></td>
+<td style="width:50%;"><input name="post[v3]" type="text" value="{$v3}" id="v3"/></td>
+</tr>
+</table>
+</div>
+<p>商品介绍</p>
+</div>
+<input type="hidden" name="post[content]" id="content"/>
+<ul class="ui-editor-toolbar">
+<li class="ui-editor-img"><div id="editor-picker"></div></li>
+<li class="ui-editor-bold"><input type="button" value=" " editor-action="bold"/>B</li>
+<li class="ui-editor-italic"><input type="button" value=" " editor-action="italic"/>I</li>
+<li class="ui-editor-underline"><input type="button" value=" " editor-action="underline"/>U</li>
+</ul>
+<div class="ui-editor-content" id="editor">{$content}</div>
+{load('editor.js')}
+<script type="text/javascript">
+$(function(){
+    $('#editor').DEditor({
+        editorid: 'editor',
+        textareaid: 'content',
+        server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=editor'
+    });
+});
+</script>
+<div class="ui-form">
+<p>备注信息</p>
+<div><textarea name="post[note]" id="note" style="height:48px;">{$note}</textarea></div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="{if $action == 'edit'}修改{else}添加{/if}" class="btn-blue"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	var l;
+	var f;
+	f = 'skuid';
+	l = Dd(f).value.length;
+	if(l < 2) {
+		Dmsg('请填写条形编码', f);
+		return false;
+	}
+	f = 'title';
+	l = Dd(f).value.length;
+	if(l < 1) {
+		Dmsg('请填写商品名称', f);
+		return false;
+	}
+	f = 'thumb';
+	l = Dd(f).value.length;
+	if(l < 10) {
+		Dmsg('请上传商品图片', f);
+		return false;
+	}
+	f = 'price';
+	l = Dd(f).value;
+	if(l < 0.01) {
+		Dmsg('请填写商品售价', f);
+		return false;
+	}
+	return true;
+}
+</script>
+{elseif $action=='update'}
+<form method="post" id="dform" action="?" onsubmit="return check();">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="type" value="{$type}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<div class="ui-form">
+{if $title}
+<p>商品名称</p>
+<div>{$title}</div>
+{/if}
+<p>{if $type}出库{else}入库{/if}数量<i>*</i><b id="damount"></b></p>
+<div><input name="amount" type="number" value="{$amount}" id="amount" style="width:30%"></div>
+<p>操作事由</p>
+<div><input name="reason" type="text" size="20" value="{$reason}" id="reason" style="width:40%"/>&nbsp;
+<select onchange="Dd('reason').value=this.value;">
+<option value="">常用事由</option>
+{if $type}
+<option value="商品售出">商品售出</option>
+<option value="库存修正">库存修正</option>
+{else}
+<option value="商品进货">商品进货</option>
+<option value="买家退货">买家退货</option>
+<option value="库存修正">库存修正</option>
+{/if}
+</select></div>
+<p>备注信息</p>
+<div><textarea name="note" id="note" style="height:48px;">{$note}</textarea></div>
+<p>条形编码<i>*</i><b id="dskuid"></b></p>
+<div><input type="text" name="skuid" id="skuid" value="{$skuid}"/>{if in_array($DT_MBS, array('app','cms','web')) || $wx_jssdk}<div class="ui-form-scan" onclick="App_Scan('#skuid');"></div>{/if}</div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="{if $type}出 库{else}入 库{/if}" class="btn-{if $type}blue{else}green{/if}"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	var l;
+	var f;
+	f = 'amount';
+	l = parseInt(Dd(f).value);
+	if(l < 1) {
+		Dmsg('请填写数量', f);
+		return false;
+	}
+	f = 'skuid';
+	l = Dd(f).value.length;
+	if(l < 2) {
+		Dmsg('请填写条形编码', f);
+		return false;
+	}
+	return true;
+}
+{if !$skuid}Dd('skuid').focus();{/if}
+</script>
+
+{elseif $action == 'record'}
+<div id="search-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="?">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+</div>
+
+<div class="list-tab">
+	<ul>
+		<li><a href="?mid={$mid}&action=index"><span>商品列表</span></a></li>
+		<li class="on"><a href="?mid={$mid}&action=record"><span>库存记录</span></a></li>
+		<li><a href="?mid={$mid}&action=open"><span>公用数据</span></a></li>
+	</ul>
+</div>
+
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li>
+<span class="f_r">余:{$v[balance]}</span>
+{if $v[amount] < 0}
+<strong style="font-size:24px;color:#FF6600;">{$v[amount]}</strong>
+{else}
+<strong style="font-size:24px;">+{$v[amount]}</strong>
+{/if}
+</li>
+<li><span class="f_r">{$v[addtime]}</span>{$v[title]}</li>
+</ul>
+</div>
+{/loop}
+{else}
+	<div class="list-none">{if $kw}未搜索到“{$kw}”相关结果{else}暂无记录{/if}</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+
+{elseif $action == 'open'}
+<div id="search-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="?">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+</div>
+
+<div class="list-tab">
+	<ul>
+		<li><a href="?mid={$mid}&action=index"><span>商品列表</span></a></li>
+		<li><a href="?mid={$mid}&action=record"><span>库存记录</span></a></li>
+		<li class="on"><a href="?mid={$mid}&action=open"><span>公用数据</span></a></li>
+	</ul>
+</div>
+
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<input type="checkbox" name="itemid[]" value="{$v[itemid]}" class="dsn" id="checkbox-{$v[itemid]}"/>
+<a href="{$v[linkurl]}"><img src="{if $v[thumb]}{$v[thumb]}{else}{DM_SKIN}60x60.png{/if}" width="60" height="60" alt="" onerror="this.src='{DM_SKIN}60x60.png';"/></a>
+<ul>
+<li><a href="?mid={$mid}&action=add&itemid={$v[itemid]}"><strong>{$v[title]}</strong></a></li>
+<li></em><span>{$DT[money_sign]}{$v[price]} / {$v[brand]} / {$v[skuid]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+	<div class="list-none">{if $kw}未搜索到“{$kw}”相关结果{else}暂无记录{/if}</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+
+{else}
+
+<div id="search-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="?">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+</div>
+
+<div class="list-tab">
+	<ul>
+		<li class="on"><a href="?mid={$mid}&action=index"><span>商品列表</span></a></li>
+		<li><a href="?mid={$mid}&action=record"><span>库存记录</span></a></li>
+		<li><a href="?mid={$mid}&action=open"><span>公用数据</span></a></li>
+	</ul>
+</div>
+
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<input type="checkbox" name="itemid[]" value="{$v[itemid]}" class="dsn" id="checkbox-{$v[itemid]}"/>
+<a href="?mid={$mid}&action=edit&itemid={$v[itemid]}"><img src="{if $v[thumb]}{$v[thumb]}{else}{DM_SKIN}60x60.png{/if}" width="60" height="60" alt="" onerror="this.src='{DM_SKIN}60x60.png';"/></a>
+<ul>
+<li><em class="check" id="check-{$v[itemid]}"></em><a href="?mid={$mid}&action=edit&itemid={$v[itemid]}"><strong>{$v[title]}</strong></a></li>
+<li><em class="sheet" id="sheet-{$v[itemid]}"></em><span>{$DT[money_sign]}{$v[price]} / {$v[amount]} / {$v[skuid]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+	<div class="list-none">{if $kw}未搜索到“{$kw}”相关结果{else}暂无记录{/if}</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<div id="foot-bar" class="dsn">
+<div class="foot-bar-fix"></div>
+<div class="foot-bar btns">
+<input type="submit" name="submit" value="删除选中" class="btn-red" onclick="if(confirm('确定要删除选中证书吗？')){this.form.action='?status={$status}&action=delete'}else{return false;}"/>
+</div>
+</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	if($('#foot-bar input').length == 0) $('.check').hide();
+	$('.list-img em').click(function() {
+		if($(this).attr('class') == 'sheet') {
+			var id = $(this).attr('id').replace('sheet-', '');
+			Dsheet('{$js_pageid}','<a href="?mid={$mid}&action=edit&itemid='+id+'"><span>修改</span></a>|<a href="?mid={$mid}&action=update&itemid='+id+'&type=0"><span>入库</span></a>|<a href="?mid={$mid}&action=update&itemid='+id+'&type=1"><span>出库</span></a>|<a href="?mid={$mid}&action=delete&itemid='+id+'" onclick="return _delete();"><span style="color:red;">删除</span></a>', '取消');
+		} else {
+			var id = $(this).attr('id').replace('check-', '');
+			if($('#checkbox-'+id).attr('checked')) {
+				$('#checkbox-'+id).attr('checked', false);
+				$(this).attr('class', 'check');
+			} else {
+				$('#checkbox-'+id).attr('checked', true);
+				$(this).attr('class', 'checked');
+			}
+			if($('.checked').length > 0) {
+				$('#foot-bar').fadeIn(300);
+			} else {
+				$('#foot-bar').fadeOut(300);
+			}
+		}
+	});
+});
+</script>
+{/if}
+{if $wx_jssdk}
+<script src="//res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+<script type = "text/javascript">
+wx.config({
+	debug: false,
+	appId: '{$wx_jssdk[appId]}',
+	timestamp: {$wx_jssdk[timestamp]},
+	nonceStr: '{$wx_jssdk[nonceStr]}',
+	signature: '{$wx_jssdk[signature]}',
+	jsApiList: ['scanQRCode']
+});
+function App_Scan(id) {	
+	wx.scanQRCode({
+		needResult: 1,
+		scanType: ["barCode"],
+		success: function (res) {
+			$(id).val(res.resultStr.indexOf(',') == -1 ? res.resultStr : res.resultStr.split(',')[1]);
+		}
+	});
+}
+</script>
+{/if}
+{template 'footer', 'member'}

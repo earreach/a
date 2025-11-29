@@ -1,0 +1,204 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">评论列表</div>
+<div class="head-bar-right">
+{if $EXT[comment_api]}
+<a href="javascript:window.location.reload();"><img src="{DM_SKIN}icon-reload{$wh}.png" width="24" height="24"/></a>
+{else}
+<a href="javascript:Hcomment();" id="hc-{$js_pageid}" style="display:none;"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+<a href="javascript:Scomment();" id="sc-{$js_pageid}"><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></a>
+{/if}
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+{if $action == 'close'}
+<div class="content">
+	<div style="padding:128px 0;color:#999999;text-align:center;">评论已关闭</div>
+</div>
+<script style="text/javascript">
+$(function(){
+	$('.head-bar-right').hide();
+});
+</script>
+{elseif $EXT[comment_api] == 'changyan'}
+<div id="SOHUCS" sid="{$mid}-{$itemid}"></div>
+<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="http://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id={$EXT[comment_api_id]}&conf={$EXT[comment_api_key]}"></script>
+{else}
+<style type="text/css">
+.userinfo-v0,.userinfo-v1,.userinfo-v2 {margin:32px 0 0 32px;}
+.quote{border:1px solid #EEEEEE;background:#FFFFFF;padding:10px;margin-bottom:10px;}
+.quote_title {font-size:12px;}
+.quote_time {font-size:12px;color:#999999;}
+.quote_floor {float:right;font-size:10px;color:#999999;}
+.quote_content {clear:both;}
+.star_a {display:inline-block;margin:12px 10px 12px 0;padding:2px 8px;height:20px;line-height:20px;background:#FF6600;color:#FFFFFF;font-size:12px;border-radius:6px;}
+.star_b {display:inline-block;margin:12px 10px 12px 0;padding:2px 8px;height:20px;line-height:20px;background:#EEEEEE;color:#333333;font-size:12px;border-radius:6px;}
+.star_e {display:inline-block;margin:10px 0;padding:2px 8px;height:24px;line-height:24px;width:24px;background:url('{DM_SKIN}chat-emoji.png') no-repeat center center;background-size:24px 24px;float:right;}
+.emoji {width:100%;background:#FFFFFF;display:none;overflow:hidden;}
+.emoji i {display:block;width:10%;height:36px;float:left;padding:6px 0;text-align:center;}
+.emoji img {width:24px;height:24px;}
+</style>
+{if $faces}
+<div id="emoji-{$js_pageid}" class="emoji bd-b">
+{loop $faces $k $v}<i onclick="_into('content-{$js_pageid}',':{$k}{$v})');"><img src="{DT_PATH}file/face/{$k}.png"/></i>{/loop}
+</div>
+{/if}
+<div class="ui-form bd-b">
+<form method="post" id="comment-post">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="items" value="{$items}"/>
+<input type="hidden" name="page" value="{$page}"/>
+<input type="hidden" name="qid" value="0" id="qid"/>
+<input type="hidden" name="submit" value="1"/>
+<input type="hidden" name="star" value="3" id="star"/>
+<div><textarea name="content" id="content-{$js_pageid}" placeholder="我来说两句" onblur="window.scrollTo(0,0);" style="margin:6px 0;height:48px;border:none;" onfocus="Scomment();"></textarea></div>
+<section id="box-btn-{$js_pageid}" style="display:none;">
+<div class="bd-t" id="box-star">
+<span class="star_e" onclick="$('#emoji-{$js_pageid}').slideToggle('fast');"></span>
+<span id="star_5" class="star_a" onclick="Dstar(5);">极好</span>
+<span id="star_4" class="star_b" onclick="Dstar(4);">好</span>
+<span id="star_3" class="star_b" onclick="Dstar(3);">一般</span>
+<span id="star_2" class="star_b" onclick="Dstar(2);">差</span>
+<span id="star_1" class="star_b" onclick="Dstar(1);">极差</span>
+</div>
+{if $need_captcha}
+<div class="bd-t">{template 'captcha', 'chip'}</div>
+{/if}
+{if $MOD[comment_tip]}
+<div class="bd-t" style="padding-top:10px;color:#999999;font-size:12px;line-height:24px;">{$MOD[comment_tip]}</div>
+{/if}
+<div class="blank-16"></div>
+<input type="button" class="btn-blue" value="发表评论" onclick="Dcomment();"/>
+<div class="blank-32"></div>
+</section>
+</form>	
+</div>
+{if $level}<div style="padding:16px;color:#999999;font-size:12px;">本评论开启了筛选功能，仅展示作者筛选出的评论</div>{/if}
+{if $lists}
+{loop $lists $k $v}
+<a name="H{$v[itemid]}"></a>
+<div class="list-user">
+<img src="{useravatar($v[uname])}" width="48" height="48" class="avatar"/><i class="userinfo-v{$v[member][validate]}"></i>
+<ul>
+<li>
+{if $v[floor]}<span>{$v[floor]} 楼</span>{elseif $v[level]==2}<span class="fb_red">置顶</span>{elseif $v[level]==1}<span class="fb_orange">精选</span>{/if}
+<a href="{userurl($v[uname])}" rel="external"><b>{$v[name]}</b></a> <img src="{DT_STATIC}image/grade-{$v[member][gradeid]}.png" width="24" alt="" style="float:none;"/>{if $v[username]==$v[item_username]} <b class="fb_green">作者</b>{/if}
+</li>
+
+<li><i class="ui-ico-time" title="{$v[adddate]}">{timetoread($v[addtime], 5)}</i>{if $MOD[comment_ip]}<i class="ui-ico-area">IP属地 {ip2area($v[ip], $MOD[comment_ip])}</i>{/if}<span><img src="{DM_SKIN}star{$v[star]}.png" style="padding-top:6px;width:40px;"/></span></li>
+</ul>
+</div>
+<div class="content" id="c_{$v[itemid]}">
+{if $v[quotation]}{$v[quotation]}{else}{$v[content]}{/if}
+{if $v[reply]}
+<br/><span class="px12 f_gray">{if $v[replyer]==$v[item_username]}<span class="fb_blue">作者</span>{else}<span class="fb_red">网站</span>{/if} <span title="{$v[replydate]}">{timetoread($v[replytime], 5)}</span> 回复： </span>
+<br/>{nl2br($v[reply])}
+{/if}
+</div>
+<div class="ui-tool">
+{if $MOD[comment_vote]}
+<i class="ui-ico-like" onclick="Dlike(3, 0, {$v[itemid]});">支持 <span id="like-3-0-{$v[itemid]}">{$v[likes]}</span></i>
+<i class="ui-ico-hate" onclick="Dhate(3, 0, {$v[itemid]});">反对 <span id="hate-3-0-{$v[itemid]}">{$v[hates]}</span></i>
+{/if}
+<i class="ui-ico-quote" onclick="Q({$v[itemid]}, '{$v[name]}');">回复 {$v[quotes]}</i>
+<i class="ui-ico-report" onclick="R({$v[itemid]});">举报</i>
+{if $could_del}
+<a href="?mid={$mid}&itemid={$itemid}&page={$page}&action=delete&cid={$v[itemid]}&proxy={$proxy}" target="send" onclick="return confirm('确定要删除此评论吗？')"><i class="ui-ico-delete">删除</i></a>
+{/if}
+</div>
+{/loop}
+{else}
+<div class="list-empty">暂无评论</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<script type="text/javascript">
+function R(id) {
+	Dreport(3, 0, id, '评论举报，评论ID:'+id+'\n评论内容:\n'+Dd('c_'+id).innerHTML);
+}
+function Q(qid, username){
+	window.scrollTo(0,0);
+	Dd('qid').value = qid;
+	$('#content-{$js_pageid}').attr('placeholder', '回复 '+username+' 的评论：');
+	Dd('content-{$js_pageid}').focus();
+}
+function Scomment() {
+	window.scrollTo(0,0);$('#box-btn-{$js_pageid}').slideDown(300);$('#hc-{$js_pageid}').show();$('#sc-{$js_pageid}').hide();void(0);
+}
+function Hcomment() {
+	if($('#emoji-{$js_pageid}').css('display') != 'none') {
+		$('#emoji-{$js_pageid}').hide();
+	} else {
+		$('#box-btn-{$js_pageid}').slideUp(300);$('#hc-{$js_pageid}').hide();$('#sc-{$js_pageid}').show();
+		$('#emoji-{$js_pageid}').hide();
+	}
+	void(0);
+}
+function Demoji(v) {
+	$('#content-{$js_pageid}').val($('#content-{$js_pageid}').val()+':'+v+')');
+}
+function Dstar(v) {
+	for(var i = 1; i < 6; i++) {
+		if(v == i) {
+			$('#star').val(i);
+			$('#star_'+i).attr('class', 'star_a');
+		} else {
+			$('#star_'+i).attr('class', 'star_b');
+		}
+	}
+}
+function Dcomment() {
+	var len;
+	len = $('#content-{$js_pageid}').val().length;
+	if(len < {$MOD[comment_min]}) {
+		Dtoast('{$js_pageid}','正文最少个{$MOD[comment_min]}字，已填写'+len+'个字');
+		return false;
+	}
+	if(len > {$MOD[comment_max]}) {
+		Dtoast('{$js_pageid}','正文最多个{$MOD[comment_max]}字，已填写'+len+'个字');
+		return false;
+	}
+	{if $need_captcha}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dtoast('{$js_pageid}','请填写验证码');
+		return false;
+	}
+	{/if}
+	$.post('index.php', $('#comment-post').serialize(), function(data) {
+		if(data.indexOf('alert(') == -1) {
+			Dtoast('{$js_pageid}','评论发表成功');
+			setTimeout(function() {
+				if($('#page-last').length > 0) {
+					Go($('#page-last').attr('href'));
+				} else {
+					window.location.reload();
+				}
+			}, 1000);
+		} else {
+			var t0 = data.split("alert('");
+			var t1 = t0[1].split("')");
+			var msg = t1[0];
+			Dtoast('{$js_pageid}',msg);
+			if(msg.indexOf('审核') != -1) {
+				setTimeout(function() {
+					window.location.reload();
+				}, 1000);
+			} else {
+				reloadcaptcha();
+			}
+		}
+	});
+}
+{if $need_captcha}
+$(function(){
+	$('#captcha').on('blur', function(){window.scrollTo(0,0);});
+	$('#captcha').css({'width':'100px','border':'none','padding':'0','font-size':'16px'});
+});
+{/if}
+</script>
+{/if}
+{template 'footer'}

@@ -1,0 +1,356 @@
+{template 'header'}
+<!--<script type="text/javascript">var module_id= {$moduleid},item_id={$itemid},content_id='content',img_max_width={$MOD[max_width]};</script>-->
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}css/base.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<!--<link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">-->
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}css/list26.css"/>
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}css/bootstrap.min.css"/>
+<!--<link rel="stylesheet" type="text/css" href="{DT_SKIN}css/bootstrap.min.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>-->
+<link href="http://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+<!--<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+
+<!--<script src="{DT_SKIN}js/jquery.min.js"></script>-->
+
+<link href="{DT_SKIN}css/style01.css" type="text/css" rel="stylesheet">
+
+<style>
+
+
+
+
+
+</style>
+
+<!--<div class="w-160 h-300 fb-apple">-->
+
+</div>
+
+
+<div class="m">
+	<div class="nav"><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')}</div>
+</div>
+
+
+<div class="m  ">
+	<div class="">
+		{if $FD || $CP}
+		<form action="{$MOD[linkurl]}search.php" id="search">
+			<input type="hidden" name="catid" value="{$catid}"/>
+			<div class="sort-f">
+				{if $FD}{template 'fields_search', 'chip'}{/if}
+				{if $CP}{template 'property_search', 'chip'}{/if}
+			</div>
+		</form>
+		<script type="text/javascript">$(function(){if($('.sort-f').html().indexOf('sort')==-1){$('.sort-f').hide();}});</script>
+		{/if}
+
+		<!--		<div class="catlist">
+                    {php $cols = 5;}
+                    {if $page == 1}{ad($moduleid,$catid,'',6)}{/if}
+                    {if $tags}{template 'list-'.$module, 'tag'}{/if}
+            </div> -->
+
+		<div class="p20 bgbai ml-10">
+
+			<div class="df jcc h-50 lh-50 aic ptb-20">
+				<img src="{$icon}" class="h100" alt="{$seo_title}">
+				<h1 class="h-50 ti-10">{$seo_title}</h1>
+			</div>
+			<div class="df h-600">
+				<div id="content" class=" w-600">{template 'content', 'chip'}</div>
+				{if $images[0]}<img src="{$images[0]}" class="f1  " alt="{$seo_title}" title="{$seo_title}">{/if}
+			</div>
+			<h2>シリーズから修理メニュー・料金表を見る11111111111</h2>
+
+
+
+			<!--			<img src="{DT_SKIN}article/13.png" class="w100" alt="ご希望の機種項目をタップすると料金表が切替ります">-->
+
+
+			<select name="exposure">
+				<option value="iphone" selected="selected">iphone</option>
+				<option value="ipad">ipad</option>
+				<option value="iwatch">iwatch</option>
+				<option value="ipod">ipod</option>
+				<option value="Optione">Galaxy</option>
+				<option value="Optione">SONY</option>
+				<option value="Optione">Google</option>
+				<option value="Optione">SHARP</option>
+				<option value="Optione">OPPO</option>
+				<option value="Optione">Xiaomi</option>
+				<option value="Optione">HUAWEI</option>
+				<option value="Optione">ASUS</option>
+				<option value="Optione">Fujitsu</option>
+				<option value="Optione">LG</option>
+				<option value="Optione">Motorola</option>
+				<option value="Optione">ZTE</option>
+				<option value="Optione">HTC</option>
+
+			</select>
+
+			<select name="clicks">
+				<option value="A001">A001</option>
+				<option value="A002">A002</option>
+				<option value="A003">A003</option>
+				<option value="A003">A004</option>
+
+			</select>
+
+
+
+
+
+
+
+
+
+
+
+			<div class="table m0a pt-20 ">
+				<p class="fs14 fw-800 red2 ">※事前WEB予約をされてご来店された後、お会計時にアンケート回答をして頂きますと通常料金から2,200円引きさせていただきます。
+				<p class="fs14 fw-800 red2  ">※各種割引をご希望のお客様は、受付時に店舗スタッフまでお伝え下さい。</p>
+				<p class="fs14 fw-800 red2  ">※表示料金は税込表示です。</p>
+				<p class="fs14 fw-800 red2  ">※修理不可の場合は、修理費用の発生は致しませんのでご安心下さいませ。</p>
+				<p class="fs14 fw-800 red2 ">※別途作業料金などの追加料金は頂きません。</p>
+
+				<p class="fs14 fw-800 red2">※実際の修理内容によっては修理料金が変動する可能性があるので詳細の修理料金は各店舗までお問い合わせ下さい</p>
+			</div>
+
+
+
+
+
+
+
+			<p class="mb-30 mt-30 fs16">（スマホ/スマートフォン）iPhone(アイフォン)のバッテリーはあくまでも消耗品です。
+				なので、使用にともない畜電量は落ち、いつかは交換を行う必要があります。
+				基本的には1年～2年ほどがバッテリーの寿命と言われており、2年程度で購入当時の70％ほどしか充電できなくなる場合が多いようです。
+				充電回数が多いiPhoneだと早い場合で、数ヶ月から1年程度の使用でバッテリーが寿命になっている方も多くいらっしゃいます。</p>
+
+			<p class="mb-30 fs16">また、水に落とした等の水没の場合は、ほぼバッテリー交換が必須の場合が多いです。
+				水没や寿命を超えたiPhone(アイフォン)のバッテリーをそのまま使い続けると、下記の画像のように膨張してしまう恐れがあり、大変危険です。</p>
+			<img src="{DT_SKIN}31/02.png" class="w100" alt="ご希望の機種項目をタップすると料金表が切替ります">
+
+
+
+
+
+			<!--				<div class="blue8 line1 mt-20 mb-20"></div>-->
+
+
+
+
+
+			<div class="blue8 line1 mt-60 "></div>
+			<h3 class="tac">当店が取り扱う（スマホ/スマートフォン）iPhoneバッテリーについて</h3>
+			<!--				<div class="blue8 line1 mt-20 mb-20"></div>	-->
+			<p class="mb-30 fs16 mt-30">品質は、リサイクルバッテリーと比べて非常に良質で、純正バッテリーとほとんど変わりません。 純正品とほとんど変わらない品質のため、iOSのアップデート後等のトラブルもなく安心してご利用いただける製品となっております。
+				本来iPhoneバッテリーは特定電気用品ではないため、第三者機関による適合性検査は必要ないのですが、お客様にご安心いただくため、海外の機関で適合性検査を実施し検査レポート及び証書を取っています。</p>
+			<p class="mb-30 fs16 mt-30">交換部品に関しては<span class="fw-800 blue8">3ヵ月間の無償保証付</span>ですので、安心してご利用いただけます。</p>
+
+
+
+
+
+			<div class="blue8 line1 mt-60 "></div>
+			<h2 class="tac">互換品バッテリーとリサイクルバッテリーの違い</h2>
+			<!--				<div class="blue8 line1 mt-20 mb-20"></div>-->
+			<div class="mt-40">
+				<h3 class="tac">リサ`イクルバッテリー`</h3>
+				<p class="m-20">格安の部品は、廃バッテリーから基盤をリサイクルしたものを使用してコストダウンしている物か、検品で基準値を満たしていない物のどちらかになります。
+					分解しない限りは見た目に見分けが付きません。リサイクル基盤の中には水没した基盤も含まれています。</p>
+				<h3 class="tac">当店が取り扱う互換品</h3>
+				<p class="m-20">バッテリーの本体から基盤、ケーブルまで全て互換品として生産されている物です。
+					当店が取り扱っているのは、信頼出来る国内商社の自社製品のみを使用しております。
+					自らが検品することで安定供給に繋がり、エンドユーザーにご安心してご使用を頂ける品質となります。</p>
+
+			</div>
+
+
+			<div class="blue8 line1 mt-60 "></div>
+			<h4 class="tac">iPhoneバッテリー交換、修理サービスをご利用いただいた</h4>
+			<h2 class="tac blue8">[お客様の声]</h2>
+			<!--				<div class="blue8 line1 mt-20 mb-20"></div>-->
+			<p class="pt-20 pb-20 fs16 lh-30 gray2 tac">道内シェアNo.1のスマートクリアグループは様々な端末の修理を承っております。</p>
+			<p class="pt-20 pb-20 fs16 lh-30 gray2 tac">バッテリー修理を実際に当店でサービスを体験していただいた「お客様の声」をご紹介します。</p>
+
+			<div class="">
+				{php $cols = 3;}
+				{if $page == 1}{ad($moduleid,$catid,'',6)}{/if}
+				{if $tags }<?$tags=array_slice($tags,0,3);?>{/if}
+				{if $tags }{template 'list-'.$module.'01', 'tag'}{/if}
+			</div>
+
+
+			<div class="blue8 line1 mt-60 "></div>
+			<h2 class="tac">スマートクリアが皆様に選ばれる６つの理由</h2>
+
+			<div class="mt-40">
+				<p class="w-300  h-50 m0a br br-50 tac lh-50 bgblue8 white fs20">1.バックアップ不要</p>
+				<p class="m-20 tac fw-800">データそのままで修理が出来るので、手間のかかるバックアップが要らない！</p>
+				<p class="w-300  h-50 m0a br br-50 tac lh-50 bgblue8 white fs20">２、スピード快適修理！</p>
+				<p class="m-20 tac fw-800">iPhone（アイフォン）が使えないと不安・不便だからこそ、スピード修理でそんな不安を解消します！</p>
+				<p class="w-300  h-50 m0a br br-50 tac lh-50 bgblue8 white fs20">３、無料診断実施中！</p>
+				<p class="m-20 tac fw-800">まずは相談したい！そんなお客様もお気軽にいつでも無料でご相談していただけます。</p>
+				<p class="w-300  h-50 m0a br br-50 tac lh-50 bgblue8 white fs20">４、修理不可は費用無料</p>
+				<p class="m-20 tac fw-800">万が一、部品交換しても改善が出来なかった場合は、費用は頂いておりません。</p>
+				<p class="w-300  h-50 m0a br br-50 tac lh-50 bgblue8 white fs20">５、安心の３か月保証</p>
+				<p class="m-20 tac fw-800">交換部品のトラブルは無料で交換できるので安心。</p>
+				<p class="w-300  h-50 m0a br br-50 tac lh-50 bgblue8 white fs20">６、信用・信頼・高技術Ｎo.1</p>
+				<p class="m-20 tac fw-800">お陰様で、たくさんの方にご利用・ご紹介して頂いた結果、道内最大級店舗数を出店させて頂いております。</p>
+			</div>
+
+
+
+
+		</div>
+	</div>
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+
+<script>
+	// 滑动滚动条
+	// $(function (){
+	// 	$("[href='#Section3']").click(function (){
+	// 		tableHeader()
+	// 		console.log(5555555)
+	// 	})
+	// })
+
+	//
+
+	$(function (){
+		tableHeader(0)
+		arrs=$(".nav1-tabs li")
+		arrs.each(function (i){
+			$(this).click(function (){
+				if($(this).index()==i){
+					// mie()
+					arrs.removeClass("active")
+					$(this).addClass("active")
+					// if ($(".fenbiao #tableid_").length>=2){$(".fenbiao #tableid_").first().html('');console.log("删除tableid_")}
+					tableHeader(i)
+					$("#section"+i).siblings().addClass("dn")
+					$("#section"+i).removeClass("dn")
+					// mie()
+				}
+			})
+		})
+	})
+
+	function tabcreate(j){
+		// $("#tableid_").html('')
+		// console.log(5555)
+
+		$("#tableid"+j).parent().prepend(
+				'<table id="tableid_'+j+'" border="0" cellspacing="0" cellpadding="0"><thead>' + $("#tableid"+j+" thead").html() + '</thead></table>'
+		).parent().css({
+			// 'overflow-y':'auto'
+		})
+		$("#tableid"+j).parent().parent().removeClass("dn")
+		$("#tableid_"+j).find('th').each(function(i) {
+			$(this).css('width', $('#tableid'+j).find('th:eq( '+i+')').width());
+		});
+		$("#tableid_"+j).css({
+			// 'position': 'absolute',
+			'position': 'absolute',
+			'top': '0',
+			'left': 0,
+			'z-index': 1
+		})
+		$("#tableid"+j).css({
+			'position': 'absolute',
+			'top': 0,
+			'left': 0
+		})
+	}
+
+
+
+
+
+
+	function tabcl(k){
+		if ($(".fenbiao #tableid_"+k).length>1){$(".fenbiao #tableid_"+k).each(function (l){
+			if (l>=1){$(this).html('')}
+		})}
+
+
+		// console.log("第"+i+"次点击")
+		// i++
+		// if ($(".fenbiao #tableid_").length>=2){$(".fenbiao #tableid_").last().html('');console.log("删除tableid_")}
+		// console.log(8555555555)
+
+
+
+	}
+
+	function tableHeader(j) {
+
+		tabcreate(j);
+		$("#section"+j).scroll(function() {
+
+			// if ($("#tableid_"+j).length>=2){$("#tableid_"+j).last().html('')}
+			// $("#tableid_").first().html('')
+			if ($('#section'+j).scrollTop() >= 0) {
+				tabcl(j)
+				$("#tableid_"+j).css('top', $('#section'+j).scrollTop());
+			} else {
+				$("#tableid_"+j).css('top', 0);
+			}
+		});
+	}
+
+	var map = {
+		"iphone": ['A001','A002','A003'],
+		"ipad": ['B001','B002','B003'],
+		"iwatch": ['c001','c00102','C003'],
+		"ipod": ['d001','d002','d003'],
+		"Optione": ['e001','e002','e003','e003','e003','e003'],
+	};
+
+
+
+
+	function create(key)
+	{
+		var result = [];
+		if (map.hasOwnProperty(key)) {
+			for (var i = 0; i < map[key].length; i++) {
+				result.push('<option value="'+map[key][i]+'">');
+				result.push(map[key][i]);
+				result.push('</option>');
+			}
+		}
+		return result.join('');
+	}
+
+	$('select[name="exposure"]').on('change', function()
+	{
+		alert(this.value);
+		var options = create(this.value);
+		$('select[name="clicks"]').html(options);
+	});
+
+
+</script>
+<script src="{DT_SKIN}js/slide.js"></script>
+
+
+
+
+
+{if $content}{load('content.js')}{/if}
+{template 'footer'}

@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset={DT_CHARSET}"/>
+<title>{if $seo_title}{$seo_title}{else}{if $head_title}{$head_title}{$DT[seo_delimiter]}{/if}{if $city_sitename}{$city_sitename}{else}{$DT[sitename]}{/if}{/if}</title>
+{if $head_keywords}
+<meta name="keywords" content="{$head_keywords}"/>
+{/if}
+{if $head_description}
+<meta name="description" content="{$head_description}"/>
+{/if}
+<meta name="generator" content="DESTOON - www.destoon.com"/>
+<link rel="shortcut icon" type="image/x-icon" href="{DT_PATH}favicon.ico"/>
+<link rel="bookmark" type="image/x-icon" href="{DT_PATH}favicon.ico"/>
+{if $head_canonical}
+<link rel="canonical" href="{$head_canonical}"/>
+{/if}
+{if defined('TOHTML')}
+<!--[if IE]><!-->
+<script type="text/javascript" src="{DT_STATIC}script/jquery-1.12.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<!--<![endif]-->
+<!--[if !IE]><!-->
+<script type="text/javascript" src="{DT_STATIC}script/jquery-3.6.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<!--<![endif]-->
+{else}
+{if strpos($DT_MBS, 'IE') === false}
+<script type="text/javascript" src="{DT_STATIC}script/jquery-3.6.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{else}
+<script type="text/javascript" src="{DT_STATIC}script/jquery-1.12.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{/if}
+{/if}
+<script type="text/javascript" src="{DT_PATH}api/booklet/jquery.easing.1.3.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_PATH}api/booklet/jquery.booklet.1.1.0.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<link rel="stylesheet" type="text/css" href="{DT_PATH}api/booklet/jquery.booklet.1.1.0.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<link rel="stylesheet" type="text/css" href="{DT_PATH}api/booklet/style.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+{load('photo.css')}
+<script type="text/javascript">
+var EW = window.screen.availWidth - 200;
+var EH = window.screen.availHeight - 200;
+document.write('<style type="text/css">');
+document.write(".book_wrapper{width:"+EW+"px;height:"+EH+"px;}");
+document.write(".book_wrapper img{max-width:"+(EW/2-20)+"px;");
+document.write('</style>');
+</script>
+</head>
+<body>
+<div class="book_wrapper">
+	<div class="book-nav"><a href="{$MOD[linkurl]}{rewrite('view.php?itemid='.$itemid)}"><img src="{DT_STATIC}image/ico-list-img.png" width="16" height="16" title="全部展开" align="absmiddle" style="border:none;"/></a><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')} <i onclick="alert($().jquery);">&gt;</i> {$title}</div>
+	<a id="next_page_button"></a>
+	<a id="prev_page_button"></a>
+	<div id="loading" class="loading">Loading pages...</div>
+	<div id="mybook" style="display:none;">
+		<div class="b-load">
+			{loop $T $k $t}
+			<div>
+				<img src="{$t[big]}" title="{$t[introduce]}" alt=""/>
+			</div>
+			{/loop}
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(function() {
+	var $mybook 		= $('#mybook');
+	var $bttn_next		= $('#next_page_button');
+	var $bttn_prev		= $('#prev_page_button');
+	var $js_loading		= $('#loading');
+	var $mybook_images	= $mybook.find('img');
+	var cnt_images		= $mybook_images.length;
+	var loaded			= 0;
+	//preload all the images in the book,
+	//and then call the booklet plugin
+
+	$mybook_images.each(function(){
+		var $img 	= $(this);
+		var source	= $img.attr('src');
+		$('<img/>').on('load', function(){
+			++loaded;
+			if(loaded == cnt_images){
+				$js_loading.hide();
+				$bttn_next.show();
+				$bttn_prev.show();
+				$mybook.show().booklet({
+					name:               null,                            // name of the booklet to display in the document title bar
+					width:              EW,                             // container width
+					height:             EH,                             // container height
+					speed:              600,                             // speed of the transition between pages
+					direction:          'LTR',                           // direction of the overall content organization, default LTR, left to right, can be RTL for languages which read right to left
+					startingPage:       {$page-1},                               // index of the first page to be displayed
+					easing:             'easeInOutQuad',                 // easing method for complete transition
+					easeIn:             'easeInQuad',                    // easing method for first half of transition
+					easeOut:            'easeOutQuad',                   // easing method for second half of transition
+
+					closed:             false,                           // start with the book "closed", will add empty pages to beginning and end of book
+					closedFrontTitle:   null,                            // used with "closed", "menu" and "pageSelector", determines title of blank starting page
+					closedFrontChapter: null,                            // used with "closed", "menu" and "chapterSelector", determines chapter name of blank starting page
+					closedBackTitle:    null,                            // used with "closed", "menu" and "pageSelector", determines chapter name of blank ending page
+					closedBackChapter:  null,                            // used with "closed", "menu" and "chapterSelector", determines chapter name of blank ending page
+					covers:             false,                           // used with  "closed", makes first and last pages into covers, without page numbers (if enabled)
+
+					pagePadding:        10,                              // padding for each page wrapper
+					pageNumbers:        true,                            // display page numbers on each page
+
+					hovers:             false,                            // enables preview pageturn hover animation, shows a small preview of previous or next page on hover
+					overlays:           false,                            // enables navigation using a page sized overlay, when enabled links inside the content will not be clickable
+					tabs:               false,                           // adds tabs along the top of the pages
+					tabWidth:           60,                              // set the width of the tabs
+					tabHeight:          20,                              // set the height of the tabs
+					arrows:             false,                           // adds arrows overlayed over the book edges
+					cursor:             'pointer',                       // cursor css setting for side bar areas
+
+					hash:               false,                           // enables navigation using a hash string, ex: #/page/1 for page 1, will affect all booklets with 'hash' enabled
+					keyboard:           true,                            // enables navigation with arrow keys (left: previous, right: next)
+					next:               $bttn_next,          			// selector for element to use as click trigger for next page
+					prev:               $bttn_prev,          			// selector for element to use as click trigger for previous page
+
+					menu:               null,                            // selector for element to use as the menu area, required for 'pageSelector'
+					pageSelector:       false,                           // enables navigation with a dropdown menu of pages, requires 'menu'
+					chapterSelector:    false,                           // enables navigation with a dropdown menu of chapters, determined by the "rel" attribute, requires 'menu'
+
+					shadows:            true,                            // display shadows on page animations
+					shadowTopFwdWidth:  166,                             // shadow width for top forward anim
+					shadowTopBackWidth: 166,                             // shadow width for top back anim
+					shadowBtmWidth:     50,                              // shadow width for bottom shadow
+
+					before:             function(){},                    // callback invoked before each page turn animation
+					after:              function(){}                     // callback invoked after each page turn animation
+				});
+			}
+		}).attr('src',source);
+	});
+	
+});
+</script>
+</body>
+</html>

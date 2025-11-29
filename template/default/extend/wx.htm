@@ -1,0 +1,33 @@
+{template 'header'}
+<div class="m">	
+	<div class="nav"><div><a href="javascript:window.close();"><img src="{DT_SKIN}ico-close.png" width="16" height="16" title="关闭窗口" align="absmiddle" onmouseover="this.src='{DT_SKIN}ico-close-on.png';" onmouseout="this.src='{DT_SKIN}ico-close.png';"/></a></div><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> {$head_name}</div>
+	<div class="b16"></div>
+</div>
+<div class="m">
+	<br/><br/>
+	<center class="px14">
+	{if $wx || $wxqr}
+		<img src="{DT_STATIC}image/share-{if $gzh}gzh{else}wx{/if}.png"/>
+		<br/><br/><br/>
+		{if $wx}
+		{if $gzh}公众号{else}微信号{/if}：<b>{$wx}</b>{if strpos($DT_MBS, 'IE') === false}<a href="javascript:;" data-clipboard-action="copy" data-clipboard-target="#copy-wx" onclick="Dtoast('帐号已复制');" title="复制帐号"><img src="{DT_STATIC}image/ico-copy.png" style="width:11px;height:11px;padding:0 10px;"/></a>{/if}
+		{/if}
+
+		{if $wxqr}
+		<br/><br/><br/><img src="{$wxqr}" onerror="this.src='{DT_STATIC}image/spacer.png';$('#tips').hide();"/>
+		<br/><span class="px12 f_gray" id="tips">{if $gzh}微信扫码关注{else}微信扫码，添加好友{/if}</span><br/>
+		{/if}
+	{else}
+	帐号不存在
+	{/if}
+	</center>
+	<br/><br/><br/>
+	<br/><br/><br/>
+</div>
+
+{if $wx && strpos($DT_MBS, 'IE') === false}
+<div style="z-index:1000;position:absolute;top:-10000px;"><textarea id="copy-wx">{$wx}</textarea></div>
+{load('clipboard.min.js')}
+<script type="text/javascript">var clipboard = new Clipboard('[data-clipboard-action]');</script>
+{/if}
+{template 'footer'}

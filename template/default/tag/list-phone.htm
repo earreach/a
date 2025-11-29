@@ -1,0 +1,18 @@
+
+wrong
+
+{loop $tags $i $t}
+{/loop}
+
+
+
+
+{loop $t[child1] $j $h}
+<a href="{$t[linkurl]}"{if $target} target="{$target}"{/if}{if $class} class="{$class}"{/if} title="{$t[alt]}">{$t[title]}
+<div class="df fw nw">
+
+	<div class="w-220 br h-120"></div>
+
+</div>
+</a>
+{/loop}

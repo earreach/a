@@ -1,0 +1,84 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=index" data-transition="none">一键登录</a>
+<a href="?action=login" data-transition="none">登录记录</a>
+{if $_userid}
+<a href="index.php" data-direction="reverse">会员中心</a>
+{else}
+<a href="{$DT[file_login]}" data-direction="reverse">取消绑定</a>
+{/if}
+</div>
+</div>
+
+{if $action=='bind'}
+<div class="blank-20"></div>
+<center><img src="{$icon}" style="width:48px;height:48px;margin:32px 0 16px 0;border-radius:8px;"/><img src="{$avatar}" style="48px;height:48px;margin:32px 0 16px -6px;border-radius:50%;" onerror="this.src='{DT_PATH}api/oauth/avatar.png';"/></center>
+<div class="blank-16"></div>
+<center><b>{$nickname}</b></center>
+<div class="blank-20"></div>
+<center style="font-size:12px;color:#999999;">只差一步，可以用<a href="{$connect}" class="b" rel="external">{$site}</a>自动登录了</center>
+<div class="blank-20"></div>
+<div class="list-btn"><a href="?action=auto"><div class="btn-green">不是会员，自动创建账号</div></a></div>
+<div class="blank-20"></div>
+<div class="list-btn"><a href="{$DT[file_register]}"><div class="btn-green">不是会员，手动注册账号</div></a></div>
+<div class="blank-20"></div>
+<div class="list-btn"><a href="{$DT[file_login]}"><div class="btn-blue">已是会员，登录自动绑定</div></a></div>
+<div class="blank-20"></div>
+<div class="list-btn"><a href="{$DT[file_login]}" onclick="return confirm('确定要取消本次绑定吗？');"><div class="btn">取消绑定</div></a></div>
+<div class="blank-20"></div>
+
+{elseif $action == 'login'}
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<img src="{DT_PATH}api/oauth/{$v[site]}/icon.png" width="60" height="60" alt="" class="avatar"/>
+<ul>
+<li>
+<span class="f_r">{$v[area]}</span>
+<strong>{$v[loginip]}</strong>
+</li>
+<li><span class="f_r">{$v[message]}</span><span>{$v[logintime]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无记录</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+
+{else}
+{loop $OAUTH $k $v}
+{if $v[enable]}
+{if isset($lists[$k])}
+<div class="list-img">
+<img src="{if $lists[$k][avatar]}{$lists[$k][avatar]}{else}{DT_PATH}api/avatar/default.jpg{/if}" width="60" height="60" alt="" onerror="this.src='{DT_PATH}api/avatar/default.jpg';" class="avatar"/>
+<ul>
+<li><span class="f_r">{$v[name]}</span><strong>{$lists[$k][nickname]}</strong></li>
+<li><span class="f_r"><a href="?action=delete&itemid={$lists[$k][itemid]}" class="b" onclick="return confirm('确定要解除绑定吗？');">解除绑定</a></span><em>{$lists[$k][logindate]}</em></li>
+</ul>
+</div>
+{else}
+<div class="list-img">
+<img src="{DT_PATH}api/avatar/default.jpg" width="60" height="60" alt="" class="avatar"/>
+<ul>
+<li><span class="f_r">{$v[name]}</span><strong>未绑定</strong></li>
+<li><span class="f_r"><a href="{DT_PATH}api/oauth/{$k}/connect.php" class="b">立即绑定</a></span><em>N/A</em></li>
+</ul>
+</div>
+{/if}
+{/if}
+{/loop}
+{/if}
+{template 'footer', 'member'}

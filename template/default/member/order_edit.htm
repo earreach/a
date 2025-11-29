@@ -1,0 +1,43 @@
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+{template 'goods', 'chip'}
+<div class="t2">修改地址</div>
+<table cellspacing="1" cellpadding="10" class="tb">
+<tr>
+<td class="tl">现地址</td>
+<td class="tr">{$O[buyer_address]} {$O[buyer_name]} {$O[buyer_mobile]}</td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 修改为</td>
+<td class="tr">
+	<select name="aid" id="aid">
+	<option value="0">请选择新收货地址</option>
+	{loop $address $v}
+	{if $v[address].$v[truename].$v[mobile] != $O[buyer_address].$O[buyer_name].$O[buyer_mobile]}
+	<option value="{$v[itemid]}">{if $v[typename]}{$v[typename]} {/if}{$v[truename]} {$v[mobile]} {$v[street]}</option>
+	{/if}
+	{/loop}
+	</select> &nbsp; <a href="address.php" class="t">管理地址</a> 
+	<span id="daid" class="f_red"></span>
+</td>
+</tr>
+<tr>
+<td class="tl"> </td>
+<td class="tr">
+<input type="submit" name="submit" value=" 修 改 " class="btn_g"/>
+&nbsp;&nbsp;<input type="button" value=" 取 消 " class="btn" onclick="history.back(-1);"/>
+</td>
+</tr>
+</table>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('aid').value < 1) {
+		Dmsg('请选择新收货地址', 'aid');
+		return false;
+	}
+}
+</script>
+<script type="text/javascript">s('order');m('action');</script>

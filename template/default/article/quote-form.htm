@@ -1,0 +1,968 @@
+{template 'header'}
+
+<h2>设备故障确认 & 报价信息填写</h2>
+
+<form action="{$MOD[linkurl]}quote.php" method="post" enctype="multipart/form-data" id="quote-form">
+  <input type="hidden" name="step" value="submit"/>
+  <input type="hidden" name="devices_detail" value="{php echo htmlspecialchars($devices_detail_json, ENT_QUOTES, 'UTF-8');}"/>
+  <input type="hidden" name="model_catids" value="{$model_catids_str}"/>
+  <!--  <input type="text" name="aaa" value="666666"/>-->
+
+  <!-- 1. 设备 & 故障确认 -->
+  <h3>1. 确认您选择的设备和故障</h3>
+  <div class="quote-devices">
+    {loop $devices $catid $d}
+    <div class="device-block">
+      <h4 class="device-header">
+        <span class="device-name">设备：{$d['name']} (catid: {$catid})</span>
+
+        {if isset($color_options[$catid]) && $color_options[$catid]}
+        <span class="device-color">
+          颜色：
+          {loop $color_options[$catid] $c}
+          <label>
+            <input type="radio" name="color[{$catid}]" value="{$c}"/> {$c}
+          </label>
+          {/loop}
+        </span>
+        {/if}
+      </h4>
+
+      <ul>
+        {loop $d['faults'] $f}
+        <li>
+          故障编号：{$f['num']}，
+          故障名称：{$f['name']}，
+          参考价格：{$f['price']} 円
+        </li>
+        {/loop}
+      </ul>
+    </div>
+    {/loop}
+  </div>
+
+
+  <!-- 6. 多图上传（上传成功后预览，可删除） -->
+  <h3>6. 上传设备照片（可多张）</h3>
+  <div id="image-uploader">
+    <button type="button" id="btn-select-images">选择图片</button>
+    <input type="file" id="image-input" multiple accept="image/*" style="display:none;">
+  </div>
+  <div id="image-preview-list">
+    <!-- 每张图片一块：img + 删除按钮 + hidden input[name="images[]"] -->
+  </div>
+
+
+  <!-- 5. 故障补充说明 -->
+  <h3>5. 故障补充说明</h3>
+  <div class="form-row">
+    <textarea name="fault_desc" rows="4" style="width:100%;" placeholder="请尽量详细描述故障现象（如是否进水、是否自行拆机等）"></textarea>
+  </div>
+
+  <div class="form-block" id="company-block">
+    <!-- 2. 选择维修门店 -->
+    <h3>2. 选择维修门店</h3>
+    <span id="company-error" style="color:red;margin-left:10px;"></span>
+    <div class="company-list">
+      {loop $companies $c}
+      <div class="company-card">
+        <label>
+          <input type="radio" name="company_id" value="{$c['userid']}"/>
+          {$c['company']}
+        </label>
+
+        <!-- 地区分级换行 + 缩进 -->
+        <div class="company-area">
+          {php $area_text = area_pos($c['areaid'], ' / ');}
+          {php $area_parts = explode(' / ', $area_text);}
+          {if $area_parts[0]}<div class="area-level-1">{$area_parts[0]}</div>{/if}
+          {if $area_parts[1]}<div class="area-level-2">{$area_parts[1]}</div>{/if}
+          {if $area_parts[2]}<div class="area-level-3">{$area_parts[2]}</div>{/if}
+        </div>
+
+        {if $c['thumb']}
+        <div class="company-thumb">
+          <img src="{$c['thumb']}" alt="{$c['company']}" style="max-width:100px;max-height:100px;"/>
+        </div>
+        {/if}
+
+        <!-- 公司详情按钮，调用接口，不跳转 -->
+        <button type="button" class="btn-company-detail" data-userid="{$c['userid']}">查看详情</button>
+      </div>
+      {/loop}
+    </div>
+  </div>
+
+  <!-- 公司详情弹窗 -->
+  <div id="company-modal" style="display:none;">
+    <div class="company-modal-mask"></div>
+    <div class="company-modal-dialog">
+      <span class="company-modal-close">×</span>
+      <div id="company-modal-body">加载中...</div>
+    </div>
+  </div>
+
+  <!-- 3. 预约时间（放在公司下面） -->
+  <div class="form-block" id="appoint-block">
+
+    <h3>3. 预约到店时间</h3>
+    <div class="form-row">
+      <label>日期：</label>
+      <input type="date" name="appoint_date"/>   <span id="appoint-error" style="color:red;margin-left:10px;"></span>
+    </div>
+    <div class="form-row">
+      <label>时间：</label>
+      <select name="appoint_hour">
+        {php for($h=10;$h<=22;$h++) { }
+        <option value="{$h}">{$h}:00</option>
+        {php } }
+      </select>
+    </div>
+  </div>
+
+  <!-- 4. 优惠码（在预约时间下面） -->
+  <h3>4. 优惠码</h3>
+  <div class="form-row">
+    <input type="text" name="discount_code" placeholder="如有优惠码请填写，没有可留空"/>
+  </div>
+
+
+
+  <!-- 8. 联系人信息（最后） -->
+  <h3>8. 联系人信息</h3>
+  <div class="form-row">
+    <label>姓（必填）：</label>
+    <input type="text" name="first_name" required>
+  </div>
+  <div class="form-row">
+    <label>名（必填）：</label>
+    <input type="text" name="last_name" required>
+  </div>
+
+
+  <!-- 7. 联系方式 & 验证 -->
+  <h3>7. 联系方式 & 验证</h3>
+
+  <!-- 电话：只填写和入库，不发验证码 -->
+  <div class="form-row">
+    <label>电话号码（选填）：</label>
+    <input type="text" name="mobile" id="mobile-input" style="width:300px;" placeholder="可填写联系电话，方便联系">
+  </div>
+
+  <!-- 邮箱：必须填写，用来收验证码 -->
+  <div class="form-row" id="email-block">
+    <label>
+      邮箱 <span style="color:red">*</span>
+
+    </label>
+    <input type="text" name="email" id="email" style="width:260px;" placeholder="请输入邮箱地址"><span id="email-error" style="color:red;margin-left:10px;"></span>
+  </div>
+
+  <div class="form-row">
+    <label>邮箱验证码 <span style="color:red">*</span></label>
+    <input type="text" name="email_code" id="email_code" style="width:120px;" placeholder="输入邮箱收到的验证码">
+    <button type="button" id="btn-send-email-code" style="margin-left:8px;">获取验证码</button>
+    <!-- 这个之前就有，用来显示“已发送”等状态 -->
+    <span id="email-code-status" style="margin-left:8px;font-size:12px;"></span>
+  </div>
+
+  <!-- 图片验证码：只在提交报价时校验，不参与“获取邮箱验证码” -->
+  <div class="form-row" id="captcha-block">
+    <label>
+      图形验证码 <span style="color:red">*</span>
+
+    </label>
+    <!--{template 'captcha', 'chip'}-->   <span id="captcha-error" style="color:red;margin-left:10px;"></span>
+  </div>
+
+  <!-- 提交按钮 -->
+  <div class="form-row">
+    <button type="submit">提交报价请求</button>
+  </div>
+
+</form>
+<div id="quote-success-layer" style="
+       display:none;
+       position:fixed;
+       left:0; top:0; right:0; bottom:0;
+       background:rgba(0,0,0,0.5);
+       z-index:9999;
+       align-items:center;
+       justify-content:center;">
+  <div class="quote-success-dialog">
+    <div class="quote-success-top">
+      <!-- 纯 CSS 沙漏或图片沙漏，作为“加载中”效果 -->
+      <!--      <span class="hourglass-css"></span>-->
+      <!--      <img src="/static/img/hourglass.gif" alt="loading" class="hourglass-img"/>-->
+
+      <!-- 不再固定显示数字，留空即可 -->
+      <span id="quote-success-count"></span>
+    </div>
+    <div id="quote-success-text">
+      正在提交，请稍候…
+    </div>
+
+    <!-- 成功后显示的两个按钮：默认隐藏 -->
+    <div id="quote-success-actions" style="margin-top:15px; display:none;">
+      <button type="button" id="btn-quote-again">继续提交其他设备</button>
+      <button type="button" id="btn-quote-my">查看我的报价</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+</form>
+
+<style>
+  .form-row { margin:8px 0; }
+  .company-card { border:1px solid #ddd; padding:10px; margin-bottom:10px; }
+  .company-area .area-level-1 { margin-left:0; }
+  .company-area .area-level-2 { margin-left:1em; }
+  .company-area .area-level-3 { margin-left:2em; }
+
+  #company-modal {
+    position:fixed; left:0; top:0; right:0; bottom:0;
+    z-index:9999;
+  }
+  .company-modal-mask {
+    position:absolute; left:0; top:0; right:0; bottom:0;
+    background:rgba(0,0,0,.5);
+  }
+  .company-modal-dialog {
+    position:absolute; left:50%; top:50%;
+    transform:translate(-50%, -50%);
+    background:#fff; padding:15px; max-width:800px; width:90%; max-height:90%; overflow:auto;
+  }
+  .company-modal-close { float:right; cursor:pointer; font-size:20px; }
+  #image-preview-list { margin-top:10px; display:flex; flex-wrap:wrap; gap:10px; }
+  .image-item { border:1px solid #ddd; padding:5px; position:relative; }
+  .image-item img { max-width:120px; max-height:120px; display:block; }
+  .image-item button { position:absolute; right:2px; top:2px; }
+  .device-block { margin-bottom:12px; }
+  .device-header {
+    display:flex;
+    align-items:center;
+    gap:16px;
+    flex-wrap:wrap; /* 屏幕窄时自动换行 */
+  }
+  .device-header .device-name { font-weight:bold; }
+  .device-header .device-color label { margin-right:8px; }
+
+
+
+   .quote-success-dialog {
+     background:#fff;
+     padding:20px 30px;
+     border-radius:6px;
+     text-align:center;
+     min-width:260px;
+   }
+  .quote-success-top {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:10px;
+    gap:8px;
+  }
+  #quote-success-count {
+    font-size:26px;
+    font-weight:bold;
+  }
+  #quote-success-text {
+    font-size:14px;
+    color:#666;
+  }
+  /* 新增：两个按钮样式 */
+  #quote-success-actions button {
+    margin:0 8px;
+    padding:6px 14px;
+    cursor:pointer;
+  }
+  /* 方案1：纯 CSS 沙漏 */
+  .hourglass-css {
+    width:16px;
+    height:28px;
+    border:2px solid #666;
+    border-radius:4px;
+    box-sizing:border-box;
+    display:inline-block;
+    position:relative;
+    animation: hourglass-flip 1.2s infinite ease-in-out;
+  }
+  .hourglass-css::before,
+  .hourglass-css::after {
+    content:'';
+    position:absolute;
+    left:3px;
+    right:3px;
+    height:0;
+    border-left:5px solid transparent;
+    border-right:5px solid transparent;
+  }
+  .hourglass-css::before {
+    top:4px;
+    border-bottom:8px solid #666;
+  }
+  .hourglass-css::after {
+    bottom:4px;
+    border-top:8px solid #666;
+  }
+  @keyframes hourglass-flip {
+    0%   { transform:rotate(0deg); }
+    50%  { transform:rotate(180deg); }
+    100% { transform:rotate(360deg); }
+  }
+
+  /* 方案2：图片沙漏：默认隐藏，想用图片版可以把 display 改为 inline-block，并改上面的 src 路径 */
+  .hourglass-img {
+    display:none;
+    width:24px;
+    height:24px;
+    vertical-align:middle;
+  }
+
+  .form-row { margin:8px 0; }
+
+
+</style>
+
+<script>
+  // ======== 公司详情弹窗：调用接口 get_company_detail.php ========
+  document.addEventListener('DOMContentLoaded', function() {
+    var modal = document.getElementById('company-modal');
+    var modalBody = document.getElementById('company-modal-body');
+    var modalClose = document.querySelector('.company-modal-close');
+    var modalMask = document.querySelector('.company-modal-mask');
+
+    document.querySelectorAll('.btn-company-detail').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var userid = this.getAttribute('data-userid');
+        modal.style.display = 'block';
+        modalBody.innerHTML = '加载中...';
+
+        fetch('/api/get_company_detail.php?userid=' + encodeURIComponent(userid))
+                .then(function(res){ return res.text(); })
+                .then(function(html){
+                  modalBody.innerHTML = html;
+                })
+                .catch(function(){
+                  modalBody.innerHTML = '加载失败，请稍后重试';
+                });
+      });
+    });
+
+    function closeModal() {
+      modal.style.display = 'none';
+    }
+    modalClose.addEventListener('click', closeModal);
+    modalMask.addEventListener('click', closeModal);
+  });
+
+  // ======== 多图上传：上传成功后预览 + 删除 ========
+  document.addEventListener('DOMContentLoaded', function() {
+    var btnSelect = document.getElementById('btn-select-images');
+    var inputFile = document.getElementById('image-input');
+    var previewList = document.getElementById('image-preview-list');
+
+    btnSelect.addEventListener('click', function() {
+      inputFile.click();
+    });
+
+    inputFile.addEventListener('change', function() {
+      if(!this.files.length) return;
+
+      Array.prototype.forEach.call(this.files, function(file){
+        var formData = new FormData();
+        formData.append('file', file);
+
+        fetch('/api/quote_upload_image.php', {
+          method: 'POST',
+          body: formData
+        }).then(function(res){
+          return res.text();
+        }).then(function(text){
+          console.log('服务器返回原文:', text);
+
+          // 先试着解析 JSON
+          var data;
+          try {
+            data = JSON.parse(text);
+          } catch (e) {
+            alert('服务器返回的不是合法 JSON：\n' + text);
+            return;
+          }
+
+          if(!data.success) {
+            alert(data.message || '上传失败');
+            return;
+          }
+
+          addImagePreview(data.url, data.path);
+        }).catch(function(err){
+          alert('请求失败，请稍后再试');
+          console.log('fetch 错误:', err);
+        });
+      });
+
+      // 清空 input，避免同一个文件无法再次触发 change
+      this.value = '';
+    });
+
+    function addImagePreview(url, path) {
+      var item = document.createElement('div');
+      item.className = 'image-item';
+      item.innerHTML = ''
+              + '<img src="'+url+'" alt="">'
+              + '<button type="button">删除</button>'
+              + '<input type="hidden" name="images[]" value="'+path+'">';
+      var btnDel = item.querySelector('button');
+      btnDel.addEventListener('click', function(){
+        // 这里可以考虑再发请求给后端删除这个文件（可选）
+        item.remove();
+      });
+      previewList.appendChild(item);
+    }
+  });
+</script>
+
+<script type="text/javascript">
+  (function() {
+    // 简单邮箱正则，前端用来拦截一下明显错误
+    function isValidEmail(email) {
+      // 非严格版：只做基本格式检查
+      var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    var btnSend    = document.getElementById('btn-send-email-code');
+    var emailInput = document.getElementById('email');
+    var statusSpan = document.getElementById('email-code-status');
+
+    if (!btnSend || !emailInput || !statusSpan) {
+      // 防止某些模板下元素不存在
+      return;
+    }
+
+    var sending   = false;   // 是否正在发送中
+    var countdown = 0;       // 倒计时秒数
+    var timerId   = null;
+
+    function setStatus(text, color) {
+      statusSpan.innerHTML = text || '';
+      if (color) statusSpan.style.color = color;
+    }
+
+    function setButton(text, disabled) {
+      btnSend.innerHTML = text;
+      btnSend.disabled = !!disabled;
+    }
+
+    function startCountdown(seconds) {
+      countdown = seconds;
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+
+      setButton('重新发送（' + countdown + 's）', true);
+
+      timerId = setInterval(function() {
+        countdown--;
+        if (countdown <= 0) {
+          clearInterval(timerId);
+          timerId = null;
+          setButton('获取验证码', false);
+          setStatus('可以重新获取验证码', '#666');
+        } else {
+          setButton('重新发送（' + countdown + 's）', true);
+        }
+      }, 1000);
+    }
+
+    btnSend.addEventListener('click', function() {
+      if (sending) return; // 防止重复点击
+
+      var email = emailInput.value.replace(/^\s+|\s+$/g, '');
+      if (!email) {
+        setStatus('请先填写邮箱', 'red');
+        emailInput.focus();
+        return;
+      }
+      if (!isValidEmail(email)) {
+        setStatus('邮箱格式不正确', 'red');
+        emailInput.focus();
+        return;
+      }
+
+      // 前端状态：开始发送
+      sending = true;
+      setButton('发送中...', true);
+      setStatus('正在发送验证码到 ' + email + '，请稍候...', '#666');
+
+      fetch('/api/quote_send_email_code.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'email=' + encodeURIComponent(email)
+      })
+              .then(function(res) {
+                // 用 text 拿原始内容，避免 Warning 把 JSON 搞坏
+                return res.text();
+              })
+              .then(function(text) {
+                console.log('send_email_code 返回原始内容:', text);
+
+                var data = null;
+                // 有些环境前面会带 Warning/HTML，这里从第一个 { 开始尝试解析
+                var jsonStart = text.indexOf('{');
+                if (jsonStart !== -1) {
+                  var jsonStr = text.slice(jsonStart);
+                  try {
+                    data = JSON.parse(jsonStr);
+                  } catch (e) {
+                    console.error('send_email_code JSON 解析失败:', e);
+                  }
+                }
+
+                // 连 JSON 都解析不出来，当作服务器异常
+                if (!data) {
+                  setStatus('发送失败，服务器返回异常', 'red');
+                  setButton('获取验证码', false);
+                  return;
+                }
+
+                if (data.success) {
+                  // 成功：提示 + 60 秒倒计时
+                  setStatus('验证码已发送，请查收邮箱', 'green');
+                  startCountdown(60);
+                } else {
+                  // 失败：显示后端返回的信息
+                  var msg = data.message || '发送失败，请稍后重试';
+                  setStatus(msg, 'red');
+                  setButton('获取验证码', false);
+                }
+              })
+              .catch(function(err) {
+                console.error(err);
+                setStatus('发送失败，请检查网络或稍后重试', 'red');
+                setButton('获取验证码', false);
+              })
+              .finally(function() {
+                sending = false;
+              });
+
+    });
+
+  })();
+</script>
+
+
+<script type="text/javascript">
+  // null = 未校验/不确定, true = 校验通过, false = 校验失败
+  var emailCodeValid = null;
+
+  (function() {
+    var emailInput     = document.getElementById('email');
+    var emailCodeInput = document.getElementById('email_code');
+    var statusSpan     = document.getElementById('email-code-status');
+
+    if(!emailInput || !emailCodeInput || !statusSpan) return;
+
+    function setStatus(text, color) {
+      statusSpan.innerHTML = text || '';
+      if(color) statusSpan.style.color = color;
+    }
+
+    // 用户修改验证码时，先把状态重置为“未知”
+    emailCodeInput.addEventListener('input', function() {
+      emailCodeValid = null;
+      if (statusSpan) {
+        statusSpan.innerHTML = '';
+      }
+    });
+
+    // 验证码输入框失去焦点时，去后端“预检查”一下
+    emailCodeInput.addEventListener('blur', function() {
+      var email      = emailInput.value.replace(/^\s+|\s+$/g, '');
+      var email_code = emailCodeInput.value.replace(/^\s+|\s+$/g, '');
+
+      if (!email || !email_code) return;
+
+      setStatus('正在校验验证码...', '#666');
+      emailCodeValid = null; // 当前这一轮结果还不知道
+      fetch('/api/quote_check_email_code.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'email=' + encodeURIComponent(email) +
+                '&email_code=' + encodeURIComponent(email_code)
+      })
+              .then(function(res) {
+                // 先拿到原始文本，方便看
+                return res.text();
+              })
+              .then(function(text) {
+                console.log('check_email_code 返回原始内容:', text);
+
+                var data;
+                try {
+                  data = JSON.parse(text);
+                } catch (e) {
+                  // 说明后端不是返回 JSON，而是别的东西（HTML、错误提示等）
+                  emailCodeValid = null;
+                  setStatus('验证失败，请稍后重试', 'red');
+                  return;
+                }
+
+                if (data && data.success) {
+                  emailCodeValid = true;
+                  setStatus('验证码正确', 'green');
+                } else {
+                  emailCodeValid = false;
+                  var msg = (data && data.message) ? data.message : '验证码错误，请重新获取';
+                  setStatus(msg, 'red');
+                }
+              })
+              .catch(function(err) {
+                console.error(err);
+                emailCodeValid = null;
+                setStatus('验证失败，请稍后重试', 'red');
+              });
+    });
+  })();
+</script>
+
+<script type="text/javascript">
+  (function() {
+    var form          = document.getElementById('quote-form');
+    var btnQuoteAgain  = document.getElementById('btn-quote-again');
+    var btnQuoteMy     = document.getElementById('btn-quote-my');
+
+    // “继续提交其他设备”：跳回文章模块首页（你也可以改成你的 list-4 页面）
+    if (btnQuoteAgain) {
+      btnQuoteAgain.addEventListener('click', function () {
+        window.location.href = '{$MOD[linkurl]}'; // 模块首页
+      });
+    }
+
+    // “查看我的报价”：进入我的报价列表页
+    if (btnQuoteMy) {
+      btnQuoteMy.addEventListener('click', function () {
+        window.location.href = '{$MOD[linkurl]}quote_my.php';
+      });
+    }
+
+    // 公司相关
+    var companyError  = document.getElementById('company-error');
+    var companyBlock  = document.getElementById('company-block');
+
+    // 预约时间相关
+    var appointError  = document.getElementById('appoint-error');
+    var appointBlock  = document.getElementById('appoint-block');
+    var appointDate   = document.querySelector('input[name="appoint_date"]');
+    var appointHour   = document.querySelector('select[name="appoint_hour"]');
+
+    // 邮箱相关
+    var emailBlock      = document.getElementById('email-block');
+    var emailInput      = document.getElementById('email');
+    var emailError      = document.getElementById('email-error');
+    var emailCodeInput  = document.getElementById('email_code');
+    var emailCodeStatus = document.getElementById('email-code-status');
+
+    // 图形验证码相关
+    var captchaBlock  = document.getElementById('captcha-block');
+    var captchaInput  = document.getElementById('captcha');
+    var captchaError  = document.getElementById('captcha-error');
+
+    if (!form) return;
+
+    // 跟发送验证码那段公用同一个邮箱正则
+    function isValidEmail(email) {
+      var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    form.addEventListener('submit', function(e) {
+      var hasError        = false;
+      var firstErrorBlock = null;
+
+      /* 1) 必须选择公司 */
+      var checkedCompany = document.querySelector('input[name="company_id"]:checked');
+      if (!checkedCompany) {
+        hasError = true;
+        if (companyError) {
+          companyError.innerHTML = '请选择一个维修门店';
+        } else {
+          alert('请选择一个维修门店');
+        }
+        if (!firstErrorBlock) firstErrorBlock = companyBlock;
+      } else {
+        if (companyError) companyError.innerHTML = '';
+      }
+
+      /* 2) 必须选择预约日期（时间你默认 10:00，就不强制了） */
+      var dateVal = appointDate ? appointDate.value.replace(/^\s+|\s+$/g, '') : '';
+      if (!dateVal) {
+        hasError = true;
+        if (appointError) {
+          appointError.innerHTML = '请选择预约日期';
+        } else {
+          alert('请选择预约日期');
+        }
+        if (!firstErrorBlock) firstErrorBlock = appointBlock;
+      } else {
+        if (appointError) appointError.innerHTML = '';
+      }
+
+      /* 3) 邮箱必填 + 格式必正确 */
+      var emailVal = emailInput ? emailInput.value.replace(/^\s+|\s+$/g, '') : '';
+      if (!emailVal) {
+        hasError = true;
+        if (emailError) {
+          emailError.innerHTML = '请填写邮箱';
+        } else {
+          alert('请填写邮箱');
+        }
+        if (!firstErrorBlock) firstErrorBlock = emailBlock;
+      } else if (!isValidEmail(emailVal)) {
+        hasError = true;
+        if (emailError) {
+          emailError.innerHTML = '邮箱格式不正确';
+        } else {
+          alert('邮箱格式不正确');
+        }
+        if (!firstErrorBlock) firstErrorBlock = emailBlock;
+      } else {
+        if (emailError) emailError.innerHTML = '';
+      }
+
+      /* 4) 邮箱验证码必填 */
+      var emailCodeVal = emailCodeInput ? emailCodeInput.value.replace(/^\s+|\s+$/g, '') : '';
+      if (!emailCodeVal) {
+        hasError = true;
+        if (emailCodeStatus) {
+          emailCodeStatus.innerHTML = '请填写邮箱验证码';
+          emailCodeStatus.style.color = 'red';
+        } else {
+          alert('请填写邮箱验证码');
+        }
+        if (!firstErrorBlock) firstErrorBlock = emailBlock;
+      } else {
+        // 填了就把“请填写邮箱验证码”提示清掉，正确/错误由 blur 的异步校验去更新
+        if (emailCodeStatus && emailCodeStatus.innerHTML === '请填写邮箱验证码') {
+          emailCodeStatus.innerHTML = '';
+        }
+      }
+
+      /* 4.1) 如果前端已经校验为错误，则禁止提交 */
+      if (emailCodeVal && emailCodeValid === false) {
+        hasError = true;
+        if (emailCodeStatus) {
+          emailCodeStatus.innerHTML = '邮箱验证码错误，请重新输入或重新获取';
+          emailCodeStatus.style.color = 'red';
+        } else {
+          alert('邮箱验证码错误，请重新输入或重新获取');
+        }
+        if (!firstErrorBlock) firstErrorBlock = emailBlock;
+      }
+
+      /* 5) 图形验证码必填 */
+      var captchaVal = captchaInput ? captchaInput.value.replace(/^\s+|\s+$/g, '') : '';
+      if (!captchaVal) {
+        hasError = true;
+        if (captchaError) {
+          captchaError.innerHTML = '请填写图片验证码';
+        } else {
+          alert('请填写图片验证码');
+        }
+        if (!firstErrorBlock) firstErrorBlock = captchaBlock;
+      } else {
+        if (captchaError) captchaError.innerHTML = '';
+      }
+
+      /* 6) 有任何一项不通过 -> 阻止提交并滚动到第一个错误块 */
+      if (hasError) {
+        e.preventDefault();
+        if (firstErrorBlock && firstErrorBlock.scrollIntoView) {
+          firstErrorBlock.scrollIntoView({behavior: 'smooth'});
+        }
+        return false;
+      }
+    });
+  })();
+
+
+
+</script>
+<!-- ======== 提交报价：AJAX 提交 + 遮罩 + “正在提交中...” 动画 + 3 秒后成功提示 ======== -->
+<script type="text/javascript">
+  document.addEventListener('DOMContentLoaded', function () {
+    var form = document.getElementById('quote-form');
+    if (!form) return;
+
+    // “正在提交中...” 三个点动画 & 3 秒后成功 的定时器
+    var submitDotsTimer    = null;
+    var submitSuccessTimer = null;
+    var submitBaseText     = '正在提交中';
+
+    // 启动“正在提交中...” 三个点循环动画
+    function startSubmitDots(textDom) {
+      if (!textDom) return;
+
+      if (submitDotsTimer) {
+        clearInterval(submitDotsTimer);
+        submitDotsTimer = null;
+      }
+
+      var dots = 0;
+      textDom.innerHTML = submitBaseText + '...';
+
+      submitDotsTimer = setInterval(function () {
+        dots = (dots + 1) % 4; // 0,1,2,3 -> 0~3 个点
+        var dotStr = '';
+        for (var i = 0; i < dots; i++) {
+          dotStr += '.';
+        }
+        textDom.innerHTML = submitBaseText + dotStr;
+      }, 500);
+    }
+
+    // 清理所有和提交弹层有关的定时器
+    function clearSubmitTimers() {
+      if (submitDotsTimer) {
+        clearInterval(submitDotsTimer);
+        submitDotsTimer = null;
+      }
+      if (submitSuccessTimer) {
+        clearTimeout(submitSuccessTimer);
+        submitSuccessTimer = null;
+      }
+    }
+
+    form.addEventListener('submit', function (e) {
+      // 如果前面的校验监听已经阻止了提交，直接退出
+      if (e.defaultPrevented) return;
+
+      // 让浏览器先做原生 required 校验（如果不支持 checkValidity 也没关系）
+      if (form.checkValidity && !form.checkValidity()) {
+        // 交给浏览器自带的提示
+        return;
+      }
+
+      e.preventDefault(); // 拦截默认提交，改成 AJAX
+
+      // 防重复提交
+      if (form._submitting) return;
+      form._submitting = true;
+
+      // 提交后立刻展示“正在提交中...”弹层（带三个点动画）
+      showQuoteSuccessLayer();
+
+      var fd = new FormData(form);
+
+      fetch(form.action, {
+        method: 'POST',
+        body: fd,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest' // 后端靠这个判断 AJAX
+        }
+      })
+              .then(function (res) {
+                return res.text(); // 先拿文本
+              })
+              .then(function (text) {
+                var data = null;
+
+                // 同样防御：如果返回里有 Warning/HTML，从第一个 { 开始解析
+                var jsonStart = text.indexOf('{');
+                if (jsonStart !== -1) {
+                  var jsonStr = text.slice(jsonStart);
+                  try {
+                    data = JSON.parse(jsonStr);
+                  } catch (e) {
+                    console.log('quote.php JSON 解析失败:', e, text);
+                  }
+                }
+
+                form._submitting = false;
+
+                if (!data || !data.success) {
+                  // 后端返回失败：关掉弹层，提示错误
+                  hideQuoteSuccessLayer();
+                  alert((data && data.message) ? data.message : '提交失败，请稍后重试');
+                  return;
+                }
+
+                // 成功：3 秒后改成“提交成功 + 两个按钮”
+                showQuoteSubmitSuccessAndRedirect();
+              })
+              .catch(function (err) {
+                form._submitting = false;
+                console.log('提交失败:', err);
+                hideQuoteSuccessLayer();
+                alert('请求失败，请稍后重试');
+              });
+    });
+
+    // 显示“正在提交中...”遮罩 & 开始三个点动画
+    function showQuoteSuccessLayer() {
+      var layer      = document.getElementById('quote-success-layer');
+      var countDom   = document.getElementById('quote-success-count');
+      var textDom    = document.getElementById('quote-success-text');
+      var actionsDom = document.getElementById('quote-success-actions');
+
+      if (!layer || !textDom) return;
+
+      clearSubmitTimers();
+
+      if (countDom) countDom.innerHTML = '';
+      layer.style.display = 'flex';
+
+      // 提交过程不显示按钮
+      if (actionsDom) {
+        actionsDom.style.display = 'none';
+      }
+
+      startSubmitDots(textDom);
+    }
+
+    // 提交成功：3 秒后改成“提交成功 + 两个按钮”
+    function showQuoteSubmitSuccessAndRedirect() {
+      var layer      = document.getElementById('quote-success-layer');
+      var countDom   = document.getElementById('quote-success-count');
+      var textDom    = document.getElementById('quote-success-text');
+      var actionsDom = document.getElementById('quote-success-actions');
+
+      if (!layer || !textDom) {
+        alert('提交成功，我们会在2个小时内联系您。');
+        return;
+      }
+
+      if (countDom) countDom.innerHTML = '';
+
+      clearTimeout(submitSuccessTimer);
+      submitSuccessTimer = setTimeout(function () {
+        clearSubmitTimers(); // 停止“...”动画
+
+        textDom.innerHTML = '提交成功，我们会在2个小时内联系您。';
+        layer.style.display = 'flex';
+
+        if (actionsDom) {
+          actionsDom.style.display = 'block'; // 显示“继续提交其他设备 / 查看我的报价”
+        }
+      }, 3000);
+    }
+
+    // 提交失败时关闭弹层，并清理所有定时器
+    function hideQuoteSuccessLayer() {
+      var layer = document.getElementById('quote-success-layer');
+      if (layer) {
+        layer.style.display = 'none';
+      }
+      clearSubmitTimers();
+    }
+
+  });
+</script>
+
+{template 'footer'}

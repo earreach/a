@@ -1,0 +1,26 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">成员列表</div>
+<div class="head-bar-right"><a href="{$MODULE[2][mobile]}{$DT[file_my]}?mid={$moduleid}&job=join&action=add&gid={$gid}" rel="external"><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+{if $lists}
+<div id="list-{$js_pageid}">
+<div class="gird-5">
+	<ul>
+		{loop $lists $k $v}
+		<li><a href="{userurl($v[username], 'file=contact')}" rel="external"><img src="{useravatar($v[username], 'middle')}" width="48" height="48" class="avatar"/><span>{$v[passport]}</span></a></li>
+		{/loop}
+	</ul>
+</div>
+</div>
+<div id="load-{$js_pageid}" class="ui-load"></div>
+{else}
+{template 'empty', 'chip'}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{template 'footer'}

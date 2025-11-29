@@ -1,0 +1,16 @@
+{loop $tags $k $t}
+{if $t[thumb]}
+<div class="ui-list-mix{if $t[ontop]} post-ontop{elseif $t[level]} post-level{/if}">
+<a href="{$t[linkurl]}"><img src="{$t[thumb]}" width="120" height="90" alt=""/></a>
+<ul>
+<li><a href="{$t[linkurl]}"><strong>{$t[title]}</strong></a></li>
+<li><p><i class="ui-ico-hits ui-fr">{$t[hits]}</i><i class="ui-ico-comm ui-fr">{$t[reply]}</i><i class="ui-ico-user">{$t[passport]}</i></p></li>
+</ul>
+</div>
+{else}
+<div class="ui-list-txt{if $t[ontop]} post-ontop{elseif $t[level]} post-level{/if}">
+<a href="{$t[linkurl]}"><strong>{$t[title]}</strong></a>
+<p><i class="ui-ico-hits ui-fr">{$t[hits]}</i><i class="ui-ico-comm ui-fr">{$t[reply]}</i><i class="ui-ico-user">{$t[passport]}</i></p>
+</div>
+{/if}
+{/loop}

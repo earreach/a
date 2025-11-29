@@ -1,0 +1,344 @@
+<?php
+defined('DT_ADMIN') or exit('Access Denied');
+require DT_ROOT.'/module/'.$module.'/'.$module.'.class.php';
+$do = new $module($moduleid);
+$menus = array (
+    array('添加商品', '?moduleid='.$moduleid.'&action=add'),
+    array('商品列表', '?moduleid='.$moduleid),
+    array('审核商品', '?moduleid='.$moduleid.'&action=check'),
+    array('下架商品', '?moduleid='.$moduleid.'&action=expire'),
+    array('未通过商品', '?moduleid='.$moduleid.'&action=reject'),
+    array('回收站', '?moduleid='.$moduleid.'&action=recycle'),
+    array('移动分类', '?moduleid='.$moduleid.'&action=move'),
+);
+
+if(in_array($action, array('add', 'edit'))) {
+	$FD = cache_read('fields-'.substr($table, strlen($DT_PRE)).'.php');
+	if($FD) require DT_ROOT.'/include/fields.func.php';
+	isset($post_fields) or $post_fields = array();
+	$CP = $MOD['cat_property'];
+	if($CP) require DT_ROOT.'/include/property.func.php';
+	isset($post_ppt) or $post_ppt = array();
+}
+if($_catids || $_areaids) require DT_ROOT.'/module/destoon/admin/check.inc.php';
+
+if(in_array($action, array('', 'check', 'expire', 'reject', 'recycle'))) {
+	$sfields = array('模糊',  '商品名称',  'SKU', '商品品牌',  '商品简介', ' 商品卖点' ,'卖点链接', '链接文字','图片地址', '视频地址', '计量单位', '关联名称', '公司名', '联系人', '联系电话', '联系地址', '电子邮件', 'QQ', '微信', '会员名', '编辑', 'IP', '属性名1', '属性名2', '属性名3', '属性值1', '属性值2', '属性值3', '快递1', '快递2', '快递3', '文件路径', '内容模板', '链接地址');
+	$dfields = array('keyword', 'title', 'skuid', 'brand', 'introduce', 'subtitle', 'sublink', 'subtext', 'thumbs', 'video', 'unit', 'relate_name', 'company', 'truename', 'telephone', 'address', 'email', 'qq', 'wx', 'username', 'editor', 'ip', 'n1', 'n2', 'n3', 'v1', 'v2', 'v3', 'express_name_1', 'express_name_2', 'express_name_3', 'filepath', 'template', 'linkurl');
+	isset($fields) && isset($dfields[$fields]) or $fields = 0;
+	$sorder  = array('结果排序方式', '添加时间降序', '添加时间升序', '更新时间降序', '更新时间升序', '推荐级别降序', '推荐级别升序', '浏览次数降序', '浏览次数升序', '点赞次数降序', '点赞次数升序', '反对次数降序', '反对次数升序', '收藏次数降序', '收藏次数升序', '打赏次数降序', '打赏次数升序', '打赏金额降序', '打赏金额升序', '分享次数降序', '分享次数升序', '举报次数降序', '举报次数升序', '评价数量降序', '评价数量升序', VIP.'级别降序', VIP.'级别升序', '商品单价降序', '商品单价升序', '订单数量降序', '订单数量升序', '销售数量降序', '销售数量升序', '库存总量降序', '库存总量升序', '信息ID降序', '信息ID升序');
+	$dorder  = array($MOD['order'], 'addtime DESC', 'addtime ASC', 'edittime DESC', 'edittime DESC', 'level DESC', 'level ASC', 'hits DESC', 'hits ASC', 'likes DESC', 'likes ASC', 'hates DESC', 'hates ASC', 'favorites DESC', 'favorites ASC', 'awards DESC', 'awards ASC', 'award DESC', 'award ASC', 'shares DESC', 'shares ASC', 'reports DESC', 'reports ASC', 'comments DESC', 'comments ASC', 'vip DESC', 'vip ASC', 'price DESC', 'price ASC', 'orders DESC', 'orders ASC', 'sales DESC', 'sales ASC', 'amount DESC', 'amount ASC', 'itemid DESC', 'itemid ASC');
+	isset($order) && isset($dorder[$order]) or $order = 0;
+	isset($datetype) && in_array($datetype, array('edittime', 'addtime', 'sfromtime', 'stotime')) or $datetype = 'edittime';
+	(isset($fromdate) && is_time($fromdate)) or $fromdate = '';
+	$fromtime = $fromdate ? datetotime($fromdate) : 0;
+	(isset($todate) && is_time($todate)) or $todate = '';
+	$totime = $todate ? datetotime($todate) : 0;
+	$level = isset($level) ? intval($level) : 0;
+	$elite = isset($elite) ? intval($elite) : 0;
+	$cod = isset($cod) ? intval($cod) : 0;
+	$rl = isset($rl) ? intval($rl) : 0;
+	$price = isset($price) ? intval($price) : 0;
+	$mode = isset($mode) ? intval($mode) : 0;
+	(isset($mixt) && in_array($mixt, array('price', 'fprice', 'sprice', 'orders','sales','amount','comments','vip'))) or $mixt = 'price';
+	$minv = isset($minv) ? intval($minv) : '';
+	$maxv = isset($maxv) ? intval($maxv) : '';
+	$minv or $minv = '';
+	$maxv or $maxv = '';
+	$itemid or $itemid = '';
+	(isset($ip) && is_ip($ip)) or $ip= '';
+	(isset($username) && check_name($username)) or $username = '';
+
+	$fields_select = dselect($sfields, 'fields', '', $fields);
+	$level_select = level_select('level', '级别', $level, 'all');
+	$order_select  = dselect($sorder, 'order', '', $order);
+
+	$condition = '';
+	if($_childs) $condition .= " AND catid IN (".$_childs.")";//CATE
+	if($_areaids) $condition .= " AND areaid IN (".$_areaids.")";//CITY
+	if($_self) $condition .= " AND username='$_username'";//SELF
+	if($keyword) $condition .= match_kw($dfields[$fields], $keyword);
+	if($catid) $condition .= ($CAT['child']) ? " AND catid IN (".$CAT['arrchildid'].")" : " AND catid=$catid";
+	if($areaid) $condition .= ($ARE['child']) ? " AND areaid IN (".$ARE['arrchildid'].")" : " AND areaid=$areaid";
+	if($fromtime) $condition .= " AND `$datetype`>=$fromtime";
+	if($totime) $condition .= " AND `$datetype`<=$totime";
+	if($minv) $condition .= " AND `$mixt`>=$minv";
+	if($maxv) $condition .= " AND `$mixt`<=$maxv";
+	if($level) $condition .= $level > 9 ? " AND level>0" : " AND level=$level";
+	if($elite) $condition .= " AND elite>0";
+	if($cod) $condition .= " AND cod>0";
+	if($rl) $condition .= " AND relate_id<>''";
+	if($price) $condition .= " AND price>0";
+	if($ip) $condition .= " AND ip='$ip'";
+	if($username) $condition .= " AND username='$username'";
+	if($itemid) $condition .= " AND itemid=$itemid";
+	if($mode == 1) $condition .= " AND prices<>''";
+	if($mode == 2) $condition .= " AND step<>''";
+	if($mode == 3) $condition .= " AND stock<>''";
+	if($mode == 4) $condition .= " AND prices='' AND step='' AND stock=''";
+	if($mode == 5) $condition .= " AND fprice>0";
+	if($mode == 6) $condition .= " AND sprice>0";
+	if($mode == 10) $condition .= " AND cod>0";
+	if($mode == 11) $condition .= " AND relate_id<>''";
+	if($mode == 12) $condition .= " AND elite>0";
+
+	$timetype = strpos($dorder[$order], 'add') !== false ? 'add' : '';
+}
+switch($action) {
+	case 'add':
+		if($submit) {
+			if($do->pass($post)) {
+				if($FD) fields_check($post_fields);
+				if($CP) property_check($post_ppt);
+				$do->add($post);
+				if($FD) fields_update($post_fields, $table, $do->itemid);
+				if($CP) property_update($post_ppt, $moduleid, $post['catid'], $do->itemid);
+				if($MOD['show_html'] && $post['status'] > 2) $do->tohtml($do->itemid);
+				dmsg('添加成功', '?moduleid='.$moduleid.'&action='.$action);
+			} else {
+				msg($do->errmsg);
+			}
+		} else {
+			foreach($do->fields as $v) {
+				isset($$v) or $$v = '';
+			}
+			$a1 = 1;
+			$minamount = 1;
+			$days = 1;
+			$a2 = $a3 = $p1 = $p2 = $p3 = '';
+			$unit = '件';
+			$boc = 1;
+			$stocks = '';
+			$mode = 0;
+			$content = '';
+			$status = 3;
+			$addtime = timetodate($DT_TIME);
+			$username = $_username;
+			$item = $thumbs = array();
+			isset($url) or $url = '';
+			if($url) {
+				$tmp = fetch_url($url);
+				if($tmp) extract($tmp);
+			}
+			$EXP = array();
+			$result = $db->query("SELECT * FROM {$table_express} WHERE username='$username' AND parentid=0 ORDER BY listorder ASC,itemid ASC LIMIT 100");
+			while($r = $db->fetch_array($result)) {
+				$EXP[] = $r;
+			}
+			$menuid = 0;
+			$history = 0;
+			include tpl('edit', $module);
+		}
+	break;
+	case 'edit':
+		$itemid or msg();
+		$do->itemid = $itemid;
+		if($submit) {
+			if($do->pass($post)) {
+				if($FD) fields_check($post_fields);
+				if($CP) property_check($post_ppt);
+				if($FD) fields_update($post_fields, $table, $do->itemid);
+				if($CP) property_update($post_ppt, $moduleid, $post['catid'], $do->itemid);
+				$do->edit($post);
+				dmsg('修改成功', $forward);
+			} else {
+				msg($do->errmsg);
+			}
+		} else {
+			$item = $do->get_one();
+			extract($item);
+			$history = history($moduleid, $itemid);
+			$thumbs = get_thumbs($item);
+			if($step) {
+				extract(unserialize($step));
+				$a2 > 0 or $a2 = '';
+				$a3 > 0 or $a3 = '';
+				$p2 > 0 or $p2 = '';
+				$p3 > 0 or $p3 = '';
+				$mode = 2;
+			} else {
+				$a1 = 1;
+				$p1 = $item['price'];
+				$a2 = $a3 = $p2 = $p3 = '';
+				$mode = $prices ? 1 : 0;
+			}
+			$stocks = '';
+			if($stock) {
+				$stocks = json_encode(get_stocks($stock));
+				$mode = 3;
+			}
+			$unit or $unit = '件';
+			$addtime = timetodate($addtime);
+			$sfromtime = $sfromtime ? timetodate($sfromtime) : '';
+			$stotime = $stotime ? timetodate($stotime) : '';
+			$EXP = array();
+			$result = $db->query("SELECT * FROM {$table_express} WHERE username='$username' AND parentid=0 ORDER BY listorder ASC,itemid ASC LIMIT 100");
+			while($r = $db->fetch_array($result)) {
+				$EXP[] = $r;
+			}
+			$menuon = array('5', '4', '2', '1', '3');
+			$menuid = $menuon[$status];
+			include tpl($action, $module);
+		}
+	break;
+	case 'move':
+		if($submit) {
+			$fromids or msg('请填写来源ID');
+			if($tocatid) {
+				$db->query("UPDATE {$table} SET catid=$tocatid WHERE `{$fromtype}` IN ($fromids)");
+				dmsg('移动成功', $forward);
+			} else {
+				msg('请选择目标分类');
+			}
+		} else {
+			$itemid = $itemid ? implode(',', $itemid) : '';
+			$menuid = 6;
+			include tpl($action);
+		}
+	break;
+	case 'update':
+		is_array($itemid) or msg('请选择商品');
+		foreach($itemid as $v) {
+			$do->update($v);
+		}
+		dmsg('更新成功', $forward);
+	break;
+	case 'tohtml':
+		is_array($itemid) or msg('请选择商品');
+		foreach($itemid as $itemid) {
+			tohtml('show', $module);
+		}
+		dmsg('生成成功', $forward);
+	break;
+	case 'delete':
+		$itemid or msg('请选择商品');
+		isset($recycle) ? $do->recycle($itemid) : $do->delete($itemid);
+		dmsg('删除成功', $forward);
+	break;
+	case 'restore':
+		$itemid or msg('请选择商品');
+		$do->restore($itemid);
+		dmsg('还原成功', $forward);
+	break;
+	case 'refresh':
+		$itemid or msg('请选择商品');
+		$do->refresh($itemid);
+		dmsg('刷新成功', $forward);
+	break;
+	case 'clear':
+		$do->clear();
+		dmsg('清空成功', $forward);
+	break;
+	case 'level':
+		$itemid or msg('请选择商品');
+		$level = intval($level);
+		$do->level($itemid, $level);
+		dmsg('级别设置成功', $forward);
+	break;
+	case 'type':
+		$itemid or msg('请选择商品');
+		$tid = intval($tid);
+		array_key_exists($tid, $TYPE) or $tid = 0;
+		$do->type($itemid, $tid);
+		dmsg('类型设置成功', $forward);
+	break;
+	case 'recycle':
+		$lists = $do->get_list('status=0'.$condition, $dorder[$order]);
+		$menuid = 5;
+		include tpl('index', $module);
+	break;
+	case 'reject':
+		if($itemid && !$psize) {
+			$do->reject($itemid);
+			dmsg('拒绝成功', $forward);
+		} else {
+			$lists = $do->get_list('status=1'.$condition, $dorder[$order]);
+			$menuid = 4;
+			include tpl('index', $module);
+		}
+	break;
+	case 'expire':
+		$lists = $do->get_list('status=4'.$condition);
+		$menuid = 3;
+		include tpl('index', $module);
+	break;
+	case 'unsale':
+		$itemid or msg('请选择商品');
+		$do->unsale($itemid);
+		dmsg('下架成功', $forward);
+	break;
+	case 'onsale':
+		$itemid or msg('请选择商品');
+		$do->onsale($itemid);
+		dmsg('上架成功', $forward);
+	break;
+	case 'relate_del':
+		$itemid or msg('请选择商品');
+		$do->itemid = $itemid;
+		$M = $do->get_one(0);
+		($M && $M['status'] == 3) or msg('请选择商品');
+		isset($id) or $id = array();
+		$ids = is_array($id) ? $id : array($id);
+		$ids or msg('请选择移除商品');
+		foreach($ids as $id) {
+			$do->itemid = $id;
+			if($do->itemid < 1) continue;
+			$A = $do->get_one();
+			if(!$A) continue;
+			$do->relate_del($M, $A);
+			$do->itemid = $itemid;
+			$M = $do->get_one(0);
+		}
+		dmsg('移除成功', '?moduleid='.$moduleid.'&file='.$file.'&itemid='.$itemid.'&action=relate');
+	break;
+	case 'relate_add':
+		$relate_name = isset($relate_name) ? dhtmlspecialchars(trim($relate_name)) : '';
+		$relate_name or msg('请填写关联名称');
+		$itemid or msg('请选择商品');
+		$do->itemid = $itemid;
+		$M = $do->get_one(0);
+		($M && $M['status'] == 3) or msg('请选择商品');
+		$id = isset($id) ? intval($id) : 0;
+		$id or msg('请选择关联商品');
+		$do->itemid = $id;
+		$A = $do->get_one(0);
+		($A && $A['status'] == 3 && $A['username'] == $M['username']) or msg('请选择关联商品');
+		if($itemid == $id) msg('选择的商品已经存在');
+		$do->relate_add($M, $A, $relate_name);
+		dmsg('新增成功', '?moduleid='.$moduleid.'&file='.$file.'&itemid='.$itemid.'&action=relate');
+	break;
+	case 'relate_update':
+		$itemid or msg('请选择商品');
+		$do->itemid = $itemid;
+		$M = $do->get_one(0);
+		($M && $M['status'] == 3) or msg('请选择商品');
+		$relate_name = isset($relate_name) ? dhtmlspecialchars(trim($relate_name)) : '';
+		$relate_name or msg('请填写关联名称');
+		$do->relate($M, $post, $relate_name);
+		dmsg('更新成功', '?moduleid='.$moduleid.'&file='.$file.'&itemid='.$itemid.'&action=relate');
+	break;
+	case 'relate':
+		$itemid or msg('请选择商品');
+		$do->itemid = $itemid;
+		$M = $do->get_one(0);
+		($M && $M['status'] == 3) or msg('请选择商品');
+		$lists = $do->relate_list($M);
+		include tpl('relate', $module);
+	break;
+	case 'check':
+		if($itemid && !$psize) {
+			$do->check($itemid);
+			dmsg('审核成功', $forward);
+		} else {
+			$lists = $do->get_list('status=2'.$condition, $dorder[$order]);
+			$menuid = 2;
+			include tpl('index', $module);
+		}
+	break;
+	default:
+		$lists = $do->get_list('status=3'.$condition, $dorder[$order]);
+		$menuid = 1;
+		include tpl('index', $module);
+	break;
+}
+?>

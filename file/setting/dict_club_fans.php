@@ -1,0 +1,10 @@
+<?php exit;?>
+itemid,ID,
+gid,商圈ID,
+username,会员名,
+passport,昵称,
+ban,是否禁言,
+reason,加入理由,
+addtime,加入时间,
+chattime,发言时间,
+status,状态,

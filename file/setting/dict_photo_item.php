@@ -1,0 +1,6 @@
+<?php exit;?>
+itemid,ID,
+item,图库ID,
+introduce,简介,
+thumb,标题图,
+listorder,排序,

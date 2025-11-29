@@ -1,0 +1,10 @@
+<?php exit;?>
+itemid,ID,
+ip,IP,
+width,屏幕宽度,
+height,屏幕高度,
+ua,客户端,
+uk,识别号,
+url,网址,
+refer,来源,
+addtime,时间,

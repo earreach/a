@@ -1,0 +1,5 @@
+<?php exit;?>
+talentid,ID,
+username,会员名,
+resumeid,简历ID,
+jointime,添加时间,

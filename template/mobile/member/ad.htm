@@ -1,0 +1,316 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right">
+{if $action=='add' || $action=='list'}
+<a href="?action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{/if}
+<a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a>
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=list" data-transition="none">广告预定</a>
+<a href="?action=index" data-transition="none">我的广告</a>
+<a href="biz.php" data-direction="reverse">商户后台</a>
+</div>
+</div>
+
+{if $action == 'add'}
+{load('webuploader.min.js')}
+{load('url2video.js')}
+{load('player.js')}
+<div class="ui-widget" id="widget-{$js_pageid}"></div>
+<form method="post" action="?" id="dform" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="pid" value="{$pid}"/>
+<input type="hidden" name="price" value="{$p[price]}" id="price"/>
+<div class="content">
+广告位名称：{$p[name]}<br/>
+广告位类型：{$TYPE[$typeid]}<br/>
+{if $p[introduce]}广告位介绍：{$p[introduce]}<br/>{/if}
+{if $p[width] && $p[height]}广告位大小：{$p[width]}px X {$p[height]}px<br/>{/if}
+</div>
+<div class="ui-form">
+{if $typeid == 1}
+<p>广告代码<i>*</i><b id="dcode"></b></p>
+<div><textarea name="post[code]" id="code" style="height:50px;overflow:visible;"></textarea></div>
+{elseif $typeid == 2}
+<p>链接文字<i>*</i><b id="dtext_name"></b></p>
+<div><input type="text" name="post[text_name]" id="text_name"/></div>
+<p>链接地址<i>*</i><b id="dtext_url"></b></p>
+<div><input type="url" name="post[text_url]" id="text_url"/></div>
+<p>标题提示</p>
+<div><input type="text" name="post[text_title]" id="text_title"/></div>
+{elseif $typeid == 3 || $typeid == 5}
+<p>图片地址<i>*</i><b id="dthumb"></b></p>
+<div><input type="url" name="post[image_src]" id="thumb"/></div>
+<div class="ui-form-file-upload"><div id="file-picker"></div></div>
+<script type="text/javascript">
+var fileu = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width={$p[width]}&height={$p[height]}',
+    pick: '#file-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+fileu.on('beforeFileQueued', function(file) {
+	var exts = fileu.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+fileu.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+fileu.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+fileu.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#thumb').val(data.url);
+	}
+});
+fileu.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+fileu.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+
+<p>链接地址<i>*</i><b id="dimage_url"></b></p>
+<div><input type="url" name="post[image_url]" id="image_url"/></div>
+<p>标题提示</p>
+<div><input type="text" name="post[image_alt]" id="image_alt"/></div>
+{elseif $typeid == 4}
+<p>视频地址<i>*</i><b id="dvideo"></b></p>
+<div>{template 'upload-video', 'chip'}</div>
+<p>自动播放</p>
+<div>
+<label><input type="radio" name="post[video_auto]" value="1" checked/> 是</label>&nbsp;&nbsp;
+<label><input type="radio" name="post[video_auto]" value="0"/> 否</label>
+</div>
+<p>循环播放</p>
+<div>
+<label><input type="radio" name="post[video_loop]" value="1" checked/> 是</label>&nbsp;&nbsp;
+<label><input type="radio" name="post[video_loop]" value="0"/> 否</label>
+</div>
+<p>链接地址</p>
+<div><input type="url" name="post[video_url]" id="video_url"/></div>
+{elseif $typeid == 6}
+<p>所属模块</p>
+<div>{$MODULE[$p[moduleid]][name]}</div>
+<p>所属分类</p>
+<div>{ajax_category_select('post[catid]', '请选择', 0, $p[moduleid])}</div>
+<p>关键词</p>
+<div><input type="text" name="post[word]" id="word"/></div>
+{if $p[moduleid] == 4}
+<input type="hidden" name="post[key_id]" id="key_id" value="{$_userid}"/>
+{else}
+<p>信息ID<i>*</i><b id="dkey_id"></b></p>
+<div><input type="number" name="post[key_id]" value="{if $mid==4}{$_userid}{/if}" size="10" id="key_id" style="width:100px;"/><a href="javascript:;" onclick="Dwidget('{$js_pageid}', AJPath+'?action=choose&job=item&from=member&mid={$p[moduleid]}', '选择信息');"><img src="{DM_SKIN}icon-sort.png" style="width:16px;height:16px;padding:0 16px;opacity:0.5;"/></a></div>
+{/if}
+{elseif $typeid == 7}
+<p>所属模块</p>
+<div>{$MODULE[$p[moduleid]][name]}</div>
+<p>所属分类</p>
+<div>{ajax_category_select('post[catid]', '请选择', $catid, $p[moduleid])}</div>
+<p>关键词</p>
+<div><input type="text" name="post[word]" id="word" value="{$kw}"/></div>
+<p>广告代码<i>*</i><b id="dcode"></b></p>
+<div><textarea name="post[code]" id="code" style="height:50px;overflow:visible;"></textarea></div>
+{/if}
+<p>开始日期<i>*</i><b id="dpostfromtime"></b></p>
+<div><input type="date" name="post[fromtime]" value="{str_replace(' ', 'T', $fromdate)}" id="postfromtime" step="1"/></div>
+<p>购买时长<i>*</i><b id="dmonth"></b></p>
+<div>
+<select name="month" id="month"{if $prices} onchange="CA();"{/if}>
+{loop $months $m}<option value="{$m}">{$m}</option>{/loop}
+</select>
+<span id="pname">月</span>
+</div>
+{if $prices}
+<p>广告价格</p>
+<div>
+{if count($prices) == 1}
+	{loop $prices $kk $vv}
+	<input type="hidden" name="ptype" id="ptype" value="m1" data-price="{$vv}" data-name="{$PTYPE[$kk]}"/>
+	<span class="f_red">{if $currency == 'money'}{$DT[money_sign]}{/if}{$p[price]}</span> {$unit}/{$PTYPE[$kk]}
+	{/loop}
+{else}
+	<select name="ptype" id="ptype" onchange="CP();">
+	{loop $prices $kk $vv}
+	<option value="{$kk}" data-price="{$vv}" data-name="{$PTYPE[$kk]}">{$vv}{$unit}/{$PTYPE[$kk]}</option>
+	{/loop}
+	</select>
+{/if}
+</div>
+<p>应付总价</p>
+<div><strong style="font-size:20px;color:#FF6600;" id="money">{$p[price]}</strong> {$unit}</div>
+{if $currency == 'money'}
+<p>账户余额</p>
+<div><span class="f_blue">{$DT[money_sign]}{$_money}</span> {$DT[money_unit]}&nbsp;&nbsp;<a href="charge.php?action=pay" class="b">[充值]</a></div>
+<section id="payword">
+<p>支付密码<i>*</i><b id="dpassword"></b></p>
+<div>{template 'payword', 'chip'}</div>
+</section>
+{else}
+<p>{$DT[credit_name]}余额</p>
+<div><span class="f_blue">{$_credit}</span> {$DT[credit_unit]}&nbsp;&nbsp;<a href="credit.php?action=buy" class="b">[购买]</a></div>
+{/if}
+{/if}
+<p>备注事项</p>
+<div><input type="text" name="post[note]"/></div>
+</div>
+<div class="blank-32"></div>
+<div class="list-btn"><input type="submit" name="submit" value="{if $prices}确定购买{else}预定广告{/if}" class="btn-green"/></div>
+<div class="blank-16"></div>
+<div class="list-btn"><input type="button" class="btn" value="重新选择" onclick="Dsheet('{$js_pageid}','<a href=&#34;?action=list&#34;><span style=&#34;color:red&#34;>重新选择</span></a>', '取消', '确定要重新选择吗？');"/></div>
+<div class="blank-32"></div>
+</form>
+{load('clear.js')}
+<script type="text/javascript">
+var money;
+function CA() {
+	money = Dd('price').value*Dd('month').value;
+	Dd('money').innerHTML = money;
+	if(money > {$DT[quick_pay]}){$('#payword').show();}else{$('#payword').hide();}
+}
+function CP() {
+	{if count($prices) > 1}
+	$('#price').val($('#ptype').find('option:selected').attr('data-price'));
+	$('#pname').html($('#ptype').find('option:selected').attr('data-name'));
+	{/if}
+	CA();
+}
+function check() {
+	var p = Dd('price').value;
+{if $currency == 'money'}
+	if(p*Dd('month').value > {$_money}) {
+		alert('帐户余额不足，请先充值');
+		return false;
+	}
+{else}
+	if(p*Dd('month').value > {$_credit}) {
+		alert('您的{$DT[credit_name]}不足，请先购买');
+		return false;
+	}
+{/if}
+{if $typeid == 1 || $typeid == 7}
+	if(Dd('code').value.length < 5) {
+		Dmsg('请填写广告代码', 'code');
+		return false;
+	}
+{elseif $typeid == 2}
+	if(Dd('text_name').value.length < 2) {
+		Dmsg('请填写链接文字', 'text_name');
+		return false;
+	}
+	if(Dd('text_url').value.length < 10) {
+		Dmsg('请填写链接地址', 'text_url');
+		return false;
+	}
+{elseif $typeid == 3 || $typeid == 5}
+	if(Dd('thumb').value.length < 10) {
+		Dmsg('请填写图片地址或上传图片', 'thumb');
+		return false;
+	}
+{elseif $typeid == 4}
+	if(Dd('video').value.length < 10) {
+		Dmsg('请填写视频地址', 'video');
+		return false;
+	}
+{elseif $typeid == 6}
+	if(Dd('key_id').value.length < 1) {
+		Dmsg('请填写信息ID', 'key_id');
+		return false;
+	}
+{/if}
+	if(Dd('postfromtime').value.replace(/-/g, '') < '{$fromdate}'.replace(/-/g, '')) {
+		Dd('postfromtime').value = '{$fromdate}';
+		Dd('postfromtime').focus();
+		Dmsg('开始投放日期需从{$fromdate}开始', 'postfromtime');
+		return false;
+	}
+{if $prices && $currency == 'money'}
+	if(money > {$DT[quick_pay]} && Dd('password').value.length < 6) {
+		Dmsg('请填写支付密码', 'password');
+		return false;
+	}
+{/if}
+}
+{if $prices}
+$(function(){
+	CP();
+});
+{/if}
+</script>
+
+
+{elseif $action == 'list'}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li><span class="f_r">
+{if $v[prices]}
+	{if count($v[prices]) == 1}
+	{loop $v[prices] $kk $vv}
+	<span style="color:red;">{$vv}{$unit}/{$PTYPE[$kk]}</span>
+	{/loop}
+	{else}
+	<select>
+	{loop $v[prices] $kk $vv}
+	<option>{$vv}{$unit}/{$PTYPE[$kk]}</option>
+	{/loop}
+	</select>
+	{/if}
+{else}
+	<span style="color:#999999;">面议</span>
+{/if}
+</span><strong>{$v[name]}</strong></li>
+<li><span class="f_r"><a href="?action=add&pid={$v[pid]}" class="b">{if $v[prices]}购买{else}预定{/if}</a></span><span>{$v[typename]}</span></li>
+</ul>
+</div>
+{/loop}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+
+
+{else}
+<script type="text/javascript">$(function(){Stabs('{$js_pageid}');});</script>
+<div class="list-menu" id="tabs-{$js_pageid}">
+	<ul>
+	<a href="?status=3"><li{if $status==3} class="on"{/if} id="s3">已通过{if !$kw} <i>{$nums[3]}</i>{/if}</li></a>
+	<a href="?status=2"><li{if $status==2} class="on"{/if} id="s2">审核中{if !$kw} <i>{$nums[2]}</i>{/if}</li></a>
+	</ul>
+</div>
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li><span class="f_r" style="color:red;">{$v[amount]}{if $v[currency]=='money'}{$DT[money_unit]}{else}{$DT[credit_unit]}{/if}</span><strong>{$TYPE[$v[typeid]]}/{$v[title]}</strong></li>
+<li><span class="f_r">{$v[process]}</span><span>{timetodate($v[fromtime], 3)} / {timetodate($v[totime], 3)} 余{$v[days]}天</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+	<div class="list-none">{if $kw}未搜索到“{$kw}”相关结果{else}暂无记录{/if}</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{/if}
+{template 'footer', 'member'}

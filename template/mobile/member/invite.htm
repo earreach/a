@@ -1,0 +1,128 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=index" data-transition="none">邀请注册</a>
+<a href="?action=record" data-transition="none">注册记录</a>
+<a href="index.php" data-direction="reverse">会员中心</a>
+</div>
+</div>
+
+{if $action == 'record'}
+<div class="ui-form-search">
+<form action="?">
+<input type="hidden" name="action" value="{$action}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+{if $lists}
+	{loop $lists $v}
+	<div class="list-img">
+	<a href="{userurl($v[username], 'file=space')}" rel="external"><img src="{useravatar($v[username], 'large')}" width="60" height="60" alt="" class="avatar"/></a>
+	<ul>
+	<li><span class="ui-fr">{$v[regdate]}</span><a href="{userurl($v[username], 'file=space')}" rel="external"><strong>{$v[passport]}</strong></a></li>
+	<li><span>{if $v[sign]}{$v[sign]}{else}没有留下签名~~{/if}</span></li>
+	</ul>
+	</div>
+	{/loop}
+	{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{else}
+	<div class="list-none">{if $kw}未搜索到记录{else}暂无记录{/if}</div>
+{/if}
+
+{else}
+<div class="ui-form">
+<p>引导目标</p>
+<div>
+<label><input type="radio" name="goto" value="1" id="goto_1" onclick="mk(1);" checked/> 网站首页</label>&nbsp;&nbsp;&nbsp;&nbsp;
+<label><input type="radio" name="goto" value="2" id="goto_2" onclick="mk(2);"/> 会员注册</label><br/>
+<label><input type="radio" name="goto" value="3" id="goto_3" onclick="mk(3);"/> 我的主页</label>&nbsp;&nbsp;&nbsp;&nbsp;
+<label><input type="radio" name="goto" value="4" id="goto_4" onclick="mk(4);"/> 站内网址</label>
+</div>
+<section  id="uri" class="dsn">
+<p>站内网址<b id="durl"></b></p>
+<div><input type="url" id="url"/></div>
+</section>
+<p>推广网址<b><img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#code" onclick="Dtoast('{$js_pageid}', '推广网址已复制');"/></b></p>
+<div><input type="url" id="code" value="{$url}" readonly/></div>
+<p>二维码</p>
+<div><img src="{DT_PATH}api/qrcode.php?size=4&auth={$url}" width="188" height="188" id="qr"/></div>
+
+<p>推广方法</p>
+<s>
+- 将上面的推广网址或二维码发给您QQ/微信/Email等好友<br/>
+- 在自媒体平台、论坛签名、博客链接、网站等加上推广网址<br/>
+</s>
+
+<p>奖励规则</p>
+<s>
+- 每引导一个IP访问您可以获赠 <strong class="f_blue">{$MOD[credit_ip]}</strong> {$DT[credit_name]} (24小时内最多积{$MOD[credit_maxip]}{$DT[credit_name]})<br/>
+- 每引导一个用户注册您可以获赠 <strong class="f_blue">{$MOD[credit_user]}</strong> {$DT[credit_name]}<br/>
+{if $MG[agent]}
+- 注册成功的用户会自动成为您的代理，<a href="agent.php?status=2" class="b">审核</a>之后可以代理分销您的商品<br/>
+{/if}
+</s>
+
+<p>备注事项</p>
+<s>
+- 无论引导至那个页面，系统均会自动记录您为用户注册推荐人<br/>
+- 引导用户需注册成功完善资料后方可为您加分<br/>
+- 同一IP 24小时内计算一次<br/>
+</s>
+</div>
+<div class="blank-32"></div>
+{load('clipboard.min.js')}
+<script type="text/javascript">
+var clipboard = new Clipboard('[data-clipboard-action]');
+function mk(i) {
+	if(i == 4) { $('#uri').show();$('#url').focus(); } else { $('#uri').hide(); }
+	if(i == 4) {
+		Dd('code').value='{$url}&goto='+(ck($('#url').val()) ? $('#url').val() : '');
+	} else if(i == 3) {
+		Dd('code').value='{$url}&goto=homepage';
+	} else if(i == 2) {
+		Dd('code').value='{$url}&goto=register';
+	} else {
+		Dd('code').value='{$url}';
+	}
+	qr();
+}
+function ck(url) {
+	if(substr_count(url, '://') != 1) return false;
+	if(CKDomain) {
+		var dom = cutstr(url, '://', '/');
+		if(dom.indexOf(CKDomain) == -1) return false;
+	} else {
+		if(url.indexOf(DTPath) == -1) return false;
+	}
+	return true;
+}
+function qr() {
+	var s = '{DT_PATH}api/qrcode.php?size=4&auth='+encodeURIComponent($('#code').val());
+	if($('#qr').attr('src') != s) $('#qr').attr('src', s);
+}
+$(function(){
+	$('#url').on('input paste blur', function() {
+		if(ck($('#url').val())) {
+			$('#code').val('{$url}&goto='+encodeURIComponent($('#url').val()));
+			$('#durl').html('<span class="f_green">校验成功</span>');
+		} else {
+			$('#code').val('{$url}&goto=');
+			$('#durl').html('<span class="f_red">网址错误</span>');
+		}
+		qr();
+	});
+});
+</script>
+{/if}
+{template 'footer', 'member'}

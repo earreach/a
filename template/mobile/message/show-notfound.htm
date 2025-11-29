@@ -1,0 +1,17 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$MOD[name]}不存在</div>
+<div class="head-bar-right"><a href="{$MOD[mobile]}"><img src="{DM_SKIN}icon-index{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div style="background:#FFFFFF url('{DT_STATIC}image/msg-404.png') no-repeat center 0;background-size:256px 256px;">
+	<div style="padding:256px 24px 1480px 24px;font-size:14px;">
+		<center class="f_gray">您正在访问的{$MOD[name]}可能已经删除、更名或不存在</center>
+	</div>
+</div>
+{php $foot='';}
+{template 'footer'}

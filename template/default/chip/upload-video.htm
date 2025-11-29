@@ -1,0 +1,76 @@
+<input name="post[video]" type="text" id="video" size="70" value="{$video}" onblur="UpdateURL();"/>
+<span class="upl">
+<span id="video-picker"><img src="{DT_STATIC}image/ico-upl.png" title="上传"/></span>
+<img src="{DT_STATIC}image/ico-play.png" title="播放" onclick="Dplay();"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('video').value='';$('#video-progress').html('');"/>
+</span>
+<span id="video-progress" class="f_gray"></span> <span id="dvideo" class="f_red"></span>
+<script type="text/javascript">
+{if strpos($DT_MBS, 'IE') === false}
+	var filev;
+	$(function(){
+		filev = WebUploader.create({
+			auto: true,
+			server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=file',
+			pick: '#video-picker',
+			accept: {
+				title: 'video',
+				extensions: 'mp4,mov,3gp,mp3', 
+				mimeTypes: 'video/*'
+			},
+			fileNumLimit: 1,
+			resize: false
+		});
+		filev.on('beforeFileQueued', function(file) {
+			var exts = filev.options.accept[0].extensions;
+			if((','+exts).indexOf(','+ext(file.name)) == -1) {
+				alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+				return false;
+			}
+		});
+		filev.on('fileQueued', function(file) {
+			$('#video-progress').html('0%');
+		});
+		filev.on('uploadProgress', function(file, percentage) {
+			var p = parseInt(percentage * 100);
+			if(p >= 100) p = 100;
+			$('#video-progress').html(p+'%');
+		});
+		filev.on( 'uploadSuccess', function(file, data) {
+			if(data.error) {
+				Dmsg(data.message, 'video');
+			} else {
+				$('#video-progress').html('100%');
+				$('#video').val(data.url);
+			}
+		});
+		filev.on( 'uploadError', function(file, data) {
+			Dmsg(data.message, 'video');
+		});
+		filev.on('uploadComplete', function(file) {
+			$('#video-progress').html('100%');
+			window.setTimeout(function() {$('#video-progress').html('');}, 1000);
+		});
+		window.setTimeout(function() {filev.refresh();}, 1000);
+		window.setTimeout(function() {filev.refresh();}, 2000);
+	});
+{else}
+	$(function(){
+		$('#video-picker').click(function() {
+			Dfile(<?php echo $moduleid;?>, Dd('video').value, 'video', 'mp4|mov|3gp|mp3');
+		});
+	});
+{/if}
+function Dplay() {
+	UpdateURL();
+	if(Dd('video').value.length > 5) {
+		mkDialog('', '<div style="width:800px;height:450px;background:#000000;">'+player(Dd('video').value,800,450,1)+'</div>', '视频预览', 800);
+	} else {
+		Dtoast('视频地址为空');
+	}
+}
+function UpdateURL() {
+	var str = url2video(Dd('video').value);
+	if(str) Dd('video').value = str;
+}
+</script>

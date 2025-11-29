@@ -1,0 +1,33 @@
+<table cellpadding="5" cellspacing="5" width="100%">
+{loop $tags $k $t}
+{if $k%5==0}<tr>{/if}
+<td valign="top" width="20%" id="item_{$t[itemid]}">
+	<table cellpadding="3" cellspacing="3" width="100%">
+	<tr align="center">
+	<td class="thumb"><a href="{$t[linkurl]}" target="_blank"><img src="{imgurl($t[thumb], 160)}" width="160" height="160" alt="" class="bd"/></a></td>
+	</tr>
+	<tr align="center">
+	<td class="thumb">
+	<ul>
+	<li><input type="checkbox" id="check_{$t[itemid]}" name="itemid[]" value="{$t[itemid]}" onclick="sell_tip(this, {$t[itemid]});"/> <a href="{$t[linkurl]}" target="_blank" class="px14 f_n">{$t[title]}</a></li>
+	</ul>
+	<div style="padding:6px 0;">
+		{if $t[price]>0}
+			<span class="f_red">{$DT[money_sign]}<strong class="px14">{$t[price]}</strong>{if $t[unit]}/{$t[unit]}{/if}</span><br/>
+			<a href="{$MODULE[2][linkurl]}buy.php?mid={$moduleid}&itemid={$t[itemid]}" target="_blank"><img src="{DT_SKIN}buy.gif" title="购买" class="iq_btn"/></a>
+		{else}
+			<span class="f_gray">面议</span><br/>
+			<a href="{$MOD[linkurl]}{rewrite('inquiry.php?itemid='.$t['itemid'])}" target="_blank"><img src="{DT_SKIN}inquiry.gif" title="询价" class="iq_btn"/></a>
+		{/if}
+	</div>
+	<ul>
+	<li>{if $t[username] && $DT[im_web]}{im_web($t[username].'&mid='.$moduleid.'&itemid='.$t[itemid])}{/if} <a href="{userurl($t[username])}" target="_blank">{$t[company]}</a></li>
+	</ul>
+	</td>
+	</tr>
+	</table>
+</td>
+{if $k%5==4}</tr>{/if}
+{/loop}
+</table>
+{if $showpage && $pages}<div class="pages">{$pages}</div>{/if}

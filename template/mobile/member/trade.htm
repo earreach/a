@@ -1,0 +1,481 @@
+{template 'header', 'member'}
+{if $action == 'update'}
+	{template 'trade_'.$step, 'member'}
+{elseif $action == 'process'}
+	{template 'trade_'.$step, 'member'}
+{elseif $action == 'muti'}
+{load('cart.css')}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">批量发货</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="javascript:;" onclick="window.scrollTo(0,0);$('#trade-muti').slideToggle(300);">筛选商品</a>
+<a href="?action=index" data-direction="reverse">取消发货</a>
+<a href="?action=index" data-direction="reverse">订单列表</a>
+</div>
+</div>
+
+<div id="trade-muti" style="display:none;">
+<div class="ui-form">
+<form action="?">
+<input type="hidden" name="action" value="{$action}"/>
+<p>筛选类型</p>
+<div>{$fields_select}</div>
+<p>关键词</p>
+<div><input type="text" name="kw" value="{$kw}"/></div>
+<p>买家</p>
+<div><input type="text" name="buyer" value="{$buyer}"/></div>
+
+<div class="blank-20"></div>
+<div><input type="submit" name="submit" value="筛 选" class="btn-blue"/></div>
+<div class="blank-20"></div>
+<div><input type="button" value="取 消" class="btn" onclick="Go('?action={$action}');"/></div>
+<div class="blank-20"></div>
+</form>
+</div>
+</div>
+
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="action" value="{$action}"/>
+
+<div class="ui-form">
+<p>快递类型<i>*</i><b id="dsend_type"></b></p>
+<div>
+<select name="send_type" id="send_type">
+<option value="">请选择</option>
+{loop $send_types $v}
+<option value="{$v}">{$v}</option>
+{/loop}
+</select>
+{if $send_type}
+&nbsp;&nbsp;
+上次使用 <a href="javascript:" onclick="javascript:$('#send_type').val('{$send_type}');" class="b">{$send_type}</a>
+{/if}
+</div>
+<p>发货时间</p>
+<div><input type="date" name="send_time" id="send_time" value="{$send_time}"/></div>
+{if $DT[sms]}
+<div><input type="checkbox" name="sendsms" value="1" checked="checked"/> 短信通知买家 <a href="sms.php">可用短信{$_sms}条</a></div>
+{/if}
+</div>
+<div class="blank-20 bd-b"></div>
+{loop $lists $k $v}
+<div class="order-t">
+<em>{$v[buyer_mobile]}</em><input type="checkbox" name="itemid[]" value="{$v[itemid]}" checked id="check_{$v[itemid]}" onclick="calculate();"/> {$v[buyer_address]} {$v[buyer_name]}</a>
+</div>
+<div class="list-img">
+<a href="?itemid={$v[itemid]}&action=update&step=detail"><img src="{if $v[thumb]}{$v[thumb]}{else}{DM_SKIN}60x60.png{/if}" width="60" height="60" alt="" onerror="this.src='{DM_SKIN}60x60.png';"/></a>
+<ul>
+<li><a href="?itemid={$v[itemid]}&action=update&step=detail"><strong>{$v[title]}</strong></a></li>
+<li><em class="f_r">x{$v[number]}</em><span>{$v[par]}</span></li>
+</ul>
+</div>
+{if isset($tags[$v[itemid]])}
+{loop $tags[$v[itemid]] $i $t}
+<div class="list-img">
+<a href="?itemid={$v[itemid]}&action=update&step=detail"><img src="{if $t[thumb]}{$t[thumb]}{else}{DM_SKIN}60x60.png{/if}" width="60" height="60" alt="" onerror="this.src='{DM_SKIN}60x60.png';"/></a>
+<ul>
+<li><a href="?itemid={$v[itemid]}&action=update&step=detail"><strong>{$t[title]}</strong></a></li>
+<li><em class="f_r">{$DT[money_sign]}{$t[price]}x{$t[number]}</em><span>{$t[par]}</span></li>
+</ul>
+</div>
+{/loop}
+{/if}
+<div class="order-p"><span class="f_r">合计：<b>{$DT[money_sign]}{$v[money]}</b></span><input type="text" name="send_nos[{$v[itemid]}]" placeholder="快递单号：" id="send_no_{$v[itemid]}"/>{if in_array($DT_MBS, array('app','cms','web')) || $wx_jssdk}<img src="{DM_SKIN}icon-scan.png" style="width:20px;height:20px;margin-left:10px;" align="absmiddle" onclick="App_Scan('#send_no_{$v[itemid]}');"/>{/if}</div>
+{/loop}
+
+<div class="blank-32"></div>
+<div class="blank-32"></div>
+
+<div class="cart-foot-fix"></div>
+<div class="cart-foot">
+<table cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td class="c2">&nbsp; &nbsp; 共 <b id="total_good"></b> 单</td>
+<td class="c3"><input name="submit" type="submit" value="发货"/></td>
+</tr>
+</table>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	return confirm('您确认货物已经发出，并且以上信息填写无误吗？\n\n此操作将不可撤销');
+}
+function calculate() {
+	Dd('total_good').innerHTML = $(':checkbox:checked').length;
+}
+calculate();
+</script>
+{elseif $action == 'express'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">我的快递</div>
+<div class="head-bar-right"><a href="javascript:Dmenu('search-{$action}-{$js_pageid}');"><img src="{DM_SKIN}icon-search{$wh}.png" width="24" height="24"/></a><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=index" data-direction="reverse">订单列表</a>
+<a href="?action=express" data-transition="none">我的快递</a>
+{if $MOD[contract]}<a href="?action=contract" data-transition="none">我的合同</a>{/if}
+{if $MOD[invoice_types]}<a href="?action=invoice" data-transition="none">我的发票</a>{/if}
+<a href="?action=service" data-transition="none">售后服务</a>
+</div>
+</div>
+
+<div id="search-{$action}-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="?" data-ajax="false">
+<input type="hidden" name="action" value="{$action}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+</div>
+
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li><span class="f_r">{$v[dstatus]}</span><a href="?itemid={$v[itemid]}&action=update&step=express"><strong>{$v[send_type]}</strong></a></li>
+<li><em class="f_r">{$v[updatetime]}</em><span>{$v[send_no]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无快递</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+
+{elseif $action == 'contract'}
+<!--[我的合同]-->
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">我的合同</div>
+<div class="head-bar-right"><a href="javascript:Dmenu('search-{$action}-{$js_pageid}');"><img src="{DM_SKIN}icon-search{$wh}.png" width="24" height="24"/></a><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=index" data-direction="reverse">订单列表</a>
+<a href="?action=express" data-transition="none">我的快递</a>
+{if $MOD[contract]}<a href="?action=contract" data-transition="none">我的合同</a>{/if}
+{if $MOD[invoice_types]}<a href="?action=invoice" data-transition="none">我的发票</a>{/if}
+<a href="?action=service" data-transition="none">售后服务</a>
+</div>
+</div>
+
+<div id="search-{$action}-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="?" data-ajax="false">
+<input type="hidden" name="action" value="{$action}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+</div>
+
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li><span class="f_r">{$dstatus[$v[status]]}</span><a href="?action=update&step=contract&itemid={$v[oid]}"><strong>{$v[buyer_company]}</strong></a></li>
+<li><em class="f_r">{$v[addtime]}</em><span>{$DT[money_sign]}{$v[amount]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无合同</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+
+{elseif $action == 'invoice'}
+<!--[我的发票]-->
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">我的发票</div>
+<div class="head-bar-right"><a href="javascript:Dmenu('search-{$action}-{$js_pageid}');"><img src="{DM_SKIN}icon-search{$wh}.png" width="24" height="24"/></a><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=index" data-direction="reverse">订单列表</a>
+<a href="?action=express" data-transition="none">我的快递</a>
+{if $MOD[contract]}<a href="?action=contract" data-transition="none">我的合同</a>{/if}
+{if $MOD[invoice_types]}<a href="?action=invoice" data-transition="none">我的发票</a>{/if}
+<a href="?action=service" data-transition="none">售后服务</a>
+</div>
+</div>
+
+<div id="search-{$action}-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="?" data-ajax="false">
+<input type="hidden" name="action" value="{$action}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+</div>
+
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li>
+<span class="f_r">
+{if $v[url]}
+<span style="color:#2BA245;">已上传</span>
+{elseif $v[send_type]}
+<span style="color:#2BA245;">已快递</span>
+{else}
+<span style="color:#999999;">待开票</span>
+{/if}
+</span><a href="?action=update&step=invoice&itemid={$v[oid]}"><strong>{$v[company]}</strong></a></li>
+<li><em class="f_r">{$v[addtime]}</em><span>{$v[type]} {$DT[money_sign]}{$v[amount]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无发票</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+
+{elseif $action == 'service'}
+<!--[售后服务]-->
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">售后服务</div>
+<div class="head-bar-right"><a href="javascript:Dmenu('search-{$action}-{$js_pageid}');"><img src="{DM_SKIN}icon-search{$wh}.png" width="24" height="24"/></a><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=index" data-direction="reverse">订单列表</a>
+<a href="?action=express" data-transition="none">我的快递</a>
+{if $MOD[contract]}<a href="?action=contract" data-transition="none">我的合同</a>{/if}
+{if $MOD[invoice_types]}<a href="?action=invoice" data-transition="none">我的发票</a>{/if}
+<a href="?action=service" data-transition="none">售后服务</a>
+</div>
+</div>
+
+<div id="search-{$action}-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="?" data-ajax="false">
+<input type="hidden" name="action" value="{$action}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+</div>
+
+<div class="list-menu" id="tabs-{$js_pageid}">
+	<ul>
+	<a href="?action={$action}"><li{if $typeid===''} class="on"{/if}>全部</li></a>
+	{loop $dservice $k $v}
+	<a href="?action={$action}&typeid={$k}"><li{if $typeid===$k} class="on"{/if}>{$v}</li></a>
+	{/loop}
+	</ul>
+</div>
+
+{if $lists}
+{loop $lists $k $v}
+<div class="order-t">
+<em>{$v[dstatus]}</em>{$v[addtime]} <a href="{userurl($v[seller], 'file=contact')}">{$v[seller]}</a>
+</div>
+<div class="list-img">
+<a href="?itemid={$v[itemid]}&action=update&step=detail"><img src="{if $v[thumb]}{$v[thumb]}{else}{DM_SKIN}60x60.png{/if}" width="60" height="60" alt="" onerror="this.src='{DM_SKIN}60x60.png';"/></a>
+<ul>
+<li><a href="?itemid={$v[itemid]}&action=update&step=detail"><strong>{$v[title]}</strong></a></li>
+<li><em class="f_r">{$DT[money_sign]}{$v[price]}x{$v[number]}</em><span>{$v[par]}</span></li>
+</ul>
+</div>
+<div class="order-p"><span class="f_r">实付：<b>{$DT[money_sign]}{$v[amount]}</b></span>{$v[typename]}</div>
+<div class="order-b">
+{if $v[status] == 0}
+<a href="?action=process&step=check&itemid={$v[itemid]}">受理申请</a>
+{elseif $v[status] == 4}
+	<a href="?action=process&step=receive&itemid={$v[itemid]}">验收商品</a>
+{elseif $v[status] == 5}
+	<a href="?action=process&step=send&itemid={$v[itemid]}">发回商品</a>
+{/if}
+<a href="?action=update&step=detail&itemid={if $v[pid]}{$v[pid]}{else}{$v[oid]}{/if}">订单详情</a>
+<a href="?action=process&step=service&itemid={$v[itemid]}">服务详情</a>
+</div>
+{/loop}
+{else}
+	<div class="list-none">{if $kw}未搜索到“{$kw}”相关订单{else}暂无订单记录{/if}</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+
+{else}
+<!--[我收到的订单]-->
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">我的订单</div>
+<div class="head-bar-right"><a href="javascript:Dmenu('trade-{$action}-{$js_pageid}');"><img src="{DM_SKIN}icon-search{$wh}.png" width="24" height="24"/></a><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=muti" data-transition="none">批量发货</a>
+<a href="?action=index" data-transition="none">订单列表</a>
+<a href="?action=express" data-transition="none">我的快递</a>
+{if $MOD[contract]}<a href="?action=contract" data-transition="none">我的合同</a>{/if}
+{if $MOD[invoice_types]}<a href="?action=invoice" data-transition="none">我的发票</a>{/if}
+<a href="?action=service" data-transition="none">售后服务</a>
+<a href="biz.php" data-direction="reverse">商户后台</a>
+</div>
+</div>
+
+<script type="text/javascript">$(function(){Stabs('{$js_pageid}');});</script>
+<div class="list-menu" id="tabs-{$js_pageid}">
+	<ul>
+	<a href="?action=index"><li{if !in_array($nav, array(0,1,2,3,4,7))} class="on"{/if}>全部</li></a>
+	<a href="?nav=0"><li{if $nav==0} class="on"{/if}>待确认</li></a>
+	<a href="?nav=1"><li{if $nav==1} class="on"{/if}>待付款</li></a>
+	<a href="?nav=2"><li{if $nav==2} class="on"{/if}>待发货</li></a>
+	<a href="?nav=3"><li{if $nav==3} class="on"{/if}>待收货</li></a>
+	<a href="?nav=4"><li{if $nav==4} class="on"{/if}>已完成</li></a>
+	<a href="?nav=7"><li{if $nav==7} class="on"{/if}>待评价</li></a>
+	</ul>
+</div>
+
+<div id="trade-{$action}-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="?" data-ajax="false">
+<input type="hidden" name="action" value="{$action}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+</div>
+
+{if $lists}
+{loop $lists $k $v}
+<div class="order-t bd-b">
+<em>{if $v[status] == 1 && $v[bill]}<span class="f_blue">待审款</span>{else}{$v[dstatus]}{/if}</em>
+<span class="f_grey px12">{$v[addtime]}</span> &nbsp;  <a href="{userurl($v[buyer], 'file=space')}" rel="external"><b>{if $v[buyer_passport]}{$v[buyer_passport]}{else}{$v[buyer_passport]}{/if}</b></a>
+</div>
+<div class="list-img">
+<a href="?itemid={$v[itemid]}&action=update&step=detail"><img src="{if $v[thumb]}{$v[thumb]}{else}{DM_SKIN}60x60.png{/if}" width="60" height="60" alt="" onerror="this.src='{DM_SKIN}60x60.png';"/></a>
+<ul>
+<li><a href="?itemid={$v[itemid]}&action=update&step=detail"><strong>{$v[title]}</strong></a></li>
+<li><em class="f_r f_grey">x{$v[number]}</em><span class="f_grey">{$v[par]}</span></li>
+</ul>
+</div>
+{if isset($tags[$v[itemid]])}
+{loop $tags[$v[itemid]] $i $t}
+<div class="list-img">
+<a href="?itemid={$v[itemid]}&action=update&step=detail"><img src="{if $t[thumb]}{$t[thumb]}{else}{DM_SKIN}60x60.png{/if}" width="60" height="60" alt="" onerror="this.src='{DM_SKIN}60x60.png';"/></a>
+<ul>
+<li><a href="?itemid={$v[itemid]}&action=update&step=detail">{$t[title]}</a></li>
+<li><em class="f_r f_grey">{$DT[money_sign]}{$t[price]}x{$t[number]}</em><span class="f_grey">{$t[par]}</span></li>
+</ul>
+</div>
+{/loop}
+{/if}
+<div class="order-p"><span class="f_r">合计：<b>{$DT[money_sign]}{$v[money]}</b></span><span class="f_grey px12">订单号：{$v[itemid]}</span></div>
+<div class="order-b">
+{if $v[status] == 0}
+<a href="?itemid={$v[itemid]}&action=update&step=edit&confirm=1">确认订单</a> 
+<a href="?itemid={$v[itemid]}&action=update&step=edit">修改订单</a> 
+<a href="?itemid={$v[itemid]}&action=update&step=close" onclick="return confirm('确定要关闭此交易吗？此操作将不可撤销');">关闭交易</a> 
+{elseif $v[status] == 1}
+{if $v[bill]}
+<a href="?itemid={$v[itemid]}&action=update&step=bill">审核付款</a>
+{else}
+<a href="?itemid={$v[itemid]}&action=update&step=edit">修改订单</a> 
+<a href="?itemid={$v[itemid]}&action=update&step=close" onclick="return confirm('确定要关闭此交易吗？此操作将不可撤销');">关闭交易</a> 
+{/if}
+{elseif $v[status] == 2}
+{if isset($tags[$v[itemid]])}<a href="?action=update&step=split&itemid={$v[itemid]}">拆分订单</a>{/if}
+<a href="?itemid={$v[itemid]}&action=update&step=send_goods">确认发货</a> 
+{elseif $v[status] == 3}
+	{if $v[lefttime]}
+	<a href="?itemid={$v[itemid]}&action=update&step=add_time">延长时间</a> 
+	{else}
+	<a href="?itemid={$v[itemid]}&action=update&step=get_pay">直接收款</a> 
+	{/if}	
+	{if $v[send_type] && $v[send_no]}
+	<a href="?itemid={$v[itemid]}&action=update&step=express">快递追踪</a> 
+	{/if}
+{elseif $v[status] == 4}
+	{if $MODULE[$v[mid]][module] == 'mall'}
+	{if $v[buyer_star]}
+	<a href="?itemid={$v[itemid]}&action=update&step=comment_detail">评价详情</a> 
+	{else}
+	<a href="?itemid={$v[itemid]}&action=update&step=comment">评价</a> 
+	{/if}
+	{/if}
+{elseif $v[status] == 5}
+	{if $v[buyer_reason]}<a href="?itemid={$v[itemid]}&action=update&step=refund_agree">同意退款</a> {/if}
+{elseif $v[status] == 7}
+	{if $v[send_time]}
+	<a href="?itemid={$v[itemid]}&action=update&step=cod_success" onclick="return confirm('您确定已经收到货款，交易完成吗？此操作将不可撤销');">确认完成</a> 
+	{else}
+	{if isset($tags[$v[itemid]])}<a href="?action=update&step=split&itemid={$v[itemid]}">拆分订单</a>{/if}
+	<a href="?itemid={$v[itemid]}&action=update&step=send_goods">确认发货</a> 
+	{/if}
+{elseif $v[status] == 8}
+	<a href="?itemid={$v[itemid]}&action=update&step=close" onclick="return confirm('确定要删除此订单吗？此操作将不可撤销');">删除订单</a> 
+{/if}
+<a href="?itemid={$v[itemid]}&action=update&step=detail">订单详情</a>
+</div>
+{/loop}
+{else}
+	<div class="list-none">{if $kw}未搜索到“{$kw}”相关订单{else}暂无订单记录{/if}</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{/if}
+{if $wx_jssdk}
+<script src="//res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+<script type = "text/javascript">
+wx.config({
+	debug: false,
+	appId: '{$wx_jssdk[appId]}',
+	timestamp: {$wx_jssdk[timestamp]},
+	nonceStr: '{$wx_jssdk[nonceStr]}',
+	signature: '{$wx_jssdk[signature]}',
+	jsApiList: ['scanQRCode']
+});
+function App_Scan(id) {	
+	wx.scanQRCode({
+		needResult: 1,
+		scanType: ["barCode"],
+		success: function (res) {
+			$(id).val(res.resultStr.indexOf(',') == -1 ? res.resultStr : res.resultStr.split(',')[1]);
+		}
+	});
+}
+</script>
+{/if}
+{template 'footer', 'member'}

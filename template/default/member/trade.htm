@@ -1,0 +1,577 @@
+{template 'header', 'member'}
+<script type="text/javascript">var errimg = '{DT_STATIC}image/nopic60.png';</script>
+<div class="menu">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="tab" id="action"><a href="?action=index"><span>订单管理</span></a></td>
+<td class="tab" id="action_muti"><a href="?action=muti"><span>批量发货</span></a></td>
+{if $MOD[contract]}<td class="tab" id="action_contract"><a href="?action=contract"><span>我的合同</span></a></td>{/if}
+{if $MOD[invoice_types]}<td class="tab" id="action_invoice"><a href="?action=invoice"><span>我的发票</span></a></td>{/if}
+<td class="tab" id="action_express"><a href="?action=express"><span>我的快递</span></a></td>
+<td class="tab" id="action_service"><a href="?action=service"><span>售后服务</span></a></td>
+</tr>
+</table>
+</div>
+{if $action == 'update'}
+	{template 'trade_'.$step, 'member'}
+{elseif $action == 'process'}
+	{template 'trade_'.$step, 'member'}
+{elseif $action == 'muti'}
+<!--[批量发货]-->
+<div class="tt">
+<form action="?" id="search">
+<input type="hidden" name="action" value="{$action}"/>
+{$fields_select}&nbsp;
+<input type="text" size="30" name="kw" value="{$kw}" title="关键词" placeholder="关键词"/>&nbsp;
+<input type="text" size="20" name="buyer" value="{$buyer}" title="买家" placeholder="买家"/>&nbsp;
+<input type="submit" value=" 筛 选 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?action={$action}');"/>
+<div class="b10"></div>
+<div>
+<select name="datetype">
+<option value="addtime"{if $datetype == 'addtime'} selected{/if}>下单时间</option>
+<option value="updatetime"{if $datetype == 'updatetime'} selected{/if}>更新时间</option>
+</select>&nbsp;
+{dcalendar('fromdate', $fromdate, '-', 1)} 至 {dcalendar('todate', $todate, '-', 1)}&nbsp;
+{$status_select}&nbsp;
+<label><input type="checkbox" name="cod" value="1"{if $cod} checked{/if}/> 货到付款</label>&nbsp;
+</div>
+</form>
+</div>
+
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="action" value="{$action}"/>
+<table cellpadding="10" cellspacing="1" class="tb" style="border-top:#E8E8E8 1px solid;">
+<tr>
+<td class="tl">快递类型</td>
+<td class="tr f_gray">
+<select name="send_type" id="send_type">
+<option value="">请选择</option>
+{loop $send_types $v}
+<option value="{$v}">{$v}</option>
+{/loop}
+</select>
+{if $send_type}
+&nbsp;&nbsp;
+上次使用 <a href="javascript:" onclick="javascript:$('#send_type').val('{$send_type}');" class="t">{$send_type}</a>
+{/if}
+</td>
+</tr>
+</table>
+<div class="ls">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="20"><input type="checkbox" onclick="checkall(this.form);" title="全选/反选"/></th>
+<th width="100">图片</th>
+<th>商品</th>
+<th width="100">单价</th>
+<th width="100">数量</th>
+<th width="150">订单金额</th>
+<th width="150">下单时间</th>
+<th width="40" data-hide-1200="1">订单</th>
+<th width="40">打印</th>
+<th width="40">移除</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center" data-{$v[itemid]}="1">
+<td><input type="checkbox" name="itemid[]" value="{$v[itemid]}" checked id="check_{$v[itemid]}"/></td>
+<td><a href="javascript:_preview('{$v[thumb]}');"><img src="{if $v[thumb]}{$v[thumb]}{else}{DT_STATIC}image/nopic60.png{/if}" width="60" height="60" onerror="this.src=errimg;" style="margin:10px;"/></a></td>
+<td align="left" valign="top" class="f_gray lh18"><a href="{$v[linkurl]}" target="_blank" class="t">{$v[title]}</a><br/>{$v[par]}{if $v[note]}备注：{$v[note]}{/if}
+</td>
+<td>{$DT[money_sign]}{$v[price]}</td>
+<td>{$v[number]}</td>
+<td class="f_red">{$DT[money_sign]}{$v[money]}</td>
+<td>{$v[addtime]}</td>
+<td data-hide-1200="1"><a href="?action=update&step=detail&itemid={$v[itemid]}" target="_blank" class="t">详情</a>
+<td><a href="?action=update&step=print&itemid={$v[itemid]}" target="_blank" class="t">打印</a>
+<td><a href="javascript:;" onclick="$('[data-{$v[itemid]}]').fadeOut(300, function(){$(this).remove();});" class="t">移除</a>
+</tr>
+{if isset($tags[$v[itemid]])}
+{loop $tags[$v[itemid]] $i $t}
+<tr align="center" data-{$v[itemid]}="1">
+<td></td>
+<td><a href="javascript:_preview('{$t[thumb]}');"><img src="{if $t[thumb]}{$t[thumb]}{else}{DT_STATIC}image/nopic60.png{/if}" width="60" height="60" onerror="this.src=errimg;"/></a></td>
+<td align="left" valign="top" class="f_gray lh18"><a href="{$t[linkurl]}" target="_blank" class="t">{$t[title]}</a><br/>{$t[par]}{if $t[note]}备注：{$t[note]}{/if}</td>
+<td>{$t[price]}</td>
+<td>{$t[number]}</td>
+<td></td>
+<td></td>
+<td data-hide-1200="1"></td>
+<td></td>
+<td></td>
+</tr>
+{/loop}
+{/if}
+<tr align="center" data-{$v[itemid]}="1">
+<td></td>
+<td title="订单号码"><a href="?action=update&step=detail&itemid={$v[itemid]}" target="_blank">{$v[itemid]}</a></td>
+<td title="收货地址" align="left">{$v[buyer_address]}</td>
+<td title="姓名">{$v[buyer_name]}</td>
+<td title="手机号">{$v[buyer_mobile]}</td>
+<td colspan="2"><input type="text" size="20" name="send_nos[{$v[itemid]}]" placeholder="快递单号：" title="快递单号"/></td>
+<td title="仓储货位" colspan="3">{if $v[sku]}{$v[sku][location]}{/if}</td>
+</tr>
+{/loop}
+</table>
+</div>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl">发货时间</td>
+<td class="tr f_gray">{dcalendar('send_time', $send_time)}</td>
+</tr>
+{if $_userid && $DT[sms]}
+<tr>
+<td class="tl"></td>
+<td class="tr"><label><input type="checkbox" name="sendsms" value="1" checked="checked"/> 短信通知买家已发货</label> (<a href="sms.php" target="_blank" class="t">我的可用短信 <strong class="f_blue">{$_sms}</strong> 条</a>)</td>
+</tr>
+{/if}
+<tr>
+<td class="tl"> </td>
+<td class="tr">
+<input type="submit" name="submit" value=" 批量发货 " class="btn_g"/>
+</td>
+</tr>
+</table>
+</form>
+<script type="text/javascript">
+function check() {
+	return confirm('您确认货物已经发出，并且以上信息填写无误吗？\n\n此操作将不可撤销');
+}
+</script>
+<script type="text/javascript">s('trade');m('action_muti');</script>
+
+{elseif $action == 'contract'}
+<!--[我的合同]-->
+<div class="tt">
+<form action="?" id="search">
+<input type="hidden" name="action" value="{$action}"/>
+{$fields_select}&nbsp;
+<input type="text" size="30" name="kw" value="{$kw}" title="关键词" placeholder="关键词"/>&nbsp;
+<input type="text" size="20" name="buyer" value="{$buyer}" title="买家" placeholder="买家"/>&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?action={$action}');"/><br/>
+<div class="b10"></div>
+<div>
+<select name="datetype">
+<option value="addtime"{if $datetype == 'addtime'} selected{/if}>下单时间</option>
+<option value="buyer_time"{if $datetype == 'buyer_time'} selected{/if}>甲方签署</option>
+<option value="seller_time"{if $datetype == 'seller_time'} selected{/if}>乙方签署</option>
+</select>&nbsp;
+{dcalendar('fromdate', $fromdate, '-', 1)} 至 {dcalendar('todate', $todate, '-', 1)}&nbsp;
+{$status_select}&nbsp;
+</div>
+</form>
+</div>
+<div class="bd">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th>单号</th>
+<th>甲方</th>
+<th data-hide-1200="1" data-hide-1400="1">商品</th>
+<th width="150">金额</th>
+<th width="150" data-hide-1200="1" data-hide-1400="1" data-hide-1600="1">下单时间</th>
+<th width="150">乙方签署</th>
+<th width="150">甲方签署</th>
+<th width="100">买家</th>
+<th width="100">状态</th>
+<th width="40">详情</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><a href="?action=update&step=detail&itemid={$v[oid]}">{$v[oid]}</a></td>
+<td><a href="javascript:;" onclick="Dq('buyer','{$v[buyer]}');">{$v[buyer_company]}</a></td>
+<td data-hide-1200="1" data-hide-1400="1"><a href="javascript:;" onclick="Dq('kw',this.innerHTML);">{dsubstr($v[title], 40, '...')}</a></td>
+<td><a href="javascript:;" onclick="Dq('fields',2,0);Dq('kw','={$v[amount]}');">{$DT[money_sign]}{$v[amount]}</a></td>
+<td data-hide-1200="1" data-hide-1400="1" data-hide-1600="1"><a href="javascript:;" onclick="Dq('datetype','addtime',0);Dq('date',this.innerHTML);">{$v[addtime]}</a></td>
+<td>{if $v[seller_time]}<a href="javascript:;" onclick="Dq('datetype','seller_time',0);Dq('date',this.innerHTML);">{timetodate($v[seller_time], 5)}</a>{else}N/A{/if}</td>
+<td>{if $v[buyer_time]}<a href="javascript:;" onclick="Dq('datetype','buyer_time',0);Dq('date',this.innerHTML);">{timetodate($v[buyer_time], 5)}</a>{else}N/A{/if}</td>
+<td><a href="{userurl($v[buyer], 'file=contact')}" target="_blank">{$v[buyer]}</a></td>
+<td><a href="javascript:;" onclick="Dq('status','{$v[status]}');">{$dstatus[$v[status]]}</a></td>
+<td><a href="?action=update&step=contract&itemid={$v[oid]}" class="t">详情</a></td>
+</tr>
+{/loop}
+</table>
+</div>
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('trade');m('action_contract');</script>
+
+{elseif $action == 'invoice'}
+<!--[我的发票]-->
+<div class="tt">
+<form action="?" id="search">
+<input type="hidden" name="action" value="{$action}"/>
+{$fields_select}&nbsp;
+<input type="text" size="30" name="kw" value="{$kw}" title="关键词" placeholder="关键词"/>&nbsp;
+<input type="text" size="20" name="buyer" value="{$buyer}" title="买家" placeholder="买家"/>&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?action={$action}');"/>
+<div class="b10"></div>
+<div>
+<select name="datetype">
+<option value="updatetime"{if $datetype == 'updatetime'} selected{/if}>开票时间</option>
+<option value="addtime"{if $datetype == 'addtime'} selected{/if}>申请时间</option>
+</select>&nbsp;
+{dcalendar('fromdate', $fromdate, '-', 1)} 至 {dcalendar('todate', $todate, '-', 1)}&nbsp;
+<select name="status">
+<option value="0"{if $status == 0} selected{/if}>开票状态</option>
+<option value="1"{if $status == 1} selected{/if}>未开票</option>
+<option value="2"{if $status == 2} selected{/if}>已开票</option>
+<option value="3"{if $status == 3} selected{/if}>已上传</option>
+<option value="4"{if $status == 4} selected{/if}>已快递</option>
+</select>&nbsp;
+</div>
+</form>
+</div>
+<div class="bd">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th>单号</th>
+<th>类型</th>
+<th data-hide-1200="1">抬头</th>
+<th data-hide-1200="1" data-hide-1400="1">纳税人识别号</th>
+<th width="150">金额</th>
+<th width="150">申请时间</th>
+<th width="150">开票时间</th>
+<th width="100">买家</th>
+<th width="100">发票</th>
+<th width="40">详情</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><a href="?action=update&step=detail&itemid={$v[oid]}">{$v[oid]}</a></td>
+<td><a href="javascript:;" onclick="Dq('fields',2,0);Dq('kw','='+this.innerHTML);">{$v[type]}</a></td>
+<td data-hide-1200="1"><a href="javascript:;" onclick="Dq('fields',1,0);Dq('kw','='+this.innerHTML);">{$v[company]}</a></td>
+<td data-hide-1200="1" data-hide-1400="1"><a href="javascript:;" onclick="Dq('fields',3,0);Dq('kw','='+this.innerHTML);">{$v[taxid]}</a></td>
+<td><a href="javascript:;" onclick="Dq('fields',4,0);Dq('kw','={$v[amount]}');">{$DT[money_sign]}{$v[amount]}</a></td>
+<td><a href="javascript:;" onclick="Dq('datetype','addtime',0);Dq('date',this.innerHTML);">{$v[addtime]}</a></td>
+<td><a href="javascript:;" onclick="Dq('datetype','updatetime',0);Dq('date',this.innerHTML);">{$v[updatetime]}</a></td>
+<td><a href="{userurl($v[buyer], 'file=contact')}" target="_blank">{$v[buyer]}</a></td>
+<td>
+<a href="?action=update&step=invoice&itemid={$v[oid]}">
+{if $v[url]}
+<span class="f_green">已上传</span>
+{elseif $v[send_type]}
+<span class="f_green">已快递</span>
+{else}
+<span class="f_gray">待开票</span>
+{/if}
+</a>
+</td>
+<td><a href="?action=update&step=invoice&itemid={$v[oid]}" class="t">查看</a></td>
+</tr>
+{/loop}
+</table>
+</div>
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('trade');m('action_{$action}');</script>
+
+{elseif $action == 'express'}
+<!--[我的快递]-->
+<div class="tt">
+<form action="?" id="search">
+<input type="hidden" name="action" value="{$action}"/>
+{$fields_select}&nbsp;
+<input type="text" size="30" name="kw" value="{$kw}" title="关键词" placeholder="关键词"/>&nbsp;
+{$status_select}&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?action={$action}');"/>
+<div class="b10"></div>
+<div>
+<select name="datetype">
+<option value="addtime"{if $datetype == 'addtime'} selected{/if}>下单时间</option>
+<option value="updatetime"{if $datetype == 'updatetime'} selected{/if}>更新时间</option>
+</select>&nbsp;
+{dcalendar('fromdate', $fromdate, '-', 1)} 至 {dcalendar('todate', $todate, '-', 1)}&nbsp;
+</div>
+</form>
+</div>
+<div class="bd">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="150">快递公司</th>
+<th>快递单号</th>
+{if strpos($DT_MBS, 'IE') === false}<th width="40">复制</th>{/if}
+<th width="100">快递状态</th>
+<th data-hide-1200="1" data-hide-1400="1">收件地址</th>
+<th width="100">收件人</th>
+<th width="150">收件手机</th>
+<th width="150" data-hide-1200="1" data-hide-1600="1">下单时间</th>
+<th width="150">更新时间</th>
+<th width="40">订单</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><a href="javascript:;" onclick="Dq('fields',2,0);Dq('kw','='+this.innerHTML);">{$v[send_type]}</a></td>
+<td title="快递追踪"><a href="?action=update&step=express&itemid={$v[itemid]}" class="t">{$v[send_no]}</a></td>
+{if strpos($DT_MBS, 'IE') === false}<td><img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#copy-{$v[itemid]}" onclick="Dtoast('快递单号 {$v[send_no]} 已复制');"/></td>{/if}
+<td><a href="javascript:;" onclick="Dq('status','{$v[send_status]}');">{$v[dstatus]}</a></td>
+<td align="left" data-hide-1200="1" data-hide-1400="1">{$v[buyer_address]}</td>
+<td>{$v[buyer_name]}</td>
+<td><a href="javascript:;" onclick="Dq('fields',4,0);Dq('kw','='+this.innerHTML);">{$v[buyer_mobile]}</a></td>
+<td data-hide-1200="1" data-hide-1600="1"><a href="javascript:;" onclick="Dq('datetype','addtime',0);Dq('date',this.innerHTML);">{$v[addtime]}</a></td>
+<td><a href="javascript:;" onclick="Dq('datetype','updatetime',0);Dq('date',this.innerHTML);">{$v[updatetime]}</a></td>
+<td><a href="?action=update&step=detail&itemid={$v[itemid]}" class="t">查看</a></td>
+</tr>
+{/loop}
+</table>
+</div>
+<div class="pages">{$pages}</div>
+{if strpos($DT_MBS, 'IE') === false}
+<div style="z-index:1000;position:absolute;top:-10000px;">
+{loop $lists $k $v}
+<textarea id="copy-{$v[itemid]}">{$v[send_no]}</textarea>
+{/loop}
+</div>
+{load('clipboard.min.js')}
+<script type="text/javascript">var clipboard = new Clipboard('[data-clipboard-action]');</script>
+{/if}
+<script type="text/javascript">
+s('trade');m('action_express');
+</script>
+
+{elseif $action == 'service'}
+<!--[售后服务]-->
+<div class="tt">
+<form action="?" id="search">
+<input type="hidden" name="action" value="{$action}"/>
+{$fields_select}&nbsp;
+<input type="text" size="30" name="kw" value="{$kw}" title="关键词" placeholder="关键词"/>&nbsp;
+{$type_select}&nbsp;
+{$status_select}&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?action={$action}');"/>
+<div class="b10"></div>
+<div>
+<select name="datetype">
+<option value="updatetime"{if $datetype == 'updatetime'} selected{/if}>更新时间</option>
+<option value="addtime"{if $datetype == 'addtime'} selected{/if}>申请时间</option>
+</select>&nbsp;
+{dcalendar('fromdate', $fromdate, '-', 1)} 至 {dcalendar('todate', $todate, '-', 1)}&nbsp;
+<input type="text" size="10" name="buyer" value="{$buyer}" title="买家" placeholder="买家"/>&nbsp;
+<input type="text" size="10" name="oid" value="{$oid}" title="单号" placeholder="单号"/>&nbsp;
+</div>
+</form>
+</div>
+
+<div class="nav">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="{if $typeid===''}nav_2{else}nav_1{/if}"><a href="?action={$action}">全部服务</a></td>
+{loop $dservice $k $v}
+<td class="{if $typeid===$k}nav_2{else}nav_1{/if}"><a href="?action={$action}&typeid={$k}">{$v}</a></td>
+{/loop}
+<td>&nbsp;</td>
+</tr>
+</table>
+</div>
+<div class="bd">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th>商品信息</th>
+<th width="120">单价</th>
+<th width="60">数量</th>
+<th width="120">实付</th>
+<th width="100">买家</th>
+<th width="120">类型</th>
+<th width="120">状态</th>
+</tr>
+</table>
+{loop $lists $k $v}
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr bgcolor="#F5F5F5">
+<td colspan="8" class="f_gray">
+<span class="f_r">
+{if $v[status] == 0}
+<a href="?action=process&step=check&itemid={$v[itemid]}">受理申请</a> | 
+{elseif $v[status] == 4}
+	<a href="?action=process&step=receive&itemid={$v[itemid]}">验收商品</a> | 
+{elseif $v[status] == 5}
+	<a href="?action=process&step=send&itemid={$v[itemid]}">发回商品</a> | 
+{/if}
+<a href="?action=update&step=detail&itemid={if $v[pid]}{$v[pid]}{else}{$v[oid]}{/if}">订单详情</a> | 
+<a href="?action=process&step=service&itemid={$v[itemid]}">服务详情</a>&nbsp;
+</span>
+&nbsp; <span class="c_p" onclick="Dq('datetype','addtime',0);Dq('date',this.innerHTML);">{$v[addtime]}</span> &nbsp; <span class="c_p" onclick="Dq('oid',{if $v[pid]}{$v[pid]}{else}{$v[oid]}{/if});">订单号：{if $v[pid]}{$v[pid]}{else}{$v[oid]}{/if}<span>
+</td>
+</tr>
+<tr align="center">
+<td width="70"><a href="javascript:_preview('{$v[thumb]}');"><img src="{if $v[thumb]}{$v[thumb]}{else}{DT_STATIC}image/nopic60.png{/if}" width="60" height="60" onerror="this.src=errimg;"/></a></td>
+<td align="left" valign="top" class="f_gray lh18"><a href="{$v[linkurl]}" target="_blank" class="t">{$v[title]}</a>
+<td width="120">{$DT[money_sign]}{$v[price]}</td>
+<td width="60">{$v[number]}</td>
+<td width="120">{$DT[money_sign]}{$v[amount]}</td>
+<td width="100"><div style="margin-bottom:16px;"><a href="{userurl($v[buyer], 'file=contact')}" target="_blank">{$v[buyer]}</a></div>{if $DT[im_web]}{im_web($v[buyer].'&mid=16&itemid='.$v[mallid])} {/if}<a href="javascript:;" onclick="Dwidget('message.php?action=send&touser={$v[buyer]}', '发送信件');"><img src="{DT_STATIC}image/msg.gif" title="发送站内信" align="absmiddle"/></a></td>
+<td width="120"><a href="javascript:;" onclick="Dq('typeid','{$v[typeid]}');">{$v[typename]}</a></a>
+<td width="120">
+<a href="javascript:;" onclick="Dq('status','{$v[status]}');">{$v[dstatus]}</a>
+{if $v[status] == 0}
+	<a href="?action=process&step=check&itemid={$v[itemid]}"><span class="trade_step">受理</span></a>
+{elseif $v[status] == 4}
+	<a href="?action=process&step=receive&itemid={$v[itemid]}"><span class="trade_step">验收</span></a>
+{elseif $v[status] == 5}
+	<a href="?action=process&step=send&itemid={$v[itemid]}"><span class="trade_step">发回</span></a>
+{/if}
+</td>
+</tr>
+</table>
+{/loop}
+</div>
+
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('trade');m('action_{$action}');</script>
+{else}
+<!--[我收到的订单]-->
+<div class="tt">
+<form action="?" id="search">
+<input type="hidden" name="mid" value="{$mid}"/>
+{$fields_select}&nbsp;
+<input type="text" size="30" name="kw" value="{$kw}" title="关键词" placeholder="关键词"/>&nbsp;
+<input type="text" size="10" name="itemid" value="{$itemid}" title="单号" placeholder="单号"/>&nbsp;
+<input type="text" size="10" name="mallid" value="{$mallid}" title="商品ID" placeholder="商品ID"/>&nbsp;
+<input type="text" size="10" name="buyer" value="{$buyer}" title="买家" placeholder="买家"/>&nbsp;
+<input type="text" size="10" name="inviter" value="{$inviter}" title="分销会员" placeholder="分销会员"/>&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?action=index');"/><br/>
+<div class="b10"></div>
+<div>
+<select name="datetype">
+<option value="addtime"{if $datetype == 'addtime'} selected{/if}>下单时间</option>
+<option value="updatetime"{if $datetype == 'updatetime'} selected{/if}>更新时间</option>
+</select>&nbsp;
+{dcalendar('fromdate', $fromdate, '-', 1)} 至 {dcalendar('todate', $todate, '-', 1)}&nbsp;
+{$status_select}&nbsp;
+<input type="text" size="15" name="skuid" value="{$skuid}" title="条形编码" placeholder="条形编码"/>&nbsp;
+<input type="text" size="15" name="mobile" value="{$mobile}" title="买家手机" placeholder="买家手机"/>&nbsp;
+<label><input type="checkbox" name="cod" value="1"{if $cod} checked{/if}/> 货到付款</label>&nbsp;
+</div>
+</form>
+</div>
+
+<div class="nav">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="{if !in_array($nav, array(0,1,2,3,4,7))}nav_2{else}nav_1{/if}"><a href="?action=index">全部</a></td>
+<td class="{if $nav==0}nav_2{else}nav_1{/if}"><a href="?nav=0">待确认 <span>({php echo $db->count($table, "seller='$_username' AND pid=0 AND status=0");})</span></a></td>
+<td class="{if $nav==1}nav_2{else}nav_1{/if}"><a href="?nav=1">待付款 <span>({php echo $db->count($table, "seller='$_username' AND pid=0 AND status=1");})</span></a></td>
+<td class="{if $nav==2}nav_2{else}nav_1{/if}"><a href="?nav=2">待发货 <span>({php echo $db->count($table, "seller='$_username' AND pid=0 AND status=2");})</span></a></td>
+<td class="{if $nav==3}nav_2{else}nav_1{/if}"><a href="?nav=3">待收货 <span>({php echo $db->count($table, "seller='$_username' AND pid=0 AND status=3");})</span></a></td>
+<td class="{if $nav==4}nav_2{else}nav_1{/if}"><a href="?nav=4">已完成 <span>({php echo $db->count($table, "seller='$_username' AND pid=0 AND status=4");})</span></a></td>
+<td class="{if $nav==7}nav_2{else}nav_1{/if}"><a href="?nav=7">待评价 <span>({php echo $db->count($table, "seller='$_username' AND pid=0 AND status=4 AND buyer_star=0");})</span></a></td>
+</tr>
+</table>
+</div>
+
+<div class="bd">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th>商品信息</th>
+<th width="60">数量</th>
+<th width="120">订单金额</th>
+<th width="100">买家</th>
+<th width="120">订单状态</th>
+</tr>
+</table>
+{loop $lists $k $v}
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr bgcolor="#F5F5F5">
+<td colspan="7" class="f_gray">
+<span class="f_r">
+{if $v[status] == 0}
+<a href="?action=update&step=edit&itemid={$v[itemid]}&confirm=1">确认订单</a> | 
+<a href="?action=update&step=edit&itemid={$v[itemid]}">修改订单</a> | 
+<a href="?action=update&step=close&itemid={$v[itemid]}" onclick="return confirm('确定要关闭此交易吗？此操作将不可撤销');">关闭交易</a> | 
+{elseif $v[status] == 1}
+{if $v[bill]}
+<a href="?itemid={$v[itemid]}&action=update&step=bill">审核付款</a> | 
+{else}
+<a href="?action=update&step=edit&itemid={$v[itemid]}">修改订单</a> | 
+<a href="?action=update&step=close&itemid={$v[itemid]}" onclick="return confirm('确定要关闭此交易吗？此操作将不可撤销');">关闭交易</a> | 
+{/if}
+{elseif $v[status] == 2}
+{if isset($tags[$v[itemid]])}<a href="?action=update&step=split&itemid={$v[itemid]}">拆分订单</a> | {/if}
+<a href="?action=update&step=send_goods&itemid={$v[itemid]}">确认发货</a> | 
+<a href="?action=update&step=print&itemid={$v[itemid]}" target="_blank">打印订单</a> | 
+{elseif $v[status] == 3}
+	{if $v[lefttime]}
+	<span class="f_blue"><img src="{DT_STATIC}image/clock.gif" width="12" height="12"/> 距买家处理订单还剩{$v[lefttime]}</span>&nbsp;
+	<a href="?action=update&step=add_time&itemid={$v[itemid]}">延长时间</a> | 
+	{else}
+	<span class="f_blue">买家处理订单超时</span>
+	<a href="?action=update&step=get_pay&itemid={$v[itemid]}">直接收款</a> | 
+	{/if}
+	{if $v[send_type] && $v[send_no]}
+	<a href="?action=update&step=express&itemid={$v[itemid]}">快递追踪</a> | 
+	{/if}
+{elseif $v[status] == 4}
+	{if $MODULE[$v[mid]][module] == 'mall'}
+	{if $v[buyer_star]}
+	<a href="?action=update&step=comment_detail&itemid={$v[itemid]}">评价详情</a> | 
+	{else}
+	<a href="?action=update&step=comment&itemid={$v[itemid]}">评价</a> | 
+	{/if}
+	{/if}
+{elseif $v[status] == 5}
+	{if $v[buyer_reason]}<a href="?action=update&step=refund_agree&itemid={$v[itemid]}">同意退款</a> | {/if}
+{elseif $v[status] == 7}
+	{if $v[send_time]}
+	<a href="?action=update&step=cod_success&itemid={$v[itemid]}" onclick="return confirm('您确定已经收到货款，交易完成吗？此操作将不可撤销');">确认完成</a> | 
+	{else}
+	{if isset($tags[$v[itemid]])}<a href="?action=update&step=split&itemid={$v[itemid]}">拆分订单</a> | {/if}
+	<a href="?action=update&step=send_goods&itemid={$v[itemid]}">确认发货</a> | 
+	{/if}
+{elseif $v[status] == 8}
+	<a href="?action=update&step=close&itemid={$v[itemid]}" onclick="return confirm('确定要删除此订单吗？此操作将不可撤销');">删除订单</a> | 
+{/if}
+<a href="?action=update&step=detail&itemid={$v[itemid]}">订单详情</a>&nbsp;
+</span>
+&nbsp; <span class="c_p" onclick="Dq('datetype','addtime',0);Dq('date',this.innerHTML);">{$v[addtime]}</span> &nbsp; <span class="c_p" onclick="Go('?action=update&step=detail&itemid={$v[itemid]}');">订单号：{$v[itemid]}<span>
+</td>
+</tr>
+<tr align="center">
+<td width="70"><a href="javascript:_preview('{$v[thumb]}');"><img src="{if $v[thumb]}{$v[thumb]}{else}{DT_STATIC}image/nopic60.png{/if}" width="60" height="60" onerror="this.src=errimg;"/></a></td>
+<td align="left" valign="top" class="f_gray lh18"><a href="{$v[linkurl]}" target="_blank" class="t">{$v[title]}</a><br/>{$v[par]}</td>
+<td width="60">{$v[number]}</td>
+<td width="120"><a href="javascript:;" onclick="Dq('fields',2,0);Dq('kw','={$v[money]}');">{$DT[money_sign]}{$v[money]}</a></td>
+<td width="100"><div style="margin-bottom:16px;"><a href="{userurl($v[buyer], 'file=contact')}" target="_blank">{$v[buyer]}</a></div>{if $DT[im_web]}{im_web($v[buyer].'&mid=16&itemid='.$v[mallid])} {/if}<a href="javascript:;" onclick="Dwidget('message.php?action=send&touser={$v[buyer]}', '发送信件');"><img src="{DT_STATIC}image/msg.gif" title="发送站内信" align="absmiddle"/></a></td>
+<td width="120">
+<a href="javascript:;" onclick="Dq('status','{$v[status]}');">{if $v[status] == 1 && $v[bill]}<span class="f_blue">待审款</span>{else}{$v[dstatus]}{/if}</a>
+{if $v[status] == 0}
+<a href="?action=update&step=edit&itemid={$v[itemid]}&confirm=1"><span class="trade_step">确认</span></a>
+{elseif $v[status] == 1}
+	{if $v[bill]}<a href="?itemid={$v[itemid]}&action=update&step=bill"><span class="trade_step">审款</span></a>{/if}
+{elseif $v[status] == 2}
+<a href="?action=update&step=send_goods&itemid={$v[itemid]}"><span class="trade_step">发货</span></a>
+{elseif $v[status] == 4}
+	{if $MODULE[$v['mid']]['module'] == 'mall' && !$v[buyer_star]}
+	<a href="?action=update&step=comment&itemid={$v[itemid]}"><span class="trade_step">评价</span></a>
+	{/if}
+{elseif $v[status] == 5}
+	<a href="?action=update&step=refund_agree&itemid={$v[itemid]}"><span class="trade_step">退款</span></a>
+{elseif $v[status] == 10}
+	{if $v[send_time]}
+	<a href="?action=update&step=cod_success&itemid={$v[itemid]}" onclick="return confirm('您确定已经收到货款，交易完成吗？此操作将不可撤销');"><span class="trade_step">完成</span></a>
+	{else}
+	<a href="?action=update&step=send_goods&itemid={$v[itemid]}"><span class="trade_step">发货</span></a>
+	{/if}
+{/if}
+</td>
+</tr>
+{if isset($tags[$v[itemid]])}
+{loop $tags[$v[itemid]] $i $t}
+<tr align="center">
+<td><a href="javascript:_preview('{$t[thumb]}');"><img src="{if $t[thumb]}{$t[thumb]}{else}{DT_STATIC}image/nopic60.png{/if}" width="60" height="60" onerror="this.src=errimg;"/></a></td>
+<td align="left" valign="top" class="f_gray lh18"><a href="{$t[linkurl]}" target="_blank" class="t">{$t[title]}</a><br/>{$t[par]}{if $t[note]}备注：{$t[note]}{/if}</td>
+<td>{$t[number]}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+{/loop}
+{/if}
+</table>
+{/loop}
+</div>
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('trade');m('action');</script>
+{/if}
+{template 'footer', 'member'}

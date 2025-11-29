@@ -1,0 +1,381 @@
+{template 'header', 'member'}
+<div class="menu{if isset($widget)} dsn{/if}">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="tab" id="add"><a href="?mid={$mid}&action=add"><span>发布{$MOD[name]}</span></a></td>
+{if $_userid}
+<td class="tab" id="s3"><a href="?mid={$mid}"><span>已发布({$nums[3]})</span></a></td>
+<td class="tab" id="s2"><a href="?mid={$mid}&status=2"><span>审核中({$nums[2]})</span></a></td>
+<td class="tab" id="s1"><a href="?mid={$mid}&status=1"><span>未通过({$nums[1]})</span></a></td>
+<td class="tab" id="s4"><a href="?mid={$mid}&status=4"><span>待发布({$nums[4]})</span></a></td>
+{/if}
+</tr>
+</table>
+</div>
+{load('moment.css')}
+{load('moment.js')}
+{load('player.js')}
+{if $action=='add' || $action=='edit'}
+{load('webuploader.min.js')}
+{load('url2video.js')}
+<iframe src="" name="send" id="send" style="display:none;"></iframe>
+<form method="post" action="?" id="dform" target="send" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="post[topicid]" value="{$topicid}" id="topicid"/>
+<input type="hidden" name="post[quoteid]" value="{$quoteid}" id="quoteid"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+{if $status==1 && $action=='edit' && $note}
+<tr>
+<td class="tl">未通过原因</td>
+<td class="tr f_blue">{$note}</td>
+</tr>
+{/if}
+
+{if $quote}
+<tr id="quote">
+<td class="tl">转发{$MOD[name]}</td>
+<td class="tr">
+<a href="{userurl($quote[username], 'file=space&mid='.$mid)}" class="t" target="_blank">@{$quote[passport]}</a> &nbsp; &nbsp; <a href="javascript:;" onclick="if(confirm('确定要取消转发{$MOD[name]}吗？')){$('#quoteid').val(0);$('#quote').hide();}"><img src="{DT_STATIC}image/ico-del.png" width="11" height="11" title="取消转发"/></a>
+<div class="lh20">{$quote[introduce]} <a href="{$MOD[linkurl]}{$quote[linkurl]}" class="t" target="_blank">查看原文</a></div>
+</td>
+</tr>
+{/if}
+
+{if $topic}
+<tr id="topic">
+<td class="tl">参与话题</td>
+<td class="tr">
+<a href="{$MOD[linkurl]}{rewrite('topic.php?itemid='.$topicid)}" class="t" target="_blank">#{$topic[title]}#</a> &nbsp; &nbsp; <a href="javascript:;" onclick="if(confirm('确定要取消参与话题吗？')){$('#topicid').val(0);$('#topic').hide();}"><img src="{DT_STATIC}image/ico-del.png" width="11" height="11" title="取消参与"/></a></td>
+</tr>
+{/if}
+{if $FD}{fields_html('<td class="tl">', '<td class="tr">', $item)}{/if}
+<tr>
+<td class="tl"><span class="f_red">*</span> {$MOD[name]}内容</td>
+<td class="tr">
+<div class="mm-editor">
+<textarea name="post[content]" id="content" placeholder="写下这一刻的想法">{$content}</textarea>
+<div>
+	<img src="{DT_STATIC}image/me-image.png" id="me-image" title="上传图片"/>
+	<img src="{DT_STATIC}image/me-video.png" id="me-video" title="上传视频"/>
+	<img src="{DT_STATIC}image/me-face.png" id="me-face" title="表情"/>
+	<img src="{DT_STATIC}image/me-at.png" id="me-at" title="提到某人"/>
+	<img src="{DT_STATIC}image/me-hash.png" id="me-hash" title="话题"/>
+	{if $action=='add'}<img src="{DT_STATIC}image/me-time.png" id="me-time" title="定时发布"/>{/if}
+	<img src="{DT_STATIC}image/me-more.png" id="me-more" title="更多"/>
+</div>
+</div><span id="dcontent" class="f_red"></span>
+</td>
+</tr>
+
+<tr{if !$thumbs} class="dsn"{/if} id="mt-image">
+<td class="tl">上传图片</td>
+<td class="tr">{template 'upload-album', 'chip'}</td>
+</tr>
+<tbody{if !$video} class="dsn"{/if} id="mt-video">
+<tr>
+<td class="tl">上传视频</td>
+<td class="tr">{template 'upload-video', 'chip'}</td>
+</tr>
+</tbody>
+
+<tr class="dsn" id="mt-face">
+<td class="tl">插入表情</td>
+<td class="tr"><div class="mm-faces">{loop $faces $k $v}<img src="{DT_PATH}file/face/{$k}.png" onclick="me_into('{$k}', this.title);" width="24" height="24" title="{$v}"/>{/loop}</div></td>
+</tr>
+
+<tr class="dsn" id="mt-at">
+<td class="tl">提到某人</td>
+<td class="tr"><input type="text" id="at" size="40" placeholder="输入会员名或昵称"/><img src="{DT_STATIC}image/ico-fadd.png" title="选择好友" class="jc" onclick="Dwidget(AJPath+'?moduleid=2&action=choose&job=friend&from=moment&fid=at&key=passport', '选择好友', 980, 600);"/><input type="button" value="插入" class="btn_b mm-insert" onclick="me_into(Dd('at').value, 'at');"/></td>
+</tr>
+
+
+<tr class="dsn" id="mt-hash">
+<td class="tl">插入话题</td>
+<td class="tr"><input type="text" id="hash" size="40" placeholder="输入话题"/><img src="{DT_STATIC}image/ico-new.png" title="选择话题" class="jc" onclick="Dwidget(AJPath+'?moduleid={$moduleid}&action=choose&job=topic&from=moment&fid=hash', '选择话题', 980, 600);"/><input type="button" value="插入" class="btn_b mm-insert" onclick="me_into(Dd('hash').value, 'hash');"/></td>
+</tr>
+
+{if $action=='add'}
+<tr class="dsn" id="mt-time">
+<td class="tl">定时发布</td>
+<td class="tr">{dcalendar('post[addtime]', $addtime, '-', 1)}</td>
+</tr>
+{/if}
+
+<tbody class="dsn" id="mt-more">
+<tr>
+<td class="tl">所属分类</td>
+<td class="tr">{category_select('post[catid]', '选择分类', $catid, $moduleid)} <span id="dcatid" class="f_red"></span></td>
+</tr>
+{if $CP}
+<script type="text/javascript">
+var property_catid = {$catid};
+var property_itemid = {$itemid};
+var property_admin = 0;
+</script>
+{load('property.js')}
+<tbody id="load_property" style="display:none;">
+<tr><td></td><td></td></tr>
+</tbody>
+{/if}
+<tr>
+<td class="tl">公开程度</td>
+<td class="tr">
+<select name="post[open]">
+<option value="1"{if $open == 1} selected{/if}>公开</option>
+<option value="2"{if $open == 2} selected{/if}>粉丝可见</option>
+<option value="3"{if $open == 3} selected{/if}>好友可见</option>
+<option value="0"{if $open == 0} selected{/if}>自己可见</option>
+</select>
+</td>
+</tr>
+<tr>
+<td class="tl">评论功能</td>
+<td class="tr">
+<select name="post[comment]">
+<option value="1"{if $comment == 1} selected{/if}>开放</option>
+<option value="2"{if $comment == 2} selected{/if}>筛选</option>
+<option value="0"{if $comment == 0} selected{/if}>关闭</option>
+</select>
+</td>
+</tr>
+</tbody>
+{if $fee_add}
+<tr>
+<td class="tl">发布此信息需消费</td>
+<td class="tr"><span class="f_b f_red">{$fee_add}</span> {$fee_unit}</td>
+</tr>
+{if $fee_currency == 'money'}
+<tr>
+<td class="tl">{$DT[money_name]}余额</td>
+<td class="tr"><span class="f_blue f_b">{$_money}{$fee_unit}</span> <a href="charge.php?action=pay" target="_blank" class="t">[充值]</a></td>
+</tr>
+{else}
+<tr>
+<td class="tl">{$DT[credit_name]}余额</td>
+<td class="tr"><span class="f_blue f_b">{$_credit}{$fee_unit}</span> <a href="credit.php?action=buy" target="_blank" class="t">[购买]</a></td>
+</tr>
+{/if}
+{/if}
+{if $need_password}
+<tr>
+<td class="tl"><span class="f_red">*</span> 支付密码</td>
+<td class="tr">{template 'payword', 'chip'} <span id="dpassword" class="f_red"></span></td>
+</tr>
+{/if}
+{if $need_question}
+<tr>
+<td class="tl"><span class="f_red">*</span> 验证问题</td>
+<td class="tr">{template 'question', 'chip'} <span id="danswer" class="f_red"></span></td>
+</tr>
+{/if}
+{if $need_captcha}
+<tr>
+<td class="tl"><span class="f_red">*</span> 验证码</td>
+<td class="tr">{template 'captcha', 'chip'} <span id="dcaptcha" class="f_red"></span></td>
+</tr>
+{/if}
+{if $MOD[tip_add]}
+<tr>
+<td class="tl">规则说明</td>
+<td class="ts">{$MOD[tip_add]}</td>
+</tr>
+{/if}
+</table>
+<div class="sbt"><input type="submit" name="submit" value=" 提 交 " class="btn_g"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value=" 返 回 " class="btn" onclick="history.back(-1);"/></div>
+</form>
+{load('clear.js')}
+{if $action=='add'}
+<script type="text/javascript">s('mid_{$mid}');m('{$action}');</script>
+{else}
+<script type="text/javascript">s('mid_{$mid}');m('s{$status}');</script>
+{/if}
+{else}
+<div class="tt">
+<form action="?">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="status" value="{$status}"/>
+&nbsp;{category_select('catid', '所有分类', $catid, $moduleid)}&nbsp;
+<input type="text" size="70" name="kw" value="{$kw}" title="关键词" placeholder="关键词"/>&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?mid={$mid}&status={$status}');"/>
+</form>
+</div>
+<div class="ls">
+<form method="post">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="20"><input type="checkbox" onclick="checkall(this.form);" title="全选/反选"/></th>
+<th width="100">我</th>
+<th>内容</th>
+<th width="40">修改</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td valign="top"><input type="checkbox" name="itemid[]" value="{$v[itemid]}"/></td>
+<td valign="top"><img src="{useravatar($v[username])}" width="64" class="avatar"/><div class="b10"></div>{if $v[passport]}{$v[passport]}{else}{$v[username]}{/if}<div class="b10"></div></td>
+<td valign="top" align="left">
+<div class="mm-info">
+<span class="f_r">
+点赞 ({$v[likes]}) &nbsp;|&nbsp; 
+评论 ({$v[comments]}) &nbsp;|&nbsp; 
+转发 ({$v[quotes]}) &nbsp;|&nbsp; 
+收藏 ({$v[favorites]}) &nbsp;|&nbsp; 
+举报 ({$v[reports]})
+</span>
+<span title="{timetodate($v[addtime], 5)}">{timetoread($v[addtime], 5)}</span>
+ &nbsp; <a href="{$v[caturl]}" target="_blank">{$v[catname]}</a>
+</div>
+{if $v[topic]}<div class="mm-topic"><a href="{$MOD[linkurl]}{rewrite('topic.php?itemid='.$v['topicid'])}" target="_blank"><b>#{$v[topic]}#</b></a></div>{/if}
+<div class="mm-text" id="content-{$v[itemid]}">{$v[introduce]}{if $v[more]}<i onclick="mm_more({$mid}, {$v[itemid]});">全文</i>{/if}</div>
+{if $v[linkto]}<div class="mm-link"><a href="{gourl($v[linkto])}" target="_blank"><i>网页链接</i></a></div>{/if}
+{if $v[pics] || $v[video]}
+<div class="mm-pics">
+	<ul id="thumbs-{$v[itemid]}">
+	{if $v[video]}<li><img src="{DT_STATIC}image/play.gif" onclick="mm_pic_show('{$v[itemid]}', this);" data-video="{$v[video]}"/></li>{/if}
+	{loop $v[pics] $p}
+	{if $p}<li><img src="{$p}" onclick="mm_pic_show('{$v[itemid]}', this);"/></li>{/if}
+	{/loop}
+	</ul>
+	<p id="thumbshow-{$v[itemid]}" onclick="mm_pic_next('{$v[itemid]}');"></p>
+</div>
+{/if}
+
+{if $v[quoteid]}
+{php $q = get_quote($v['quoteid']);}
+{if $q}
+	{if $q[open]==1}
+	<div class="mm-quote">
+		<div class="mm-user"><a href="{$MODULE[$moduleid][linkurl]}{$q[linkurl]}" target="_blank" title="原文"><span></span></a><a href="{userurl($q[username], 'file=space&mid='.$moduleid)}" target="_blank"><b>@{if $q[passport]}{$q[passport]}{else}{$q[username]}{/if}</b></a></div>
+		<div class="mm-time"><span title="{timetodate($q[addtime], 5)}">{timetoread($q[addtime], 5)}</span></div>
+		{if $q[topic]}<div class="mm-topic"><a href="{$MOD[linkurl]}{rewrite('topic.php?itemid='.$q['topicid'])}" target="_blank"><b>#{$q[topic]}#</b></a></div>{/if}
+		<div class="mm-text" id="content-{$q[itemid]}-{$v[itemid]}">{$q[introduce]}{if $q[more]}<i onclick="mm_more({$moduleid}, {$q[itemid]}, {$v[itemid]});">全文</i>{/if}</div>
+		{if $q[linkto]}<div class="mm-link"><a href="{gourl($q[linkto])}" target="_blank"><i>网页链接</i></a></div>{/if}
+		{if $q[pics] || $q[video]}
+		<div class="mm-pics">
+			<ul id="thumbs-{$v[itemid]}-{$q[itemid]}">
+			{if $q[video]}<li><img src="{DT_STATIC}image/play.gif" onclick="mm_pic_show('{$v[itemid]}-{$q[itemid]}', this);" data-video="{$q[video]}"/></li>{/if}
+			{if $q[pics]}
+			{loop $q[pics] $p}
+			{if $p}<li><img src="{$p}" onclick="mm_pic_show('{$v[itemid]}-{$q[itemid]}', this);"/></li>{/if}
+			{/loop}
+			{/if}
+			</ul>
+			<p id="thumbshow-{$v[itemid]}-{$q[itemid]}" onclick="mm_pic_next('{$v[itemid]}-{$q[itemid]}');"></p>
+			</div>
+		{/if}
+	</div>
+	{else}
+	<div class="mm-lost">原文已隐藏</div>
+	{/if}
+{else}
+	<div class="mm-lost">原文已删除</div>
+{/if}
+{/if}
+
+</td>
+<td valign="top"><a href="?mid={$mid}&action=edit&itemid={$v[itemid]}"><img width="16" height="16" src="{DT_STATIC}member/edit.png" title="修改" alt=""/></a></td>
+</tr>
+{/loop}
+</table>
+</div>
+{if $MG[delete]}
+<div class="btns">
+<label><input type="checkbox" onclick="checkall(this.form);" title="全选/反选"/></label>
+<input type="submit" value=" 删除选中 " class="btn_r" onclick="if(confirm('确定要删除选中{$MOD[name]}吗？')){this.form.action='?mid={$mid}&status={$status}&action=delete'}else{return false;}"/>
+</div>
+{/if}
+</form>
+{if $show_limit}
+<div class="limit">
+{if $mod_limit}
+总共可发 <span class="f_b f_red">{$mod_limit}</span> 条&nbsp;&nbsp;&nbsp;
+当前已发 <span class="f_b">{$limit_used}</span> 条&nbsp;&nbsp;&nbsp;
+还可以发 <span class="f_b f_blue">{$limit_free}</span> 条&nbsp;&nbsp;&nbsp;
+{/if}
+{if !$MG[fee_mode] && $MOD[fee_add]}
+发布信息收费 <span class="f_b f_red">{$MOD[fee_add]}</span> {if $MOD[fee_currency] == 'money'}{$DT[money_unit]}{else}{$DT[credit_unit]}{/if}/条&nbsp;&nbsp;&nbsp;
+可免费发布 <span class="f_b">{if $mod_free_limit<0}无限{else}{$mod_free_limit}{/if}</span> 条&nbsp;&nbsp;&nbsp;
+{/if}
+</div>
+{/if}
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('mid_{$mid}');m('s{$status}');</script>
+{/if}
+{if $action == 'add' || $action == 'edit'}
+<script type="text/javascript">
+function check() {
+	var l;
+	var f;
+	f = 'content';
+	l = Dd(f).value.length;
+	if(l < 1) {
+		Dmsg('请填写动态内容', f);
+		return false;
+	}
+	var v = Dd(f).value;
+	if(v.indexOf('#') != -1 && substr_count(v, '#')%2 != 0) {
+		Dmsg('{$L[pass_ht]}', f);
+		return false;
+	}
+	/*
+	if(v.indexOf('##') != -1) {
+		Dmsg('{$L[pass_ht2]}', f);
+		return false;
+	}
+	*/
+	if(v.indexOf('@ ') != -1) {
+		Dmsg('{$L[pass_at1]}', f);
+		return false;
+	}
+	if(v.indexOf('@@') != -1) {
+		Dmsg('{$L[pass_at2]}', f);
+		return false;
+	}
+	if(v.indexOf('@') != -1 && substr_count(v, '@') > substr_count(v, ' ')) {
+		Dmsg('{$L[pass_at]}', f);
+		return false;
+	}
+	{if $FD}{fields_js()}{/if}
+	{if $CP}{property_js()}{/if}
+{if $need_password}
+	f = 'password';
+	l = Dd(f).value.length;
+	if(l < 6) {
+		Dmsg('请填写支付密码', f);
+		return false;
+	}
+{/if}
+{if $need_question}
+	f = 'answer';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证问题', f);
+		return false;
+	}
+{/if}
+{if $need_captcha}
+	f = 'captcha';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', f);
+		return false;
+	}
+{/if}
+	return true;
+}
+$(function(){
+	me_init();
+	{if $action=='add'}
+	if(window.self != window.top) {
+		$('.menu').hide();
+		$('.btn').val(' 取 消 ');
+		$('.btn').attr('onclick', 'parent.cDialog();');
+	}
+	{/if}
+});
+var destoon_oauth = '{str_replace(",moment", "", $EXT[oauth])}';
+</script>
+{/if}
+{if $action=='add' && strlen($EXT[oauth]) > 1}{load('weibo.js')}{/if}
+{template 'footer', 'member'}

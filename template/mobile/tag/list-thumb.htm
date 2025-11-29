@@ -1,0 +1,9 @@
+{loop $tags $k $t}
+<div class="ui-list-img">
+<div>
+<a href="{$t[linkurl]}"><img src="{if $t[thumb]}{$t[thumb]}{else}{DM_SKIN}80x60.png{/if}" alt=""/></a>
+{if $datetype}<p>{if isset($t[hits])}<i class="ui-ico-hits ui-fr">{$t[hits]}浏览</i>{/if}<i class="ui-ico-time">{timetodate($t[addtime], $datetype)}</i></p>{/if}
+<a href="{$t[linkurl]}"><strong>{$t[title]}</strong></a>
+</div>
+</div>
+{/loop}

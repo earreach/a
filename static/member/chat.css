@@ -1,0 +1,133 @@
+/*
+	DESTOON Copyright (C)2008-2099 www.destoon.com
+	This is NOT a freeware,Use is subject to license.txt
+*/
+* {word-break:break-all;font-family:'Microsoft YaHei',Verdana,Arial;-webkit-text-size-adjust:none;scrollbar-width:thin;scrollbar-color:#CCCCCC #F7F7F7;}
+::-webkit-scrollbar{width:6px;height:6px;overflow:auto;}::-webkit-scrollbar-thumb{background-color:#CCCCCC;min-height:24px;min-width:24px;border:1px solid #E0E0E0;}::-webkit-scrollbar-track{background-color:#F7F7F7;border:1px solid #EFEFEF;}
+body {background:#D8D8D8;color:#333333;font-size:12px;margin:0;}
+html {overflow-x:hidden;overflow-y:auto;}
+input,textarea,select {padding:2px;}
+img {border:none;}
+ul li {list-style-type:none;}
+ol li {list-style-type:decimal;}
+ul,dl,form {margin:0;padding:0;}
+a:link,a:visited,a:active {text-decoration:none;color:#333333;}
+a:hover {color:#FF0000;text-decoration:none;}
+a.b:link,a.b:visited,a.b:active {text-decoration:none;color:#007AFF;}
+a.b:hover {color:#FF3300;}
+.head0 {line-height:44px;font-size:16px;padding:0 0 0 16px;}
+.head0 .online_1 {color:#70D672;}
+.head0 .online_0 {color:#CCCCCC;}
+.head_more {width:48px;background:url('../image/ico-more.png') no-repeat center center;cursor:pointer;}
+.head_more ul {width:80px;position:absolute;z-index:5;margin:16px 0 0 -32px;padding:6px 0;background:#FFFFFF;box-shadow:0 0 10px #DDDDDD;border-radius:6px 0 6px 6px;display:none;}
+.head_more li {line-height:32px;text-align:center;font-size:12px;}
+.head_more li:hover {color:#FF6600;}
+.head_more:hover {background:url('../image/ico-more-on.png') no-repeat center center;}
+.head_more:hover ul {display:block;}
+.head1 {line-height:44px;font-size:14px;padding:0 16px;font-weight:bold;}
+.head2 {line-height:44px;font-size:14px;padding:0 16px;font-weight:bold;border-bottom:#CCCCCC 1px solid;}
+.body0 {padding:6px 0;width:100%;overflow:hidden;}
+a.t:link,a.t:visited,a.t:active {display:block;width:80px;height:24px;line-height:24px;margin-left:16px;text-align:center;text-decoration:none;border:#CCCCCC 1px solid;color:#333333;float:left;}
+a.t:hover {color:#007AFF;border:#007AFF 1px solid;}
+.body1 {margin:6px 16px;}
+.body1 li {height:32px;line-height:32px;overflow:hidden;}
+.body2 {padding:16px;}
+.body2 img {width:60px;margin:0 10px 10px 0;float:left;border:#CCCCCC 1px solid;}
+.body2 li {padding:0 0 10px 0;line-height:18px;}
+.body2 strong {color:#FF0000;}
+.body3 {margin:10px 0 10px 10px;}
+.body3 div {width:48px;height:72px;float:left;margin:0 10px 10px 0;}
+.body3 img {border-radius:50%;}
+.body3 p {height:24px;line-height:24px;text-align:center;margin:0;overflow:hidden;}
+.userinfo {padding:16px;border-bottom:#F2F2F2 1px solid;}
+.userinfo img {width:56px;height:56px;border-radius:50%;float:left;margin-right:16px;}
+.userinfo b {font-size:14px;}
+.userinfo s {color:#999999;text-decoration:none;}
+.userinfo li {height:28px;line-height:28px;overflow:hidden;}
+.userinfo-v0,.userinfo-v1,.userinfo-v2 {position:absolute;display:block;width:16px;height:16px;background:#FFFFFF url('../image/ico-v0.png') no-repeat center center;border-radius:50%;margin:40px 0 0 40px;}
+.userinfo-v1 {background:#FFFFFF url('../image/ico-v1.png') no-repeat center center;}
+.userinfo-v2 {background:#FFFFFF url('../image/ico-v2.png') no-repeat center center;}
+.follow0 {display:inline-block;height:24px;line-height:24px;padding:0 10px 0 32px;font-size:12px;text-align:center;border:#EEEEEE 1px solid;background:#FFFFFF url('../image/ico-follow.png') no-repeat 10px center;border-radius:6px;cursor:pointer;float:right;}
+.follow0:hover {background:#F6F6F6 url('../image/ico-followed.png') no-repeat 10px center;}
+.follow1 {display:inline-block;height:24px;line-height:24px;padding:0 10px 0 32px;font-size:12px;text-align:center;border:#EEEEEE 1px solid;background:#EEEEEE url('../image/ico-followed.png') no-repeat 10px center;color:#999999;border-radius:6px;cursor:pointer;float:right;}
+.follow0 b,.follow1 b {font-weight:normal;}
+.follow0 i,.follow1 i {font-weight:normal;font-style:normal;padding-left:6px;}
+
+#chat {width:auto;height:366px;overflow:auto;padding:10px 0;background:#FAFAFA;}
+#chat img {cursor:pointer;}
+#chat a:link,#chat a:visited,#chat a:active {color:#0072C1;text-decoration:none;}
+#chat a:hover {color:#FF0000;}
+#chat table {margin-top:16px;}
+#chat td {padding:0;}
+.chat-more {text-align:center;padding:16px 0 0 0;font-size:12px;}
+.chat-more span {color:#007AFF;}
+.chat-date {text-align:center;padding:16px 0 0 0;font-size:10px;color:#666666;}
+.chat_nick0 {font-size:12px;color:#999999;padding:0 0 6px 0;}
+.chat_nick1 {font-size:12px;color:#999999;padding:0 0 6px 0;text-align:right;}
+.chat_msg0 {background:#E8E8E8;padding:10px;border-radius:4px;font-size:14px;line-height:160%;display:inline-block;float:left;}
+.chat_arr0 {width:8px;background:url('chat_arr0.gif') no-repeat 0 16px;}
+.chat_arr00 {width:8px;background:url('chat_arr0.gif') no-repeat 0 32px;}
+.chat_msg1 {background:#D8E8F9;padding:10px;border-radius:4px;font-size:14px;line-height:160%;display:inline-block;float:right;}
+.chat_arr1 {width:8px;background:url('chat_arr1.gif') no-repeat 0 16px;}
+.chat_arr11 {width:8px;background:url('chat_arr1.gif') no-repeat 0 32px;}
+.chat_head {width:40px;height:40px;border-radius:50%;}
+#tool {height:32px;background:#EEEEEE;}
+.tools,.tool_a,.tool_b {width:32px;height:32px;text-align:center;cursor:pointer;}
+.tool_b,.tools:hover {background:#DDDDDD;}
+#font {height:38px;background:#FFFFFF;border-top:#CCCCCC 1px solid;}
+#face {z-index:1000;width:576px;position:absolute;margin:-275px 0 0 -1px;background:#FFFFFF;border:#CCCCCC 1px solid;cursor:pointer;}
+#face span {float:right;}
+#face div {background:#EEEEEE;padding:0 10px;line-height:38px;}
+#face img {width:24px;height:24px;margin:6px 0 0 0;padding:6px;border-radius:50%;cursor:pointer;}
+#face img:hover {background:#EEEEEE;}
+.word {height:60px;padding:6px;}
+#word {width:100%;height:50px;border:none;margin:0;outline:none;resize:none;}
+#ec {z-index:1000;width:160px;position:absolute;margin:-28px 0 0 2px;background:#FFFFFF;border:#CCCCCC 1px solid;cursor:pointer;}
+#ec span {display:block;width:160px;line-height:24px;padding-left:20px;}
+.ec {background:url('chat_ec.gif') no-repeat 6px center;}
+#tip {background:url('chat_tip.gif') no-repeat 2px 8px;padding:0 0 0 18px;line-height:30px;}
+#btns {height:44px;}
+#btns td {height:44px;}
+.s10 {font-size:10px;}
+.s11 {font-size:11px;}
+.s12 {font-size:12px;}
+.s13 {font-size:13px;}
+.s14 {font-size:14px;}
+.s16 {font-size:16px;}
+.s18 {font-size:18px;}
+.s20 {font-size:20px;}
+.s24 {font-size:24px;}
+.c1 {color:#000000;}
+.c2 {color:#FF0000;}
+.c3 {color:#0000FF;}
+.c4 {color:#008040;}
+.c5 {color:#FF6600;}
+.c6 {color:#FF00FF;}
+.fb {font-weight:bold;}
+.fi {font-style:italic;}
+.fu {text-decoration:underline;}
+.sys {color:#666666;}
+.sc {display:block;width:18px;height:18px;background: url('../admin/dialog-close.png') no-repeat center center;cursor:pointer;margin:10px 0 0 0;border-radius:4px;}
+.sc:hover {background:#C00000 url('../admin/dialog-close-on.png') no-repeat center center;}
+.f_gray {color:#999999;font-size:12px;}
+.btn,.btn-g,.btn-b,.btn-r{display:inline-block;border-radius:4px;width:80px;height:26px;line-height:normal !important;padding:0;text-align:center;cursor:pointer;}
+.btn{background:#F8F8F8;border:#C6C6C6 1px solid;}
+.btn:hover{background:#DEDEDE;border:#CECECE 1px solid;}
+.btn-g{background:#1AAD19;border:#18A117 1px solid;color:#FFFFFF;}
+.btn-g:hover{background:#179B16;border:#159014 1px solid;}
+.btn-b{background:#007AFF;border:#1E74D0 1px solid;color:#FFFFFF;}
+.btn-b:hover{background:#0569D5;}
+.chat_font,.chat_face,.chat_img,.chat_file,.chat_clear,.chat_log,.chat_save {width:32px;height:32px;overflow:hidden;}
+.chat_font {background:url('chat_font.gif') no-repeat center center;}
+.chat_face {background:url('chat_face.gif') no-repeat center center;}
+.chat_img {background:url('chat_img.gif') no-repeat center center;}
+.chat_file {background:url('chat_file.gif') no-repeat center center;}
+.chat_clear {background:url('chat_clear.gif') no-repeat center center;}
+.chat_log {background:url('chat_log.gif') no-repeat center center;}
+.chat_save {background:url('chat_save.gif') no-repeat center center;}
+#chat-side {width:100%;height:300px;overflow-y:auto;}
+.webuploader-container {position:relative;}
+.webuploader-element-invisible {position:absolute !important;clip: rect(1px 1px 1px 1px);clip: rect(1px,1px,1px,1px);}
+.webuploader-pick {position:relative;display:inline-block;cursor:pointer;width:80px;height:80px;}
+.webuploader-pick-hover {}
+.webuploader-pick-disable {opacity:0.6;pointer-events:none;}

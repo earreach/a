@@ -1,0 +1,6 @@
+<input name="password" type="password" size="30" class="input-pass" id="password" autocomplete="new-password"/>&nbsp;
+<img src="{DT_STATIC}image/keyboard.gif" title="密码键盘" alt="" class="c_p" onclick="kb_s('password', 'kb');"/>
+<div id="kb" style="display:none;"></div>
+&nbsp; <a href="send.php" target="_blank" class="t">忘记密码？</a>
+{load('keyboard.js')}
+{if $DT[md5_pass]}{load('md5.js')}<script type="text/javascript">$(function(){md5_pwd();});</script>{/if}

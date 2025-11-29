@@ -1,0 +1,307 @@
+{template 'header', 'member'}
+<div class="menu">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="tab" id="s3"><a href="?action=index"><span>站内交谈</span></a></td>
+{if $chat_group}<td class="tab" id="s2"><a href="?action=group"><span>我的群聊</span></a></td>{/if}
+{if $action == 'view'}<td class="tab" id="view"><a href="?action=view&chatid={$chatid}"><span>聊天记录</span></a></td>{/if}
+</table>
+</div>
+{if $action == 'view'}
+<form action="?">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="chatid" value="{$chatid}"/>
+<div class="tt">
+<input type="text" size="50" name="kw" value="{$kw}" placeholder="关键词"/>&nbsp;
+{dcalendar('fromdate', $fromdate, '-', 1)} 至 {dcalendar('todate', $todate, '-', 1)}&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 搜 " class="btn" onclick="Go('?action={$action}&chatid={$chatid}');"/>
+</div>
+</form>
+<div class="ls">
+<table cellspacing="0" cellpadding="10" class="tb">
+<tr>
+<th width="60">头像</th>
+<th width="160">会员</th>
+<th width="160">时间</th>
+<th>内容</th>
+{if $admin}
+<th width="40">禁言</th>
+<th width="40">删除</th>
+{/if}
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><a href="{userurl($v[username], 'file=space')}"><img src="{useravatar($v[username])}" style="padding:6px;" width="48" height="48" class="avatar"/></a></td>
+<td>{if $v[nickname]}{$v[nickname]}@{/if}{if $v[passport]}{$v[passport]}{else}{$v[username]}{/if}</td>
+<td>{$v[date]}</td>
+<td align="left">{$v[word]}</td>
+{if $admin}
+<td><a href="?action=view&mid={$mid}&gid={$gid}&job=ban&itemid={$v[itemid]}" class="t" onclick="if(!confirm('确定要禁言 {$v[username]} 吗？')) return false;">禁言</a></td>
+<td><a href="?action=view&mid={$mid}&gid={$gid}&job=del&itemid={$v[itemid]}" class="t" onclick="if(!confirm('确定要删除聊天记录吗？此操作将不可撤销')) return false;">删除</a></td>
+{/if}
+</tr>
+{/loop}
+</table>
+</div>
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('im');m('view');</script>
+{elseif $action == 'group'}
+<style type="text/css">
+.chat_list {width:100%;height:300px;overflow-y:auto;}
+.chat_list .on {background:#ECECEC;}
+.chat_list table {width:100%;cursor:pointer;}
+.chat_list table:hover {background:#ECECEC;}
+.chat_list li {height:24px;line-height:24px;overflow:hidden;color:#999999;padding:0 10px 0 0;}
+.chat_list li b {color:#666666;}
+.chat_list li span {color:#999999;}
+.chat_list p {padding:32px;line-height:48px;font-size:14px;text-align:center;color:#666666;}
+.chat_onl {width:48px;height:48px;border-radius:50%;margin:6px;}
+.chat_main {width:100%;height:360px;background:#FAFAFA url('{DT_STATIC}member/bg-im.png') no-repeat center center;display:none;}
+</style>
+<table cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td width="276" valign="top">
+<form action="?" onsubmit="return check();" id="dform">
+<div style="padding:16px 0 10px 0;">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="text" name="kw" id="kw" value="{$kw}" placeholder="群聊名称" title="群聊名称" style="width:180px;border-radius:6px;border:#18A117 1px solid;outline:none;"/>&nbsp;
+<input type="submit" value="搜索" class="btn_g"/>
+</div>
+</form>
+<div class="chat_list" id="chat-list">
+{if $lists}
+{loop $lists $k $v}
+<table cellpadding="0" cellspacing="0" id="tb-{$v[mid]}-{$v[gid]}" onclick="Schat('{$v[linkurl]}', {$v[mid]}, {$v[gid]});">
+<tr>
+<td width="60"><img src="{$v[thumb]}" class="chat_onl"/></td>
+<td><ul><li><b>{$v[title]}</b> <span>({$v[fans]}人)</span></li><li>最后发言:{$v[last]}</li></ul></td>
+</tr>
+</table>
+{/loop}
+{else}
+<p>暂未加入群聊{if !$kw}<br/><a href="{$MODULE[$chat_group][linkurl]}" target="_blank" class="b">查找群</a>{/if}</p>
+{/if}
+{if $kw}
+<br/><br/><br/><center><input type="button" value="重 搜" class="btn" onclick="Go('?action={$action}');"/></center>
+{/if}
+</div>
+</td>
+<td valign="top"><div class="chat_main" id="chat-main"></div></td>
+</tr>
+</table>
+<script type="text/javascript">
+function check() {
+	if(Dd('kw').value.length < 2) {
+		alert('请输入关键词');
+		return false;
+	}
+	return true;
+}
+function Schat(u, mid, gid) {
+	if($('#chat-main').html().indexOf('iframe') == -1) $('#chat-main').css('background', "#FAFAFA url('{DT_STATIC}image/load.gif') no-repeat center center");
+	$('#chat-list table').removeClass('on');
+	$('#tb-'+mid+'-'+gid).addClass('on');
+	{if strpos($DT_MBS, 'IE') === false}history.replaceState(0, 0, '?action={$action}&mid='+mid+'&gid='+gid);{/if}
+	$('#chat-main').html('<iframe src="'+u+'" width="100%" height="100%" border="0" vspace="0" hspace="0" marginwidth="0" marginheight="0" framespacing="0" frameborder="0" scrolling="no"></iframe>');
+}
+function Dsize() {
+	$('#chat-main').css({'height':($(window).height() - 110)+'px','display':'block'});
+	$('#chat-list').css('height',($(window).height() - 166)+'px');
+}
+$(function() {
+	$('.menu').css('margin', 0);
+	Dsize();
+	$(window).resize(function() {
+		Dsize();
+    });
+	{if $mid && $gid}Schat('{$MODULE[$mid][linkurl]}chat.php?gid={$gid}', {$mid}, {$gid});{/if}
+});
+</script>
+<script type="text/javascript">s('im');m('s2');</script>
+{elseif $action == 'friend'}
+<style type="text/css">
+.chat_list {width:100%;height:300px;overflow-y:auto;}
+.chat_list table {width:270px;margin:0 0 0 6px;cursor:pointer;}
+.chat_list table:hover {background:#ECECEC;}
+.chat_list li {height:24px;line-height:24px;overflow:hidden;color:#999999;padding:0 10px 0 0;}
+.chat_list li b {color:#666666;}
+.chat_list li span {color:#999999;}
+.chat_list img {width:48px;height:48px;border-radius:50%;}
+.chat_list h2 {padding:10px;margin:0;cursor:pointer;font-size:12px;font-weight:normal;}
+.chat_list p {padding:32px;line-height:48px;font-size:14px;text-align:center;color:#999999;}
+.chat_onl {width:48px;height:48px;border-radius:50%;margin:6px;}
+.chat_main {width:100%;height:360px;background:#FAFAFA url('{DT_STATIC}member/bg-im.png') no-repeat center center;display:none;}
+</style>
+<table cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td width="276" valign="top">
+<form action="?" onsubmit="return check();" id="dform">
+<div style="padding:16px 0 6px 0;">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="text" name="kw" id="kw" value="{$kw}" placeholder="会员名/昵称/姓名/别名/手机号" title="会员名/昵称/姓名/别名/手机号" style="width:180px;border-radius:6px;border:#18A117 1px solid;outline:none;"/>&nbsp;
+<input type="submit" value="搜索" class="btn_g"/>
+</div>
+</form>
+<div class="nav">
+<table cellpadding="0" cellspacing="0">
+<tr align="center">
+<td class="nav_2" width="106"><a href="?action=friend">我的好友</a></td>
+<td class="nav_1" width="106"><a href="?action=index">最近交谈</a></td>
+</tr>
+</table>
+</div>
+<div class="chat_list" id="chat-list">
+{if $lists}
+{loop $TYPE $i $t}
+<h2 onclick="$('#f-{$i}').toggle(100);"><b>{$t[typename]}</b> <span>({$t[num]})</span></h2>
+<div id="f-{$i}">
+{loop $lists[$i] $k $v}
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td width="60" onclick="Dchat('{$v[linkurl]}');"><img src="{useravatar($v[username])}" class="chat_onl"/></a></td>
+<td><a href="?touser={$v[username]}"><ul><li><b>{$v[name]}</b></li><li>{$v[note]}</li></ul></a></td>
+</tr>
+</table>
+{/loop}
+</div>
+{/loop}
+{else}
+<p>暂无好友{if !$kw}<br/><a href="friend.php?action=find" class="b">添加好友</a>{/if}</p>
+{/if}
+{if $kw}
+<br/><br/><br/><center><input type="button" value="重 搜" class="btn" onclick="Go('?action={$action}');"/></center>
+{/if}
+</div>
+</td>
+<td valign="top"><div class="chat_main" id="chat-main"></div></td>
+</tr>
+</table>
+<script type="text/javascript">
+function check() {
+	if(Dd('kw').value.length < 2) {
+		alert('请输入关键词');
+		return false;
+	}
+	return true;
+}
+function Dsize() {
+	$('#chat-main').css({'height':($(window).height() - 110)+'px','display':'block'});
+	$('#chat-list').css('height',($(window).height() - 220)+'px');
+}
+$(function() {
+	$('.menu').css('margin', 0);
+	Dsize();
+	$(window).resize(function() {
+		Dsize();
+    });
+});
+</script>
+<script type="text/javascript">s('im');m('s3');</script>
+{else}
+<style type="text/css">
+.chat_list {width:100%;height:300px;overflow-y:auto;}
+.chat_list .on {background:#ECECEC;}
+.chat_list table {width:100%;cursor:pointer;}
+.chat_list table:hover {background:#ECECEC;}
+.chat_list li {height:24px;line-height:24px;overflow:hidden;color:#999999;padding:0 10px 0 0;}
+.chat_list li b {color:#666666;}
+.chat_list li span {float:right;color:#999999;}
+.chat_list li em {float:right;color:#FFFFFF;font-style:normal;background:#FA5A57;border-radius:10px;color:#FFFFFF;font-size:12px;display:inline-block;height:14px;line-height:14px;padding:0 4px;}
+.chat_onl {width:48px;height:48px;border-radius:50%;margin:6px;}
+.chat_off {width:48px;height:48px;border-radius:50%;margin:6px;opacity:0.3;filter:Alpha(Opacity=30);}
+.chat_main {width:100%;height:360px;background:#FAFAFA url('{DT_STATIC}member/bg-im.png') no-repeat center center;display:none;}
+</style>
+<table cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td width="276" valign="top">
+<form action="chat.php" onsubmit="return check();" id="dform">
+<div style="padding:16px 0 6px 0;">
+<input type="text" style="width:180px;border-radius:6px;border:#18A117 1px solid;outline:none;" name="touser" id="touser" placeholder="会员名/昵称/姓名/别名/手机号"/>&nbsp; 
+<input type="submit" value="交谈" class="btn_g"/>
+</div>
+</form>
+<div class="nav">
+<table cellpadding="0" cellspacing="0">
+<tr align="center">
+<td class="nav_1" width="106"><a href="?action=friend">我的好友</a></td>
+<td class="nav_2" width="106"><a href="?action=index">最近交谈</a></td>
+</tr>
+</table>
+</div>
+<div class="chat_list" id="chat-list"></div>
+</td>
+<td valign="top"><div class="chat_main" id="chat-main"></div></td>
+</tr>
+</table>
+<script type="text/javascript">
+var chatid = '{$chatid}';
+var touser = '{$touser}';
+function check() {
+	if(Dd('touser').value == '{$_username}') {
+		alert('不能和自己聊天');
+		return false;
+	}
+	if(Dd('touser').value.length < 2) {
+		alert('请输入会员名');
+		return false;
+	}
+	Schat('chat.php?touser='+Dd('touser').value);
+	setTimeout(function(){Lchat();}, 2000);
+	return false;
+}
+function Hchat() {
+	$('#chat-list table').removeClass('on');
+	if(chatid) {
+		$('#chat-list #chat-'+chatid).addClass('on');
+		$('#chat-list #chat-'+chatid+' em').hide();
+	} else if(touser) {
+		$('#chat-list [uid="'+touser+'"]').addClass('on');
+		$('#chat-list [uid="'+touser+'"] em').hide();
+	}
+	if($('#chat-list em').length < 1) $('#im em,#destoon_chat em').hide();
+}
+function Lchat() {
+	$('#chat-list').load('?action=list&reload={$DT_TIME}', function() {
+		Hchat();
+	});
+}
+function Schat(u) {
+	if($('#chat-main').html().indexOf('iframe') == -1) $('#chat-main').css('background', "#FAFAFA url('{DT_STATIC}image/load.gif') no-repeat center center");
+	if(u.indexOf('chatid=') != -1) {
+		chatid = cutstr(u, 'chatid=');
+		touser = '';
+		{if strpos($DT_MBS, 'IE') === false}history.replaceState(0, 0, '?chatid='+chatid);{/if}
+	} else if(u.indexOf('touser=') != -1) {
+		touser = cutstr(u, 'touser=');
+		chatid = '';
+		{if strpos($DT_MBS, 'IE') === false}history.replaceState(0, 0, '?touser='+touser);{/if}
+	}
+	Hchat();
+	$('#chat-main').html('<iframe src="'+u+'" width="100%" height="100%" border="0" vspace="0" hspace="0" marginwidth="0" marginheight="0" framespacing="0" frameborder="0" scrolling="no"></iframe>');
+}
+function Dsize() {
+	$('#chat-main').css({'height':($(window).height() - 110)+'px','display':'block'});
+	$('#chat-list').css('height',($(window).height() - 220)+'px');
+}
+$(function() {
+	$('.menu').css('margin', 0);
+	Dsize();
+	if(chatid) {
+		Schat('chat.php?chatid='+chatid);
+	} else if(touser) {
+		Schat('chat.php?touser='+touser);
+		setTimeout(function(){Lchat();}, 2000);
+	}
+	Lchat();
+	setInterval(function() {
+		Lchat();
+	}, 10000);
+	$(window).resize(function() {
+		Dsize();
+    });
+});
+</script>
+<script type="text/javascript">s('im');m('s3');</script>
+{/if}
+{template 'footer', 'member'}

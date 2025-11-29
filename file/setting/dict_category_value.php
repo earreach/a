@@ -1,0 +1,5 @@
+<?php exit;?>
+oid,属性ID,
+moduleid,模块ID,
+itemid,信息ID,
+value,属性值,

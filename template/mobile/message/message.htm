@@ -1,0 +1,27 @@
+{template 'header'}
+{if $dtime == -1}
+<meta http-equiv="refresh" content="0;URL={$dforward}"/>
+<div class="content-msg">
+	<center><a href="{$dforward}" rel="external"><img src="{DM_SKIN}spinner.gif" width="24" height="24"/></a></center>
+	{$dmessage}
+</div>
+{else}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="javascript:{if $dforward && $dforward != 'goback'}Go('{$dforward}');{else}window.history.back(-1);{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">提示信息</div>
+<div class="head-bar-right"><a href="{DT_MOB}"><img src="{DM_SKIN}icon-index{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{DT_TIME}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{DT_TIME}"></div>
+</div>
+<div class="content-msg">{$dmessage}</div>
+<div class="blank-16"></div>
+{if $dforward == 'goback'}
+<div class="list-btn"><input type="button" value="确 定" class="btn" onclick="window.history.back(-1);"/></div>
+{elseif $dforward}
+<div class="list-btn"><input type="button" value="确 定" class="btn" onclick="Go('{$dforward}');"/></div>
+<meta http-equiv="refresh" content="{$dtime};URL={$dforward}">
+{/if}
+{/if}
+{template 'footer'}

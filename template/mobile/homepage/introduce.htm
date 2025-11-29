@@ -1,0 +1,147 @@
+{template 'header', $template}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{if $head_name}{$head_name}{else}公司介绍{/if}</div>
+<div class="head-bar-right"><a href="javascript:Dmenu('{$file}-{$js_pageid}');"><img src="{DM_SKIN}icon-action{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div id="{$file}-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="list-set">
+<ul>
+<li style="background:#F6F6F6;"><div><a href="{userurl($username, 'file=introduce', $domain)}">公司介绍</a></div></li>
+{loop $TYPE $k $v}
+<li{if $itemid==$v[itemid]} style="background:#F6F6F6;"{/if}><div><a href="{$v[linkurl]}">{$v[alt]}</a></div></li>
+{/loop}
+</ul>
+</div>
+<div class="blank-36 bd-b"></div>
+</div>
+{if $itemid}
+	<div class="title"><h1>{$title}</h1></div>
+	<div class="info"><i class="ui-ico-time">{timetodate($addtime, 3)}</i>{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}<i class="ui-ico-hits ui-fr">{$hits}</i></div>
+	{if $content}<div class="content">{$content}</div>{/if}
+{else}
+	<div class="content">
+	<table width="100%" cellpadding="6" cellspacing="0">
+	{if $COM[shop] && $COM[vshop]}
+	<tr>
+	<td class="f_b">店铺名称</td>
+	<td>{$COM[shop]}</td>
+	</tr>
+	{/if}
+	<tr>
+	<td width="80" class="f_b">公司名称</td>
+	<td id="title">{$COM[company]}</td>
+	</tr>
+	{if $COM[validated]}
+	<tr>
+	<td class="f_b">资料认证</td>
+	<td class="f_green"><img src="{DT_STATIC}member/ok.png" width="16" height="16" align="absmiddle"/> 企业资料通过{$COM[validator]}认证
+	</td>
+	</tr>
+	<tr>
+	<td class="f_b">认证项目</td>
+	<td class="f_green" style="line-height:32px;">
+	<ul>
+	{if $COM[vcompany]}<li><img src="{DT_STATIC}member/ok.png" width="16" height="16" align="absmiddle"/> 工商资料</li>{/if}
+	{if $COM[vtruename]}<li><img src="{DT_STATIC}member/ok.png" width="16" height="16" align="absmiddle"/> 实名身份</li>{/if}
+	{if $COM[vbank]}<li><img src="{DT_STATIC}member/ok.png" width="16" height="16" align="absmiddle"/> 银行账号</li>{/if}
+	{if $COM[vmobile]}<li><img src="{DT_STATIC}member/ok.png" width="16" height="16" align="absmiddle"/> 手机号码</li>{/if}
+	{if $COM[vemail]}<li><img src="{DT_STATIC}member/ok.png" width="16" height="16" align="absmiddle"/> 电子邮件</li>{/if}
+	</ul>
+	</td>
+	</tr>
+	{else}
+	<tr>
+	<td class="f_b">资料认证</td>
+	<td class="f_red"><img src="{DT_STATIC}member/ko.png" width="16" height="16" align="absmiddle"/> 企业资料未认证
+	</td>
+	</tr>
+	{/if}
+	{if $COM[deposit]}
+	<tr>
+	<td class="f_b">保 证 金</td>
+	<td><strong class="f_green">{$DT[money_sign]}{$COM[deposit]}</strong></td>
+	</tr>
+	{/if}
+	<tr>
+	<td class="f_b">公司类型</td>
+	<td>{$COM[type]} ({$COM[mode]})</td>
+	</tr>
+	<tr>
+	<td class="f_b">所 在 地</td>
+	<td>{area_pos($COM[areaid], '/')}</td>
+	</tr>
+	<tr>
+	<td class="f_b">公司规模</td>
+	<td>{$COM[size]}</td>
+	</tr>
+	<tr>
+	<td class="f_b">注册资本</td>
+	<td>{if $COM[capital]}{$COM[capital]}万{$COM[regunit]}{else}未填写{/if}</td>
+	</tr>
+	<tr>
+	<td class="f_b">注册年份</td>
+	<td>{$COM[regyear]}</td>
+	</tr>
+	{if $COM[mode]}
+	<tr>
+	<td class="f_b">经营模式</td>
+	<td>{$COM[mode]}</td>
+	</tr>
+	{/if}
+	{if $COM[business]}
+	<tr>
+	<td class="f_b">经营范围</td>
+	<td>{$COM[business]}</td>
+	</tr>
+	{/if}
+	{if $COM[sell]}
+	<tr>
+	<td class="f_b">销售的产品</td>
+	<td>{$COM[sell]}</td>
+	</tr>
+	{/if}
+	{if $COM[buy]}
+	<tr>
+	<td class="f_b">采购的产品</td>
+	<td>{$COM[buy]}</td>
+	</tr>
+	{/if}
+	{if $COM[catid]}
+	<tr>
+	<td class="f_b">主营行业</td>
+	<td>
+	{php $catids = explode(',', substr($COM['catid'], 1, -1));}
+	{loop $catids $i $c}
+	{str_replace($MOD['linkurl'], $MOD['mobile'], cat_pos(get_cat($c), ' / '))} &nbsp; &nbsp; 
+	{/loop}
+	</td>
+	</tr>
+	{/if}
+	</table>	
+	</div>
+	{if $video}
+	<div class="ui-head"><i></i><b>形象视频</b></div>
+	<div class="content">{DC::player($video, '100%', 270, 1, 0, ' muted="muted"')}</div>
+	{/if}
+	<div class="ui-head">{if $COM[agent]}<a href="{$MODULE[2][linkurl]}partner.php?action=add&username={$username}"><span>申请代理</span></a>{/if}<i></i><b>{$MENU[$menuid][name]}</b></div>
+	<div class="content">
+	{if $thumb}<center><img src="{$thumb}"/></center>{/if}
+	{$content}
+	</div>
+	{php $itemid = $userid;}
+	<div class="tool">
+	{if $MOD[show_like]}<div class="like" onclick="Dlike({$moduleid}, {$itemid}, 0);">点赞 <b id="like-{$moduleid}-{$itemid}-0">{$likes}</b></div>{/if}
+	{if $MOD[show_hate]}<div class="hate" onclick="Dhate({$moduleid}, {$itemid}, 0);">反对 <b id="hate-{$moduleid}-{$itemid}-0">{$hates}</b></div>{/if}
+	{if $MOD[show_report]}<div class="report" onclick="Dreport({$moduleid}, {$itemid}, 0);">举报</div>{/if}
+	{if $MOD[show_favorite]}<div class="favorite" onclick="Dfavor({$moduleid}, {$itemid});">收藏 <b>{$favorites}</b></div>{/if}
+	{if $MOD[fee_award]}<div class="award" onclick="Go('{$MODULE[2][mobile]}award.php?mid={$moduleid}&itemid={$itemid}');">打赏 <b>{$awards}</b></div>{/if}
+	{if $could_comment}<div class="comment" onclick="Go('{$EXT[comment_mob]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}');">评论 <b>{$comments}</b></div>{/if}
+	{if $MOD[show_share]}<div class="share" onclick="Go('{DT_MOB}api/share.php?mid={$moduleid}&itemid={$itemid}');">分享 <b>{$shares}</b></div>{/if}
+	</div>
+{/if}
+{template 'footer', $template}

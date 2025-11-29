@@ -1,0 +1,7 @@
+{php isset($PROCESS) or $PROCESS = $GLOBALS['PROCESS'];}
+{loop $tags $k $t}
+<div class="ui-list-txt">
+<a href="{$t[linkurl]}"><strong>{$t[title]}</strong></a>
+<p><i class="ui-ico-info ui-fr">{$PROCESS[$t[process]]}</i><i class="ui-ico-time" title="{timetodate($t[addtime], 3)}">{timetoread($t[addtime], 3)}</i></p>
+</div>
+{/loop}

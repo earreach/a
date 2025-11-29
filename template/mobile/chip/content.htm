@@ -1,0 +1,65 @@
+{if $user_status == 3}
+	{if $module == 'exhibit'}
+		姓名:{$truename}<br/>
+		{if $telephone}电话:<a href="tel:{$telephone}">{$telephone}</a><br/>{/if}
+		{if $mobile}手机:<a href="tel:{$mobile}">{$mobile}</a><br/>{/if}
+		{if $fax}传真:{$fax}<br/>{/if}
+		{if $email}邮件:<a href="mailto:{$email}">{$email}</a><br/>{/if}
+		{if $qq}QQ:<a href="http://wpa.qq.com/msgrd?v=3&uin={$qq}&site=qq&menu=yes" target="_blank" rel="external">{$qq}</a><br/>{/if}
+		{if $wx && $DT[im_wx]}微信:<a href="{DT_MOB}api/wx.php?wid={$wx}&username={$username}" target="_blank" rel="external">{$wx}</a><br/>{/if}
+		{if $addr}地址:{$addr}<br/>{/if}
+	{elseif $module == 'resume'}
+		{if $mobile}手机:<a href="tel:{$mobile}">{$mobile}</a><br/>{/if}
+		{if $email}邮件:<a href="mailto:{$email}">{$email}</a><br/>{/if}
+		{if $telephone}电话:<a href="tel:{$telephone}">{$telephone}</a><br/>{/if}
+		{if $address}地址:{$address}<br/>{/if}
+		{if $username && $DT[im_web]}站内：<a href="{$MODULE[2][mobile]}chat.php?touser={$username}" rel="external" class="b">在线交谈</a><br/>{/if}
+		{if $qq && $DT[im_qq]}QQ:<a href="http://wpa.qq.com/msgrd?v=3&uin={$qq}&site=qq&menu=yes" target="_blank" rel="external">{$qq}</a><br/>{/if}
+		{if $wx && $DT[im_wx]}微信:<a href="{DT_MOB}api/wx.php?wid={$wx}&username={$username}" target="_blank" rel="external">{$wx}</a><br/>{/if}
+		{if $ali && $DT[im_ali]}阿里旺旺:<a href="http://amos.alicdn.com/msg.aw?v=2&uid={$ali}&site=cnalichn&s=6&charset=UTF-8" target="_blank" rel="external">{$ali}</a><br/>{/if}
+		{if $skype && $DT[im_skype]}Skype:{$skype}{/if}
+	{elseif $module == 'know'}
+		{$best[content]}
+		{if $best[url]}<br/>
+		参考资料：<a href="{fix_link($best[url])}" target="_blank" rel="external" class="b">{$best[url]}</a>
+		{/if}
+	{elseif $module == 'down'}
+		<div class="blank-32"></div>
+		{if $MIRROR}
+		<div class="list-set">
+		<ul>
+			<li><div><a href="{$MOD[mobile]}down.php?itemid={$itemid}" class="b" rel="external">主站下载</a></div></li>
+			{loop $MIRROR $k=>$v}
+			<li><div><a href="{$MOD[mobile]}down.php?mirror={$k}&itemid={$itemid}" class="b" rel="external">{$v[name]}镜像</a></div></li>
+			{/loop}
+		</ul>
+		</div>
+		{else}
+		<div class="list-btn"><a href="{$MOD[mobile]}down.php?itemid={$itemid}" rel="external"><div class="btn-green">点击下载</div></a></div>
+		{/if}
+	{elseif $module == 'photo'}
+		<img src="{$P[src]}" id="photo_{$itemid}" style="width:100%;" onclick="photo_next({$itemid})"/>
+	{elseif $module == 'video'}
+		<div id="video-{$js_pageid}" style="width:100%;height:300px;background:#000000;">{DC::player($video, '100%', '100%')}</div>
+	{elseif $module == 'article'}
+		{$content}
+	{else}
+	{$content}
+	{/if}
+{elseif $user_status == 2}
+{if isset($description) && $description}{$description}<br/>{/if}
+<div style="padding:16px;line-height:200%;">
+查看详细内容需支付 <b style="color:red;">{$fee}</b>{$fee_unit}<br/>
+{$fee_name}余额：{if $currency == 'money'}{$_money}{else}{$_credit}{/if}{$fee_unit} <a href="{$MODULE[2][mobile]}" class="b">我的账户</a><br/><br/>
+<a href="{$MODULE[2][mobile]}pay.php?mid={$mid}&itemid={$itemid}" rel="external"><div class="btn-green">立即支付</div></a>
+</div>
+{elseif $user_status == 1}
+<br/><br/><center>
+无权查看，请升级会员级别<br/>
+{if $DT[telephone]}咨询电话：<a href="tel:{$DT[telephone]}">{$DT[telephone]}</a><br/>{/if}
+</center><br/><br/>
+{elseif $user_status == 0}
+<br/><br/><center>请 <a href="{$MODULE[2][mobile]}{$DT[file_login]}" rel="external" class="b">登录</a> 或 <a href="{$MODULE[2][mobile]}{$DT[file_register]}" rel="external" class="b">注册</a> 后查看详情</center><br/><br/>
+{else}
+<div id="content"><div style="height:128px;background:#FFFFFF url('{DM_SKIN}spinner.gif') no-repeat center center;background-size:16px 16px;"></div></div>
+{/if}

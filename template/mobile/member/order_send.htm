@@ -1,0 +1,142 @@
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">寄回商品</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=process&step=service&itemid={$itemid}" data-transition="none">服务详情</a>
+<a href="?action=update&step=detail&itemid={if $O[pid]}{$O[pid]}{else}{$O[oid]}{/if}" data-transition="none">订单详情</a>
+<a href="?action=service" data-direction="reverse">售后服务</a>
+</div>
+</div>
+
+{template 'goods_service', 'chip'}
+{load('mall.css')}
+{load('mall.js')}
+{load('player.js')}
+<div class="ui-head"><i></i><b>服务详情</b></div>
+<div class="content">
+联系卖家：<a href="{userurl($O[seller], 'file=contact')}" class="b">{$O[seller]}</a><br/>
+申请时间：{$O[adddate]}<br/>
+最后更新：{$O[updatedate]}<br/>
+服务类型：{$dservice[$O[typeid]]}<br/>
+申请原因：{$O[buyer_title]}<br/>
+{if $O[buyer_reason]}
+补充说明：<br/>
+{nl2br($O[buyer_reason])}<br/>
+{/if}
+
+{if $O[buyer_thumbs] || $O[buyer_video]}
+申请凭据：<br/>
+<div class="comment-r">
+<ul id="{$itemid}0">			
+{if $O[buyer_video]}<li><img src="{DT_STATIC}image/play.gif" onclick="comment_thumb_show({$itemid}0, this);" data-video="{$O[buyer_video]}"/></li>{/if}
+{loop $O[buyer_thumbs] $t}
+{if $t}<li><img src="{$t}" onclick="comment_thumb_show({$itemid}0, this);"/></li>{/if}
+{/loop}
+</ul>
+</div>
+<p id="thumbshow-{$itemid}0" onclick="comment_thumb_next({$itemid}0);"></p>
+{/if}
+服务状态：{$dservice_status[$O[status]]}<br/>
+{if $O[seller_title]}
+操作原因：{$O[seller_title]}<br/>
+{/if}
+{if $O[seller_reason]}
+补充说明：<br/>
+{nl2br($O[seller_reason])}<br/>
+{/if}
+
+{if $O[seller_thumbs] || $O[seller_video]}
+操作凭据：<br/>
+<div class="comment-r">
+<ul id="{$itemid}1">			
+{if $O[seller_video]}<li><img src="{DT_STATIC}image/play.gif" onclick="comment_thumb_show({$itemid}1, this);" data-video="{$O[seller_video]}"/></li>{/if}
+{loop $O[seller_thumbs] $t}
+{if $t}<li><img src="{$t}" onclick="comment_thumb_show({$itemid}1, this);"/></li>{/if}
+{/loop}
+</ul>
+</div>
+<p id="thumbshow-{$itemid}1" onclick="comment_thumb_next({$itemid}1);"></p>
+{/if}
+
+{if $O[seller_note]}
+备注事项：<br/>
+{nl2br($O[seller_note])}<br/>
+{/if}
+</div>
+
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div class="ui-head"><i></i><b>寄回商品</b></div>
+<div class="ui-form">
+<p>服务类型<i>*</i></p>
+<div>{$dservice[$O[typeid]]}</div>
+{if $O[typeid] < 2}
+<p>退款金额<i>*</i></p>
+<div class="f_red">{$DT[money_sign]}{$O[amount]}</div>
+{/if}
+{if $O[typeid] > 1}
+<p>收货地址<i>*</i><b id="daid"></b></p>
+<div>
+	<select name="aid" id="aid">
+	<option value="0">与原订单收货地址一致</option>
+	{loop $address $v}
+	<option value="{$v[itemid]}">{$v[address]} {$v[truename]} {$v[mobile]}</option>
+	{/loop}
+	</select> &nbsp; 
+	<a href="address.php" class="t">管理</a> 
+</div>
+{/if}
+
+{if $DT[postcode]}
+<p>邮政编码<b>{if $O[seller_postcode]}<img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#seller_postcode" onclick="Dtoast('{$js_pageid}', '邮编已复制');"/>{/if}</b></p>
+<div>{$O[seller_postcode]}</div>
+{/if}
+<p>寄回地址<b>{if $O[seller_address]}<img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#seller_address" onclick="Dtoast('{$js_pageid}', '地址已复制');"/>{/if}</b></p>
+<div>{$O[seller_address]}</div>
+<p>收件姓名<b>{if $O[seller_name]}<img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#seller_name" onclick="Dtoast('{$js_pageid}', '姓名已复制');"/>{/if}</b></p>
+<div>{$O[seller_name]}</div>
+<p>收件手机<b>{if $O[seller_mobile]}<img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#seller_mobile" onclick="Dtoast('{$js_pageid}', '手机已复制');"/>{/if}</b></p>
+<div>{$O[seller_mobile]}</div>
+<p>快递类型<b></b></p>
+<div>
+	<select name="send_type" id="send_type">
+	<option value="">请选择</option>
+	{loop $send_types $v}
+	<option value="{$v}">{$v}</option>
+	{/loop}
+	</select>
+</div>
+<p>快递单号<b></b></p>
+<div><input type="text" size="30" name="send_no" id="send_no"/></div>
+<p>发货时间<b></b></p>
+<div><input type="datetime-local" name="send_time" value="{str_replace(' ', 'T', $send_time)}" id="send_time" step="1"/></div>
+<div class="blank-20"></div>
+<div><input type="submit" name="submit" value="确 定" class="btn-blue"/></div>
+<div class="blank-20"></div>
+</div>
+</form>
+<div style="z-index:1000;position:absolute;top:-10000px;">
+<textarea id="seller_postcode">{$O[seller_postcode]}</textarea>
+<textarea id="seller_address">{$O[seller_address]}</textarea>
+<textarea id="seller_name">{$O[seller_name]}</textarea>
+<textarea id="seller_mobile">{$O[seller_mobile]}</textarea>
+</div>
+{load('clipboard.min.js')}
+<script type="text/javascript">
+var clipboard = new Clipboard('[data-clipboard-action]');
+function check() {
+	return confirm('您确认货物已经发出，并且以上信息填写无误吗？\n\n此操作将不可撤销');
+}
+</script>

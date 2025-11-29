@@ -1,0 +1,53 @@
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">修改地址</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=update&step=detail&itemid={$itemid}" data-transition="none">订单详情</a>
+<a href="?action=index" data-direction="reverse">订单列表</a>
+</div>
+</div>
+
+{template 'goods', 'chip'}
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div class="ui-head"><i></i><b>修改地址</b></div>
+<div class="ui-form">
+<p>现地址<b><a href="address.php" class="b">管理地址</a></b></p>
+<div>{$O[buyer_address]} {$O[buyer_name]} {$O[buyer_mobile]}</div>
+<p>修改为<i>*</i><b id="daid"></b></p>
+<div>
+	<select name="aid" id="aid">
+	<option value="0">请选择新收货地址</option>
+	{loop $address $v}
+	{if $v[address].$v[truename].$v[mobile] != $O[buyer_address].$O[buyer_name].$O[buyer_mobile]}
+	<option value="{$v[itemid]}">{if $v[typename]}{$v[typename]} {/if}{$v[truename]} {$v[mobile]} {$v[street]}</option>
+	{/if}
+	{/loop}
+	</select>
+</div>
+
+<div class="blank-20"></div>
+<div><input type="submit" name="submit" value="修 改" class="btn-green"/></div>
+<div class="blank-20"></div>
+</div>
+
+<script type="text/javascript">
+function check() {
+	if(Dd('aid').value < 1) {
+		Dmsg('请选择新收货地址', 'aid');
+		return false;
+	}
+}
+</script>
+</form>

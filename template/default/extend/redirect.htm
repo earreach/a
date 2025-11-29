@@ -1,0 +1,13 @@
+{template 'header'}
+<div class="m">	
+	<div class="nav"><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> {$head_title}</div>
+</div>
+<div class="m">
+	<div style="padding:64px 256px;font-size:14px;">
+		<div style="padding:6px 0;"><strong>{$head_title}</strong></div>
+		<div style="color:#666666;">您即将离开本站，请注意您的帐号和财产安全</div>
+		<div style="color:#666666;padding:24px 0;">{$url}</div>
+		<div style="padding:6px 0;"><input type="button" value="继续访问" class="btn-blue" onclick="Go('{$url}');"/> &nbsp;  <input type="button" value="取消访问" class="btn" onclick="try{window.close();}catch(e){Go(DTPath);}"/></div>
+	</div>
+</div>
+{template 'footer'}

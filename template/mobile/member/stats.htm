@@ -1,0 +1,292 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=index" data-transition="none">流量统计</a>
+<a href="?action=record" data-transition="none">浏览记录</a>
+<a href="?action=report" data-transition="none">统计报表</a>
+<a href="biz.php" data-direction="reverse">商户后台</a>
+</div>
+</div>
+
+{if $action=='report'}
+<script type="text/javascript">
+$(function(){
+	Stabs('{$js_pageid}');
+	$(window).bind('orientationchange.chart', function(e){
+		window.location.reload();
+	});
+});
+</script>
+<div class="list-menu" id="tabs-{$js_pageid}">
+	<ul>
+	<a href="?action={$action}&job=pv"><li{if $job == 'pv'} class="on"{/if}>流量趋势</li></a>
+	<a href="?action={$action}&job=ip"><li{if $job == 'ip'} class="on"{/if}>IP趋势</li></a>
+	<a href="?action={$action}&job=rb"><li{if $job == 'rb'} class="on"{/if}>抓取频次</li></a>
+	<a href="?action={$action}&job=domain"><li{if $job == 'domain'} class="on"{/if}>外部链接</li></a>
+	<a href="?action={$action}&job=username"><li{if $job == 'username'} class="on"{/if}>活跃会员</li></a>
+	<a href="?action={$action}&job=itemid"><li{if $job == 'itemid'} class="on"{/if}>信息排行</li></a>
+	</ul>
+</div>
+
+{load('echarts.min.js')}
+{if $job == 'pv'}
+<script type="text/javascript">
+document.write('<div id="chart" style="width:'+(document.body.clientWidth-32)+'px;height:300px;margin:16px;"></div>');
+var chart = echarts.init(Dd('chart'));
+var option = {
+    title: {
+        text: '流量趋势'
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data: ['总PV', '电脑PV', '手机PV']
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    toolbox: {
+        feature: {
+            saveAsImage: {}
+        }
+    },
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: [{$data}]
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [
+        {
+            name: '总PV',
+            type: 'line',
+            data: [{$pv}]
+        },
+        {
+            name: '电脑PV',
+            type: 'line',
+            data: [{$pv_pc}]
+        },
+        {
+            name: '手机PV',
+            type: 'line',
+            data: [{$pv_mb}]
+        }
+    ]
+};
+chart.setOption(option);
+</script>
+{elseif $job == 'ip'}
+<script type="text/javascript">
+document.write('<div id="chart" style="width:'+(document.body.clientWidth-32)+'px;height:300px;margin:16px;"></div>');
+var chart = echarts.init(Dd('chart'));
+var option = {
+    title: {
+        text: 'IP趋势'
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data: ['总IP', '电脑IP', '手机IP']
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    toolbox: {
+        feature: {
+            saveAsImage: {}
+        }
+    },
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: [{$data}]
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [
+        {
+            name: '总IP',
+            type: 'line',
+            data: [{$ip}]
+        },
+        {
+            name: '电脑IP',
+            type: 'line',
+            data: [{$ip_pc}]
+        },
+        {
+            name: '手机IP',
+            type: 'line',
+            data: [{$ip_mb}]
+        }
+    ]
+};
+chart.setOption(option);
+</script>
+{elseif $job == 'rb'}
+<script type="text/javascript">
+document.write('<div id="chart" style="width:'+(document.body.clientWidth-32)+'px;height:300px;margin:16px;"></div>');
+var chart = echarts.init(Dd('chart'));
+var option = {
+    title: {
+        text: '抓取频次'
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data: ['总PV', '电脑PV', '手机PV']
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    toolbox: {
+        feature: {
+            saveAsImage: {}
+        }
+    },
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: [{$data}]
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [
+        {
+            name: '总PV',
+            type: 'line',
+            data: [{$rb}]
+        },
+        {
+            name: '电脑PV',
+            type: 'line',
+            data: [{$rb_pc}]
+        },
+        {
+            name: '手机PV',
+            type: 'line',
+            data: [{$rb_mb}]
+        }
+    ]
+};
+chart.setOption(option);
+</script>
+{elseif in_array($job, array('domain', 'username', 'itemid'))}
+<script type="text/javascript">
+document.write('<div id="chart" style="width:'+(document.body.clientWidth-32)+'px;height:{$height}px;margin:16px;"></div>');
+var chart = echarts.init(Dd('chart'));
+var option = {
+	color: ['#61A0A8'],
+    title: {
+        text: '',
+        subtext: ''
+    },
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'shadow'
+        }
+    },
+    grid: {
+		top: '16px;',
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    xAxis: {
+        type: 'value',
+        boundaryGap: [0, 0.01]
+    },
+    yAxis: {
+        type: 'category',
+        data: [{$xd}]
+    },
+    series: [
+        {
+            type: 'bar',
+            data: [{$yd}]
+        }
+    ]
+};
+chart.setOption(option);
+chart.on('click', function(e) {
+	if(e.data.url) {
+		if(e.data.url.substring(0, 1) == '?') {
+			Go(e.data.url);
+		} else {
+			window.open(e.data.url);
+		}
+	}
+});
+</script>
+{/if}
+{elseif $action == 'record'}
+<div class="ui-form-search">
+<form action="?">
+<input type="hidden" name="status" value="{$status}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li><a href="{$v[url]}"><strong>{$v[url]}</strong></a></li>
+<li><span>{ip2area($v[ip], 2)} / {$v[username]}</span><span class="f_r">{$v[addtime]}</span></li>
+</ul>
+</div>
+{/loop}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{else}
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li><a href="?action=record&fromdate={$v[date]} 00:00:00&todate={$v[date]} 23:23:59"><strong>{$v[date]}</strong></a></li>
+<li>IP:{$v[ip]} / PV:{$v[pv]}</li>
+</ul>
+</div>
+{/loop}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<div id="foot-bar" class="dsn">
+<div class="foot-bar-fix"></div>
+<div class="foot-bar btns">
+<input type="submit" name="submit" value="删除选中" class="btn-red" onclick="if(confirm('确定要删除选中证书吗？')){this.form.action='?status={$status}&action=delete'}else{return false;}"/>
+</div>
+</div>
+</form>
+{/if}
+{template 'footer', 'member'}

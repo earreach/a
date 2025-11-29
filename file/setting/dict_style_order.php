@@ -1,0 +1,12 @@
+<?php exit;?>
+itemid,ID,
+styleid,模板ID,
+title,模板名称,
+skin,风格目录,
+fee,价格,
+amount,总额,
+currency,价格单位,
+number,时长,
+username,会员名,
+addtime,购买时间,
+totime,到期时间,

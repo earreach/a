@@ -1,0 +1,366 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right">
+{if $action == 'pay' || $action == 'confirm' || $action == 'scan'}
+<a href="?action=record"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{elseif $action == 'payed'}
+{else}
+<a href="?action=pay"><span><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></span></a>
+{/if}
+<a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a>
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=pay" data-transition="none">在线支付</a>
+<a href="?action=record" data-transition="none">支付记录</a>
+{if $MOD[pay_card]}<a href="?action=card" data-transition="none">充值卡支付</a>{/if}
+{if $MOD[pay_url]}<a href="{$MOD[pay_url]}" rel="external">银行汇款</a>{/if}
+<a href="index.php" data-direction="reverse">会员中心</a>
+</div>
+</div>
+
+{if $action == 'record'}
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li><span class="f_r">{$v[dstatus]}{if $repay && $v[repay]} &nbsp; <a href="?action=repay&itemid={$v[itemid]}" class="b">支付</a>{/if}</span><strong style="font-size:24px;{if $v[status]==1||$v[status]==2}color:#999999;{/if}">{$DT[money_sign]}{$v[amount]}</strong></li>
+<li><span class="f_r">{$PAY[$v[bank]][name]}</span><span>{$v[sendtime]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无记录</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+
+{elseif $action == 'card'}
+<form method="post" action="?" onsubmit="return check_card();">
+<input type="hidden" name="action" value="card"/>
+<div class="blank-20"></div>
+<div class="list-inp">
+	<div><input type="number" name="number" id="number" placeholder="卡号：" onblur="window.scrollTo(0,0);"/></div>
+</div>
+
+<div class="blank-20"></div>
+<div class="list-inp">
+	<div><input type="text" name="password" id="password" placeholder="密码：" onblur="window.scrollTo(0,0);"/></div>
+</div>
+
+<div class="blank-20"></div>
+<div class="list-btn"><input type="submit" name="submit" value="立即充值" class="btn-green"/></div>
+<div class="blank-20"></div>
+</form>
+<script type="text/javascript">
+function check_card() {
+	if(Dd('number').value.length < 8) {
+		Dmsg('请填写正确的充值卡卡号', 'number');
+		return false;
+	}
+	if(Dd('password').value.length < 6) {
+		Dmsg('请填写正确的充值卡密码', 'password');
+		return false;
+	}
+}
+</script>
+{elseif $action == 'pay'}
+{if $MOD[pay_online]}
+<form method="post" action="?" data-ajax="false" onsubmit="return check();" id="dform">
+<input type="hidden" name="auto" value="{$auto}"/>
+<input type="hidden" name="reason" value="{$reason}"/>
+<input type="hidden" name="price" id="price" value="{$amount}"/>
+<input type="hidden" name="action" value="confirm"/>
+<div class="blank-20"></div>
+<div class="list-inp">
+	<div><input type="number" name="amount" id="amount" value="{$amount}" step="0.01" placeholder="支付金额：" onblur="window.scrollTo(0,0);"/></div>
+</div>
+<div class="blank-20"></div>
+{if $PAYLIST}
+<input type="hidden" name="bank" value="{$bank}" id="bank"/>
+<div class="list-pay">
+<ul>
+{loop $PAYLIST $k $v}
+<li onclick="var bk=$('#bank').val();if(bk=='{$v[bank]}'){return;}$('#check-'+bk).attr('class', 'check');$('#check-{$v[bank]}').attr('class', 'checked');$('#bank').val('{$v[bank]}');"><div><em class="{if $v[bank]==$bank}checked{else}check{/if}" id="check-{$v[bank]}"></em><img src="{DT_PATH}api/pay/{$v[bank]}/icon.png" width="24" height="24"/>{$v[name]} {if $v[percent]>0}<span>手续费 {$v[percent]}%</span>{/if}</div></li>
+{/loop}
+</ul>
+</div>
+<div class="blank-20"></div>
+<div class="list-btn"><input type="submit" value="下一步" class="btn-green"/></div>
+{else}
+<div class="content">抱歉，系统未设置支付平台，暂时无法在线支付</div>
+{/if}
+<div class="blank-20"></div>
+{if $MOD[pay_card]}
+<div class="blank-20"></div>
+<div class="list-btn"><input type="button" value="充值卡" class="btn" onclick="Go('?action=card');"/></div>
+{/if}
+{if $MOD[pay_url]}
+<div class="blank-20"></div>
+<div class="list-btn"><input type="button" value="银行汇款" class="btn" onclick="Go('{moburl($MOD[pay_url])}');"/></div>
+{/if}
+<div class="blank-20"></div>
+</form>
+<script type="text/javascript">
+{if $auto}if(check()){Dd('dform').submit();}{/if}
+function check() {
+	if(!Dd('amount').value) {
+		Dmsg('请填写支付金额', 'amount');
+		return false;
+	}
+{if $mincharge}
+	if(Dd('amount').value < {$mincharge}) {
+		Dmsg('金额最少{$mincharge}', 'amount');
+		return false;
+	}
+{/if}
+	return true;
+}
+</script>
+{/if}
+{elseif $action == 'confirm'}
+<form method="post" action="?" id="dform">
+<input type="hidden" name="goto" value="1"/>
+<input type="hidden" name="action" value="confirm"/>
+<input type="hidden" name="amount" value="{$amount}"/>
+<input type="hidden" name="bank" value="{$bank}"/>
+<input type="hidden" name="reason" value="{$reason}"/>
+<div class="blank-20"></div>
+<div class="list-set">
+<ul>
+<li><div><span>{$PAY[$bank][name]}</span>支付平台</div></li>
+<li><div><span>{$amount} {$DT[money_unit]}</span>支付金额</div></li>
+<li><div><span>{$fee} {$DT[money_unit]}</span>手续费</div></li>
+<li><div><span>{$charge} {$DT[money_unit]}</span>实收金额</div></li>
+</ul>
+</div>
+<div class="blank-32"></div>
+<div class="list-btn"><input type="submit" value="立即支付" class="btn-green"/></div>
+<div class="blank-20"></div>
+<div class="list-btn"><input type="button" value="返回修改" class="btn" onclick="Go('?action=pay');"/></div>
+<div class="blank-32"></div>
+</form>
+{if $auto}<script type="text/javascript">Dd('dform').submit();</script>{/if}
+{elseif $action == 'scan'}
+<div class="main">
+	<center><img src="{$src}" style="margin:32px 0 10px 0;width:128px;"/></center>
+	<div class="content f_grey t_c" style="font-size:14px;line-height:44px;">
+	<b style="font-size:22px;color:#000000;">{$DT[money_sign]}{$amount}</b><br/>
+	{if $bank=='wxscan'}
+	{if $DT_MBS == 'weixin'}
+	请长按识别上图二维码付款
+	{else}
+	请打开微信，扫码付款<br/>
+	<a href="javascript:;" onclick="Dtoast('{$js_pageid}', '微信账号已复制 请添加好友并付款{$amount}{$DT[money_unit]}');" data-clipboard-action="copy" data-clipboard-target="#account" class="b">复制账号</a> &nbsp;<span style="color:#999999;">|</span>&nbsp; 
+	<a href="weixin://" class="b">打开微信</a>
+	{/if}	
+	{elseif $bank=='qqscan'}
+	{if $DT_MBS == 'qq'}
+	请长按识别上图二维码付款
+	{else}
+	请打开手机QQ，扫码付款<br/>
+	<a href="javascript:;" onclick="Dtoast('{$js_pageid}', 'QQ账号已复制 请添加好友并付款{$amount}{$DT[money_unit]}');" data-clipboard-action="copy" data-clipboard-target="#account" class="b">复制账号</a> &nbsp;<span style="color:#999999;">|</span>&nbsp; 
+	<a href="mqqapi://" class="b">打开QQ</a>
+	{/if}
+	{elseif $bank=='aliscan'}
+	请打开手机支付宝，扫码付款<br/>
+	<a href="javascript:;" onclick="Dtoast('{$js_pageid}', '支付宝账号已复制 请付款{$amount}{$DT[money_unit]}');" data-clipboard-action="copy" data-clipboard-target="#account" class="b">复制账号</a> &nbsp;<span style="color:#999999;">|</span>&nbsp; 
+	<a href="alipay://platformapi/startapp?appId=20000116" class="b">打开支付宝</a>
+	{/if}
+	</div>
+	<div style="padding:32px;">
+		<div class="btn-green" id="pay-{$js_pageid}" onclick="Go('?action=payed&itemid={$itemid}');">已经支付</div>
+	</div>
+</div>
+</form>
+<div style="z-index:1000;position:absolute;top:-10000px;"><textarea id="account">{$account}</textarea></div>
+{load('clipboard.min.js')}
+<script type="text/javascript">
+var clipboard = new Clipboard('[data-clipboard-action]');
+$(function(){
+	var interval = window.setInterval(
+		function() {
+			$.post('?', 'action=ajax&itemid={$itemid}', function(data) {
+				if(data == 'ok') {
+					clearInterval(interval);
+					Go('?action=payed&itemid={$itemid}');
+				}
+			});
+		}, 
+	3000);
+	var i{$js_pageid} = 60;
+	$('#pay-{$js_pageid}').attr('disabled', true);
+	$('#pay-{$js_pageid}').html('请完成支付('+i{$js_pageid}+'秒)');
+	var time_int_{$js_pageid} = window.setInterval(
+		function() {
+			if(i{$js_pageid} == 1) {
+				clearInterval(time_int_{$js_pageid});
+				$('#pay-{$js_pageid}').attr('disabled', false);
+				$('#pay-{$js_pageid}').html('已完成支付');
+			} else {
+				i{$js_pageid}--;
+				$('#pay-{$js_pageid}').html('请完成支付('+i{$js_pageid}+'秒)');
+			}
+		},
+	1000);
+
+});
+</script>
+{elseif $action == 'bank'}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div class="ui-form">
+<p>银行名称</p>
+<div>{$PAY[$bank][type]}<img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#copy-type" onclick="Dtoast('{$js_pageid}', '银行名称已复制');"/></div>
+<p>开户分行</p>
+<div>{$PAY[$bank][branch]}<img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#copy-branch" onclick="Dtoast('{$js_pageid}', '开户分行已复制');"/></div>
+<p>收款户名</p>
+<div>{$PAY[$bank][company]}<img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#copy-company" onclick="Dtoast('{$js_pageid}', '收款户名已复制');"/></div>
+<p>收款账号</p>
+<div>{$PAY[$bank][account]}<img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#copy-account" onclick="Dtoast('{$js_pageid}', '收款账号已复制');"/></div>
+<p>汇款金额</p>
+<div><strong style="font-size:22px;color:#000000;">{$DT[money_sign]}{$amount}</strong><img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#copy-amount" onclick="Dtoast('{$js_pageid}', '汇款金额已复制');"/></div>
+{if $src}
+<p>扫码支付</p>
+<div><img src="{$src}" width="128"/></div>
+{/if}
+{load('webuploader.min.js')}
+<p>汇款凭证<i>*</i><b id="dbill"></b></p>
+<div>
+<input type="text" name="bill" value="" id="bill" placeholder="限制为pdf|jpg|jpeg|png"/>
+<div class="ui-form-file-upload"><div id="file-picker"></div></div>
+<script type="text/javascript">
+var fileu = WebUploader.create({
+	auto: true,
+	server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=file',
+	pick: '#file-picker',
+	accept: {
+		title: 'Files',
+		extensions: 'pdf,jpg,jpeg,png', 
+		mimeTypes: '*/*'
+	},
+	resize: false
+});
+fileu.on('beforeFileQueued', function(file) {
+	var exts = fileu.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+fileu.on('fileQueued', function(file) {
+	Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+fileu.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+fileu.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#bill').val(data.url);
+	}
+});
+fileu.on( 'uploadError', function(file, data) {
+	Dtoast('{$js_pageid}',data.message, '', 5);
+});
+fileu.on('uploadComplete', function(file) {
+	$('#toast-{$js_pageid}').hide();
+});
+</script>
+</div>
+<s>请按以上汇款方式汇款后上传汇款凭证，以便财务人员审核</s>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="提交凭证" class="btn-blue" id="sbm"/>
+<div class="blank-16"></div>
+</div>
+</form>
+<div style="z-index:1000;position:absolute;top:-10000px;">
+<textarea id="copy-type">{$PAY[$bank][type]}</textarea>
+<textarea id="copy-branch">{$PAY[$bank][branch]}</textarea>
+<textarea id="copy-company">{$PAY[$bank][company]}</textarea>
+<textarea id="copy-account">{$PAY[$bank][account]}</textarea>
+<textarea id="copy-amount">{$amount}</textarea>
+</div>
+{load('clipboard.min.js')}
+<script type="text/javascript">
+var clipboard = new Clipboard('[data-clipboard-action]');
+$(function(){
+	var interval = window.setInterval(
+		function() {
+			$.post('?', 'action=ajax&itemid={$itemid}', function(data) {
+				if(data == 'ok') {
+					clearInterval(interval);
+					Go('?action=payed&itemid={$itemid}');
+				}
+			});
+		}, 
+	3000);
+});
+function check() {
+	var f;var l;
+	f = 'bill';
+	l = Dd(f).value.length;
+	if(l < 15) {
+		Dmsg('请上传汇款凭证', f);
+		return false;
+	}
+	return true;
+}
+</script>
+{elseif $action == 'payed'}
+{if $t[status] == 3 || $t[status] == 4}
+<div class="ui-ok">
+<p>成功支付{$DT[money_sign]}{$t[amount]}{$DT[money_unit]}</p>
+<input type="button" value="确 定" class="btn-green" onclick="Go('{if $charge_forward}{$charge_forward}{else}?action=record{/if}');"/>
+</div>
+{if $charge_forward}<script type="text/javascript">setTimeout(function(){Go('{$charge_forward}');}, 3000);</script>{/if}
+{else}
+<div class="ui-tm">
+<p>支付{$DT[money_sign]}{$t[amount]}{$DT[money_unit]}，审核中</p>
+<input type="button" value="刷 新" class="btn-green" onclick="window.location.reload();"/>
+<input type="button" value="返 回" class="btn" onclick="Go('?action=record');"/>
+</div>
+<script type="text/javascript">
+var interval = window.setInterval(
+	function() {
+		$.post('?', 'action=ajax&itemid={$itemid}', function(data) {
+			if(data == 'ok') {
+				clearInterval(interval);
+				window.location.reload();
+			}
+		});
+	}, 
+3000);
+</script>
+{/if}
+{else}
+{if $charge_status == 2}
+<div class="ui-ko">
+<p>支付异常 {$charge_errcode}</p>
+<input type="button" value="确 定" class="btn-green" onclick="Go('?action=record');"/>
+</div>
+{elseif $charge_status == 1}
+<div class="ui-ok">
+<p>支付成功{$charge_amount}{$DT[money_unit]}</p>
+<input type="button" value="确 定" class="btn-green" onclick="Go('?action=record');"/>
+</div>
+{else}
+<div class="ui-ko">
+<p>支付失败</p>
+<input type="button" value="确 定" class="btn-green" onclick="Go('?action=pay');"/>
+</div>
+{/if}
+{if $charge_forward}<script type="text/javascript">setTimeout(function(){Go('{$charge_forward}');}, 2000);</script>{/if}
+{/if}
+{template 'footer', 'member'}

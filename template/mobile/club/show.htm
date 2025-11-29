@@ -1,0 +1,99 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<form action="{$MOD[mobile]}search.php">
+<div class="head-bar-title"><input type="search" name="kw" value="{$kw}" placeholder="帖子搜索"/></div>
+</form>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div class="ui-viewer" id="viewer-{$js_pageid}"></div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="{DT_MOB}api/share.php?mid={$moduleid}&itemid={$itemid}" data-transition="slideup">分享好友</a>
+<a href="{$MOD[mobile]}" data-direction="reverse">{$MOD[name]}首页</a>
+<a href="{DT_MOB}{rewrite('channel.php?mid='.$moduleid)}" data-transition="none">{$MOD[name]}分类</a>
+<a href="{DT_MOB}channel.php" data-direction="reverse">切换频道</a>
+<a href="{$MODULE[2][mobile]}{$DT[file_my]}?mid={$moduleid}&action=add&gid={$gid}" rel="external">发表帖子</a>
+<a href="{$MODULE[2][mobile]}{$DT[file_my]}?mid={$moduleid}&action=add&job=reply&tid={$itemid}" rel="external">回复帖子</a>
+</div>
+</div>
+
+<style type="text/css">
+.userinfo-v0,.userinfo-v1,.userinfo-v2 {margin:32px 0 0 32px;}
+.club_quote {background:#FAFAFA url('{DT_SKIN}club_quote_a.gif') no-repeat 10px 10px;background-size:14px 14px;margin:6px 0 6px 0;font-size:12px;padding:6px 10px;}
+.club_quote div {display:inline-block;padding:5px 20px 5px 20px;background:url('{DT_SKIN}club_quote_b.gif') no-repeat right bottom;background-size:14px 14px;line-height:20px;}
+.club_quote p {margin:0;text-indent:0;}
+.club_quote a:link,.club_quote a:visited,.club_quote a:active {color:#555555;text-decoration:none;}
+.club_quote a:hover {color:#FF6600;}
+.club_break {display:none;}
+</style>
+<div class="title"><h1>{$title}</h1></div>
+<div class="info"><i class="ui-ico-info">{if $level}精华{else}楼主 {$passport}{/if}</i><i class="ui-ico-comm ui-fr">{$reply}</i>{if $MOD[hits]}<i class="ui-ico-hits ui-fr" id="hits">{$hits}</i>{/if}{if $MOD[ip]}<i class="ui-ico-area ui-fr">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}</div>
+{if $page == 1}
+<div class="list-user">
+<a href="{userurl($item[username], 'file=space&mid='.$moduleid)}" rel="external"><img src="{useravatar($item[username])}" width="48" height="48" class="avatar"/></a><i class="userinfo-v{$member[validate]}"></i>
+<ul>
+<li><span>原贴</span><a href="{userurl($item[username], 'file=space&mid='.$moduleid)}" rel="external" class="b">{if $item[username]}{$item[passport]}{else}{ip2area($item[ip])}访客{/if}</a> <img src="{DT_STATIC}image/grade-{$member[gradeid]}.png" width="24" alt="" style="float:none;"/></li>
+<li>{if $item[username] == $GRP[username]}<span class="fb_red">圈主</span>{elseif in_array($item[passport], $GRP[managers])}<span class="fb_orange">版主</span>{/if}<em title="{timetodate($item[addtime], 5)}">{timetoread($item[addtime], 5)}</em></li>
+</ul>
+</div>
+<div class="content" data-content="{$js_pageid}">
+{if $user_status == 3}
+{$content}
+{else}
+{template 'content', 'chip'}
+{/if}
+</div>
+<div class="tool">
+{if $MOD[show_like]}<div class="like" onclick="Dlike({$moduleid}, {$itemid}, 0);">点赞 <b id="like-{$moduleid}-{$itemid}-0">{$likes}</b></div>{/if}
+{if $MOD[show_hate]}<div class="hate" onclick="Dhate({$moduleid}, {$itemid}, 0);">反对 <b id="hate-{$moduleid}-{$itemid}-0">{$hates}</b></div>{/if}
+{if $MOD[show_report]}<div class="report" onclick="Dreport({$moduleid}, {$itemid}, 0);">举报</div>{/if}
+{if $MOD[show_favorite]}<div class="favorite" onclick="Dfavor({$moduleid}, {$itemid});">收藏 <b>{$favorites}</b></div>{/if}
+{if $MOD[fee_award]}<div class="award" onclick="Go('{$MODULE[2][mobile]}award.php?mid={$moduleid}&itemid={$itemid}');">打赏 <b>{$awards}</b></div>{/if}
+{if $MOD[show_share]}<div class="share" onclick="Go('{DT_MOB}api/share.php?mid={$moduleid}&itemid={$itemid}');">分享 <b>{$shares}</b></div>{/if}
+</div>
+{/if}
+{if $lists}
+<div class="main blank-10"></div>
+{loop $lists $k $v}
+<a name="H{$v[itemid]}"></a>
+<div class="list-user">
+<a href="{userurl($v[username], 'file=space&mid='.$moduleid)}" rel="external"><img src="{useravatar($v[username])}" width="48" height="48" class="avatar"/></a><i class="userinfo-v{$v[member][validate]}"></i>
+<ul>
+<li><span>{if $v[level]}<span class="fb_red">精华</span>&nbsp;&nbsp;{/if}{if $v[fname]}{$v[fname]}{else}{$v[floor]}楼{/if}</span><a href="{userurl($v[username], 'file=space&mid='.$moduleid)}" rel="external" class="b">{if $v[username]}{$v[passport]}{else}{ip2area($item[ip])}访客{/if}</a>  <img src="{DT_STATIC}image/grade-{$v[member][gradeid]}.png" width="24" alt="" style="float:none;"/></li>
+<li>{if $v[username] == $GRP[username]}<span class="fb_red">圈主</span>{elseif in_array($v[passport], $GRP[managers])}<span class="fb_orange">版主</span>{elseif $v[username] == $item[username]}<span class="fb_green">楼主</span>{/if}<em title="{timetodate($v[addtime], 5)}">{timetoread($v[addtime], 5)}</em></li>
+</ul>
+</div>
+<div class="content" data-content="{$js_pageid}" id="R_{$v[itemid]}">{$v[content]}</div>
+<div class="ui-tool">
+{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($v[ip], $MOD[ip])}</i>{/if}
+<i class="ui-ico-like" onclick="Dlike({$moduleid}, 0, {$v[itemid]});">支持 <span id="like-{$moduleid}-0-{$v[itemid]}">{$v[likes]}</span></i>
+<i class="ui-ico-hate" onclick="Dhate({$moduleid}, 0, {$v[itemid]});">反对 <span id="hate-{$moduleid}-0-{$v[itemid]}">{$v[hates]}</span></i>
+<a href="{$MODULE[2][mobile]}{$DT[file_my]}?mid={$moduleid}&action=add&job=reply&tid={$itemid}&rid={$v[itemid]}" rel="external"><i class="ui-ico-quote">回复</i></a>			 
+<i class="ui-ico-report" onclick="Rreply({$v[itemid]});">举报</i>
+</div>
+{/loop}
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<div class="foot-bar-fix"></div>
+<div class="foot-bar">
+	<div class="foot-bar-txt"><textarea onfocus="Go('{$MODULE[2][mobile]}{$DT[file_my]}?mid={$moduleid}&action=add&job=reply&tid={$itemid}');">回复：{$title}</textarea></div>
+</div>
+<script style="text/javascript">
+function Rreply(id) {
+	var c = Dd('R_'+id).innerHTML;
+	if(c.indexOf('club_break') != -1) {
+		var t = c.split('club_break');
+		c = t[1];
+		c = c.substring(c.indexOf('>') + 1);
+	}
+	Dreport({$moduleid}, 0, id, '{$MOD[name]}回复举报，回复ID:'+id+'\n回复内容:\n'+c);
+}
+</script>
+{template 'footer'}

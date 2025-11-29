@@ -1,0 +1,93 @@
+{template 'header'}
+<script type="text/javascript">var module_id= {$moduleid},item_id={$itemid},content_id='content',img_max_width={$MOD[max_width]};</script>
+<div class="m">	
+	<div class="nav"><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')}</div>
+</div>
+<div class="m m3">
+	<div class="m3l">
+	<h1 class="title" id="title">{$title}</h1>
+	<div class="info"><span class="f_r"><img src="{DT_SKIN}ico-zoomin.png" width="16" height="16" alt="放大字体" class="c_p" onclick="fontZoom('+');"/>&nbsp;&nbsp;<img src="{DT_SKIN}ico-zoomout.png" width="16" height="16"  alt="缩小字体" class="c_p" onclick="fontZoom('-');"/></span>
+	<i class="ui-ico-time">{$adddate}</i>
+	{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}
+	{if $MOD[hits]}<i class="ui-ico-hits" id="hits">{$hits}</i>{/if}
+	</div>
+	<div class="content">
+	<table cellpadding="8" cellspacing="1" width="100%" bgcolor="#DDDDDD">
+	<tr bgcolor="#FFFFFF">
+	<td width="80">行业</td>
+	<td width="230">{$CATEGORY[$parentid][catname]}</td>
+	<td width="80">职位</td>
+	<td width="230">{$CATEGORY[$catid][catname]}</td>
+	</tr>
+	<tr bgcolor="#FFFFFF">
+	<td>招聘部门</td>
+	<td>{$department}</td>
+	<td>招聘人数</td>
+	<td>{if $total}{$total}人{else}若干{/if}</td>
+	</tr>
+	<tr bgcolor="#FFFFFF">
+	<td>工作地区</td>
+	<td>{area_pos($areaid, '')}</td>
+	<td>工作性质</td>
+	<td>{$TYPE[$type]}</td>
+	</tr>
+	<tr bgcolor="#FFFFFF">
+	<td>性别要求</td>
+	<td>{$GENDER[$gender]}</td>
+	<td>婚姻要求</td>
+	<td>{$MARRIAGE[$marriage]}</td>
+	</tr>
+	<tr bgcolor="#FFFFFF">
+	<td>学历要求</td>
+	<td>{$EDUCATION[$education]}</td>
+	<td>工作经验</td>
+	<td>{if $experience}{$experience}年以上{else}不限{/if}</td>
+	</tr>
+	<tr bgcolor="#FFFFFF">
+	<td>年龄要求</td>
+	<td>{if $minage && $maxage}{$minage}-{$maxage}岁{elseif $minage}{$minage}岁以上{elseif $maxage}{$maxage}岁以内{else}不限年龄{/if}</td>
+	<td>待遇水平</td>
+	<td>{if $minsalary && $maxsalary}{$minsalary}-{$maxsalary}{$DT[money_unit]}/月{elseif $minsalary}{$minsalary}{$DT[money_unit]}/月以上{elseif $maxsalary}{$maxsalary}{$DT[money_unit]}/月以内{else}面议{/if}</td>
+	</tr>
+	<tr bgcolor="#FFFFFF">
+	<td>更新日期</td>
+	<td>{$editdate}</td>
+	<td>有效期至</td>
+	<td>{$todate}{if $expired}<span class="f_red">[已过期]</span>{/if}</td>
+	</tr>
+	</table>		
+	</div>
+	{if $content}
+	<div class="head-txt">{if $username}<span><input type="button" value="职位申请" class="btn-green" onclick="Go('{$MOD[linkurl]}{rewrite('apply.php?itemid='.$itemid)}');"/></span>{/if}<strong>职位描述</strong></div>
+	{if $CP}{template 'property_show', 'chip'}{/if}
+	<div class="content" id="content">{$content}</div>
+	{/if}
+	
+	<div class="tool">
+	{if $MOD[show_like]}<i class="like" onclick="Dlike({$moduleid}, {$itemid}, 0);">点赞 <b id="like-{$moduleid}-{$itemid}-0">{$likes}</b></i>{/if}
+	{if $MOD[show_hate]}<i class="hate" onclick="Dhate({$moduleid}, {$itemid}, 0);">反对 <b id="hate-{$moduleid}-{$itemid}-0">{$hates}</b></i>{/if}
+	{if $MOD[show_report]}<i class="report" onclick="Dreport({$moduleid}, {$itemid}, 0);">举报</i>{/if}
+	{if $MOD[show_favorite]}<i class="favorite" onclick="Dfavor({$moduleid}, {$itemid});">收藏 <b>{$favorites}</b></i>{/if}
+	{if $MOD[fee_award]}<a href="{$MODULE[2][linkurl]}award.php?mid={$moduleid}&itemid={$itemid}" target="_blank"><i class="award">打赏 <b>{$awards}</b></i></a>{/if}
+	{if $could_comment}<a href="{$EXT[comment_url]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}" target="_blank"><i class="comment">评论 <b>{$comments}</b></i></a>{/if}
+	{if $MOD[show_share]}<a href="{DT_PATH}api/share.php?mid={$moduleid}&itemid={$itemid}" target="_blank"><i class="share">分享 <b>{$shares}</b></i></a>{/if}
+	</div>
+
+	{if $com_intro}
+	<div class="head-txt"><span><a href="{userurl($username)}" target="_blank">更多<i>&gt;</i></a></span><strong>公司介绍</strong></div>
+	<div class="content">{$com_intro}</div>
+	{/if}
+	</div>
+	<div class="m3r">
+		<div class="contact-body" id="contact">{template 'contact', 'chip'}</div>
+		{if $username}
+		<div class="head-sub"><span><a href="{userurl($username, 'file='.$MOD['moduledir'])}" target="_blank">更多<i>&gt;</i></a></span><strong>该企业其他招聘</strong></div>
+		<div class="list-txt">
+		<!--{tag("moduleid=$moduleid&condition=status=3 and username='$username'&itemid=$itemid&pagesize=10&order=addtime desc")}-->
+		</div>
+		{/if}
+	</div>
+	<div class="b10 c_b"></div>
+</div>
+{if $content}{load('content.js')}{/if}
+{template 'footer'}

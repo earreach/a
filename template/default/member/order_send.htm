@@ -1,0 +1,178 @@
+{load('mall.css')}
+{load('mall.js')}
+{load('player.js')}
+{template 'goods_service', 'chip'}
+<div class="t2">服务详情</div>
+<table cellspacing="1" cellpadding="10" class="tb">
+<tr>
+<td class="tl">联系买家</td>
+<td class="tr">{if $DT[im_web]}{im_web($O[buyer])} &nbsp; {/if}<a href="javascript:;" onclick="Dwidget('message.php?action=send&touser={$O[buyer]}', '发送信件', 1220);"><img src="{DT_STATIC}image/msg.gif" title="发送站内信" align="absmiddle"/></a> &nbsp; <a href="{userurl($O[buyer], 'file=contact')}" target="_blank" class="t">{$O[buyer]}</a></td>
+</tr>
+<tr>
+<td class="tl">申请时间</td>
+<td class="tr">{timetoread($O[addtime], 5)}</td>
+</tr>
+<tr>
+<td class="tl">服务类型</td>
+<td class="tr">{$dservice[$O[typeid]]}</td>
+</tr>
+<tr>
+<td class="tl">申请原因</td>
+<td class="tr">{$O[buyer_title]}</td>
+</tr>
+{if $O[buyer_reason]}
+<tr>
+<td class="tl">补充说明</td>
+<td class="tr">{nl2br($O[buyer_reason])}</td>
+</tr>
+{/if}
+{if $O[buyer_thumbs] || $O[buyer_video]}
+<tr>
+<td class="tl">申请凭据</td>
+<td class="tr">
+<div class="comment-r" style="width:auto;">
+	<ul id="thumbs-{$v[itemid]}0">
+	{if $O[buyer_video]}<li><img src="{DT_STATIC}image/play.gif" onclick="comment_thumb_show({$v[itemid]}0, this);" data-video="{$O[buyer_video]}"/></li>{/if}
+	{loop $O[buyer_thumbs] $t}
+	{if $t}<li><img src="{$t}" onclick="comment_thumb_show({$v[itemid]}0, this);"/></li>{/if}
+	{/loop}
+	</ul>
+	<p id="thumbshow-{$v[itemid]}0" onclick="comment_thumb_next({$v[itemid]}0);"></p>
+</div>
+</td>
+</tr>
+{/if}
+<tr>
+<td class="tl">服务状态</td>
+<td class="tr">{$dservice_status[$O[status]]}</td>
+</tr>
+{if $O[seller_title]}
+<tr>
+<td class="tl">操作原因</td>
+<td class="tr">{$O[seller_title]}</td>
+</tr>
+{/if}
+{if $O[seller_reason]}
+<tr>
+<td class="tl">补充说明</td>
+<td class="tr">{nl2br($O[seller_reason])}</td>
+</tr>
+{/if}
+{if $O[seller_thumbs] || $O[seller_video]}
+<tr>
+<td class="tl">操作凭据</td>
+<td class="tr">
+<div class="comment-r" style="width:auto;">
+	<ul id="thumbs-{$v[itemid]}1">
+	{if $O[seller_video]}<li><img src="{DT_STATIC}image/play.gif" onclick="comment_thumb_show({$v[itemid]}1, this);" data-video="{$O[seller_video]}"/></li>{/if}
+	{loop $O[seller_thumbs] $t}
+	{if $t}<li><img src="{$t}" onclick="comment_thumb_show({$v[itemid]}1, this);"/></li>{/if}
+	{/loop}
+	</ul>
+	<p id="thumbshow-{$v[itemid]}1" onclick="comment_thumb_next({$v[itemid]}1);"></p>
+</div>
+</td>
+</tr>
+{/if}
+{if $O[seller_note]}
+<tr>
+<td class="tl">备注事项</td>
+<td class="tr">{nl2br($O[seller_note])}</td>
+</tr>
+{/if}
+</table>
+
+
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div class="t2">寄回商品</div>
+<table cellspacing="1" cellpadding="10" class="tb">	
+<tr>
+<td class="tl"><span class="f_red">*</span> 服务类型</td>
+<td class="tr f_blue">{$dservice[$O[typeid]]}</td>
+</tr>
+{if $O[typeid] < 2}
+<tr>
+<td class="tl"><span class="f_red">*</span> 退款金额</td>
+<td class="tr f_red">{$DT[money_sign]}{$O[amount]}</td>
+</tr>
+{/if}
+{if $O[typeid] > 1}
+<tr>
+<td class="tl"><span class="f_red">*</span> 收货地址</td>
+<td class="tr">
+	<select name="aid" id="aid">
+	<option value="0">与原订单收货地址一致</option>
+	{loop $address $v}
+	<option value="{$v[itemid]}">{if $v[typename]}{$v[typename]} {/if}{$v[truename]} {$v[mobile]} {$v[street]}</option>
+	{/loop}
+	</select> &nbsp; 
+	<a href="address.php" class="t">管理地址</a> &nbsp; 
+	<span id="daid" class="f_red"></span>
+</td>
+</tr>
+{/if}
+{if $DT[postcode]}
+<tr>
+<td class="tl">邮政编码</td>
+<td class="tr">{$O[seller_postcode]}{if $O[seller_postcode] && strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#seller_postcode" onclick="Dtoast('邮编已复制');"/>{/if}</td>
+</tr>
+{/if}
+<tr>
+<td class="tl">寄回地址</td>
+<td class="tr">{$O[seller_address]}{if $O[seller_address] && strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#seller_address" onclick="Dtoast('地址已复制');"/>{/if}</td>
+</tr>
+<tr>
+<td class="tl">收件姓名</td>
+<td class="tr">{$O[seller_name]}{if $O[seller_name] && strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#seller_name" onclick="Dtoast('姓名已复制');"/>{/if}</td>
+</tr>
+<tr>
+<td class="tl">收件手机</td>
+<td class="tr">{$O[seller_mobile]}{if $O[seller_mobile] && strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#seller_mobile" onclick="Dtoast('手机已复制');"/>{/if}</td>
+</tr>
+<tr>
+<td class="tl">快递类型</td>
+<td class="tr f_gray">
+<select name="send_type" id="send_type">
+<option value="">请选择</option>
+{loop $send_types $v}
+<option value="{$v}">{$v}</option>
+{/loop}
+</select>
+</td>
+</tr>
+<tr>
+<td class="tl">快递单号</td>
+<td class="tr f_gray"><input type="text" size="30" name="send_no" id="send_no"/></td>
+</tr>
+<tr>
+<td class="tl">发货时间</td>
+<td class="tr f_gray">{dcalendar('send_time', $send_time, '-', 1)}</td>
+</tr>
+<tr>
+<td class="tl"> </td>
+<td class="tr">
+<input type="submit" name="submit" value=" 确 定 " class="btn_g"/>&nbsp;&nbsp;<input type="button" value=" 返 回 " class="btn" onclick="history.back(-1);"/>
+</td>
+</tr>
+</table>
+</form>
+{if strpos($DT_MBS, 'IE') === false}
+<div style="z-index:1000;position:absolute;top:-10000px;">
+<textarea id="seller_postcode">{$O[seller_postcode]}</textarea>
+<textarea id="seller_address">{$O[seller_address]}</textarea>
+<textarea id="seller_name">{$O[seller_name]}</textarea>
+<textarea id="seller_mobile">{$O[seller_mobile]}</textarea>
+</div>
+{load('clipboard.min.js')}
+<script type="text/javascript">var clipboard = new Clipboard('[data-clipboard-action]');</script>
+{/if}
+<script type="text/javascript">
+function check() {
+	return confirm('您确认货物已经发出，并且以上信息填写无误吗？\n\n此操作将不可撤销');
+}
+s('order');m('action_service');
+</script>

@@ -1,0 +1,260 @@
+{template 'header'}
+<div class="m">
+	<div class="nav">
+		<div class="nvs"><form action="{$MOD[linkurl]}product.php"><input type="search" name="kw" value="{$kw}" placeholder="搜索产品" title="搜索产品"/><s onclick="$(this).parent().submit();">搜索</s></form></div>
+		<a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> <a href="{$MOD[linkurl]}product.php">产品报价</a> <i>&gt;</i> <a href="{$MOD[linkurl]}{rewrite('price.php?itemid='.$itemid)}">{$P[title]}</a>
+	</div>
+	<div class="b16"></div>
+	<h1 class="title">{$P[title]}</h1>
+	<div class="info">
+	<span class="ui-fr f_gray">
+	{if $P[n1] && $P[v1]}{$P[n1]}：{$P[v1]} &nbsp; &nbsp; {/if}
+	{if $P[n2] && $P[v2]}{$P[n2]}：{$P[v2]} &nbsp; &nbsp; {/if}
+	{if $P[n3] && $P[v3]}{$P[n3]}：{$P[v3]} &nbsp; &nbsp; {/if}
+	</span>
+	<i class="ui-ico-time" title="最新报价">{timetodate($P[edittime], 5)}</i>
+	<i class="ui-ico-hits" title="浏览次数" id="hits">{$P[hits]}</i>	
+	<i class="ui-ico-pics c_p" title="报价次数" onclick="$('html, body').animate({scrollTop:$('#search').offset().top - 120}, 500);">{$P[item]}报价</i>
+	</div>
+	<table cellpadding="0" cellspacing="0" width="100%">
+	<tr>
+	<td width="20"></td>
+	<td>
+		{if $sd}
+		{load('echarts.min.js')}
+		<div id="chart" style="width:{if $could_add}880{else}1180{/if}px;height:500px;margin:16px 0;"></div>
+		<script type="text/javascript">
+		var chart = echarts.init(Dd('chart'));
+		var option = {
+			title: {
+				text: '{$chart_title}',
+				subtext: '单位({$DT[money_unit]})'
+			},
+			tooltip: {
+				trigger: 'axis'
+			},
+			legend: {
+				data: [{$ld}]
+			},
+			grid: {
+				left: '3%',
+				right: '4%',
+				bottom: '3%',
+				containLabel: true
+			},
+			toolbox: {
+				feature: {
+					saveAsImage: {}
+				}
+			},
+			xAxis: {
+				type: 'category',
+				boundaryGap: false,
+				data: [{$xd}]
+			},
+			yAxis: {
+				type: 'value'
+			},
+			series: [{$sd}]
+		};
+		chart.setOption(option);
+		</script>
+		{else}
+		<div class="list-none">数据不足，无法生成报表</div>
+		{/if}
+	</td>
+	{if $could_add}
+	<td width="300" valign="top" style="border-left:#F5F5F5 1px solid;">
+		<div class="price-add">
+		<iframe src="" name="send" id="send" style="display:none;"></iframe>
+		<form method="post" action="{$MOD[linkurl]}price.php" id="dform" target="send" onsubmit="return check();">
+		<input type="hidden" name="itemid" value="{$itemid}"/>
+		<table cellpadding="10" cellspacing="0">
+		{if $MARKET}
+		<tr>
+		<td class="tl">市场</td>
+		<td>
+			<select name="post[market]">
+			{loop $MARKET $k $v}
+			<option value="{$k}"{if $k==$market} selected{/if}>{$v}</option>
+			{/loop}
+			</select>
+		</td>
+		</tr>
+		{/if}
+		<tr>
+		<td class="tl">价格 <span class="f_red">*</span></td>
+		<td><input name="post[price]" type="text" size="10" id="price"/><span class="f_grey"> / {$P[unit]}</span></td>
+		</tr>
+		<tr>
+		<td class="tl">地区 <span class="f_red">*</span></td>
+		<td>{ajax_area_select('post[areaid]', '请选择', $areaid)}</td>
+		</tr>
+		{if !$_userid}
+		<tr>
+		<td class="tl">公司 <span class="f_red">*</span></td>
+		<td><input name="post[company]" type="text" id="company" size="20"/></td>
+		</tr>
+		<tr>
+		<td class="tl">电话</td>
+		<td><input name="post[telephone]" id="telephone" type="text" size="20"/></td>
+		</tr>
+		{if $DT[im_qq]}
+		<tr>
+		<td class="tl">QQ</td>
+		<td><input name="post[qq]" id="qq" type="text" size="20"/></td>
+		</tr>
+		{/if}
+		{if $DT[im_wx]}
+		<tr>
+		<td class="tl">微信</td>
+		<td><input name="post[wx]" id="wx" type="text" size="20"/></td>
+		</tr>
+		{/if}
+		{/if}
+		<tr>
+		<td class="tl">备注</td>
+		<td><input name="post[note]" type="text" size="20" id="note"/></td>
+		</tr>
+		{if $need_captcha}
+		<tr>
+		<td class="tl">验证码 <span class="f_red">*</span></td>
+		<td>{template 'captcha', 'chip'}<span id="dcaptcha" class="f_red"></span></td>
+		</tr>
+		{/if}
+		<tr>
+		<td class="tl">&nbsp;</td>
+		<td><input type="submit" name="submit" value="我要报价" class="btn-green"/></td>
+		</tr>
+		</table>
+		</form>
+		</div>
+		{load('guest.js')}
+		<script type="text/javascript">
+		function check() {
+			var l;
+			var f;
+			f = 'price';
+			l = parseFloat(Dd(f).value);
+			if(isNaN(l)) {
+				alert('请填写价格');
+				Dd(f).focus();
+				return false;
+			}
+		{if $P[minprice]}
+			if(l < {$P[minprice]}) {
+				alert('报价不能低于{$P[minprice]}');
+				Dd(f).focus();
+				return false;
+			}
+		{/if}
+		{if $P[maxprice]}
+			if(l > {$P[maxprice]}) {
+				alert('报价不能高于{$P[maxprice]}');
+				Dd(f).focus();
+				return false;
+			}
+		{/if}
+			f = 'areaid_1';
+			if(Dd(f).value == 0) {
+				alert('请选择所在地区');
+				return false;
+			}
+		{if !$_userid}
+			f = 'company';
+			l = Dd(f).value.length;
+			if(l < 2) {
+				alert('请填写公司名称');
+				Dd(f).focus();
+				return false;
+			}
+		{/if}
+			f = 'note';
+			l = Dd(f).value.length;
+			if(l > 20) {
+				alert('备注不能超过20个字');
+				Dd(f).focus();
+				return false;
+			}
+		{if $need_captcha}
+			f = 'captcha';
+			if($('#c'+f).html().indexOf('ok.png') == -1) {
+				alert('请填写正确的验证码');
+				Dd(f).focus();
+				return false;
+			}
+		{/if}
+			return true;
+		}
+		</script>
+	</td>
+	{/if}
+	<td width="20"></td>
+	</tr>
+	</table>
+</div>
+
+<div class="m bd-t">
+	<a name="record"></a>
+	<form action="{$MOD[linkurl]}price.php" id="search">
+	<input type="hidden" name="page" value="1"/>
+	<input type="hidden" name="itemid" value="{$itemid}"/>
+	<table cellpadding="6" cellspacing="6">
+	<tr>
+	<td>&nbsp;
+	<input type="text" size="30" name="kw" value="{$kw}" placeholder="公司" title="公司"/>&nbsp;
+	{dcalendar('fromdate', $fromdate, '-', 1)} 至 {dcalendar('todate', $todate, '-', 1)}&nbsp;
+	{ajax_area_select('areaid', '不限地区', $areaid)}&nbsp;
+	{if $MARKET}
+	<select name="market">
+	{loop $MARKET $k $v}
+	<option value="{$k}"{if $k==$market} selected{/if}>{$v}</option>
+	{/loop}
+	</select>&nbsp;
+	{/if}
+	</td>
+	<td><input type="submit" value="搜 索" class="btn-blue"/></td>
+	<td><input type="button" value="重 搜" class="btn" onclick="Go('{$MOD[linkurl]}{rewrite('price.php?page=1&itemid='.$itemid)}');"/></td>
+	</tr>
+	</table>
+	</form>
+	{if $tags}
+	<table cellpadding="16" cellspacing="0" class="tb">
+	<tr>
+	<th><a href="javascript:;" onclick="Dq('order','{if $order==1}2{else}1{/if}');">价格({$DT[money_unit]}) <img src="{DT_STATIC}image/ico-{if $order==2}asc{elseif $order==1}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+	<th>单位</th>
+	<th><a href="javascript:;" onclick="Dq('order','{if $order==3}4{else}3{/if}');">报价时间 <img src="{DT_STATIC}image/ico-{if $order==4}asc{elseif $order==3}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+	{if $MARKET}<th>市场</th>{/if}
+	<th>地区</th>
+	<th>报价公司</th>
+	<th>备注</th>
+	</tr>
+	{loop $tags $t}
+	<tr align="center">
+	<td class="f_price">{$DT[money_sign]}{$t[price]}</td>
+	<td class="f_grey">{$P[unit]}</td>
+	<td title="{timetodate($t[addtime], 5)}"><a href="javascript:;" onclick="Dq('date',this.innerHTML);">{timetoread($t[addtime], 5)}</a></td>
+	{if $MARKET}<td>{if $t[market]}<a href="javascript:;" onclick="Dq('market',{$t[market]});">{$MARKET[$t[market]]}</a>{else}&nbsp;{/if}</td>{/if}
+	<td><a href="javascript:;" onclick="Dq('areaid',{$t[areaid]});">{area_pos($t[areaid], '', 2)}</a></td>
+	<td align="left" title="{$t[company]}">{if $kw}<a href="{userurl($t[username], 'file=contact')}" target="_blank">{else}<a href="javascript:;" onclick="Dq('kw','='+this.innerHTML);">{/if}{$t[company]}</a></td>
+	<td align="left" class="f_grey" title="{$t[note]}">{dsubstr($t[note], 20, '..')}</td>
+	</tr>
+	{/loop}
+	</table>
+	{if $pages}<div class="pages">{$pages}</div>{/if}
+	{/if}
+</div>
+{if $P[content]}
+<div class="b10"></div>
+<div class="m">
+	<div class="content">{$P[content]}</div>
+</div>
+{/if}
+<script type="text/javascript">
+$(function(){
+	if(window.location.href.indexOf('page') != -1) {
+		$('html, body').animate({scrollTop:$('#search').offset().top - 118}, 100);
+	}
+});
+</script>
+{template 'footer'}

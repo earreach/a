@@ -1,0 +1,26 @@
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+{template 'goods', 'chip'}
+<div class="t2">延长买家确认时间</div>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl"><span class="f_red">*</span>延长时间</td>
+<td class="tr f_gray"><input type="text" size="10" name="add_time" id="add_time" value="72"/> 小时 （1天=24小时 只能为整数）&nbsp;<span id="dadd_time" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"> </td>
+<td class="tr">
+<input type="submit" name="submit" value=" 确 定 " class="btn_g"/>&nbsp;&nbsp;<input type="button" value=" 返 回 " class="btn" onclick="history.back(-1);"/>
+</td>
+</tr>
+</table>
+</form>
+<script type="text/javascript">
+function check() {
+	return confirm('您确认延长'+Dd('add_time').value+'小时吗？');
+}
+</script>
+<script type="text/javascript">s('trade');m('action');</script>

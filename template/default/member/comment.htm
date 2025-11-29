@@ -1,0 +1,216 @@
+{template 'header', 'member'}
+{load('comment.css')}
+<div class="menu">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="tab" id="action"><a href="?action=index"><span>评论管理</span></a></td>
+<td class="tab" id="action_fans"><a href="?action=my"><span>我的评论</span></a></td>
+</tr>
+</table>
+</div>
+{if $action == 'my'}
+<form action="?" id="search">
+<input type="hidden" name="action" value="{$action}"/>
+<div class="tt">
+{$fields_select}&nbsp;
+<input type="text" size="40" name="kw" value="{$kw}" title="关键词" placeholder="关键词"/>&nbsp;
+<input type="text" size="15" name="username" value="{$username}" title="作者" placeholder="作者"/>&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?action={$action}');"/>
+<div class="b10"></div>
+<select name="datetype">
+<option value="addtime"{if $datetype == 'addtime'} selected{/if}>评论时间</option>
+<option value="replytime"{if $datetype == 'replytime'} selected{/if}>回复时间</option>
+</select>&nbsp;
+{dcalendar('fromdate', $fromdate, '-', 1)} 至 {dcalendar('todate', $todate, '-', 1)}&nbsp;
+<select name="reply">
+<option value="0"{if $reply == 0} selected{/if}>回复类型</option>
+<option value="1"{if $reply == 1} selected{/if}>全部回复</option>
+<option value="2"{if $reply == 2} selected{/if}>作者回复</option>
+<option value="3"{if $reply == 3} selected{/if}>网站回复</option>
+</select>&nbsp;
+<label><input type="checkbox" name="level" value="1"{if $level} checked{/if}/> 精选</label>&nbsp;
+<label><input type="checkbox" name="hide" value="1"{if $hide} checked{/if}/> 匿名</label>&nbsp;
+</div>
+</form>
+<form method="post">
+<div class="ls">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="20"><input type="checkbox" onclick="checkall(this.form);" title="全选/反选"/></th>
+<th width="100">会员</th>
+<th>评论内容</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td valign="top"><input type="checkbox" name="itemid[]" value="{$v[itemid]}"/></td>
+<td valign="top">
+	<img src="{useravatar($v[username])}" width="48" height="48" style="padding:6px;border-radius:50%;"/>
+	<div class="b10"></div>
+	{if $v[passport]}{$v[passport]}{else}{$v[username]}{/if}
+</td>
+<td valign="top" align="left">
+	<div class="comment_title">
+		{if $v[level]==2}<a href="javascript:Dq('level', '1');"><span class="fb_red f_r">置顶</span></a>{elseif $v[level]==1}<a href="javascript:Dq('level', '1');"><span class="fb_orange f_r">精选</span></a>{/if}
+		<span class="comment_time c_p" title="{$v[adddate]}" onclick="Dq('datetype','addtime',0);Dq('date',this.title);">{timetoread($v[addtime], 5)}</span>
+	</div>
+	<div class="comment_content">{if $v[quotation]}{$v[quotation]}{else}{$v[content]}{/if}</div>
+	{if $v[reply]}
+	<div class="comment_reply">
+	<div>{if $v[replyer]==$v[item_username]}<span class="fb_green c_p" onclick="Dq('reply',2);">作者</span>{else}<span class="fb_orange c_p" onclick="Dq('reply',3);">网站</span>{/if} <span class="c_p" title="{$v[replydate]}" onclick="Dq('datetype','replytime',0);Dq('date',this.title);">{timetoread($v[replytime], 5)}</span> <span class="c_p" onclick="Dq('reply',1);">回复：</span></div> {nl2br($v[reply])}
+	</div>
+	{/if}
+	<div class="comment_link"><a href="javascript:;" onclick="Dq('mid','{$v[item_mid]}',0);Dq('itemid',{$v[item_id]});">原文</a>：<a href="{$v[linkurl]}" target="_blank" class="t">{$v[item_title]}</a></div>
+	<div class="comment_info">
+		<span class="comment_vote">
+		支持 ({$v[likes]}) &nbsp; 
+		反对 ({$v[hates]}) &nbsp; 
+		回复 ({$v[quotes]}) &nbsp; 
+		举报 ({$v[reports]}) &nbsp; 
+		</span>
+		<a href="javascript:Dq('star', '{$v[star]}');"><img src="{DT_STATIC}image/star{$v[star]}.gif" width="60" height="12" alt="" align="absmiddle"/></a>
+	</div>
+</td>
+</tr>
+{/loop}
+</table>
+<div class="btns">
+<label><input type="checkbox" onclick="checkall(this.form);" title="全选/反选"/></label>
+<input type="submit" value=" 删除评论 " class="btn_r" onclick="if(confirm('确定要删除选中评论吗？')){this.form.action='?action=delete'}else{return false;}"/>&nbsp;&nbsp;
+</div>
+</form>
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('comment');m('action_fans');</script>
+{else}
+<form action="?" id="search">
+<input type="hidden" name="action" value="{$action}"/>
+<div class="tt">
+{$fields_select}&nbsp;
+<input type="text" size="40" name="kw" value="{$kw}" title="关键词" placeholder="关键词"/>&nbsp;
+<input type="text" size="15" name="username" value="{$username}" title="会员名" placeholder="会员名"/>&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?action={$action}');"/>
+<div class="b10"></div>
+<select name="datetype">
+<option value="addtime"{if $datetype == 'addtime'} selected{/if}>评论时间</option>
+<option value="replytime"{if $datetype == 'replytime'} selected{/if}>回复时间</option>
+</select>&nbsp;
+{dcalendar('fromdate', $fromdate, '-', 1)} 至 {dcalendar('todate', $todate, '-', 1)}&nbsp;
+<select name="reply">
+<option value="0"{if $reply == 0} selected{/if}>回复类型</option>
+<option value="1"{if $reply == 1} selected{/if}>全部回复</option>
+<option value="2"{if $reply == 2} selected{/if}>作者回复</option>
+<option value="3"{if $reply == 3} selected{/if}>网站回复</option>
+</select>&nbsp;
+<label><input type="checkbox" name="level" value="1"{if $level} checked{/if}/> 精选</label>&nbsp;
+<label><input type="checkbox" name="hide" value="1"{if $hide} checked{/if}/> 匿名</label>&nbsp;
+<label><input type="checkbox" name="guest" value="1"{if $guest} checked{/if}/> 游客</label>&nbsp;
+</div>
+</form>
+<form method="post">
+<div class="ls">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="20"><input type="checkbox" onclick="checkall(this.form);" title="全选/反选"/></th>
+<th width="100">会员</th>
+<th>评论内容</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td valign="top"><input type="checkbox" name="itemid[]" value="{$v[itemid]}"/></td>
+<td valign="top">
+{if $v[username] && !$v[hidden]}
+	<a href="{userurl($v[username], 'file=space')}" target="_blank"><img src="{useravatar($v[username])}" width="48" height="48" style="padding:6px;border-radius:50%;"/></a>
+{else}
+	<img src="{useravatar('')}" width="48" height="48" style="padding:6px;border-radius:50%;"/>
+{/if}
+	<div class="b10"></div>
+{if $v[username]}
+	{if $v[hidden]}
+	<a href="javascript:;" onclick="Dq('hide', '1');">匿名</a>
+	{else}
+	<a href="javascript:;" onclick="Dq('username','{$v[username]}');">{if $v[passport]}{$v[passport]}{else}{$v[username]}{/if}</a>
+	{/if}
+{else}
+	<a href="javascript:;" onclick="Dq('guest', '1');">游客</a>
+{/if}
+	<div class="b10"></div>
+{if !$v[reply]}<a href="javascript:;" onclick="RE({$v[itemid]});" class="t">回复</a>{/if}
+</td>
+<td valign="top" align="left">
+	<div class="comment_title">
+		{if $v[level]==2}<a href="javascript:Dq('level', '1');"><span class="fb_red f_r">置顶</span></a>{elseif $v[level]==1}<a href="javascript:Dq('level', '1');"><span class="fb_orange f_r">精选</span></a>{/if}
+		<span class="comment_time c_p" title="{$v[adddate]}" onclick="Dq('datetype','addtime',0);Dq('date',this.title);">{timetoread($v[addtime], 5)}</span>
+	</div>
+	<div class="comment_content">{if $v[quotation]}{$v[quotation]}{else}{$v[content]}{/if}</div>
+	{if $v[reply]}
+	<div class="comment_reply">
+	<div>{if $v[replyer]==$v[item_username]}<span class="fb_green c_p" onclick="Dq('reply',2);">作者</span>{else}<span class="fb_orange c_p" onclick="Dq('reply',3);">网站</span>{/if} <span class="c_p" title="{$v[replydate]}" onclick="Dq('datetype','replytime',0);Dq('date',this.title);">{timetoread($v[replytime], 5)}</span> <span class="c_p" onclick="Dq('reply',1);">回复：</span></div> {nl2br($v[reply])}
+	</div>
+	{/if}
+	<div class="comment_link"><a href="javascript:;" onclick="Dq('mid','{$v[item_mid]}',0);Dq('itemid',{$v[item_id]});">原文</a>：<a href="{$v[linkurl]}" target="_blank" class="t">{$v[item_title]}</a></div>
+	<div class="comment_info">
+		<span class="comment_vote">
+		支持 ({$v[likes]}) &nbsp; 
+		反对 ({$v[hates]}) &nbsp; 
+		回复 ({$v[quotes]}) &nbsp; 
+		举报 ({$v[reports]}) &nbsp; 
+		</span>
+		<a href="javascript:Dq('star', '{$v[star]}');"><img src="{DT_STATIC}image/star{$v[star]}.gif" width="60" height="12" alt="" align="absmiddle"/></a>
+	</div>
+	<div class="comment_ajax" id="form-{$v[itemid]}"></div>
+</td>
+</tr>
+{/loop}
+</table>
+<div class="btns">
+<label><input type="checkbox" onclick="checkall(this.form);" title="全选/反选"/></label>
+<input type="submit" value=" 设置精选 " class="btn_g" onclick="this.form.action='?action=level&level=1'"/>&nbsp;&nbsp;
+<input type="submit" value=" 设置置顶 " class="btn" onclick="this.form.action='?action=level&level=2'"/>&nbsp;&nbsp;
+<input type="submit" value=" 取消精选 " class="btn" onclick="this.form.action='?action=level&job=cancel'"/>&nbsp;&nbsp;
+<input type="submit" value=" 取消置顶 " class="btn" onclick="this.form.action='?action=level&job=cancel'"/>&nbsp;&nbsp;
+<input type="submit" value=" 删除评论 " class="btn_r" onclick="if(confirm('确定要删除选中评论吗？')){this.form.action='?action=delete'}else{return false;}"/>&nbsp;&nbsp;
+<input type="submit" value=" 删除回复 " class="btn_r" onclick="if(confirm('确定要删除选中回复吗？')){this.form.action='?action=delete&job=reply'}else{return false;}"/>&nbsp;&nbsp;
+</div>
+</form>
+<div class="pages">{$pages}</div>
+<script type="text/javascript">
+var cid = 0;
+function RE(id) {
+	if(id == cid) return;
+	cid = id;
+	$('.comment_ajax').html('');
+	$('.comment_ajax').hide();
+	$('#form-'+cid).html('<textarea id="text-'+cid+'" placeholder="回复内容："></textarea><div><input type="button" value="回 复" class="btn_g" onclick="RP();"/><input type="button" value="取 消" class="btn" onclick="RC();"/><span id="dtext-'+cid+'"></span></div>');
+	$('#form-'+cid).slideDown();
+}
+function RC() {
+	$('#form-'+cid).html('');
+	$('#form-'+cid).slideUp();
+	cid = 0;
+}
+function RP() {
+	var v = $('#text-'+cid).val();
+	var l = v.length;
+	if(l < {$EXT[comment_min]} || l > {$EXT[comment_max]}) {
+		Dmsg('回复限制为{$EXT[comment_min]}-{$EXT[comment_max]}字，当前已输入'+l+'字', 'text-'+cid);
+	}
+	$.post('?', 'action=reply&itemid='+cid+'&content='+encodeURIComponent(v), function(data) {
+		if(data == 'ok') {
+			Dtoast('回复成功');
+			setTimeout(function() { window.location.reload(); }, 1000);
+		} else if(data == 'max') {
+			Dtoast('内容过长');
+		} else if(data == 'min') {
+			Dtoast('内容过短');
+		} else if(data == 'bad') {
+			Dtoast('内容非法');
+		} else {
+			Dtoast('回复失败');
+		}
+	});
+}
+</script>
+<script type="text/javascript">s('comment');m('action');</script>
+{/if}
+{template 'footer', 'member'}

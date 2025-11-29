@@ -1,0 +1,55 @@
+/*
+	DESTOON Copyright (C)2008-2099 www.destoon.com
+	This is NOT a freeware,Use is subject to license.txt
+*/
+/* global */
+.comment {padding:16px 0;margin:0 16px;border-top:#EEEEEE 1px solid;}
+.comment table {width:100%;border-collapse:collapse;border-spacing:0;}
+.comment_l {width:54px;padding:6px 0;}
+.comment_l li {padding:10px 0 0 0;text-align:center;}
+.comment_l .userinfo-v0,.comment_l .userinfo-v1,.comment_l .userinfo-v2 {margin:32px 0 0 32px;}
+.comment_content {color:#333333;font-size:14px;line-height:180%;clear:both;padding:6px;}
+.comment_title {height:26px;line-height:26px;color:#1B4C7A;padding:0 6px;}
+.comment_floor {float:right;}
+.comment_top {float:right;display:inline-block;padding:0 6px;background:#FDAA00;color:#FFFFFF;border-radius:2px;}
+.comment_info {padding:6px 0 6px 6px;}
+.comment_vote {float:right;color:#666666;padding:2px 0;}
+.comment_form {background:#FAFAFA;border-radius:10px;padding:10px;margin:0 16px;}
+.comment_area {width:99%;height:70px;border:#7D96C4 1px solid;}
+.comment_input {color:#1B4C7A;}
+.comment_input span {color:red;}
+.comment_input input {border:#EEEEEE 1px solid;padding:6px;}
+.comment_time {color:#666666;}
+.comment_close {padding:128px 0;font-size:14px;color:#999999;text-align:center;}
+.comment_reply {padding:6px 10px;margin:0 6px;line-height:180%;border-left:#FF6600 2px solid;font-size:14px;}
+.comment_reply div {font-size:12px;}
+.comment_link {padding:0 0 0 8px;line-height:32px;}
+.comment_tips {padding:0 0 16px 30px;color:#999999;}
+.comment_tip {padding:0 16px;color:#999999;line-height:24px;}
+.comment_post {display:inline-block;line-height:32px;padding:0 16px 0 32px;color:#FFFFFF;letter-spacing:2px;font-size:14px;font-weight:normal;background:#0075A8 url('ico-club-post.png') no-repeat 10px center;margin:0 -10px 0 0;}
+.comment_post:hover {background:#00679A url('ico-club-post.png') no-repeat 10px center;}
+.comment_ajax {padding:16px 0 0 0;display:none;}
+.comment_ajax textarea{width:500px;height:96px;}
+.comment_ajax div {padding:16px 0;color:#FF0000;}
+.comment_ajax div input {margin-right:16px;}
+
+.quote{border:1px solid #EEEEEE;background:#FFFFFF;padding:10px;margin-bottom:10px;}
+.quote_title {font-size:12px;color:#1B4C7A;}
+.quote_time {font-size:11px;color:#666666;}
+.quote_floor {float:right;font-size:10px;}
+.quote_content {clear:both;}
+.stat {padding:24px 0;display:none;}
+.stat_p {height:10px;line-height:10px;background:#F2F2F2;font-size:1px;}
+.stat_p div {height:10px;line-height:10px;background:#FFA40D;border-left:#FFA40D 2px solid;float:left;}
+.c_p {cursor:pointer;}
+#face {z-index:1000;width:576px;position:absolute;margin:-240px 0 0 0;background:#FFFFFF;border:#CCCCCC 1px solid;cursor:pointer;}
+#face span {float:right;}
+#face div {background:#EEEEEE;padding:0 10px;line-height:32px;}
+#face img {width:24px;height:24px;margin:6px 0 0 0;padding:6px;border-radius:50%;cursor:pointer;}
+#face img:hover {background:#EEEEEE;}
+.face {width:26px;height:16px;cursor:pointer;}
+.face:hover {padding-left:1px;}
+.sc {text-align:right;color:#555555;font-size:16px;font-family:Verdana;font-weight:100;cursor:pointer;}
+.sc:hover {color:#FF0000;}
+.stars {width:80px;height:16px;background:url('../../image/star5.png') no-repeat;float:right;}
+.stars span {width:16px;height:16px;display:inline-block;float:left;cursor:pointer;}

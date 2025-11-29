@@ -1,0 +1,4 @@
+<?php exit;?>
+item,类型,
+item_key,键,
+item_value,值,

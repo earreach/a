@@ -1,0 +1,18 @@
+{loop $FD $v}
+{if $v[search]}
+{php $vn = $v['name'];}
+{php $vv = isset($$vn) ? $$vn : '';}
+<div class="sort">
+	<div class="sort-k">{$v[title]}</div>
+	<div class="sort-v">
+		<input type="hidden" name="{$v[name]}" id="{$v[name]}" value="{$vv}"/>
+		<ul>
+		<li{if $vv==''} class="on"{/if}><a href="javascript:;" onclick="Dq('{$v[name]}','');">全部</a></li>
+		{loop fields_search_arr($v) $o}
+		<li{if is_array($vv) ? in_array($o[0], $vv) : $vv==$o[0]} class="on"{/if}><a href="javascript:;" onclick="Dq('{$v[name]}','{$o[0]}');">{$o[1]}</a></li>
+		{/loop}
+		</ul>
+	</div>
+</div>
+{/if}
+{/loop}

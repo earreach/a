@@ -1,0 +1,139 @@
+{template 'header', $template}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{if $head_name}{$head_name}{else}联系方式{/if}</div>
+<div class="head-bar-right">{if online($COM[userid])==1}<span style="display:inline-block;height:12px;line-height:12px;font-size:11px;color:#FFFFFF;background:#00B70C;padding:4px 8px;border-radius:12px;">在线</span>{else}<span style="display:inline-block;height:12px;line-height:12px;font-size:11px;color:#FFFFFF;background:#999999;padding:4px 8px;border-radius:12px;">离线</span>{/if}</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+{if $could_contact}
+<div class="gird-4">
+	<ul>
+		{if $DT[im_web]}
+		<li><a href="{$MODULE[2][mobile]}chat.php?touser={$COM[username]}" rel="external"><img src="{DT_STATIC}image/share-chat.png" width="48" height="48"/><span>在线交谈</span></a></li>
+		{/if}
+		<li><a href="{$MODULE[2][mobile]}message.php?action=send&touser={$COM[username]}" rel="external"><img src="{DT_STATIC}image/share-message.png" width="48" height="48"/><span>发送私信</span></a></li>
+		<li><a href="{$MODULE[2][mobile]}friend.php?action=add&username={$COM[username]}" rel="external"><img src="{DT_STATIC}image/share-friend.png" width="48" height="48"/><span>添加好友</span></a></li>
+		{if $COM[telephone]}
+		<li><a href="tel:{$COM[telephone]}"><img src="{DT_STATIC}image/share-tel.png" width="48" height="48"/><span>拨打电话</span></a></li>
+		{elseif $COM[mobile] && $DT[im_mob]}
+		<li><a href="tel:{$COM[mobile]}"><img src="{DT_STATIC}image/share-tel.png" width="48" height="48"/><span>拨打电话</span></a></li>
+		{/if}
+		{if $COM[mobile] && $DT[im_mob]}
+		<li><a href="sms:{$COM[mobile]}"><img src="{DT_STATIC}image/share-sms.png" width="48" height="48"/><span>发送短信</span></a></li>
+		{/if}
+		{if $COM[mail]}
+		<li><a href="mailto:{$COM[mail]}"><img src="{DT_STATIC}image/share-email.png" width="48" height="48"/><span>发送邮件</span></a></li>
+		{/if}
+		{if $COM[qq] && $DT[im_qq]}
+		<li><a href="http://wpa.qq.com/msgrd?v=3&uin={$COM[qq]}&site=qq&menu=yes" target="_blank" rel="external"><img src="{DT_STATIC}image/share-qq.png" width="48" height="48"/><span>QQ交谈</span></a></li>
+		{/if}
+		{if $COM[wx] && $DT[im_wx]}
+		<li><a href="{DT_MOB}api/wx.php?wid={$COM[wx]}&username={$COM[username]}" rel="external"><img src="{DT_STATIC}image/share-wx.png" width="48" height="48"/><span>微信交谈</span></a></li>
+		{/if}
+		{if $COM[gzh] && $DT[im_wx]}
+		<li><a href="{DT_MOB}api/wx.php?gzh={$COM[gzh]}&username={$COM[username]}" rel="external"><img src="{DT_STATIC}image/share-gzh.png" width="48" height="48"/><span>微信公众号</span></a></li>
+		{/if}
+		{if $COM[ali] && $DT[im_ali]}
+		<li><a href="http://amos.alicdn.com/msg.aw?v=2&uid={$COM[ali]}&site=cnalichn&s=6&charset=UTF-8" target="_blank" rel="external"><img src="{DT_STATIC}image/share-ali.png" width="48" height="48"/><span>阿里旺旺</span></a></li>
+		{/if}
+		{if $COM[skype] && $DT[im_skype]}
+		<li><img src="{DT_STATIC}image/share-skype.png" width="48" height="48" onclick="prompt('长按号码可以复制', '{$COM[skype]}');"/><span>Skype通话</span></li>
+		{/if}
+		{if $COM[address]}
+		<li><a href="{DT_MOB}api/address.php?auth={encrypt($COM[address].'|'.$COM[company].'|'.$COM[lng].','.$COM[lat], DT_KEY.'MAP')}" rel="external"><img src="{DT_STATIC}image/share-map.png" width="48" height="48"/><span>地图导航</span></a></li>
+		{/if}
+		<li><a href="javascript:;" onclick="$('html, body').animate({scrollTop:$('#content').offset().top - 48}, 500);$('#content').focus();"><img src="{DT_STATIC}image/share-gbook.png" width="48" height="48"/><span>在线留言</span></a></li>
+	</ul>
+</div>
+<div class="ui-head"><i></i><b>公司信息</b></div>
+<div class="content">
+	{if $COM[shop] && $COM[vshop]}
+	店铺名称：{$COM[shop]}<br/>
+	{/if}
+	公司名称：{$COM[company]}<br/>
+	{if $COM[address]}
+	公司地址：{$COM[address]}<br/>
+	{/if}
+	{if $COM[postcode]}
+	邮政编码：{$COM[postcode]}<br/>
+	{/if}
+	{if $COM[telephone]}
+	公司电话：{$COM[telephone]}<br/>
+	{/if}
+	{if $COM[fax]}
+	公司传真：{$COM[fax]}<br/>
+	{/if}
+	{if $COM[homepage]}
+	公司网址：<a href="{gourl($COM[homepage])}" rel="nofollow" class="b" data-ajax="false">{$COM[homepage]}</a><br/>
+	{/if}
+	{if $COM[truename]}
+	联 系 人：{$COM[truename]} （{if $COM[gender]==1}先生{else}女士{/if}）<br/>
+	{/if}
+	{if $COM[department]}
+	部门(职位)：{$COM[department]}{if $COM[career]} （{$COM[career]}）{/if}<br/>
+	{/if}
+	{if $COM[mobile] && $DT[im_mob]}
+	手机号码：{$COM[mobile]}<br/>
+	{/if}
+</div>
+{else}
+<div class="list-none">
+	{if $_userid}
+	请先 <a href="{$MODULE[2][mobile]}grade.php" rel="external" class="b">升级</a> 会员级别后查看{$MENU[$menuid][name]}
+	{else}
+	请先 <a href="{$MODULE[2][mobile]}{$DT[file_login]}" rel="external" class="b">登录</a> 或 <a href="{$MODULE[2][mobile]}{$DT[file_register]}" rel="external" class="b">注册</a> 后查看{$MENU[$menuid][name]}
+	{/if}
+</div>
+{/if}
+<div class="main">
+	<div class="ui-head"><i></i><b>在线留言</b></div>
+	<iframe src="" name="send" id="send" style="display:none;" scrolling="no" frameborder="0"></iframe>
+	<form method="post" action="{$MOD[linkurl]}index.php" id="dform" onsubmit="return check();" target="send" data-ajax="false">
+	<input type="hidden" name="file" value="{$file}"/>
+	<input type="hidden" name="homepage" value="{$username}"/>
+	<input type="hidden" name="action" value="send"/><div class="ui-form">
+	<p>留言内容<i>*</i><b id="dcontent"></b></p>
+	<div><textarea name="content" id="content" style="width:100%;height:128px;" placeholder="写下要留言的内容，限10-5000字"></textarea></div>
+	<p>手机号码<i>*</i><b id="dmobile"></b></p>
+	<div><input type="tel" name="mobile" id="mobile" value="{$_mobile}" style="width:200px;"/></div>
+	{if $_userid < 1}
+	<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+	<div>{template 'captcha', 'chip'}</div>
+	<s>您还没有<a href="{$MODULE[2][mobile]}{$DT[file_login]}" class="b">登录</a>，今日仅可留言1次</s>
+	{/if}
+	<div class="blank-16"></div>
+	<input type="submit" name="submit" value="立即发送" class="btn-green"/>
+	<div class="blank-32"></div>
+	</div>
+	</form>
+	<script type="text/javascript">
+	function check() {
+		var l;
+		var f;
+		f = 'content';
+		l = Dd(f).value.length;
+		if(l < 5) {
+			Dmsg('内容最少5字，当前已输入'+l+'字', f);
+			return false;
+		}
+		f = 'mobile';
+		l = Dd(f).value.length;
+		if(l != 11) {
+			Dmsg('请填写手机号码', f);
+			return false;
+		}
+		{if $_userid < 1}
+		f = 'captcha';
+		if($('#c'+f).html().indexOf('ok.png') == -1) {
+			Dmsg('请填写正确的验证码', f);
+			return false;
+		}
+		{/if}
+	}
+	</script>
+
+</div>
+{template 'footer', $template}

@@ -1,0 +1,28 @@
+{loop $tags $k $t}
+<div class="list">
+	<table>
+	<tr align="center">
+		<td width="20"> </td>
+		<td align="left">
+		<ul>
+		<li><a href="{$t[linkurl]}" target="_blank" title="{$t[alt]}" class="px14">{$t[title]}</a></li>
+		<li><span class="ui-ico-area">{area_pos($t[areaid], '')}</span></li>
+		</ul>
+		</td>
+		<td width="200" class="f_price">
+		{if $t[minsalary] && $t[maxsalary]}
+			{$DT[money_sign]}{$t[minsalary]}-{$t[maxsalary]}元/月
+		{elseif $t[minsalary]}
+			{$DT[money_sign]}{$t[minsalary]}元/月以上
+		{elseif $t[maxsalary]}
+			{$DT[money_sign]}{$t[maxsalary]}元/月以内
+		{else}
+			<span class="f_grey">面议</span>
+		{/if}
+		</td>
+		<td width="120" class="f_grey">{timetodate($t[edittime], $datetype)}</td>
+	</tr>
+	</table>
+</div>
+{/loop}		
+{if $showpage && $pages}<div class="pages">{$pages}</div>{/if}

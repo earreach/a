@@ -1,0 +1,40 @@
+{template 'goods', 'chip'}
+<div class="t2">快递信息</div>
+<table cellspacing="1" cellpadding="10" class="tb">
+<tr>
+<td class="tl">发货日期</td>
+<td class="tr">{$O[send_time]}</td>
+</tr>
+<tr>
+<td class="tl">快递类型</td>
+<td class="tr">{$O[send_type]}</td>
+</tr>
+<tr>
+<td class="tl">快递单号</td>
+<td class="tr">{$O[send_no]}{if strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#copy-no" onclick="Dtoast('快递单号已复制');"/>{/if}</td>
+</tr>
+<tr>
+<td class="tl">追踪结果</td>
+<td class="tr" style="line-height:200%;"><div id="express"><img src="{DT_STATIC}member/loading.gif" align="absmiddle"/> 正在查询...</div></td>
+</tr>
+<tr>
+<td class="tl">快递状态</td>
+<td class="tr">{$dsend_status[$O[send_status]]}</td>
+</tr>
+<tr>
+<td class="tl"> </td>
+<td class="tr"><input type="button" value=" 返 回 " class="btn" onclick="Go('?action=update&step=detail&itemid={$itemid}');"/>
+</td>
+</tr>
+</table>
+{if strpos($DT_MBS, 'IE') === false}
+<div style="z-index:1000;position:absolute;top:-10000px;"><textarea id="copy-no">{$O[send_no]}</textarea></div>
+{load('clipboard.min.js')}
+<script type="text/javascript">var clipboard = new Clipboard('[data-clipboard-action]');</script>
+{/if}
+<script type="text/javascript">
+$(function(){
+	$('#express').load(AJPath+'?action=express&moduleid=2&auth={$auth}');
+});
+s('trade');m('action_express');
+</script>

@@ -1,0 +1,528 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a>{if $action=='index' || !$action}<a href="javascript:Dmenu('search-{$js_pageid}');"><img src="{DM_SKIN}icon-search{$wh}.png" width="24" height="24"/></a>{/if}</div>
+<div class="head-bar-title">{if $action=='add'}简历发布{elseif $action=='edit'}简历修改{elseif $action=='apply'}应聘职位{else}简历管理{/if}</div>
+<div class="head-bar-right">
+{if $action=='add' || $action=='edit'}
+<a href="?mid={$mid}&status=3"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{elseif $action=='apply'}
+{else}
+<a href="?mid={$mid}&action=add&job={$job}"><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></a>
+{/if}
+<a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a>
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?mid={$mid}&action=add" data-transition="none">{$MOD[name]}发布</a>
+<a href="?mid={$mid}&action=index" data-transition="none">{$MOD[name]}管理</a>
+{if $jid}<a href="?mid={$mid}&action=apply" data-transition="none">应聘职位</a>{/if}
+<a href="?action=index" data-direction="reverse">切换频道</a>
+</div>
+</div>
+
+{if $action=='add' || $action=='edit'}
+{load('webuploader.min.js')}
+<div class="ui-form">
+<iframe src="" name="send" id="send" style="display:none;"></iframe>
+<form method="post" action="?" id="dform" target="send" data-ajax="false" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="post[linkurl]" value="{$linkurl}"/>
+<p>所属分类<i>*</i><b id="dcatid"></b></p>
+<div>{ajax_category_select('post[catid]', '选择分类', $catid, $moduleid)}</div>
+{if $CP}
+<script type="text/javascript">
+var property_catid = {$catid};
+var property_itemid = {$itemid};
+var property_admin = 0;
+</script>
+{load('property.js')}
+<section id="load_property" style="display:none;"></section>
+{/if}
+<p>{$MOD[name]}名称<i>*</i><b id="dtitle"></b></p>
+<div><input name="post[title]" type="text" id="title" value="{$title}"/></div>
+<p>真实姓名<i>*</i><b id="dtruename"></b></p>
+<div><input name="post[truename]" type="text" id="truename" value="{$truename}"/></div>
+<p>免冠照片</p>
+<div>
+{load('webuploader.min.js')}
+<input type="hidden" name="post[thumb]" id="thumb"  value="{$thumb}"/>
+<div class="ui-form-thumb-show" onclick="thumb_action();"></div>
+<div class="ui-form-thumb-upload"><div id="thumb-picker"></div></div>
+</div>
+<p>性别<i>*</i><b id="dgender"></b></p>
+<div>
+{loop $GENDER $k $v}
+{if $k > 0}
+<label><input type="radio" name="post[gender]" id="gender_{$k}" value="{$k}"{if $k == $gender} checked{/if}/> {$v}</label><br/>
+{/if}
+{/loop}
+</div>
+<p>婚姻状况<i>*</i><b id="dmarriage"></b></p>
+<div>
+{loop $MARRIAGE $k $v}
+{if $k > 0}
+<label><input type="radio" name="post[marriage]" id="marriage_{$k}" value="{$k}"{if $k == $marriage} checked{/if}/> {$v}</label><br/> 
+{/if}
+{/loop}
+</div>
+<p>现居住地<i>*</i><b id="dareaid"></b></p>
+<div>{ajax_area_select('post[areaid]', '请选择', $areaid)}</div>
+<p>生日<i>*</i><b id="dbyear"></b></p>
+<div>
+<input name="post[byear]" type="text" id="byear" value="{$byear}" style="width:20%">年
+<select name="post[bmonth]">
+{php for($i = 1; $i < 13; $i++) { }
+<option value="{$i}"{if $i == $bmonth} selected{/if}>{$i}</option>
+{php } }
+</select>
+月
+<select name="post[bday]">
+{php for($i = 1; $i < 32; $i++) { }
+<option value="{$i}"{if $i == $bday} selected{/if}>{$i}</option>
+{php } }
+</select>
+日
+</div>
+<p>身高</p>
+<div><input name="post[height]" type="text" id="height" value="{$height}" style="width:20%"> cm</div>
+<p>体重</p>
+<div><input name="post[weight]" type="text" id="weight" value="{$weight}" style="width:20%"> kg</div>
+<p>学历<i>*</i><b id="deducation"></b></p>
+<div>
+{loop $EDUCATION $k $v}
+{if $k > 0}
+<label><input type="radio" name="post[education]" id="education_{$k}" value="{$k}"{if $k == $education} checked{/if}/> {$v}</label><br/> 
+{/if}
+{/loop}
+</div>
+<p>毕业院校<i>*</i><b id="dschool"></b></p>
+<div><input name="post[school]" type="text" id="school" value="{$school}"></div>
+<p>所学专业</p>
+<div><input name="post[major]" type="text" id="major" value="{$major}"></div>
+<p>专业技能</p>
+<div><input name="post[skill]" type="text" id="skill" value="{$skill}"></div>
+<p>语言水平</p>
+<div><input name="post[language]" type="text" id="language" value="{$language}"></div>
+<p>工作性质<i>*</i><b id="dtype"></b></p>
+<div>
+{loop $TYPE $k $v}
+{if $k > 0}
+<label><input type="radio" name="post[type]" id="type_{$k}" value="{$k}"{if $k == $type} checked{/if}/> {$v}</label><br/>
+{/if}
+{/loop}
+</div>
+<p>期望薪资</p>
+<div><input type="text" name="post[minsalary]" id="minsalary" value="{$minsalary}" style="width:20%;" /> 至 <input type="text" name="post[maxsalary]" id="maxsalary" value="{$maxsalary}" style="width:20%;" /> 元/月 (不填或者填0为不限)</div>
+<p>工作经验<i>*</i><b id="dexperience"></b></p>
+<div><input name="post[experience]" type="text" id="experience" value="{$experience}" style="width:20%"> 年</div>
+{if $FD}{fields_html('', '', $item)}{/if}
+<p>自我鉴定<i>*</i><b id="dcontent"></b></p>
+</div>
+<input type="hidden" name="post[content]" id="content"/>
+<ul class="ui-editor-toolbar">
+<li class="ui-editor-img"><div id="editor-picker"></div></li>
+<li class="ui-editor-bold"><input type="button" value=" " editor-action="bold"/>B</li>
+<li class="ui-editor-italic"><input type="button" value=" " editor-action="italic"/>I</li>
+<li class="ui-editor-underline"><input type="button" value=" " editor-action="underline"/>U</li>
+</ul>
+<div class="ui-editor-content" id="editor">{$content}</div>
+{load('editor.js')}
+<script type="text/javascript">
+$(function(){
+    $('#editor').DEditor({
+        editorid: 'editor',
+        textareaid: 'content',
+        server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=editor'
+    });
+});
+</script>
+<div class="ui-form">
+<p>联系手机<i>*</i><b id="dmobile"></b></p>
+<div><input type="number" name="post[mobile]" value="{$mobile}" id="mobile"/></div>
+<p>电子邮件<i>*</i><b id="demail"></b></p>
+<div><input type="email" name="post[email]" value="{$email}" id="email"/></div>
+<p>联系电话</p>
+<div><input type="tel" name="post[telephone]" value="{$telephone}"/></div>
+<p>联系地址</p>
+<div><input type="text" name="post[address]" value="{$address}"/></div>
+{if $DT[im_qq]}
+<p>QQ</p>
+<div><input type="tel" name="post[qq]" value="{$qq}"/></div>
+{/if}
+{if $DT[im_wx]}
+<p>微信</p>
+<div><input type="text" name="post[wx]" value="{$wx}"/></div>
+{/if}
+{if $DT[im_ali]}
+<p>阿里旺旺</p>
+<div><input type="text" name="post[ali]" value="{$ali}"/></div>
+{/if}
+<p>求职状态</p>
+<div>
+<select name="post[situation]">
+{loop $SITUATION $k $v}
+<option value="{$k}"{if $k==$situation} selected{/if}>{$v}</option> 
+{/loop}
+</select>
+</div>
+<p>公开程度</p>
+<div>
+<label><input type="radio" name="post[open]" value="3"{if $open==3} checked{/if}/> 开放</label><br/>
+<label><input type="radio" name="post[open]" value="2"{if $open==2} checked{/if}/> 仅网站可见</label><br/>
+<label><input type="radio" name="post[open]" value="1"{if $open==1} checked{/if}/> 关闭</label><br/>
+</div>
+<p>简历模板</p>
+<div>
+{tpl_select('resume', $module, 'post[template]', '默认模板', $template, 'id="template"')}
+</div>
+{if $fee_add}
+<p>发布此信息需消费</p>
+<div><span class="f_b f_red">{$fee_add}</span> {$fee_unit}</div>
+{if $fee_currency == 'money'}
+<p>{$DT[money_name]}余额</p>
+<div><span class="f_blue f_b">{$_money}{$fee_unit}</span> <a href="charge.php?action=pay" class="b">[充值]</a></div>
+{else}
+<p>{$DT[credit_name]}余额</p>
+<div><span class="f_blue f_b">{$_credit}{$fee_unit}</span> <a href="credit.php?action=buy" class="b">[购买]</a></div>
+{/if}
+{/if}
+{if $need_password}
+<p>支付密码<i>*</i><b id="dpassword"></b></p>
+<div>{template 'payword', 'chip'}</div>
+{/if}
+{if $need_question}
+<p>验证问题<i>*</i><b id="danswer"></b></p>
+<div>{template 'question', 'chip'}</div>
+{/if}
+{if $need_captcha}
+<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+<div>{template 'captcha', 'chip'}</div>
+{/if}
+{if $action=='add'}
+<section style="display:none;" id="weibo_sync">
+<p>同步主题</p>
+<div id="weibo_show"></div>
+</section>
+{/if}
+{if $MOD[tip_add]}
+<p>规则说明</p>
+<s>{$MOD[tip_add]}</s>
+{/if}
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="{if $action == 'edit'}修改{else}发布{/if}" class="btn-blue"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function thumb_action() {
+	Dsheet('{$js_pageid}','<a href="javascript:thumb_delete();void(0);"><span style="color:red;">删除图片</span></a>', '取消', '确定要删除图片吗？');
+}
+function thumb_delete() {
+	$('#thumb').val('');
+	$('.ui-form-thumb-show').html('');
+	$('.ui-form-thumb-show').hide();
+	$('.ui-form-thumb-upload').show();	
+}
+function thumb_show(url) {
+	$('#thumb').val(url);
+	$('.ui-form-thumb-show').html('<img src="'+url+'"/>');
+	$('.ui-form-thumb-show').show();
+	$('.ui-form-thumb-upload').hide();	
+}
+var thumbu = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width={$MOD[thumb_width]}&height={$MOD[thumb_height]}',
+    pick: '#thumb-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+thumbu.on('beforeFileQueued', function(file) {
+	var exts = thumbu.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+thumbu.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+thumbu.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+thumbu.on('uploadSuccess', function(file, data) {
+    if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		thumb_show(data.url);
+	}
+});
+thumbu.on('uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+thumbu.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+{if $thumb}
+$(function(){
+	thumb_show('{$thumb}');
+});
+{/if}
+</script>
+{load('clear.js')}
+
+{elseif $action=='apply'}
+<div class="ui-form-search">
+<form action="?">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<input type="checkbox" name="itemid[]" value="{$v[applyid]}" class="dsn" id="checkbox-{$v[applyid]}"/>
+<ul>
+<li><em class="check" id="check-{$v[applyid]}"></em><a href="{$v[linkurl]}" rel="external"><strong>{$v[title]}</strong></a></li>
+<li>
+<span class="ui-fr">
+{if $v[status] == 3}
+<span class="f_blue">邀请面试</span>
+{elseif $v[status] == 2}
+<span class="f_green">已查看</span>
+{elseif $v[status] == 1}
+<span class="f_gray">未查看</span>
+{elseif $v[status] == 0}
+<span class="f_red">已拒绝</span>
+{/if}
+</span>
+<span class="ui-ico-time">{timetodate($v[applytime], 3)}</span>
+</li>
+</ul>
+</div>
+{/loop}
+{else}
+	<div class="list-none">{if $kw}未搜索到“{$kw}”相关结果{else}暂无记录{/if}</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<div id="foot-bar" class="dsn">
+<div class="foot-bar-fix"></div>
+<div class="foot-bar btns">
+{if $MG[delete]}<input type="submit" name="submit" value="删除选中" class="btn-red" onclick="if(confirm('确定要删除选中职位吗？')){this.form.action='?mid={$mid}&status={$status}&action=apply_delete'}else{return false;}"/>{/if}
+</div>
+</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	if($('#foot-bar input').length == 0) $('.check').hide();
+	$('.list-img em').click(function() {
+		if($(this).attr('class') == 'sheet') {
+			var id = $(this).attr('id').replace('sheet-', '');
+			Dsheet('{$js_pageid}','{if $MG[delete]}|<a href="?mid={$mid}&action=apply_delete&itemid='+id+'" onclick="return _delete();"><span style="color:red;">删除</span></a>{/if}', '取消');
+		} else {
+			var id = $(this).attr('id').replace('check-', '');
+			if($('#checkbox-'+id).attr('checked')) {
+				$('#checkbox-'+id).attr('checked', false);
+				$(this).attr('class', 'check');
+			} else {
+				$('#checkbox-'+id).attr('checked', true);
+				$(this).attr('class', 'checked');
+			}
+			if($('.checked').length > 0) {
+				$('#foot-bar').fadeIn(300);
+			} else {
+				$('#foot-bar').fadeOut(300);
+			}
+		}
+	});
+});
+</script>
+
+{else}
+{if $_userid}
+<script type="text/javascript">$(function(){Stabs('{$js_pageid}');});</script>
+<div class="list-menu" id="tabs-{$js_pageid}">
+	<ul>
+	<a href="?mid={$mid}&job={$job}&status=3"><li{if $status==3} class="on"{/if} id="s3">已发布{if !$kw} <i>{$nums[3]}</i>{/if}</li></a>
+	<a href="?mid={$mid}&job={$job}&status=2"><li{if $status==2} class="on"{/if} id="s2">审核中{if !$kw} <i>{$nums[2]}</i>{/if}</li></a>
+	<a href="?mid={$mid}&job={$job}&status=1"><li{if $status==1} class="on"{/if} id="s1">未通过{if !$kw} <i>{$nums[1]}</i>{/if}</li></a>
+	</ul>
+</div>
+{/if}
+
+<div id="search-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="?">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="status" value="{$status}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+</div>
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<input type="checkbox" name="itemid[]" value="{$v[itemid]}" class="dsn" id="checkbox-{$v[itemid]}"/>
+<a href="{$v[linkurl]}"><img src="{if $v[thumb]}{$v[thumb]}{else}{DM_SKIN}80x60.png{/if}" width="80" height="60" alt="" onerror="this.src='{DM_SKIN}80x60.png';"/></a>
+<ul>
+<li><em class="check" id="check-{$v[itemid]}"></em><a href="?mid={$mid}&action=edit&job={$job}&itemid={$v[itemid]}" rel="external"><strong>{$v[title]}</strong></a></li>
+<li><em class="sheet" id="sheet-{$v[itemid]}"></em><span>{$v[date]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+	<div class="list-none">{if $kw}未搜索到“{$kw}”相关结果{else}暂无记录{/if}</div>
+{/if}
+{if $show_limit}
+<div class="limit">
+{if $mod_limit}
+总共可发 <span class="f_b f_red">{$mod_limit}</span> 条&nbsp;&nbsp;&nbsp;
+当前已发 <span class="f_b">{$limit_used}</span> 条&nbsp;&nbsp;&nbsp;
+还可以发 <span class="f_b f_blue">{$limit_free}</span> 条&nbsp;&nbsp;&nbsp;
+{/if}
+{if !$MG[fee_mode] && $MOD[fee_add]}
+发布信息收费 <span class="f_b f_red">{$MOD[fee_add]}</span> {if $MOD[fee_currency] == 'money'}{$DT[money_unit]}{else}{$DT[credit_unit]}{/if}/条&nbsp;&nbsp;&nbsp;
+可免费发布 <span class="f_b">{if $mod_free_limit<0}无限{else}{$mod_free_limit}{/if}</span> 条&nbsp;&nbsp;&nbsp;
+{/if}
+</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<div id="foot-bar" class="dsn">
+<div class="foot-bar-fix"></div>
+<div class="foot-bar btns">
+{if $MG[delete]}<input type="submit" name="submit" value="删除选中" class="btn-red" onclick="if(confirm('确定要删除选中{$MOD[name]}吗？')){this.form.action='?mid={$mid}&status={$status}&action=delete'}else{return false;}"/>{/if}
+</div>
+</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	if($('#foot-bar input').length == 0) $('.check').hide();
+	$('.list-img em').click(function() {
+		if($(this).attr('class') == 'sheet') {
+			var id = $(this).attr('id').replace('sheet-', '');
+			Dsheet('{$js_pageid}','<a href="?mid={$mid}&action=edit&job={$job}&itemid='+id+'"><span>修改</span></a>{if $MG[delete]}|<a href="?mid={$mid}&action=delete&job={$job}&itemid='+id+'" onclick="return _delete();"><span style="color:red;">删除</span></a>{/if}', '取消');
+		} else {
+			var id = $(this).attr('id').replace('check-', '');
+			if($('#checkbox-'+id).attr('checked')) {
+				$('#checkbox-'+id).attr('checked', false);
+				$(this).attr('class', 'check');
+			} else {
+				$('#checkbox-'+id).attr('checked', true);
+				$(this).attr('class', 'checked');
+			}
+			if($('.checked').length > 0) {
+				$('#foot-bar').fadeIn(300);
+			} else {
+				$('#foot-bar').fadeOut(300);
+			}
+		}
+	});
+});
+</script>
+{/if}
+{if $action == 'add' || $action == 'edit'}
+<script type="text/javascript">
+function check() {
+	var l;
+	var f;
+	f = 'title';
+	l = Dd(f).value.length;
+	if(l < 2) {
+		Dmsg('请填写简历名称', f);
+		return false;
+	}
+	f = 'catid_1';
+	if(Dd(f).value == 0) {
+		Dmsg('请选择求职行业', 'catid', 1);
+		return false;
+	}
+	f = 'truename';
+	l = Dd(f).value.length;
+	if(l < 2) {
+		Dmsg('请填写真实姓名', f);
+		return false;
+	}
+	f = 'areaid_1';
+	if(Dd(f).value == 0) {
+		Dmsg('请选择居住地区', 'areaid', 1);
+		return false;
+	}
+	f = 'byear';
+	if(Dd(f).value.length != 4) {
+		Dmsg('请填写生日', f);
+		return false;
+	}
+	f = 'school';
+	if(Dd(f).value.length < 2) {
+		Dmsg('请填写毕业院校', f);
+		return false;
+	}
+	f = 'experience';
+	if(Dd(f).value.length < 1) {
+		Dmsg('请填写工作经验', f);
+		return false;
+	}
+	f = 'mobile';
+	if(Dd(f).value.length < 7) {
+		Dmsg('请填写联系手机', f);
+		return false;
+	}
+	f = 'email';
+	if(Dd(f).value.length < 6) {
+		Dmsg('请填写电子邮件', f);
+		return false;
+	}
+	f = 'content';
+	l = EditorLen();
+	if(l < 5) {
+		Dmsg('自我鉴定最少5字，当前已输入'+l+'字', f);
+		return false;
+	}
+{if $need_password}
+	f = 'password';
+	l = Dd(f).value.length;
+	if(l < 6) {
+		Dmsg('请填写支付密码', f);
+		return false;
+	}
+{/if}
+{if $need_question}
+	f = 'answer';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证问题', f);
+		return false;
+	}
+{/if}
+{if $need_captcha}
+	f = 'captcha';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', f);
+		return false;
+	}
+{/if}
+	return true;
+}
+var destoon_oauth = '{$EXT[oauth]}';
+</script>
+{/if}
+{if $action=='add' && strlen($EXT[oauth]) > 1}{load('weibo.js')}{/if}
+{template 'footer', 'member'}

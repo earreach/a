@@ -1,0 +1,175 @@
+{template 'header'}
+{if $action == 'result'}
+<div class="m">
+	<div class="nav">
+		<a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> 提交订单
+	</div>
+	{if $code < 10}
+	<div class="ui-ok">
+		<p>订单提交成功！ </p>
+		<input type="button" value="支付订单" class="btn-green" onclick="Go('{$payurl}');"/><br/>
+		<input type="button" value="继续购物" class="btn" onclick="Go('{$MOD[linkurl]}');"/>
+		<meta http-equiv="refresh" content="6;URL={$payurl}"/>
+	</div>
+	{else}
+	<div class="ui-ko">
+		<p>
+		{if $code == 10}
+		商品不存在
+		{elseif $code == 11}
+		商家不存在
+		{elseif $code == 12}
+		不能下单自己的商品
+		{elseif $code == 13}
+		商品未上架
+		{elseif $code == 14}
+		团购已结束
+		{elseif $code == 15}
+		商品价格错误
+		{else}
+		订单提交失败
+		{/if}
+		</p>
+		<input type="button" value="重新挑选" class="btn-green" onclick="Go('{$MOD[linkurl]}');"/><br/>
+		{if $itemid}
+		<input type="button" value="查看商品" class="btn" onclick="Go('{$url}');"/>
+		{/if}
+	</div>
+	{/if}
+</div>
+{else}
+<script type="text/javascript">var errimg = '{DT_STATIC}image/nopic60.png';</script>
+<div class="m">
+	<div class="nav">
+		<a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> 提交订单
+	</div>
+	<form method="post" action="{$MOD[linkurl]}buy.php" onsubmit="return check();" id="buy">
+	<input type="hidden" name="itemid" value="{$itemid}"/>
+	<div class="cart-step">
+		{if $t[logistic]}
+		<span><a href="{$MODULE[2][linkurl]}address.php?action=add" class="b" target="_blank">新增地址</a></span>
+		<div><b>1</b>确认收货地址</div>
+		{else}
+		<div><b>1</b>确认手机号码</div>
+		{/if}
+	</div>
+	{if $t[logistic]}
+	<input type="hidden" name="aid" value="{$address[0][itemid]}" id="aid"/>
+	<div class="my-addr" id="my-addr">
+		<ul>
+		{loop $address $k $v}
+		<li{if $k==0} class="on"{/if} id="addr-{$v[itemid]}" onclick="setaddr({$v[itemid]});"><b>{$v[truename]}</b> {$v[address]} {hide_str($v[mobile], 'mobile')}{if $v[typename]}<s>{$v[typename]}</s>{/if}<i><a href="{$MODULE[2][linkurl]}address.php?action=edit&itemid={$v[itemid]}" class="b" target="_blank">编辑</a></i></li>
+		{/loop}
+		</ul>
+	</div>
+	{if count($address) > 1}
+	<div class="my-addr-more" id="my-addr-more" onclick="foldaddr(0);">更多地址</div>
+	<div class="my-addr-fold" id="my-addr-fold" onclick="foldaddr(1);">收起地址</div>
+	{/if}
+	{else}
+	<table cellpadding="16" cellspacing="0" class="tf">
+	<tr>
+	<td class="tl"><span class="ui-ico-mob">手机号码 <span class="f_red">*</span></span></td>
+	<td><input type="text" size="30" style="border:#CCCCCC 1px solid;" name="mobile" id="mobile" value="{$_mobile}"/> &nbsp; <span class="f_gray">购买成功后将把订单号和密码发到您手机，凭短信到商家消费</span> <span id="dmobile" class="f_red"></span> </td>
+	</tr>
+	</table>
+	{/if}
+	<div class="cart-step">
+		<div><b>2</b>确认订单信息</div> 
+	</div>
+	<table cellpadding="16" cellspacing="0" class="tb">
+	<tr>
+	<th width="70">图片</th>
+	<th>商品</th>
+	<th width="60">价格</th>
+	<th width="100">数量</th>
+	<th width="100">小计</th>
+	</tr>
+	<tr align="center">
+	<td><a href="{$t[linkurl]}" target="_blank"><img src="{$t[thumb]}" width="60" alt="{$t[title]}"  onerror="this.src=errimg;"/></a></td>
+	<td align="left">
+	<div style="height:40px;line-height:20px;overflow:hidden;"><a href="{$t[linkurl]}" target="_blank" class="b">{$t[title]}</a></div>
+	<div style="padding:3px 0;"><input type="text" name="note" value="" size="30" style="border:#CCCCCC 1px solid;" maxlength="100" title="备注：限100字" placeholder="备注：限100字"/></div>
+	</td>
+	<td>{$DT[money_sign]}<span id="price_{$t[itemid]}">{$t[price]}</span></td>
+	<td><img src="{DT_SKIN}arrow_l.gif" width="16" height="8" alt="减少" class="c_p" onclick="alter({$t[itemid]}, '-')"/> <input type="text" name="number" value="1" size="3" style="border:#CCCCCC 1px solid;text-align:center;" id="number_{$t[itemid]}" onblur="calculate();"/> <img src="{DT_SKIN}arrow_r.gif" width="16" height="8" alt="增加" class="c_p" onclick="alter({$t[itemid]}, '+')"/></td>
+	<td><span class="f_price">{$DT[money_sign]}<span id="total_{$t[itemid]}">{$t[price]}</span></span></td>
+	</tr>
+	</table>
+	<div class="cart-foot">
+		<table cellpadding="0" cellspacing="0" width="100%">
+		<tr>
+		<td></td>
+		<td><p>合计： <span class="f_red f_b px16">{$DT[money_sign]}</span><span class="f_red f_b px16" id="total_amount"></span></p></td>
+		<td width="128"><input type="submit" name="submit" value="提交订单" style="width:128px;"/></td>
+		</tr>
+		</table>
+	</div>
+	</form>
+</div>
+{/if}
+<script type="text/javascript">
+function check() {
+	if(Dd('total_amount').innerHTML == '0.00') {
+		Dtoast('订单总额为0.00，请检查商品数量');
+		window.scroll(0, 0);
+		return false;
+	}
+	{if $t[logistic]}
+		if(Dd('aid').value == 0) {
+			Dtoast('请选择所在地区');
+			return false;
+		}
+	{else}
+		if(Dd('mobile').value.length < 11) {
+			Dmsg('请填写手机号码', 'mobile');
+			return false;
+		}
+	{/if}
+	return true;
+}
+function setaddr(id) {
+	$('#aid').val(id);
+	$('#my-addr .on').removeClass('on');
+	$('#addr-'+id).addClass('on');
+}
+function foldaddr(type) {
+	if(type) {
+		$('#my-addr').animate({'scrollTop':'0'}, 10);
+		if($('#my-addr li').first().attr('class') != 'on') {
+			var htm = $('#my-addr .on').prop('outerHTML');
+			$('#my-addr .on').remove();
+			$('#my-addr ul').prepend(htm);
+		}
+		$('#my-addr').css({'max-height':'40px','overflow':'hidden'});$('#my-addr-more').show();$('#my-addr-fold').hide();
+	} else {
+		$('#my-addr').css({'max-height':'200px','overflow-y':'auto'});$('#my-addr-more').hide();$('#my-addr-fold').show();
+	}
+}
+function alter(i, t) {
+	if(t == '+') {
+		if(Dd('number_'+i).value >= 99) return;
+		Dd('number_'+i).value =  parseInt(Dd('number_'+i).value) + 1;
+	} else {
+		if(Dd('number_'+i).value <= 0) return;
+		Dd('number_'+i).value =  parseInt(Dd('number_'+i).value) - 1;
+	}
+	calculate();
+}
+function calculate() {
+	var itemids = [{$itemid}];
+	var _good = itemid = 0;
+	for(var i = 0; i < itemids.length; i++) {
+		itemid = itemids[i];
+		var num, good;
+		num = parseInt(Dd('number_'+itemid).value);
+		if(isNaN(num) || num < 0) Dd('number_'+itemid).value = num = 1;
+		good = parseFloat(Dd('price_'+itemid).innerHTML)*num;
+		Dd('total_'+itemid).innerHTML = good.toFixed(2);
+		_good += good;
+	}
+	Dd('total_amount').innerHTML = _good.toFixed(2);
+}
+calculate();
+</script>
+{template 'footer'}

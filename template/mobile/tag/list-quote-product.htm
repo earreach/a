@@ -1,0 +1,15 @@
+{loop $tags $t}
+<div class="ui-list-mix">
+<ul>
+<li><a href="{$t[linkurl]}" rel="external"><strong>{$t[title]}</strong></a></li>
+<li>
+<p>
+{if $t[v1]}{$t[n1]}:{$t[v1]}&nbsp;&nbsp;{/if}
+{if $t[v2]}{$t[n2]}:{$t[v2]}&nbsp;&nbsp;{/if}
+{if $t[v3]}{$t[n3]}:{$t[v3]}&nbsp;&nbsp;{/if}
+</p>
+</li>
+<li><p><i class="ui-ico-pics ui-fr">{$t[item]}报价</i><i class="ui-ico-price">{$DT[money_sign]}{$t[price]}/{$t[unit]}</i></p></li>
+</ul>
+</div>
+{/loop}

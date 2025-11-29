@@ -1,0 +1,187 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right">
+{if $action=='add' || $action=='list'}
+<a href="?action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{else}
+<a href="?action=list"><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></a>
+{/if}
+<a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a>
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=list" data-transition="none">添加推广</a>
+<a href="?action=index" data-transition="none">我的推广</a>
+<a href="{$EXT[spread_mob]}" rel="external">推广中心</a>
+<a href="biz.php" data-direction="reverse">商户后台</a>
+</div>
+</div>
+
+{if $action == 'add'}
+<div class="ui-widget" id="widget-{$js_pageid}"></div>
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="word" value="{$word}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<div class="content">
+关键词：{$word}<br/>
+所属频道：{$MODULE[$mid][name]}<br/>
+</div>
+<div class="ui-form">
+	<p>我的出价<i>*</i><b id="dprice"></b></p>
+	<div><input type="number" name="buy_price" value="{$price}" id="price" onkeyup="CA();" style="width:100px;"/></div>
+	<s>最低出价：{$price}{$unit} &nbsp; 加价幅度：{if $step}{$step}{$unit}{else}不限{/if}</s>
+	<p>购买时长<i>*</i><b id="dmonth"></b></p>
+	<div>
+		<select name="buy_month" id="month" onchange="CA();">
+		{php for($i=1;$i<=$month;$i++){}
+		<option value="{$i}">{$i}月</option>
+		{php }}
+		</select>
+	</div>
+	<p>信息ID<i>*</i><b id="dkey_id"></b></p>
+	<div><input type="number" name="buy_tid" value="{if $mid==4}{$_userid}{/if}" size="10" id="key_id" style="width:100px;"/> <a href="javascript:;" onclick="Dwidget('{$js_pageid}', AJPath+'?action=choose&job=item&from=member&mid={$mid}', '选择信息');"><img src="{DM_SKIN}icon-sort.png" style="width:16px;height:16px;padding:0 16px;opacity:0.5;"/></a></div>
+	<p>应付总额</p>
+	<div><strong style="font-size:20px;color:#FF6600;">{$DT[money_sign]}<span id="money">{$price}</span></strong>{$unit}</div>
+{if $currency == 'money'}
+	<section id="mymoney" style="display:none;">
+		<p>账户余额</p>
+		<div><strong>{$DT[money_sign]}{$_money}</strong>{$DT[money_unit]}</div>
+	</section>
+	<section id="payword" style="display:none;">
+		<p>支付密码</p>
+		<div>{template 'payword', 'chip'}</div>
+	</section>
+	<section id="paytype" style="display:none;">
+		<p>支付方式</p>
+		<div>{template 'paylist', 'chip'}</div>	
+	</section>
+{else}
+	<p>{$DT[credit_name]}余额</p>
+	<div><b>{$_credit}</b>{$unit}</div>
+{/if}
+	<div class="blank-20"></div>
+	<div><input type="submit" name="submit" value="立即购买" class="btn-green"/></div>
+	<div class="blank-20"></div>
+	<div><input type="button" class="btn" value="重新选择" onclick="Dsheet('{$js_pageid}','<a href=&#34;?action=list&mid={$mid}&kw={urlencode($word)}&#34;><span style=&#34;color:red&#34;>重新选择</span></a>', '取消', '确定要重新选择吗？');"/></div>
+	<div class="blank-20"></div>
+</div>
+</form>
+{elseif $action == 'list'}
+<div class="ui-form">
+<form action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="action" value="add"/>
+<p>关键词<i>*</i><b id="dkw"></b></p>
+<div><input type="text" name="kw" id="kw" value="{$kw}"/></div>
+<p>频道<i>*</i><b id="dmid"></b></p>
+<div>
+<select name="mid">
+{loop $MODULE $m}
+{if $m[moduleid] > 3 && !$m[islink]}<option value="{$m[moduleid]}"{if $mid==$m[moduleid]} selected{/if}>{$m[name]}</option>{/if}
+{/loop}
+</select>
+</div>
+<div class="blank-16"></div>
+<input type="submit" class="btn-green" value="下一步"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('kw').value.length < 2) {
+		Dmsg('请填写关键词', 'kw');
+		return false;
+	}
+	return true;
+}
+</script>
+{else}
+<script type="text/javascript">$(function(){Stabs('{$js_pageid}');});</script>
+<div class="list-menu" id="tabs-{$js_pageid}">
+	<ul>
+	<a href="?status=3"><li{if $status==3} class="on"{/if} id="s3">已通过{if !$kw} <i>{$nums[3]}</i>{/if}</li></a>
+	<a href="?status=2"><li{if $status==2} class="on"{/if} id="s2">审核中{if !$kw} <i>{$nums[2]}</i>{/if}</li></a>
+	</ul>
+</div>
+
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li><span class="f_r">{$v[price]}{if $v[currency]=='money'}{$DT[money_unit]}{else}{$DT[credit_unit]}{/if}</span><a href="{$MODULE[$v[mid]][linkurl]}{rewrite('search.php?kw='.urlencode($v['word']))}"><strong>{$MODULE[$v[mid]][name]}/{$v[word]}</strong></a></li>
+<li><span class="f_r">{$v[process]}</span><span>{timetodate($v[fromtime], 3)} / {timetodate($v[totime], 3)}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+	<div class="list-none">{if $kw}未搜索到“{$kw}”相关结果{else}暂无记录{/if}</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{/if}
+{if $action == 'add'}
+<script type="text/javascript">
+function CA() {
+	if(Dd('price').value.match(/^[0-9]{1,}$/)) {
+		Dd('money').innerHTML = Dd('price').value*Dd('month').value;
+	} else {
+		Dd('price').value = '{$price}';
+	}
+}
+function check() {
+	var p = Dd('price').value;
+	if(p < {$price}) {
+		Dmsg('出价不能低于起价', 'price');
+		return false;
+	}
+	if((p-{$price})%{$step} != 0) {
+		Dmsg('请按加价幅度加价', 'price');
+		return false;
+	}
+	if(Dd('key_id').value.length < 1) {
+		Dmsg('请填写信息ID', 'key_id');
+		return false;
+	}
+	{if $currency == 'money'}
+	var money = p*Dd('month').value;
+	if(p*Dd('month').value > {$_money}) {
+		Go('charge.php?action=pay&reason=spread|{$mid}|{$_word}|'+p+'|'+Dd('month').value+'|'+Dd('key_id').value+'&amount='+money+'&bank='+$('#bank').val());
+		return false;
+	}
+	if(money > {$DT[quick_pay]}){
+		if(Dd('password').value.length < 6) {
+			Dmsg('请填写支付密码', 'password');
+			return false;
+		}
+	}
+	{else}
+	if(p*Dd('month').value > {$_credit}) {
+		alert('您的{$DT[credit_name]}不足，请先购买');
+		return false;
+	}
+	{/if}
+}
+
+{if $currency == 'money'}
+window.setInterval(
+	function() {
+		var money = Dd('price').value*Dd('month').value;
+		if(money > {$_money} || {$_money} < 0.01) {
+			$('#mymoney').hide();$('#paytype').show();$('#payword').hide();
+		} else {
+			$('#mymoney').show();$('#paytype').hide();if(money > {$DT[quick_pay]}){$('#payword').show();}else{$('#payword').hide();}
+		}
+	}, 
+500);
+{/if}
+</script>
+{/if}
+{template 'footer', 'member'}

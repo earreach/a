@@ -1,0 +1,34 @@
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">提醒发货</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=update&step=detail&itemid={$itemid}" data-transition="none">订单详情</a>
+<a href="?action=index" data-direction="reverse">订单列表</a>
+</div>
+</div>
+
+<form action="message.php" method="post" id="remind">
+<input type="hidden" name="action" value="send" />
+<input type="hidden" name="forward" value="{$MOD[mobile]}order.php?action=update&step=detail&itemid={$itemid}"/>
+<input type="hidden" name="touser" value="{$O[seller]}" />
+<input type="hidden" name="title" value="[发货提醒]订单(ID:{$itemid})已经付款，请尽快发货"/>
+<textarea name="content" style="display:none;">
+{$O[seller]}，您好：<br/>
+订单 <a href="{$MOD[linkurl]}trade.php?action=update&step=detail&itemid={$itemid}" target="_blank">{$O[title]} (ID:{$itemid})</a> 已经付款。请尽快发货！
+</textarea>
+</form>
+<div class="blank-32"></div>
+<div class="blank-32"></div>
+<div class="list-btn"><input type="button" value="发送提醒" class="btn-green" onclick="Dd('remind').submit();"/></div>
+<div class="blank-32"></div>
+<div class="blank-32"></div>
+<script type="text/javascript">$(function(){Dd('remind').submit();});</script>

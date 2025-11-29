@@ -1,0 +1,9 @@
+{loop $tags $i $t}
+<div>
+<a href="{$t[linkurl]}" target="_blank"><img src="{$t[thumb]}" width="200" height="200" alt=""/></a>
+<b><s>{$DT[money_sign]}</s>{$t[price]}<em>{$t[orders]}已售</em></b>
+<p><a href="{$t[linkurl]}" title="{$t[alt]}" target="_blank">{$t[title]}</a></p>
+<i><a href="{userurl($t[username])}" title="{$t[company]}" target="_blank"><span>{$t[company]}</span></a>{if $t[username] && $DT[im_web]}{im_web($t[username].'&mid='.$moduleid.'&itemid='.$t[itemid])}{/if}</i>
+</div>
+{/loop}
+{if $showpage && $pages}</div><div class="pages">{$pages}{/if}

@@ -1,0 +1,496 @@
+{template 'header'}
+<!--<script type="text/javascript">var module_id= {$moduleid},item_id={$itemid},content_id='content',img_max_width={$MOD[max_width]};</script>-->
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}css/base.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<!--<link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">-->
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}css/bootstrap.min.css"/>
+<!--<link rel="stylesheet" type="text/css" href="{DT_SKIN}css/bootstrap.min.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>-->
+<link href="http://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+<!--<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+
+<style>
+	.nav1{display: block}
+	.tab .nav1-tabs{
+		padding-left: 15px;
+		border-bottom: 4px solid #0e84b5;
+	}
+	.tab .nav1-tabs li a{
+		color: #fff;
+		padding: 10px 20px;
+		margin-right: 10px;
+		background: #0e84b5;
+		text-shadow: 1px 1px 2px #000;
+		border: none;
+		border-radius: 0;
+		opacity: 0.5;
+		position: relative;
+		transition: all 0.3s ease 0s;
+	}
+	.tab .nav1-tabs li a:hover{
+		background: #0e84b5;
+		opacity: 0.8;
+	}
+	.tab .nav1-tabs li.active a{
+		opacity: 1;
+	}
+	.tab .nav1-tabs li.active a,
+	.tab .nav1-tabs li.active a:hover,
+	.tab .nav1-tabs li.active a:focus{
+		color: #fff;
+		background: #0e84b5;
+		border: none;
+		border-radius: 0;
+	}
+	.tab .nav1-tabs li a:before,
+	.tab .nav1-tabs li a:after{
+		content: "";
+		border-top: 42px solid transparent;
+		position: absolute;
+		top: -2px;
+	}
+	.tab .nav1-tabs li a:before{
+		border-right: 15px solid #0e84b5;
+		left: -15px;
+	}
+	.tab .nav1-tabs li a:after{
+		border-left: 15px solid #0e84b5;
+		right: -15px;
+	}
+	.tab .nav1-tabs li a i,
+	.tab .nav1-tabs li.active a i{
+		display: inline-block;
+		padding-right: 5px;
+		font-size: 15px;
+		text-shadow: none;
+	}
+	.tab .nav1-tabs li a span{
+		display: inline-block;
+		font-size: 14px;
+		letter-spacing: -9px;
+		opacity: 0;
+		transition: all 0.3s ease 0s;
+	}
+	.tab .nav1-tabs li a:hover span,
+	.tab .nav1-tabs li.active a span{
+		letter-spacing: 1px;
+		opacity: 1;
+		transition: all 0.3s ease 0s;
+	}
+	.tab .tab-content{
+		/*padding: 30px;*/
+		background: #fff;
+		font-size: 16px;
+		color: #6c6c6c;
+		line-height: 25px;
+	}
+	.tab .tab-content h3{
+		font-size: 24px;
+		margin-top: 0;
+	}
+	@media only screen and (max-width: 479px){
+		.tab .nav1-tabs li{
+			width: 100%;
+			margin-bottom: 5px;
+			text-align: center;
+		}
+		.tab .nav1-tabs li a span{
+			letter-spacing: 1px;
+			opacity: 1;
+		}
+	}
+
+
+
+</style>
+
+
+
+
+<div class="m">
+	<div class="nav"><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')}</div>
+</div>
+
+
+<div class="m m1">
+	<div class="m1l">
+		{if $FD || $CP}
+		<form action="{$MOD[linkurl]}search.php" id="search">
+			<input type="hidden" name="catid" value="{$catid}"/>
+			<div class="sort-f">
+				{if $FD}{template 'fields_search', 'chip'}{/if}
+				{if $CP}{template 'property_search', 'chip'}{/if}
+			</div>
+		</form>
+		<script type="text/javascript">$(function(){if($('.sort-f').html().indexOf('sort')==-1){$('.sort-f').hide();}});</script>
+		{/if}
+
+		<div class="catlist">
+			{php $cols = 5;}
+			{if $page == 1}{ad($moduleid,$catid,'',6)}{/if}
+			{if $tags}{template 'list-'.$module, 'tag'}{/if}
+		</div>
+
+		<div class="p20">
+
+			<div class="title-middle">
+				<h1>{$seo_title}</h1>
+				<div class="m-20 bb2"></div>
+			</div>
+			<div id="content" >{template 'content', 'chip'}</div>
+
+
+
+
+
+
+
+
+			<div class="">
+
+					<div class="">
+						<div class="tab">
+							<!-- nav1 tabs -->
+							<ul class="nav1 nav1-tabs" >
+								<li class="active"><a href="javascript:void(0);" ><i class="fa fa-home"></i><span>SECTION-1</span></a></li>
+								<li><a href="javascript:void(0);" ><i class="fa fa-globe"></i><span>SECTION-2</span></a></li>
+								<li><a href="javascript:void(0);" ><i class="fa fa-briefcase"></i><span>SECTION-3</span></a></li>
+
+							</ul>
+							<!-- Tab panes -->
+							<div class="tab-content tabs ">
+								<div class="" id="section0">
+										<h3>Section 1</h3>
+										<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras nec urna aliquam, ornare eros vel, malesuada lorem. Nullam faucibus lorem at eros consectetur lobortis. Maecenas nec nibh congue, placerat sem id, rutrum velit. Phasellus porta enim at facilisis condimentum. Maecenas pharetra dolor vel elit tempor pellentesque sed sed eros. Aenean vitae mauris tincidunt, imperdiet orci semper, rhoncus ligula. Vivamus scelerisque.</p>
+								</div>
+								<div class="dn" id="section1">
+										<h3>Section 2</h3>
+										<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras nec urna aliquam, ornare eros vel, malesuada lorem. Nullam faucibus lorem at eros consectetur lobortis. Maecenas nec nibh congue, placerat sem id, rutrum velit. Phasellus porta enim at facilisis condimentum. Maecenas pharetra dolor vel elit tempor pellentesque sed sed eros. Aenean vitae mauris tincidunt, imperdiet orci semper, rhoncus ligula. Vivamus scelerisque.</p>
+								</div>
+								<div class=" dn" id="section2">
+									<div class="fenbiao rel ">
+										<table id="tableid" class="w100 t0 ">
+											<thead>
+											<tr class="bgblue8 white">
+												<th>機種名</th>
+												<th>通常料金（税込）</th>
+												<th>WEB料金（税込）</th>
+												<th>WEB料金（税込）</th>
+												<th>WEB料金（税込）</th>
+											</tr>
+											</thead>
+											<tr>
+												<td class="bghui2">1</td>
+												<td colspan="4">3</td>
+
+											</tr>
+											<tr>
+												<td class="bghui2">1</td>
+												<td colspan="4">3</td>
+											</tr>
+											<tr>
+												<td rowspan="8" class="bghui2">1</td>
+												<td>3</td>
+												<td>1</td>
+												<td>2</td>
+												<td>2</td>
+
+											</tr>
+											<tr>
+												<td>1</td>
+												<td>3</td>
+												<td>1</td>
+												<td>2</td>
+
+											</tr>
+											<tr>
+												<td>1</td>
+												<td>3</td>
+												<td>1</td>
+												<td>2</td>
+
+											</tr>
+											<tr>
+												<td>1</td>
+												<td>3</td>
+												<td>1</td>
+												<td>2</td>
+
+											</tr>
+											<tr>
+
+												<td>3</td>
+												<td>1</td>
+												<td>2</td>
+												<td>5</td>
+											</tr>
+											<tr>
+
+												<td>3</td>
+												<td>1</td>
+												<td>2</td>
+												<td>5</td>
+											</tr>
+											<tr>
+
+												<td>3</td>
+												<td>1</td>
+												<td>2</td>
+												<td>5</td>
+											</tr>	<tr>
+
+											<td>3</td>
+											<td>1</td>
+											<td>2</td>
+											<td>5</td>
+										</tr>
+
+
+
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+			</div>
+
+
+
+
+			<div class="table m0a">
+				<p class="fs14 fw-800 red2">※実際の修理内容によっては修理料金が変動する可能性があるので詳細の修理料金は各店舗までお問い合わせ下さい</p>
+
+
+			</div>
+
+			<div class="qs">
+				<div class="mt-5 pd10 blue9  line1">
+
+					<p class="qs-1 "><span class="dib  j-right">  </span><span class="pl-10 fw-800 fs-15 ">Q.1 修理にはどのくらい時間がかかりますか？</span></p>
+					<p class="bt pt-10 ">フロントパネル交換の作業時間は約20分～60分程度です。</p>
+
+				</div>
+				<div class="mt-5 pd10 blue9  line1">
+					<p class="qs-1 "><span class="dib  j-right">  </span><span class="pl-10 fw-800 fs-15 ">Q.2 来店する場合、事前予約は必要ですか？</span></p>
+					<p class="bt pt-10">フロントパネル交換の作業時間は約20分～60分程度です。</p>
+					<p class="bt pt-10"> ご予約がないお客様も受付は可能ですが、作業時間は前後致し兼ねますので、ご了承下さいませ。</p>
+				</div>
+				<div class="mt-5 pd10 blue9  line1">
+					<p class="qs-1 "><span class="dib  j-right">  </span><span class="pl-10 fw-800 fs-15 ">Q.4 データは消えますか？</span></p>
+					<p class="bt pt-10">基本的にデータ領域は触れませんので、データが消える事はまずございません。</p>
+					<p class="bt pt-10"> ですが、た修理前後問わずOSの不具合等によりデータの取り出しが困難になる場合があります。そのため、日頃から「データのバックアップ」を取られることを推奨しております。</p>
+
+				</div>
+				<div class="mt-5 pd10 blue9  line1">
+					<p class="qs-1 "><span class="dib  j-right">  </span><span class="pl-10 fw-800 fs-15 ">Q.5 修理が出来なかった場合、お金はかかりますか？</span></p>
+					<p class="bt pt-10">修理不可と判断させて頂いた場合は、料金は一切かかりませんのでご安心くださいませ。</p>
+					<p class="bt pt-10"> ただし、水没復旧の場合は作業費として2,200円(税込)を頂きます。</p>
+				</div>
+				<div class="mt-5 pd10 blue9  line1">
+					<p class="qs-1 "><span class="dib  j-right">  </span><span class="pl-10 fw-800 fs-15 ">Q.6 見積もりだけして頂くことは出来ますか？</span></p>
+					<p class="bt pt-10">もちろん可能です。見積もりはいつでも無料にて行っておりますのでお気軽にお申し付けください。</p>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+
+
+
+		<!--	<div class="content" id="article">{$content}</div>-->
+
+		<!--	<?php echo $content;?>-->
+
+
+
+	<div class="m1r  pd10  bsb">
+			<div class="h-50">
+				<p class="sb df">
+					<input type="text" placeholder="サイ卜内を検索" class="h100 bsb ">
+					<input type="button" value="搜索" class="fg1">
+				</p>
+			</div>
+
+			<div>
+				<p class="fs25 fw-800 blue9 tac side_on">症状別で探す</p>
+				<p class="fs16 fw-400 blue8 ">Smart Phone修理</p>
+
+				<ul class="bt ">
+					{loop $maincat $k $v}
+					<li class="{if $v[catid]==$catid}side_on fs16 {else}side_li fs16 {/if} mt-5"><a href="{$MOD[linkurl]}{$v[linkurl]}">{set_style($v[catname],$v[style])}{if !$cityid} <em>({$v[item]})</em>{/if}</a></li>
+					{/loop}
+				</ul>
+			</div>
+
+			<div>
+				<p class="br-5 h-100 ovfh  "  ><a href=""><img src="{DT_SKIN}article/a.png"   class="w100 h100 ofo"  alt=""></a></p>
+				<p class="br-5 h-100 ovfh  "  ><a href=""><img src="{DT_SKIN}article/b.png"  class=" w100 h100" alt=""></a></p>
+				<p class="br-5 h-100 ovfh  "  ><a href=""><img src="{DT_SKIN}article/c.png"  class=" w100 h100" alt=""></a></p>
+				<p class="br-5 h-100 ovfh  "  ><a href=""><img src="{DT_SKIN}article/d.png"  class=" w100 h100" alt=""></a></p>
+
+			</div>
+			<div>
+				<p class="fs16 fw-400 blue8 ">その他 修理</p>
+				<ul class="bt ">
+					{loop $maincat $k $v}
+					<li class="{if $v[catid]==$catid}side_on fs16 {else}side_li fs16 {/if} mt-5"><a href="{$MOD[linkurl]}{$v[linkurl]}">{set_style($v[catname],$v[style])}{if !$cityid} <em>({$v[item]})</em>{/if}</a></li>
+					{/loop}
+				</ul>
+			</div>
+			<div>
+				<div class="fs16 fw-400 blue8 ">
+					<p class="h-20"><span class="sb dib ">iPhone/iPad修理</span></p>
+					<p class="br-5 h-100 ovfh  "  ><a href=""><img src="{DT_SKIN}article/e.png"  class=" w100 h100" alt="iPhone/iPad修理"></a></p>
+				</div>
+				<div class="fs16 fw-400 blue8 ">
+					<p class="h-20"><span class="sb dib ">XPERIA/その他</span></p>
+					<p class="br-5 h-100 ovfh  "  ><a href=""><img src="{DT_SKIN}article/f.png"  class=" w100 h100" alt="XPERIA/その他"></a></p>
+				</div>
+				<div class="fs16 fw-400 blue8 ">
+					<p class="h-20"><span class="sb dib ">Switch/プレステ</span></p>
+					<p class="br-5 h-100 ovfh  "  ><a href=""><img src="{DT_SKIN}article/g.png"  class=" w100 h100" alt="Switch/プレステ"></a></p>
+				</div>
+				<div class="fs16 fw-400 blue8 ">
+					<p class="h-20"><span class="sb dib ">Switch/プレステ</span></p>
+					<p class="br-5 h-100 ovfh  "  ><a href=""><img src="{DT_SKIN}article/h.png"  class=" w100 h100" alt="Switch/プレステ"></a></p>
+				</div>
+
+			</div>
+			<div class="mt-20 blue8 fs16">
+				<p class="h-20"><span class="sb dib">1 - 8 of 20 件の口コミ</span></p>
+				<div class="bt pt-20">
+					<div class="sb  bb1 ">
+						<p class=" df">
+							<span class="dib w-50 h-50 br50 brhui2 ovfh "><img src="{DT_SKIN}article/3.png" class="w100 w100" ></span><span	 class=" dib h-50 ml-5 lh-50 w-160 wsn ovfh">yirdsafdddsfao obayash</span>
+						</p>
+						<p class="h-15 stars5 w-75" ></p>
+						<p class="ovfh gray fs14">2024年12月25日 16:14</p>
+						<p class="ovfh gray2 fs14 h-40">	丁寧でとても良かったです。また壊れたらお願いしたいです。</p>
+						<p class="ovfh gray fs12 df"> <span class=" fg1">(Googleのクチコミから引用)</span> <span class="w-30  ti-20 message">1</span>	</p>
+					</div>
+					<div class="sb  bb1">
+						<p class=" df">
+							<span class="dib w-50 h-50 br50 brhui2 ovfh "><img src="{DT_SKIN}article/3.png" class="w100 w100" ></span><span	 class=" dib h-50 ml-5 lh-50 w-160 wsn ovfh">yirdsafdddsfao obayash</span>
+						</p>
+						<p class="h-15 stars5 w-75" ></p>
+						<p class="ovfh gray fs14">2024年12月25日 16:14</p>
+						<p class="ovfh gray2 fs14 h-40">	丁寧でとても良かったです。また壊れたらお願いしたいです。</p>
+						<p class="ovfh gray fs12 df"> <span class=" fg1">(Googleのクチコミから引用)</span> <span class="w-30  ti-20 message">1</span>	</p>
+					</div>
+					<div class="sb  bb1">
+						<p class=" df">
+							<span class="dib w-50 h-50 br50 brhui2 ovfh "><img src="{DT_SKIN}article/3.png" class="w100 w100" ></span><span	 class=" dib h-50 ml-5 lh-50 w-160 wsn ovfh">yirdsafdddsfao obayash</span>
+						</p>
+						<p class="h-15 stars5 w-75" ></p>
+						<p class="ovfh gray fs14">2024年12月25日 16:14</p>
+						<p class="ovfh gray2 fs14 h-40">	丁寧でとても良かったです。また壊れたらお願いしたいです。</p>
+						<p class="ovfh gray fs12 df"> <span class=" fg1">(Googleのクチコミから引用)</span> <span class="w-30  ti-20 message">1</span>	</p>
+					</div>
+					<div class="sb  bb1">
+						<p class=" df">
+							<span class="dib w-50 h-50 br50 brhui2 ovfh "><img src="{DT_SKIN}article/3.png" class="w100 w100" ></span><span	 class=" dib h-50 ml-5 lh-50 w-160 wsn ovfh">yirdsafdddsfao obayash</span>
+						</p>
+						<p class="h-15 stars5 w-75" ></p>
+						<p class="ovfh gray fs14">2024年12月25日 16:14</p>
+						<p class="ovfh gray2 fs14 h-40">	丁寧でとても良かったです。また壊れたらお願いしたいです。</p>
+						<p class="ovfh gray fs12 df"> <span class=" fg1">(Googleのクチコミから引用)</span> <span class="w-30  ti-20 message">1</span>	</p>
+					</div>
+					<div class="sb  bb1">
+						<p class=" df">
+							<span class="dib w-50 h-50 br50 brhui2 ovfh "><img src="{DT_SKIN}article/3.png" class="w100 w100" ></span><span	 class=" dib h-50 ml-5 lh-50 w-160 wsn ovfh">yirdsafdddsfao obayash</span>
+						</p>
+						<p class="h-15 stars5 w-75" ></p>
+						<p class="ovfh gray fs14">2024年12月25日 16:14</p>
+						<p class="ovfh gray2 fs14 h-40">	丁寧でとても良かったです。また壊れたらお願いしたいです。</p>
+						<p class="ovfh gray fs12 df"> <span class=" fg1">(Googleのクチコミから引用)</span> <span class="w-30  ti-20 message">1</span>	</p>
+					</div>
+				</div>
+
+			</div>
+
+	</div>
+
+
+	<div class="b10 c_b b1">555</div>
+
+</div>
+
+
+
+<script>
+	// 滑动滚动条
+	// $(function (){
+	// 	$("[href='#Section3']").click(function (){
+	// 		tableHeader()
+	// 		console.log(5555555)
+	// 	})
+	// })
+
+	//
+	$(function (){
+		arrs=$(".nav1-tabs li")
+		arrs.each(function (i){
+			$(this).click(function (){
+				if($(this).index()==i){
+					// mie()
+					arrs.removeClass("active")
+					$(this).addClass("active")
+					tableHeader()
+					$("#section"+i).siblings().addClass("dn")
+					$("#section"+i).removeClass("dn")
+					// mie()
+
+				}
+
+			})
+
+		})
+	})
+
+	function  mie(){
+		$(".tab-pane").parent().addClass("dn")
+	}
+
+
+	function tableHeader() {
+		$("#tableid_").html('')
+		$("#tableid").parent().prepend(
+				'<table id="tableid_" border="0" cellspacing="0" cellpadding="0"><thead>' + $("#tableid thead").html() + '</thead></table>'
+		).css({
+			'position': 'relative',
+			'height': '300px',
+			'overflow-y': 'auto',
+			'z-index': 2
+		})
+		$("#tableid").parent().parent().removeClass("dn")
+		$("#tableid_").find('th').each(function(i) {
+			$(this).css('width', $('#tableid').find('th:eq(' + i + ')').width());
+		});
+		$("#tableid_").css({
+			'position': 'absolute',
+			'top': '0',
+			'left': 0,
+			'z-index': 1
+		})
+		$("#tableid").css({
+			'position': 'absolute',
+			'top': 0,
+			'left': 0
+		})
+		// $("#tableid").parent().removeClass("dn")
+		$('.fenbiao').scroll(function() {
+			if ($('.fenbiao').scrollTop() > 0) {
+				$("#tableid_").css('top', $('.fenbiao').scrollTop());
+			} else {
+				$("#tableid_").css('top', 0);
+			}
+		});
+
+	}
+</script>
+
+
+
+
+{if $content}{load('content.js')}{/if}
+{template 'footer'}

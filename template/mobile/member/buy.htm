@@ -1,0 +1,380 @@
+{template 'header', 'member'}
+{load('cart.css')}
+{if $action == 'result'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="{$MODULE[2][mobile]}order.php?mid={$mid}" rel="external">我的订单</a>
+<a href="cart.php?mid={$mid}" data-direction="reverse">购物车</a>
+<a href="{$MODULE[$mid][mobile]}" data-direction="reverse">返回{$MODULE[$mid][name]}</a>
+</div>
+</div>
+
+{if $code < 10}
+<div class="ui-ok">
+	<p>订单提交成功！ </p>
+	<input type="button" value="支付订单" class="btn-green" onclick="Go('{$payurl}');"/>
+	<input type="button" value="继续购物" class="btn" onclick="Go('{$MOD[mobile]}');"/>
+	<meta http-equiv="refresh" content="6;URL={$payurl}"/>
+</div>
+{else}
+<div class="ui-ko">
+	<p>
+		{if $code == 10}
+		商品不存在
+		{elseif $code == 11}
+		商家不存在
+		{elseif $code == 12}
+		不能下单自己的商品
+		{elseif $code == 13}
+		商品未上架
+		{elseif $code == 14}
+		商品库存不足
+		{elseif $code == 15}
+		商品价格错误
+		{else}
+		订单提交失败
+		{/if}
+	</p>
+	<input type="button" value="重新挑选" class="btn-green" onclick="Go('{$MOD[mobile]}');"/>
+	{if $itemid}
+	<input type="button" value="查看商品" class="btn" onclick="Go('{$url}');"/>
+	{else}
+	<input type="button" value="返回购物车" class="btn" onclick="Go('cart.php?mid={$mid}');"/>
+	{/if}
+</div>
+{/if}
+
+{else}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">确认订单</div>
+<div class="head-bar-right"><a href="cart.php"><img src="{DM_SKIN}icon-cart{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+{if $lists}
+<form method="post" action="buy.php" onsubmit="return check();">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="aid" value="{$address[0][itemid]}" id="aid"/>
+<div class="ui-form">
+<p>收货地址<i>*</i></span><b id="daid"><a href="{$MODULE[2][mobile]}address.php" class="b">管理</a></b></p>
+</div>
+<div class="my-addr" id="my-addr">
+	<ul>
+	{loop $address $k $v}
+	<li{if $k==0} class="on"{/if} id="addr-{$v[itemid]}" onclick="setaddr({$v[itemid]});"><b>{$v[truename]}</b> {$v[address]} {hide_str($v[mobile], 'mobile')}{if $v[typename]}<s>{$v[typename]}</s>{/if}</li>
+	{/loop}
+	</ul>
+</div>
+{if count($address) > 1}
+<div class="my-addr-more" id="my-addr-more" onclick="foldaddr(0);">更多地址</div>
+<div class="my-addr-fold" id="my-addr-fold" onclick="foldaddr(1);">收起地址</div>
+{/if}
+<div class="blank-16"></div>
+
+{loop $lists $tags}
+{loop $tags $i $t}
+{if $i == 0}
+<div class="list-seller bd-t bd-b">
+<table cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td width="16"></td>
+{php $discount = get_discount($t[username]);}
+<td><div><a href="{userurl($t[username])}">{$t[company]}</a>{if $discount}&nbsp;<span>代理折扣{$discount}%</span>{/if}<input type="hidden" id="discount-{$t[username]}" value="{$discount}"/></div></td>
+<td class="c3">
+	{php $promos = get_promos($t[username]);}
+	{if $promos}
+	<a href="{$MODULE[2][mobile]}coupon.php?username={$t[username]}"><span>&nbsp;&nbsp;领券</span></a>
+	{/if}
+	<s id="total-{$t[username]}" data-user="{$t[username]}">0.00</s>
+</td>
+</tr>
+</table>
+</div>
+{php $coupons = get_coupons($_username, $t[username]);}
+{if $coupons}
+<div class="list-coupon bd-b">
+	<select name="coupon[{$t[username]}]" id="coupon-{$t[username]}" onchange="calculate();">
+	<option value="0">我的优惠券</option>
+	{loop $coupons $c}
+	<option value="{$c[itemid]}" coupon-price="{$c[price]}" coupon-cost="{$c[cost]}" coupon-mid="{$c[mid]}" coupon-catid="{$c[catid]}" coupon-itemids="{$c[itemids]}">{$c[title]} {$DT[money_sign]}{$c[price]}{if $c[cost]>0.001}，满{$c[cost]}可用{/if}</option>
+	{/loop}
+	</select>
+</div>
+{/if}
+{/if}
+<div class="list-goods bd-b">
+<table cellpadding="0" cellspacing="0" width="100%">
+<tr data-key="{$t[key]}" data-seller="{$t[username]}">
+<td width="16"></td>
+<td class="c2"><a href="{$t[mobile]}"><img src="{if $t[thumb]}{$t[thumb]}{else}{DM_SKIN}nopic-60.png{/if}" width="60" height="60" alt="" onerror="this.src='{DM_SKIN}nopic-60.png';"/></a></td>
+<td>
+	<p><a href="{$t[mobile]}" class="b">{$t[alt]}</a></p>
+	<b>{if $t[m1]}{$t[n1]}:{$t[m1]}&nbsp;{/if}{if $t[m2]}{$t[n2]}:{$t[m2]}&nbsp;{/if}{if $t[m3]}{$t[n3]}:{$t[m3]}&nbsp;{/if}</b>
+	<div>
+	<table cellpadding="0" cellspacing="0" width="100%">
+	<tr>
+	<td><em>{$DT[money_sign]}<span id="price_{$t[key]}">{$t[price]}</span>{if isset($t[unit]) && $t[unit]}/{$t[unit]}{/if}</em></td>
+	<td class="a1" onclick="alter('{$t[key]}', '-', {$t[mina]}, {$t[maxa]});">-</td>
+	<td class="a2"><input type="tel" name="post[{$t[key]}][number]" value="{$t[a]}" id="number_{$t[key]}" onblur="calculate();"/></td>
+	<td class="a3" onclick="alter('{$t[key]}', '+', {$t[mina]}, {$t[maxa]});">+</td>
+	</tr>
+	</table>
+	</div>	
+	<s id="total_{$t[key]}" total-{$t[username]}="1">0.00</s>
+	<input type="hidden" id="a1_{$t[key]}" value="{$t[a1]}"/>
+	<input type="hidden" id="a2_{$t[key]}" value="{$t[a2]}"/>
+	<input type="hidden" id="a3_{$t[key]}" value="{$t[a3]}"/>
+	<input type="hidden" id="p1_{$t[key]}" value="{$t[p1]}"/>
+	<input type="hidden" id="p2_{$t[key]}" value="{$t[p2]}"/>
+	<input type="hidden" id="p3_{$t[key]}" value="{$t[p3]}"/>
+	<input type="hidden" id="amount_{$t[key]}" value="{$t[amount]}"/>
+	<input type="hidden" id="mina_{$t[key]}" value="{$t[mina]}"/>
+	<input type="hidden" id="maxa_{$t[key]}" value="{$t[maxa]}"/>
+	<input type="hidden" id="unit_{$t[key]}" value="{$t[unit]}"/>
+	<input type="hidden" id="mid_{$t[key]}" value="{$t[mid]}"/>
+	<input type="hidden" id="catid_{$t[key]}" value="{$t[catid]}"/>
+	<input type="hidden" id="itemid_{$t[key]}" value="{$t[itemid]}"/>
+	<input type="hidden" id="seller_{$t[key]}" value="{$t[username]}"/>
+	<input type="hidden" id="fee_start_{$t[key]}_1" value="{$t[fee_start_1]}"/>
+	<input type="hidden" id="fee_step_{$t[key]}_1" value="{$t[fee_step_1]}"/>
+	<input type="hidden" id="fee_start_{$t[key]}_2" value="{$t[fee_start_2]}"/>
+	<input type="hidden" id="fee_step_{$t[key]}_2" value="{$t[fee_step_2]}"/>
+	<input type="hidden" id="fee_start_{$t[key]}_3" value="{$t[fee_start_3]}"/>
+	<input type="hidden" id="fee_step_{$t[key]}_3" value="{$t[fee_step_3]}"/>
+	<input type="hidden" id="good_{$t[key]}" good-{$t[username]}="1" value=""/>
+</td>
+</tr>
+</table>
+</div>
+<div class="list-pars bd-b">
+	<em>运费：{$DT[money_sign]}<span id="fee_{$t[key]}">0.00</span></em>
+	<select name="post[{$t[key]}][express]" id="express_{$t[key]}" onchange="calculate();">
+	{if $t[express_name_1] == '包邮'}
+		{if $t[fee_start_1]>0}
+		{if $t[fee_start_2]>0}<option value="2" data-2>{$t[express_name_2]}</option>{/if}
+		{if $t[fee_start_3]>0}<option value="3" data-3>{$t[express_name_3]}</option>{/if}
+		<option value="-1" data--1>包邮</option>
+		{if $t[fee_start_2]>0 || $t[fee_start_3]>0}
+		{else}
+		<option value="0" data-0>联系卖家</option>
+		{/if}
+		{else}
+		<option value="0" data-0>包邮</option>
+		{/if}
+	{elseif $t[fee_start_1]>0 || $t[fee_start_2]>0 || $t[fee_start_3]>0}
+		{if $t[fee_start_1]>0}<option value="1">{$t[express_name_1]}</option>{/if}
+		{if $t[fee_start_2]>0}<option value="2">{$t[express_name_2]}</option>{/if}
+		{if $t[fee_start_3]>0}<option value="3">{$t[express_name_3]}</option>{/if}
+	{else}
+	<option value="0">联系卖家</option>
+	{/if}
+	</select>
+	{if $t[express_name_1] == '包邮' && $t[fee_start_1]>0} <span>满{$t[fee_start_1]}包邮</span>{/if}	
+	{if $t[cod]} <input type="checkbox" name="post[{$t[key]}][cod]" value="1" checked{if $t[cod] == 1} disabled{/if}/> <span>货到付款</span>{/if}
+</div>
+<div class="list-pars bd-b">
+<input type="text" name="post[{$t[key]}][note]" value="" maxlength="100" placeholder="备注：限100字以内" class="pars-note"/>
+</div>
+{/loop}
+{/loop}
+<div class="blank-36 main"></div>
+<div class="list-set">
+<ul>
+<li><div><span>{$DT[money_sign]}<font id="total_price"></font></span>总价</div></li>
+<li><div><span>{$DT[money_sign]}<font id="total_fee"></font></span>运费</div></li>
+<li><div><span>{$DT[money_sign]}<font id="total_discount"></font></span>优惠</div></li>
+</ul>
+</div>
+<div class="pars-tips">提示：实际的运费可能因为收货地址的不同而有差异，具体以提交之后系统计算或与卖家协商为准</div>
+
+<div class="blank-36"></div>
+<div class="blank-36"></div>
+
+<div class="cart-foot-fix"></div>
+<div class="cart-foot">
+<table cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td class="c2">&nbsp; &nbsp;<span style="color:#666666;">共<span id="total_good">{$num}</span>件</span> 合计:<span style="color:red;font-size:20px;font-weight:bold;">{$DT[money_sign]}<span id="total_amount"></span></span></td>
+<td class="c3"><input type="submit" name="submit" value="提交订单" style="width:128px;"/></td>
+</tr>
+</table>
+</div>
+</form>
+
+{else}
+<div class="cart-msg">
+您还没有挑选商品，赶快行动吧！马上去
+<div class="blank-32"></div>
+<div class="blank-32"></div>
+<a href="{$MOD[mobile]}"><div class="btn-green">挑选商品</div></a>
+</div>
+{/if}
+{/if}
+<script type="text/javascript">
+function check() {
+	if(Dd('total_amount').innerHTML == '0.00') {
+		Dtoast('{$js_pageid}', '订单总额为0.00，请检查商品数量');
+		window.scroll(0, 0);
+		return false;
+	}
+	if(Dd('aid').value == 0) {
+		Dtoast('{$js_pageid}', '请选择所在地区');
+		return false;
+	}
+	return true;
+}
+function setaddr(id) {
+	$('#aid').val(id);
+	$('#my-addr .on').removeClass('on');
+	$('#addr-'+id).addClass('on');
+}
+function foldaddr(type) {
+	if(type) {
+		$('#my-addr').animate({'scrollTop':'0'}, 10);
+		if($('#my-addr li').first().attr('class') != 'on') {
+			var htm = $('#my-addr .on').prop('outerHTML');
+			$('#my-addr .on').remove();
+			$('#my-addr ul').prepend(htm);
+		}
+		$('#my-addr').css({'max-height':'40px','overflow':'hidden'});$('#my-addr-more').show();$('#my-addr-fold').hide();
+	} else {
+		$('#my-addr').css({'max-height':'200px','overflow-y':'auto'});$('#my-addr-more').hide();$('#my-addr-fold').show();
+	}
+}
+function alter(i, t, mina, maxa) {
+	if(t == '+') {
+		if(maxa && Dd('number_'+i).value >= maxa) {Dtoast('{$js_pageid}', '最多购买'+maxa+Dd('unit_'+i).value);return;}
+		Dd('number_'+i).value =  parseInt(Dd('number_'+i).value) + 1;
+	} else {
+		if(Dd('number_'+i).value <= mina) {Dtoast('{$js_pageid}', '最少购买'+mina+Dd('unit_'+i).value);return;}
+		Dd('number_'+i).value = parseInt(Dd('number_'+i).value) - 1;
+	}
+	calculate();
+}
+function get_price(i) {
+	if(Dd('a2_'+i).value > 0) {
+		if(Dd('a3_'+i).value > 1 && parseInt(Dd('number_'+i).value) > parseInt(Dd('a3_'+i).value)) return Dd('p3_'+i).value;
+		if(Dd('a2_'+i).value > 1 && parseInt(Dd('number_'+i).value) > parseInt(Dd('a2_'+i).value)) return Dd('p2_'+i).value;
+		return Dd('p1_'+i).value;
+	}
+	return Dd('p1_'+i).value
+}
+function calculate() {
+	var _good = _fee = 0;
+	$('[data-key]').each(function() {
+		var num, good, maxa, mina, price;
+		var key = $(this).attr('data-key');
+		num = parseInt(Dd('number_'+key).value);
+		maxa = parseInt(Dd('maxa_'+key).value);
+		mina = parseInt(Dd('mina_'+key).value);
+		if(num < mina) Dd('number_'+key).value = num = mina;
+		if(num > maxa) Dd('number_'+key).value = num = maxa;
+		if(isNaN(num) || num < 0) Dd('number_'+key).value = num = mina;
+		if(maxa < 1) Dd('number_'+key).value = num = 0;
+		price = parseFloat(get_price(key));
+		good = price*num;
+		$('#good_'+key).val(good);
+		var es = $('#express_'+key).html();
+		if(es.indexOf('data--1') != -1) {
+			if(good >= parseFloat(Dd('fee_start_'+key+'_1').value)) {
+				$('#express_'+key).val('-1');
+			} else {
+				if(es.indexOf('data-0') != -1) {
+					$('#express_'+key).val('0');
+				} else if(es.indexOf('data-2') != -1) {
+					$('#express_'+key).val('2');
+				} else if(es.indexOf('data-3') != -1) {
+					$('#express_'+key).val('3');
+				}
+			}
+		} 
+		if(Dd('express_'+key).value > 0) {
+			var fee = parseFloat(Dd('fee_start_'+key+'_'+Dd('express_'+key).value).value) + parseFloat(Dd('fee_step_'+key+'_'+Dd('express_'+key).value).value)*(num-1);
+			Dd('fee_'+key).innerHTML = fee.toFixed(2);
+			Dd('total_'+key).innerHTML = (good+fee).toFixed(2);
+			_fee += fee;
+		} else {
+			Dd('fee_'+key).innerHTML = '0.00';
+			Dd('total_'+key).innerHTML = good.toFixed(2);
+		}
+		Dd('price_'+key).innerHTML = price.toFixed(2);
+		_good += good;
+	});
+	var d_c = 0;
+	var t_a = _good + _fee;
+	$('[data-user]').each(function() {
+		var user = $(this).attr('data-user');
+		var t_t = 0;
+		$('[total-'+user+']').each(function() {
+			t_t += parseFloat($(this).html());
+		});
+		if($('#discount-'+user).val() > 0) {
+			var g_t = 0;
+			$('[good-'+user+']').each(function() {
+				g_t += parseFloat($(this).val());
+			});
+			var g_d = parseFloat(g_t*(100-parseInt($('#discount-'+user).val()))/100);
+			d_c += g_d;
+			t_t = t_t - g_d;
+			t_a = t_a - g_d;
+		}
+		if($('#coupon-'+user).val() > 0) {
+			var c_c = parseFloat($('#coupon-'+user+' :selected').attr('coupon-cost'));
+			var c_p = parseFloat($('#coupon-'+user+' :selected').attr('coupon-price'));
+			var c_mid = parseInt($('#coupon-'+user+' :selected').attr('coupon-mid'));
+			var c_catid = parseInt($('#coupon-'+user+' :selected').attr('coupon-catid'));
+			var c_itemids = $('#coupon-'+user+' :selected').attr('coupon-itemids');
+			if(c_mid || c_catid || c_itemids) {
+				$('[data-key]').each(function() {				
+					var key = $(this).attr('data-key');
+					if($('#seller_'+key).val() == user) {
+						if(c_mid && $('#mid_'+key).val() == c_mid) c_mid = 0;
+						if(c_catid && $('#catid_'+key).val() == c_catid) c_catid = 0;
+						if(c_itemids && ','+c_itemids+','.indexOf(','+$('#itemid_'+key).val()+',') != -1) c_itemids = '';
+					}
+				});
+				if(c_mid || c_catid || c_itemids) {
+					c_p = 0;
+					$('#coupon-'+user).val('0');
+				}
+			}
+			if(c_c > 0.001) {
+				if(c_c <= t_t) {
+					t_t = t_t - c_p;
+					t_a = t_a - c_p;
+					d_c += c_p;
+				} else {
+					$('#coupon-'+user).val('0');
+				}
+			} else {
+				t_t = t_t - c_p;
+				t_a = t_a - c_p;
+				d_c += c_p;
+			}
+		}
+		$(this).html(t_t.toFixed(2));
+	});
+	$('#total_price').html(_good.toFixed(2));
+	$('#total_fee').html(_fee.toFixed(2));
+	$('#total_discount').html(d_c > 0 ? '-'+d_c.toFixed(2) : '0.00');
+	$('#total_amount').html(t_a.toFixed(2));
+}
+{if $lists}
+$(function(){calculate();});
+{/if}
+</script>
+{template 'footer', 'member'}

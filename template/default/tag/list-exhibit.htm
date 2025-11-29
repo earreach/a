@@ -1,0 +1,19 @@
+{loop $tags $k $t}
+<div class="list" id="item_{$t[itemid]}">
+	<table>
+	<tr align="center">
+		<td width="112"><div><a href="{$t[linkurl]}" target="_blank"><img src="{imgurl($t[thumb])}" width="80" height="80" alt="{$t[alt]}"/></a></div></td>
+		<td align="left">
+			<ul>
+			<li><a href="{$t[linkurl]}" target="_blank" class="px14">{$t[title]}</a></li>
+			<li><span class="ui-ico-info">{$t[sponsor]}</span></li>
+			<li><span class="ui-ico-time">{timetodate($t[fromtime], 3)} ~ {timetodate($t[totime], 3)}</span></li>
+			</ul>
+		</td>
+		<td width="160" class="f_grey">{$t[city]}</td>
+		<td width="100"><img src="{DT_STATIC}image/process_{get_process($t[fromtime], $t[totime])}.gif"/></td>
+	</tr>
+	</table>
+</div>
+{/loop}		
+{if $showpage && $pages}<div class="pages">{$pages}</div>{/if}

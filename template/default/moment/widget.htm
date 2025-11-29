@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="{DT_CHARSET}"/>
+<title>{if $seo_title}{$seo_title}{else}{if $head_title}{$head_title}{$DT[seo_delimiter]}{/if}{$DT[sitename]}{/if}</title>
+{if $head_keywords}
+<meta name="keywords" content="{$head_keywords}"/>
+{/if}
+{if $head_description}
+<meta name="description" content="{$head_description}"/>
+{/if}
+<meta http-equiv="x-ua-compatible" content="IE=8"/>
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}style.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}{$module}.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<link rel="stylesheet" type="text/css" href="{DT_PATH}file/style/home.reset.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<script type="text/javascript" src="{DT_PATH}lang/{DT_LANG}/lang.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_PATH}file/script/config.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{if strpos($DT_MBS, 'IE') === false}
+<script type="text/javascript" src="{DT_STATIC}script/jquery-3.6.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{else}
+<script type="text/javascript" src="{DT_STATIC}script/jquery-1.12.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{/if}
+<script type="text/javascript" src="{DT_STATIC}script/common.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_STATIC}script/page.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_STATIC}script/player.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_STATIC}script/{$module}.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<style>
+* {-webkit-text-size-adjust:none;scrollbar-width:thin;scrollbar-color:#CCCCCC #F7F7F7;}
+::-webkit-scrollbar{width:6px;height:6px;overflow:auto;}::-webkit-scrollbar-thumb{background-color:#CCCCCC;min-height:24px;min-width:24px;border:1px solid #E0E0E0;}::-webkit-scrollbar-track{background-color:#F7F7F7;border:1px solid #EFEFEF;}
+</style>
+</head>
+<!--<body oncontextmenu="return false;">-->
+<body>
+<div id="destoon-space" style="display:none;"></div>
+<div class="mm-widget">
+{if $username}
+<div class="mm-widget-fix">{template 'userinfo', 'chip'}</div>
+<div style="height:90px;"></div>
+{else}
+<div class="mm-type mm-widget-fix">
+	<a href="?typeid=0"><span{if $typeid==0} class="on"{/if}>最新</span></a>
+	<a href="?typeid=1"><span{if $typeid==1} class="on"{/if}>推荐</span></a>
+	<a href="?typeid=2"><span{if $typeid==2} class="on"{/if}>关注</span></a>
+	<a href="?typeid=3"><span{if $typeid==3} class="on"{/if}>好友</span></a>
+	<a href="?typeid=4"><span{if $typeid==4} class="on"{/if}>热门</span></a>
+	<a href="{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&action=add" target="_top"><span>发布</span></a>
+</div>
+<div style="height:48px;"></div>
+{/if}
+{template 'list-moment', 'tag'}
+</div>
+<div id="destoon-usercard"></div>
+<script type="text/javascript">
+$(function(){
+	{if $username}
+	$('.mm-head,.mm-user').hide();
+	$('.mm-head').parent().siblings().hide();
+	{else}
+	Dusercard({$moduleid}, '.mm-head');
+	{/if}
+	$('.mm-widget-fix').click(function(e) {
+		if(e.target.nodeName == 'DIV' || e.target.nodeName == 'LI') $('html, body').animate({scrollTop:0}, 200);
+	});
+});
+</script>
+</body>
+</html>

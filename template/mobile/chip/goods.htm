@@ -1,0 +1,22 @@
+{loop $lists $v}
+<div class="list-img">
+<a href="{$v[linkurl]}"><img src="{if $v[thumb]}{$v[thumb]}{else}{DM_SKIN}60x60.png{/if}" width="60" height="60" alt="" onerror="this.src='{DM_SKIN}60x60.png';"/></a>
+<ul>
+<li><a href="{$v[linkurl]}"><strong>{$v[title]}</strong></a></li>
+<li><em class="f_r">x{$v[number]}</em><span>{$DT[money_sign]}{$v[price]}</span></li>
+</ul>
+</div>
+{/loop}
+<div class="content">
+订单编号：{$O[itemid]}<br/>
+{if isset($O[money])}
+订单总额：{$DT[money_sign]}{$O[money]}<br/>
+{/if}
+{if $O[fee_name] && $O[fee]}
+{$O[fee_name]}：{$DT[money_sign]}{$O[fee]}<br/>
+{/if}
+{if isset($O[discount]) && $O[discount] != 0.00}
+优惠金额：-{$DT[money_sign]}{$O[discount]}<br/>
+{/if}
+实付金额：<b class="f_red px16">{$DT[money_sign]}{$O[total]}</b>
+</div>

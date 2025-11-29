@@ -1,0 +1,777 @@
+{template 'header'}
+<!--<script type="text/javascript">var module_id= {$moduleid},item_id={$itemid},content_id='content',img_max_width={$MOD[max_width]};</script>-->
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}css/base.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<!--<link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">-->
+<link rel="stylesheet" type="text/css" href="{DT_SKIN}css/list26.css"/>
+<!--<link rel="stylesheet" type="text/css" href="{DT_SKIN}css/bootstrap.min.css"/>-->
+<!--<link rel="stylesheet" type="text/css" href="{DT_SKIN}css/bootstrap.min.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>-->
+<link href="http://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+<!--<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+
+<!--<script src="{DT_SKIN}js/jquery.min.js"></script>-->
+
+<link href="{DT_SKIN}css/style01.css" type="text/css" rel="stylesheet">
+<style>
+	* {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+		font-family: 'Helvetica Neue', Arial, sans-serif;
+	}
+
+	body {
+		background-color: #f5f7fa;
+		color: #333;
+		line-height: 1.6;
+		/*padding: 20px;*/
+		max-width: 1200px;
+		margin: 0 auto;
+	}
+
+	h1 {
+		text-align: center;
+		margin-bottom: 30px;
+		color: #2c3e50;
+		font-weight: 500;
+	}
+
+	.device-selector {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 15px;
+		margin-bottom: 25px;
+		background: white;
+		padding: 20px;
+		border-radius: 10px;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+	}
+
+	@media (min-width: 768px) {
+		.device-selector {
+			grid-template-columns: 1fr 1fr;
+			align-items: center;
+		}
+	}
+
+	select {
+		padding: 12px 15px;
+		border: 1px solid #ddd;
+		border-radius: 6px;
+		background-color: white;
+		font-size: 16px;
+		width: 100%;
+		transition: border-color 0.3s;
+	}
+
+	select:focus {
+		outline: none;
+		border-color: #3498db;
+	}
+
+	.fua-container {
+		margin-top: 20px;
+		padding: 20px;
+		border-radius: 10px;
+		background-color: white;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+		position: relative;
+	}
+
+	.fua-container h4 {
+		margin-bottom: 15px;
+		color: #2c3e50;
+		font-weight: 500;
+	}
+
+	.fua-table {
+		width: 100%;
+		border-collapse: collapse;
+		margin-bottom: 20px;
+		position: relative;
+	}
+
+	.fua-table th {
+		background-color: #f8f9fa;
+		font-weight: 600;
+		padding: 12px 15px;
+		text-align: left;
+		border-bottom: 2px solid #e9ecef;
+	}
+
+	.fua-table td {
+		padding: 12px 15px;
+		transition: all 0.2s ease;
+		cursor: pointer;
+		border-bottom: 1px solid #e9ecef;
+	}
+
+	@media (min-width: 768px) {
+		.fua-table td:last-child {
+			width: 10%;
+		}
+	}
+
+	.fua-table tr:hover td {
+		background-color: #f8f9fa;
+		transform: scale(1.02);
+	}
+
+	.fua-table tr.selected td {
+		background-color: #5a6268;
+		color: white;
+	}
+
+	.table-mask {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		z-index: 10;
+	}
+
+	.mask-text {
+		background-color: #34495e;
+		color: white;
+		padding: 20px 30px;
+		border-radius: 8px;
+		font-size: 18px;
+		font-weight: 500;
+	}
+
+	.selected-devices-container {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+		margin-bottom: 20px;
+		max-height: 150px;
+		overflow-y: auto;
+		padding: 10px 0;
+	}
+
+	.selected-device-tag {
+		background-color: #3498db;
+		color: white;
+		padding: 8px 30px 8px 15px;
+		border-radius: 6px;
+		font-size: 14px;
+		position: relative;
+		display: flex;
+		align-items: center;
+	}
+
+	.selected-device-tag .close-btn {
+		position: absolute;
+		top: -5px;
+		right: 5px;
+		background-color: #5a6268;
+		color: white;
+		border: none;
+		border-radius: 50%;
+		width: 16px;
+		height: 16px;
+		font-size: 8px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+	}
+
+	.submit-section {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-top: 15px;
+	}
+
+	@media (max-width: 767px) {
+		.submit-section {
+			flex-direction: column;
+			gap: 15px;
+			align-items: stretch;
+		}
+
+		.selected-devices-container {
+			order: 1;
+		}
+
+		.submit-btn {
+			order: 2;
+			align-self: flex-end;
+		}
+	}
+
+	.submit-btn {
+		background-color: #3498db;
+		color: white;
+		border: none;
+		padding: 12px 25px;
+		border-radius: 6px;
+		font-size: 16px;
+		cursor: pointer;
+		transition: background-color 0.3s;
+	}
+
+	.submit-btn:hover {
+		background-color: #2980b9;
+	}
+
+	.submit-btn:disabled {
+		background-color: #bdc3c7;
+		cursor: not-allowed;
+	}
+
+	.loading {
+		text-align: center;
+		padding: 20px;
+		color: #7f8c8d;
+	}
+
+	.no-devices {
+		text-align: center;
+		padding: 20px;
+		color: #7f8c8d;
+		font-style: italic;
+	}
+
+	.table-container {
+		position: relative;
+	}
+</style>
+
+<script>
+
+
+</script>
+
+
+<div class="m">
+	<div class="nav"><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')}</div>
+</div>
+
+
+<div class="m  ">
+	<div class="">
+		{if $FD || $CP}
+		<form action="{$MOD[linkurl]}search.php" id="search">
+			<input type="hidden" name="catid" value="{$catid}"/>
+			<div class="sort-f">
+				{if $FD}{template 'fields_search', 'chip'}{/if}
+				{if $CP}{template 'property_search', 'chip'}{/if}
+			</div>
+		</form>
+		<script type="text/javascript">$(function(){if($('.sort-f').html().indexOf('sort')==-1){$('.sort-f').hide();}});</script>
+		{/if}
+
+		<!--		<div class="catlist">
+                    {php $cols = 5;}
+                    {if $page == 1}{ad($moduleid,$catid,'',6)}{/if}
+                    {if $tags}{template 'list-'.$module, 'tag'}{/if}
+            </div> -->
+
+		<div class="p20 ml-10">
+		
+
+			<div class="df jcc h-50 lh-50 aic ptb-20">
+				<img src="{$icon}" class="h100" alt="{$seo_title}">
+				<h1 class="h-50 ti-10">{$seo_title}</h1>
+			</div>
+			<div class="df h-600">
+				<div id="content" class=" w-600">{template 'content', 'chip'}</div>
+				{if $images[0]}<img src="{$images[0]}" class="f1  " alt="{$seo_title}" title="{$seo_title}">{/if}
+			</div>
+			<h2>シリーズから修理メニュー・料金表を見る</h2>
+
+
+
+
+
+
+
+----------------------------------------------------------------------
+
+			<h1>设备故障选择系统</h1>
+
+			<div class="device-selector">
+				<select id="first-level" name="first_level">
+					<option value="" disabled selected>请选择设备类型</option>
+					<!-- 一级选项将通过PHP动态生成 -->
+				</select>
+
+				<select id="second-level" name="second_level" disabled>
+					<option value="" disabled selected>请先选择设备类型</option>
+				</select>
+			</div>
+
+			<div class="fua-container">
+				<h4>设备详细信息</h4>
+
+				<div class="table-container">
+					<table class="fua-table">
+						<thead>
+						<tr>
+							<th>故障内容</th>
+							<th>修理费用</th>
+						</tr>
+						</thead>
+						<tbody id="fua-content">
+						<!-- 默认13行故障内容 -->
+						<tr data-num="1">
+							<td>画面（軽度）</td>
+							<td>未選択</td>
+						</tr>
+						<tr data-num="2">
+							<td>画面（重度）</td>
+							<td>未選択</td>
+						</tr>
+						<tr data-num="3">
+							<td>バッテリー</td>
+							<td>未選択</td>
+						</tr>
+						<tr data-num="4">
+							<td>充電コネクタ</td>
+							<td>未選択</td>
+						</tr>
+						<tr data-num="5">
+							<td>各種ボタン</td>
+							<td>未選択</td>
+						</tr>
+						<tr data-num="6">
+							<td>リアカメラ</td>
+							<td>未選択</td>
+						</tr>
+						<tr data-num="7">
+							<td>リアカメラレンズ</td>
+							<td>未選択</td>
+						</tr>
+						<tr data-num="8">
+							<td>フロントカメラ</td>
+							<td>未選択</td>
+						</tr>
+						<tr data-num="9">
+							<td>スピーカー</td>
+							<td>未選択</td>
+						</tr>
+						<tr data-num="10">
+							<td>水没</td>
+							<td>未選択</td>
+						</tr>
+						<tr data-num="11">
+							<td>システム修復</td>
+							<td>未選択</td>
+						</tr>
+						<tr data-num="12">
+							<td>背面パネル／外装</td>
+							<td>未選択</td>
+						</tr>
+						<tr data-num="13">
+							<td>其他</td>
+							<td>未選択</td>
+						</tr>
+						</tbody>
+					</table>
+
+					<!-- 遮罩只覆盖表格内容区域 -->
+					<div class="table-mask">
+						<div class="mask-text">请选择手机型号</div>
+					</div>
+				</div>
+
+				<div class="submit-section">
+					<div class="selected-devices-container" id="selected-devices">
+						<div class="no-devices">暂无选择的设备</div>
+					</div>
+					<button id="submit-btn" class="submit-btn" disabled>已经选择故障，请最后提交咨询</button>
+				</div>
+			</div>
+
+
+
+			<script>
+				document.addEventListener('DOMContentLoaded', function() {
+					// 获取DOM元素
+					const firstLevelSelect = document.getElementById('first-level');
+					const secondLevelSelect = document.getElementById('second-level');
+					const fuaContent = document.getElementById('fua-content');
+					const tableMask = document.querySelector('.table-mask');
+					const submitBtn = document.getElementById('submit-btn');
+					const selectedDevicesContainer = document.getElementById('selected-devices');
+
+					// 存储已选设备的数据结构
+					const selectedDevices = {};
+
+					// 从PHP获取的数据 - 通过模板引擎动态注入
+					const deviceData = <?php echo json_encode($aa); ?>;
+
+					// 初始化一级选项
+					deviceData.forEach((device, index) => {
+						const option = document.createElement('option');
+						option.value = index;
+						option.textContent = device[0]; // 设备名称
+						firstLevelSelect.appendChild(option);
+					});
+
+					// 一级选择变化事件
+					firstLevelSelect.addEventListener('change', function() {
+						const selectedIndex = this.value;
+
+						// 重置状态
+						resetToInitialState();
+
+						if (selectedIndex) {
+							// 启用二级选择
+							secondLevelSelect.disabled = false;
+
+							// 清空二级选项
+							secondLevelSelect.innerHTML = '<option value="" disabled selected>请选择具体型号</option>';
+
+							// 添加二级选项
+							const selectedDevice = deviceData[selectedIndex];
+							const secondLevelData = selectedDevice[1]; // 二级数据
+
+							secondLevelData.forEach(category => {
+								// 添加分类标题（禁用）
+								const groupOption = document.createElement('option');
+								groupOption.disabled = true;
+								groupOption.style.backgroundColor = '#666';
+								groupOption.style.color = '#fff';
+								groupOption.textContent = category[0]; // 分类名称
+								secondLevelSelect.appendChild(groupOption);
+
+								// 添加具体型号
+								const models = category[1]; // 具体型号数组
+								models.forEach(model => {
+									const option = document.createElement('option');
+									option.value = model[0]; // catid
+									option.textContent = model[1]; // 型号名称
+									secondLevelSelect.appendChild(option);
+								});
+							});
+						} else {
+							// 重置二级选择
+							secondLevelSelect.disabled = true;
+							secondLevelSelect.innerHTML = '<option value="" disabled selected>请先选择设备类型</option>';
+						}
+
+						// 更新提交按钮状态
+						updateSubmitButton();
+					});
+
+					// 二级选择变化事件
+					secondLevelSelect.addEventListener('change', function() {
+						const selectedCatId = this.value;
+						const selectedDeviceName = this.options[this.selectedIndex].textContent;
+
+						if (selectedCatId) {
+							// 显示加载状态
+							showLoadingState();
+
+							// 发送AJAX请求获取fua数据
+							fetch(`/api/get_device_detail.php?catid=${selectedCatId}`)
+									.then(response => response.json())
+									.then(data => {
+										if (data.success) {
+											// 更新表格数据
+											updateTableData(data.fua_data, selectedCatId, selectedDeviceName);
+											// 移除遮罩
+											tableMask.style.display = 'none';
+										} else {
+											// 处理错误
+											handleDataError(data.message);
+										}
+									})
+									.catch(error => {
+										console.error('请求失败:', error);
+										handleDataError('请求失败，请重试');
+									});
+						} else {
+							// 如果没有选择有效的二级选项，显示遮罩
+							tableMask.style.display = 'flex';
+						}
+
+						// 更新提交按钮状态
+						updateSubmitButton();
+					});
+
+					// 显示加载状态
+					function showLoadingState() {
+						fuaContent.innerHTML = '<tr><td colspan="2" class="loading">加载中...</td></tr>';
+						tableMask.style.display = 'none'; // 移除遮罩但显示加载中
+					}
+
+					// 更新表格数据
+					function updateTableData(fuaData, catId, deviceName) {
+						// 清空表格内容
+						fuaContent.innerHTML = '';
+
+						if (fuaData && fuaData.length > 0) {
+							// 填充表格
+							fuaData.forEach(item => {
+								const tr = document.createElement('tr');
+								tr.setAttribute('data-num', item.num);
+								tr.setAttribute('data-catid', catId);
+
+								const td1 = document.createElement('td');
+								td1.textContent = item.ming;
+
+								const td2 = document.createElement('td');
+								td2.textContent = item.bi;
+
+								tr.appendChild(td1);
+								tr.appendChild(td2);
+								fuaContent.appendChild(tr);
+
+								// 新增：检查并设置行的选中状态
+								if (selectedDevices[catId] && selectedDevices[catId].faults.includes(item.num)) {
+									tr.classList.add('selected');
+								}
+							});
+
+							// 添加行点击事件
+							addRowClickEvents(catId, deviceName);
+						} else {
+							// 如果没有数据，显示提示
+							fuaContent.innerHTML = '<tr><td colspan="2" class="loading">暂无数据</td></tr>';
+						}
+					}
+
+					// 处理数据错误
+					function handleDataError(message) {
+						fuaContent.innerHTML = `<tr><td colspan="2" class="loading">${message}</td></tr>`;
+						tableMask.style.display = 'none';
+					}
+
+					// 添加行点击事件
+					function addRowClickEvents(catId, deviceName) {
+						const rows = fuaContent.querySelectorAll('tr');
+						rows.forEach(row => {
+							row.addEventListener('click', function() {
+								const num = this.getAttribute('data-num');
+								toggleFaultSelection(catId, deviceName, num, this);
+								updateSelectedDevicesDisplay();
+								updateSubmitButton();
+							});
+						});
+					}
+
+					// 切换故障选择状态
+					function toggleFaultSelection(catId, deviceName, num, rowElement) {
+						// 初始化设备数据
+						if (!selectedDevices[catId]) {
+							selectedDevices[catId] = {
+								name: deviceName,
+								faults: []
+							};
+						}
+
+						// 切换选中状态
+						if (rowElement.classList.contains('selected')) {
+							// 取消选中
+							rowElement.classList.remove('selected');
+							const index = selectedDevices[catId].faults.indexOf(num);
+							if (index > -1) {
+								selectedDevices[catId].faults.splice(index, 1);
+							}
+
+							// 如果没有故障被选中，移除设备
+							if (selectedDevices[catId].faults.length === 0) {
+								delete selectedDevices[catId];
+							}
+						} else {
+							// 选中
+							rowElement.classList.add('selected');
+							if (!selectedDevices[catId].faults.includes(num)) {
+								selectedDevices[catId].faults.push(num);
+							}
+						}
+					}
+
+					// 更新已选设备显示
+					function updateSelectedDevicesDisplay() {
+						// 清空容器
+						selectedDevicesContainer.innerHTML = '';
+
+						// 检查是否有选中的设备
+						if (Object.keys(selectedDevices).length === 0) {
+							selectedDevicesContainer.innerHTML = '<div class="no-devices">暂无选择的设备</div>';
+							return;
+						}
+
+						// 添加已选设备标签
+						for (const catId in selectedDevices) {
+							const device = selectedDevices[catId];
+							const tag = document.createElement('div');
+							tag.className = 'selected-device-tag';
+							tag.innerHTML = `
+                        ${device.name}
+                        <button class="close-btn" data-catid="${catId}">×</button>
+                    `;
+							selectedDevicesContainer.appendChild(tag);
+						}
+
+						// 添加关闭按钮事件
+						const closeButtons = selectedDevicesContainer.querySelectorAll('.close-btn');
+						closeButtons.forEach(button => {
+							button.addEventListener('click', function(e) {
+								e.stopPropagation();
+								const catId = this.getAttribute('data-catid');
+								const deviceName = selectedDevices[catId].name;
+
+								if (confirm(`确定要移除${deviceName}的所有故障选择吗？`)) {
+									removeDevice(catId);
+									updateSelectedDevicesDisplay();
+									updateSubmitButton();
+								}
+							});
+						});
+					}
+
+					// 移除设备
+					function removeDevice(catId) {
+						// 1. 从数据结构中移除
+						delete selectedDevices[catId];
+
+						// 2. 同步清除当前表格中属于这个 catId 的选中行
+						//    这些 tr 是在 updateTableData 里赋值 data-catid 的
+						const rows = fuaContent.querySelectorAll('tr[data-catid="' + catId + '"]');
+						rows.forEach(function(row) {
+							row.classList.remove('selected');
+						});
+
+						// 如果你希望当前选中的二级下拉就是这个 catId 时，
+						// 顺便把表格重置回“未选中提示”的 13 行，也可以这里加：
+						// if (secondLevelSelect.value === catId) {
+						//     resetTableToDefault();
+						//     tableMask.style.display = 'flex';
+						// }
+					}
+
+					// 更新提交按钮状态
+					function updateSubmitButton() {
+						if (Object.keys(selectedDevices).length > 0) {
+							submitBtn.disabled = false;
+						} else {
+							submitBtn.disabled = true;
+						}
+					}
+
+					// 重置到初始状态
+					function resetToInitialState() {
+						// 重置表格为默认13行
+						resetTableToDefault();
+						// 显示遮罩
+						tableMask.style.display = 'flex';
+						// 更新提交按钮状态
+						updateSubmitButton();
+					}
+
+					// 重置表格为默认13行
+					function resetTableToDefault() {
+						fuaContent.innerHTML = '';
+
+						const defaultFaults = [
+							"画面（軽度）",
+							"画面（重度）",
+							"バッテリー",
+							"充電コネクタ",
+							"各種ボタン",
+							"リアカメラ",
+							"リアカメラレンズ",
+							"フロントカメラ",
+							"スピーカー",
+							"水没",
+							"システム修復",
+							"背面パネル／外装",
+							"其他"
+						];
+
+						defaultFaults.forEach((fault, index) => {
+							const tr = document.createElement('tr');
+							tr.setAttribute('data-num', index + 1);
+
+							const td1 = document.createElement('td');
+							td1.textContent = fault;
+
+							const td2 = document.createElement('td');
+							td2.textContent = "未選択";
+
+							tr.appendChild(td1);
+							tr.appendChild(td2);
+							fuaContent.appendChild(tr);
+						});
+
+						// 修改：不再移除所有行的选中状态，而是根据已选设备设置状态
+						// 对于默认表格，不会有选中状态，因为默认表格没有catid
+
+						// 添加行点击事件
+						addRowClickEvents();
+					}
+
+					// 跳转按钮点击事件
+					submitBtn.addEventListener('click', function() {
+						if (Object.keys(selectedDevices).length === 0) {
+							alert('请至少选择一个故障');
+							return;
+						}
+
+						// 创建隐藏表单并提交
+						const form = document.createElement('form');
+						form.method = 'POST';
+						form.action = '<?php echo $MOD["linkurl"]; ?>quote.php'; // 直接访问PHP文件
+
+						// 添加设备数据
+						const input = document.createElement('input');
+						input.type = 'hidden';
+						input.name = 'devices';
+						input.value = JSON.stringify(selectedDevices);
+						form.appendChild(input);
+
+						// 添加到页面并提交
+						document.body.appendChild(form);
+						form.submit();
+					});
+
+					// 初始化表格
+					resetTableToDefault();
+				});
+			</script>
+
+
+------------------------------------------------------------------
+			<div class="table m0a pt-20 ">
+				<p class="fs14 fw-800 red2 ">※事前WEB予約をされてご来店された後、お会計時にアンケート回答をして頂きますと通常料金から2,200円引きさせていただきます。
+				<p class="fs14 fw-800 red2  ">※各種割引をご希望のお客様は、受付時に店舗スタッフまでお伝え下さい。</p>
+				<p class="fs14 fw-800 red2  ">※表示料金は税込表示です。</p>
+				<p class="fs14 fw-800 red2  ">※修理不可の場合は、修理費用の発生は致しませんのでご安心下さいませ。</p>
+				<p class="fs14 fw-800 red2 ">※別途作業料金などの追加料金は頂きません。</p>
+
+				<p class="fs14 fw-800 red2">※実際の修理内容によっては修理料金が変動する可能性があるので詳細の修理料金は各店舗までお問い合わせ下さい</p>
+			</div>
+
+
+
+
+
+			<h4 class="tac">iPhoneバッテリー交換、修理サービスをご利用いただいた</h4>
+			<h2 class="tac blue8">[お客様の声]</h2>
+			<!--				<div class="blue8 line1 mt-20 mb-20"></div>-->
+			<p class="pt-20 pb-20 fs16 lh-30 gray2 tac">道内シェアNo.1のスマートクリアグループは様々な端末の修理を承っております。</p>
+			<p class="pt-20 pb-20 fs16 lh-30 gray2 tac">バッテリー修理を実際に当店でサービスを体験していただいた「お客様の声」をご紹介します。</p>
+
+		</div>
+	</div>
+
+
+</div>
+
+
+
+<script src="{DT_SKIN}js/slide.js"></script>
+
+
+
+{template 'footer'}

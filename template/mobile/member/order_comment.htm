@@ -1,0 +1,252 @@
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">交易评价</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=update&step=detail&itemid={$itemid}" data-transition="none">订单详情</a>
+<a href="?action=index" data-direction="reverse">订单列表</a>
+</div>
+</div>
+
+<style type="text/css">	
+.stars {width:160px;height:16px;background:url('{DM_SKIN}star5.png') no-repeat;background-size:80px 16px;}
+.stars span {width:16px;height:16px;display:inline-block;float:left;cursor:pointer;}
+.stars b {height:16px;line-height:16px;display:inline-block;float:left;font-weight:normal;color:#666666;margin-left:16px;}
+</style>
+{load('webuploader.min.js')}
+{load('url2video.js')}
+{load('player.js')}
+<script type="text/javascript">
+var album_max = parseInt({$DT[thumb_max]});
+if(album_max < 5 || album_max > 99) album_max = 9;
+function album_action(id) {
+	Dsheet('{$js_pageid}','<a href="javascript:album_delete('+id+');void(0);"><span style="color:red;">删除图片</span></a>', '取消', '确定要删除图片吗？');
+}
+function album_delete(id) {
+	$('#thumb'+id).val('');
+	$('#album'+id).html('');
+	$('#album'+id).hide();
+	$('.ui-form-album-upload').show();	
+}
+function album_show(id, url) {
+	if($('#thumb'+id).length == 0) return false;
+	$('#thumb'+id).val(url);
+	$('#album'+id).html('<img src="'+url+'"/>');
+	$('#album'+id).show();
+}
+function album_hide(id) {
+	var j = 1;
+	for(var i = 0; i < album_max; i++) {
+		if($('#thumb'+id+i).val() == '') {
+			j = 0;
+			break;
+		}
+	}
+	if(j) $('.ui-form-album-upload').hide();
+}
+function Dplay(id) {
+	var url = Dd('video-'+id).value;
+	if(url.length > 5) {
+		if($('#player-'+id).html().indexOf(url) == -1) {
+			var h = parseInt(($(document).width()-48)*9/16);
+			$('#player-'+id).css('height', h+'px');
+			$('#player-'+id).html(player(url,'100%',h,1));
+		}
+	} else {
+		Dtoast('{$js_pageid}', '视频地址为空');
+	}
+}
+$(function(){
+	$('.stars span').mouseover(function() {
+		var id = $(this).data('id');
+		$(this).parent().css({'background':"url('{DM_SKIN}star"+id+".png') no-repeat",'background-size':'80px 16px'});
+		$(this).siblings('b').html($(this).attr('title'));
+	});
+	$('.stars span').mouseleave(function() {
+		var id = $(this).parent().siblings('input').val();
+		$(this).parent().css({'background':"url('{DM_SKIN}star"+id+".png') no-repeat",'background-size':'80px 16px'});
+		$(this).siblings('b').html($(this).siblings('[data-id="'+id+'"]').attr('title'));
+	});
+	$('.stars span').click(function() {
+		var id = $(this).data('id');
+		$(this).parent().css({'background':"url('{DM_SKIN}star"+id+".png') no-repeat",'background-size':'80px 16px'});
+		$(this).siblings('b').html($(this).attr('title'));
+		$(this).parent().siblings('input').val(id);
+	});
+});
+</script>
+{template 'goods', 'chip'}
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<div class="ui-form">
+{loop $lists $k $v}
+<p>{$v[title]}</p>
+<p>商品评分<i>*</i><b id="dstar_{$v[itemid]}"></b></p>
+<div>
+<input type="hidden" name="stars[{$v[itemid]}]" value="5"/>
+<div class="stars">
+<span title="非常差" data-id="1"></span>
+<span title="差" data-id="2"></span>
+<span title="一般" data-id="3"></span>
+<span title="好" data-id="4"></span>
+<span title="非常好" data-id="5"></span>
+<b>非常好</b>
+</div>	
+</div>
+<p>物流服务<i>*</i><b id="dstar_express_{$v[itemid]}"></b></p>
+<div>
+<input type="hidden" name="stars_express[{$v[itemid]}]" value="5"/>
+<div class="stars">
+<span title="非常差" data-id="1"></span>
+<span title="差" data-id="2"></span>
+<span title="一般" data-id="3"></span>
+<span title="好" data-id="4"></span>
+<span title="非常好" data-id="5"></span>
+<b>非常好</b>
+</div>	
+</div>
+<p>商家态度<i>*</i><b id="dstar_service_{$v[itemid]}"></b></p>
+<div>
+<input type="hidden" name="stars_service[{$v[itemid]}]" value="5"/>
+<div class="stars">
+<span title="非常差" data-id="1"></span>
+<span title="差" data-id="2"></span>
+<span title="一般" data-id="3"></span>
+<span title="好" data-id="4"></span>
+<span title="非常好" data-id="5"></span>
+<b>非常好</b>
+</div>	
+</div>
+<p>详细评价<i>*</i><b id="dcontent_{$v[itemid]}"></b></p>
+<div><textarea name="contents[{$v[itemid]}]" id="content_{$v[itemid]}"></textarea></div>
+<p>上传图片</p>
+<div>
+	<script type="text/javascript">
+	for(var i = 0;i < album_max; i++) {
+		document.write('<input type="hidden" name="thumbs[{$v[itemid]}][]" id="thumb{$v[itemid]}'+i+'"/>');
+		document.write('<div class="ui-form-album-show" id="album{$v[itemid]}'+i+'" onclick="album_action({$v[itemid]}'+i+');"></div>');
+	}
+	</script>
+	<div class="ui-form-album-upload"><div id="album-picker-{$v[itemid]}"></div></div>
+	<script type="text/javascript">
+	var albumu{$v[itemid]} = WebUploader.create({
+		auto: true,
+		server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=album&width={$MOD[thumb_width]}&height={$MOD[thumb_height]}',
+		pick: '#album-picker-{$v[itemid]}',
+		accept: {
+			title: 'Images',
+			extensions: 'jpg,jpeg,png,gif,bmp',
+			mimeTypes: 'image/*'
+		},
+		resize: false
+	});
+	albumu{$v[itemid]}.on('beforeFileQueued', function(file) {
+		var exts = albumu{$v[itemid]}.options.accept[0].extensions;
+		if((','+exts).indexOf(','+ext(file.name)) == -1) {
+			alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+			return false;
+		}
+	});
+	albumu{$v[itemid]}.on('fileQueued', function(file) {
+		Dtoast('{$js_pageid}',L['uploading'], '', 30);
+	});
+	albumu{$v[itemid]}.on('uploadProgress', function(file, percentage) {
+		var p = parseInt(percentage * 100);
+		$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+	});
+	albumu{$v[itemid]}.on( 'uploadSuccess', function(file, data) {
+		if(data.error) {
+			Dtoast('{$js_pageid}',data.message, '', 5);
+		} else {
+			for(var i = 0; i < album_max; i++) {
+				if($('#thumb{$v[itemid]}'+i).val() == '') {
+					album_show('{$v[itemid]}'+i, data.url);
+					break;
+				}
+			}
+			album_hide('{$v[itemid]}');
+		}
+	});
+	albumu{$v[itemid]}.on( 'uploadError', function(file, data) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	});
+	albumu{$v[itemid]}.on('uploadComplete', function(file) {
+		$('#toast-{$js_pageid}').hide();
+	});
+	</script>
+</div>
+<p>上传视频</p>
+<div>
+	<input type="text" name="videos[{$v[itemid]}]" id="video-{$v[itemid]}" onblur="$('#player-{$v[itemid]}').html('');"/>
+	<div class="ui-form-file-upload"><div id="video-picker-{$v[itemid]}"></div></div>
+	<div class="ui-form-video" id="player-{$v[itemid]}" onclick="Dplay({$v[itemid]});"></div>
+	<script type="text/javascript">
+	var filev{$v[itemid]} = WebUploader.create({
+		auto: true,
+		server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=file',
+		pick: '#video-picker-{$v[itemid]}',
+		accept: {
+			title: 'video',
+			extensions: 'mp4,mov,3gp,mp3',
+			mimeTypes: 'video/*'
+		},
+		resize: false
+	});
+	filev{$v[itemid]}.on('beforeFileQueued', function(file) {
+		var exts = filev{$v[itemid]}.options.accept[0].extensions;
+		if((','+exts).indexOf(','+ext(file.name)) == -1) {
+			alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+			return false;
+		}
+	});
+	filev{$v[itemid]}.on('fileQueued', function(file) {
+		Dtoast('{$js_pageid}',L['uploading'], '', 30);
+	});
+	filev{$v[itemid]}.on('uploadProgress', function(file, percentage) {
+		var p = parseInt(percentage * 100);
+		$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+	});
+	filev{$v[itemid]}.on( 'uploadSuccess', function(file, data) {
+		if(data.error) {
+			Dtoast('{$js_pageid}',data.message, '', 5);
+		} else {
+			$('#video-{$v[itemid]}').val(data.url);
+			$('#player-{$v[itemid]}').html('');
+		}
+	});
+	filev{$v[itemid]}.on( 'uploadError', function(file, data) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	});
+	filev{$v[itemid]}.on('uploadComplete', function(file) {
+		$('#toast-{$js_pageid}').hide();
+	});
+	</script>
+</div>
+{/loop}
+<div class="blank-20"></div>
+<div><input type="submit" name="submit" value="确 定" class="btn-blue"/></div>
+<div class="blank-20"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	{loop $lists $k $v}
+	if(Dd('content_{$v[itemid]}').value.length > 500) {
+		alert('评价内容不能超过500字');
+		return false;
+	}
+	{/loop}
+	return confirm('您确认提交此评价吗？提交后评价分数和内容将不可更改');
+}
+</script>

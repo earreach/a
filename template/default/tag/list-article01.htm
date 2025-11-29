@@ -1,0 +1,23 @@
+<div class="kepi ">
+	{loop $tags $i $t}
+	<div>
+		<a href="{$t[linkurl]}" target="_blank" title="{$t[alt]}">
+		<div class="o7">
+		<p class="fs30 fw-400 ">{substr(timetodate($t[addtime], 3),-2)}</p>
+		<p class="fs20 fw-400 ">{substr(timetodate($t[addtime], 3),-5,-3)}</p>
+		——————
+		<div class="w100 h-40 clear lh-40">
+			<div class="fs18 fl">{mb_substr($t[title],0,12)}</div><div class=" h-30 fs12 pl-10 fr">投稿</div>
+		</div>
+		<div class="h-60 lh-18 pb-20">
+				dasf都发撒旦发范德萨发多发生范德fdasfdsaf打发范德萨发范德萨范德萨范德萨范德萨范德萨
+		</div>
+		</div>
+		<img src="{$t[thumb]}" width="100%" height="160px" alt="" class="br-20">
+		</a>
+	</div>
+	{/loop}
+</div>
+
+
+{if $showpage && $pages}<div class="pages">{$pages}</div>{/if}

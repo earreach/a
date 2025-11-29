@@ -1,0 +1,244 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a>{if $action=='index' || !$action}<a href="javascript:Dmenu('search-{$js_pageid}');"><img src="{DM_SKIN}icon-search{$wh}.png" width="24" height="24"/></a>{/if}</div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right">
+{if $action=='add' || $action=='edit'}
+<a href="?action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{else}
+<a href="?action=add"><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></a>
+{/if}
+<a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a>
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=add" data-transition="none">添加资质</a>
+<a href="?action=index" data-transition="none">资质管理</a>
+<a href="biz.php" data-direction="reverse">商户后台</a>
+</div>
+</div>
+
+{if $action=='add' || $action=='edit'}
+{load('webuploader.min.js')}
+<form method="post" action="?" id="dform" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="post[style]" value="{$style}"/>
+<div class="ui-form">
+<p>证书名称<i>*</i><b id="dtitle"></b></p>
+<div><input type="text" name="post[title]" id="title" value="{$title}"/></div>
+<p>发证机构<i>*</i><b id="dauthority"></b></p>
+<div><input type="text" name="post[authority]" id="authority" value="{$authority}"/></div>
+<p>发证日期<i>*</i><b id="dpostfromtime"></b></p>
+<div><input type="date" name="post[fromtime]" id="postfromtime" value="{$fromtime}"/></div>
+<p>到期日期</p>
+<div><input type="date" name="post[totime]" id="posttotime" value="{$totime}"/></div>
+<s>不设置表示长期有效</s>
+<p>证书图片<i>*</i><b id="dthumb"></b></p>
+<div>
+<input type="hidden" name="post[thumb]" id="thumb"/>
+<div class="ui-form-album-show" id="album" onclick="album_action();"></div>
+<div class="ui-form-album-upload"><div id="album-picker"></div></div>
+<script type="text/javascript">
+function album_action(id) {
+	Dsheet('{$js_pageid}','<a href="javascript:album_delete('+id+');void(0);"><span style="color:red;">删除图片</span></a>', '取消', '确定要删除图片吗？');
+}
+function album_delete(id) {
+	$('#thumb').val('');
+	$('#album').html('');
+	$('#album').hide();
+	$('.ui-form-album-upload').show();	
+}
+function album_show(id, url) {
+	$('#thumb').val(url);
+	$('#album').html('<img src="'+url+'"/>');
+	$('#album').show();
+}
+var albumu = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=album&width=200&height=200',
+    pick: '#album-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+albumu.on('beforeFileQueued', function(file) {
+	var exts = albumu.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+albumu.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+albumu.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+albumu.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		album_show(0, data.url);
+		if($('#thumb').val()) $('.ui-form-album-upload').hide();
+	}
+});
+albumu.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+albumu.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+{if $thumb}
+$(function(){
+	{if $thumb}album_show(0, '{$thumb}');{/if}
+	{if $thumb}$('.ui-form-album-upload').hide();{/if}
+});
+{/if}
+</script>
+</div>
+<p>证书介绍</p>
+</div>
+<input type="hidden" name="post[content]" id="content"/>
+<ul class="ui-editor-toolbar">
+<li class="ui-editor-img"><div id="editor-picker"></div></li>
+<li class="ui-editor-bold"><input type="button" value=" " editor-action="bold"/>B</li>
+<li class="ui-editor-italic"><input type="button" value=" " editor-action="italic"/>I</li>
+<li class="ui-editor-underline"><input type="button" value=" " editor-action="underline"/>U</li>
+</ul>
+<div class="ui-editor-content" id="editor">{$content}</div>
+{load('editor.js')}
+<script type="text/javascript">
+$(function(){
+    $('#editor').DEditor({
+        editorid: 'editor',
+        textareaid: 'content',
+        server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=editor'
+    });
+});
+</script>
+<div class="ui-form">
+{if $action=='add' && $MOD[credit_add_honor] < 0}
+<p>发布此信息需消费</p>
+<div><span class="f_b f_red">{abs($MOD[credit_add_honor])}</span> {$DT[credit_unit]}{$DT[credit_name]}</div>
+<p>{$DT[credit_name]}余额</p>
+<div><span class="f_blue f_b">{$_credit}{$DT[credit_unit]}</span> <a href="credit.php?action=buy" class="b">[购买]</a></div>
+{/if}
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="{if $action == 'edit'}修改{else}添加{/if}" class="btn-blue"/>
+<div class="blank-32"></div>
+</div>
+</form>
+{else}
+
+<script type="text/javascript">$(function(){Stabs('{$js_pageid}');});</script>
+<div class="list-menu" id="tabs-{$js_pageid}">
+	<ul>
+	<a href="?status=3"><li{if $status==3} class="on"{/if} id="s3">已发布{if !$kw} <i>{$nums[3]}</i>{/if}</li></a>
+	<a href="?status=2"><li{if $status==2} class="on"{/if} id="s2">审核中{if !$kw} <i>{$nums[2]}</i>{/if}</li></a>
+	<a href="?status=1"><li{if $status==1} class="on"{/if} id="s1">未通过{if !$kw} <i>{$nums[1]}</i>{/if}</li></a>
+	<a href="?status=4"><li{if $status==4} class="on"{/if} id="s4">已过期{if !$kw} <i>{$nums[4]}</i>{/if}</li></a>
+	</ul>
+</div>
+
+<div id="search-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="?">
+<input type="hidden" name="status" value="{$status}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+</div>
+
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<input type="checkbox" name="itemid[]" value="{$v[itemid]}" class="dsn" id="checkbox-{$v[itemid]}"/>
+<a href="{$v[linkurl]}"><img src="{if $v[thumb]}{$v[thumb]}{else}{DM_SKIN}60x60.png{/if}" width="60" height="60" alt="" onerror="this.src='{DM_SKIN}60x60.png';"/></a>
+<ul>
+<li><em class="check" id="check-{$v[itemid]}"></em><a href="?action=edit&itemid={$v[itemid]}"><strong>{$v[title]}</strong></a></li>
+<li><em class="sheet" id="sheet-{$v[itemid]}"></em><span>{$v[fromdate]} / {$v[todate]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+	<div class="list-none">{if $kw}未搜索到“{$kw}”相关结果{else}暂无记录{/if}</div>
+{/if}
+{if $MG[honor_limit]}
+<div class="limit">总共可发 <span class="f_b f_red">{$MG[honor_limit]}</span> 条&nbsp;&nbsp;&nbsp;当前已发 <span class="f_b">{$limit_used}</span> 条&nbsp;&nbsp;&nbsp;还可以发 <span class="f_b f_blue">{$limit_free}</span> 条</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<div id="foot-bar" class="dsn">
+<div class="foot-bar-fix"></div>
+<div class="foot-bar btns">
+<input type="submit" name="submit" value="删除选中" class="btn-red" onclick="if(confirm('确定要删除选中证书吗？')){this.form.action='?status={$status}&action=delete'}else{return false;}"/>
+</div>
+</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	if($('#foot-bar input').length == 0) $('.check').hide();
+	$('.list-img em').click(function() {
+		if($(this).attr('class') == 'sheet') {
+			var id = $(this).attr('id').replace('sheet-', '');
+			Dsheet('{$js_pageid}','<a href="?action=edit&itemid='+id+'"><span>修改</span></a>|<a href="?action=delete&itemid='+id+'" onclick="return _delete();"><span style="color:red;">删除</span></a>', '取消');
+		} else {
+			var id = $(this).attr('id').replace('check-', '');
+			if($('#checkbox-'+id).attr('checked')) {
+				$('#checkbox-'+id).attr('checked', false);
+				$(this).attr('class', 'check');
+			} else {
+				$('#checkbox-'+id).attr('checked', true);
+				$(this).attr('class', 'checked');
+			}
+			if($('.checked').length > 0) {
+				$('#foot-bar').fadeIn(300);
+			} else {
+				$('#foot-bar').fadeOut(300);
+			}
+		}
+	});
+});
+</script>
+{/if}
+{if $action=='add' || $action=='edit'}
+<script type="text/javascript">
+function check() {
+	if(Dd('title').value == '') {
+		Dmsg('请填写证书名称', 'title');
+		return false;
+	}
+	if(Dd('authority').value == '') {
+		Dmsg('请填写发证机构', 'authority');
+		return false;
+	}
+	if(Dd('postfromtime').value == '') {
+		Dmsg('请选择发证日期', 'postfromtime');
+		return false;
+	}
+	if(Dd('postfromtime').value.replace(/-/g, '') > {$today}) {
+		Dmsg('发证日期尚未开始', 'postfromtime');
+		return false;
+	}
+	if(Dd('thumb').value == '') {
+		Dmsg('请上传证书图片', 'thumb', 1);
+		return false;
+	}
+	return true;
+}
+</script>
+{/if}
+{template 'footer', 'member'}

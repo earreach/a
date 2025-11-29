@@ -1,0 +1,40 @@
+{template 'header'}
+<div class="m">
+	<div class="nav">
+	<div class="nvs"><form action="{$MOD[linkurl]}product.php" id="search"><input type="search" name="kw" value="{$kw}" placeholder="搜索产品" title="搜索产品"/><s onclick="$(this).parent().submit();">搜索</s></form></div>
+	<a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a> <i>&gt;</i> <a href="{$MOD[linkurl]}product.php">产品报价</a></div>
+</div>
+{if $lists}
+<div class="m">
+	<table cellpadding="16" cellspacing="0" class="tb">
+	<tr>
+	<th>品名</th>
+	<th>属性参数</th>
+	<th width="120"><a href="javascript:;" onclick="Dq('order','{if $order==1}2{else}1{/if}');">最新报价 <img src="{DT_STATIC}image/ico-{if $order==2}asc{elseif $order==1}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+	<th width="40">单位</th>
+	<th width="100"><a href="javascript:;" onclick="Dq('order','{if $order==3}4{else}3{/if}');">报价数 <img src="{DT_STATIC}image/ico-{if $order==4}asc{elseif $order==3}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+	<th width="120"><a href="javascript:;" onclick="Dq('order','{if $order==5}6{else}5{/if}');">报价时间 <img src="{DT_STATIC}image/ico-{if $order==6}asc{elseif $order==5}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+	</tr>
+	{loop $lists $v}
+	<tr align="center">
+	<td align="left"> &nbsp; <a href="{$v[linkurl]}" target="_blank" class="b px16">{$v[title]}</a></td>
+	<td align="left" class="f_gray">
+	{if $v[v1]}{$v[n1]}:{$v[v1]} &nbsp; {/if}
+	{if $v[v2]}{$v[n2]}:{$v[v2]} &nbsp; {/if}
+	{if $v[v3]}{$v[n3]}:{$v[v3]} &nbsp; {/if}
+	</td>
+	<td class="f_price">{$DT[money_sign]}{$v[price]}</td>
+	<td>{$v[unit]}</td>
+	<td>{$v[item]}</td>
+	<td>{timetodate($v[edittime], 5)}</td>
+	</tr>
+	{/loop}
+	</table>
+	{if $pages}<div class="pages">{$pages}</div>{/if}
+</div>
+{else}
+<div class="m bd-t">
+	<div class="list-none">未找到相关产品</div>
+</div>
+{/if}
+{template 'footer'}

@@ -1,0 +1,169 @@
+{template 'header', $template}
+<div class="dsn" id="pos_show"><a href="{$COM[linkurl]}">首页</a> <i>&gt;</i> <a href="{$MENU[$menuid][linkurl]}">{$MENU[$menuid][name]}</a></div>
+<div class="main_head"><div><strong>{$MENU[$menuid][name]}</strong></div></div>
+<div class="main_body">
+	{if $could_contact}
+	<div class="px14">
+	<table width="100%" cellpadding="12" cellspacing="0">
+	{if $COM[shop] && $COM[vshop]}
+	<tr>
+	<td class="f_b">店铺名称</td>
+	<td>{$COM[shop]}</td>
+	</tr>
+	{/if}
+	<tr>
+	<td class="f_b" width="80">公司名称</td>
+	<td>{$COM[company]}</td>
+	</tr>
+	{if $COM[address]}
+	<tr>
+	<td class="f_b">公司地址</td>
+	<td>{$COM[address]} &nbsp; <a href="{DT_PATH}api/address.php?auth={$map_auth}" target="_blank"><img src="{DT_SKIN}ico-addr-on.png" width="16" height="16" title="地图导航" align="absmiddle"/></a></td>
+	</tr>
+	{/if}
+	<tr>
+	<td class="f_b">所在地区</td>
+	<td>{area_pos($COM[areaid], '/')}</td>
+	</tr>
+	{if $COM[postcode]}
+	<tr>
+	<td class="f_b">邮政编码</td>
+	<td>{$COM[postcode]}</td>
+	</tr>
+	{/if}
+	<tr>
+	<td class="f_b">公司电话</td>
+	<td>{if $domain}{$COM[telephone]}{else}{anti_spam($COM[telephone])}{/if}</td>
+	</tr>
+	{if $COM[fax]}
+	<tr>
+	<td class="f_b">公司传真</td>
+	<td>{if $domain}{$COM[fax]}{else}{anti_spam($COM[fax])}{/if}</td>
+	</tr>
+	{/if}
+	{if $COM[mail]}
+	<tr>
+	<td class="f_b">电子邮件</td>
+	<td>{if $domain}{$COM[mail]}{else}{anti_spam($COM[mail])}{/if}</td>
+	</tr>
+	{/if}
+	{if $COM[homepage]}
+	<tr>
+	<td class="f_b">公司网址</td>
+	<td><a href="{gourl($COM[homepage])}" target="_blank" rel="nofollow">{$COM[homepage]}</a></td>
+	</tr>
+	{/if}
+	{if $COM[truename]}
+	<tr>
+	<td class="f_b">联 系 人</td>
+	<td>{$COM[truename]} （{if $COM[gender]==1}先生{else}女士{/if}）</td>
+	</tr>
+	{/if}
+	{if $COM[department]}
+	<tr>
+	<td class="f_b">部门(职位)</td>
+	<td>{$COM[department]}{if $COM[career]} （{$COM[career]}）{/if}</td>
+	</tr>
+	{/if}
+	{if $COM[mobile] && $DT[im_mob]}
+	<tr>
+	<td class="f_b">手机号码</td>
+	<td>{if $domain}{$COM[mobile]}{else}{anti_spam($COM[mobile])}{/if}</td>
+	</tr>
+	{/if}
+	<tr>
+	<td class="f_b">即时通讯</td>
+	<td>
+	{if $COM[username] && $DT[im_web]}{im_web($COM[username])} &nbsp; {/if}
+	{if $COM[qq] && $DT[im_qq]}{im_qq($COM[qq])} &nbsp; {/if}
+	{if $COM[wx] && $DT[im_wx]}{im_wx($COM[wx], $COM[username])} &nbsp; {/if}
+	{if $COM[gzh] && $DT[im_wx]}{im_gzh($COM[gzh], $COM[username])} &nbsp; {/if}
+	{if $COM[ali] && $DT[im_ali]}{im_ali($COM[ali])} &nbsp; {/if}
+	{if $COM[skype] && $DT[im_skype]}{im_skype($COM[skype])} &nbsp; {/if}
+	</td>
+	</tr>
+	<tr>
+	<td class="f_b">在线状态</td>
+	<td>{if online($COM[userid])==1}<span class="f_green">当前在线</span>{else}<span class="f_grey">当前离线</span>{/if}</td>
+	</tr>
+	</table>
+	</div>
+	{else}
+		<div class="list-none">
+		{if $_userid}
+		请先 <a href="{$MODULE[2][linkurl]}grade.php" class="b">升级</a> 会员级别后查看{$MENU[$menuid][name]}
+		{else}
+		请先 <a href="{$MODULE[2][linkurl]}{$DT[file_login]}" class="b">登录</a> 或 <a href="{$MODULE[2][linkurl]}{$DT[file_register]}" class="b">注册</a> 后查看{$MENU[$menuid][name]}
+		{/if}
+		</div>
+	{/if}
+</div>
+<div class="main_head"><div><strong>在线留言</strong></div></div>
+<div class="main_body">
+	<iframe src="" name="send" id="send" style="display:none;" scrolling="no" frameborder="0"></iframe>
+	<form method="post" action="{$MOD[linkurl]}index.php" id="dform" onsubmit="return check();" target="send">
+	<input type="hidden" name="file" value="{$file}"/>
+	<input type="hidden" name="homepage" value="{$username}"/>
+	<input type="hidden" name="action" value="send"/>
+	<table cellpadding="10" cellspacing="0" width="100%">
+	<tr>
+	<td width="100">留言内容 <span class="f_red">*</span></td>
+	<td><textarea name="content" id="content" style="width:480px;height:128px;" placeholder="写下要留言的内容，限10-5000字"></textarea></td>
+	</tr>	
+	<tr>
+	<td>手机号码 <span class="f_red">*</span></td>
+	<td><input type="text" name="mobile" size="20" id="mobile" value="{$_mobile}"/></td>
+	</tr>
+	{if $_userid < 1}
+	<tr>
+	<td>验证码 <span class="f_red">*</span></td>
+	<td>{template 'captcha', 'chip'} <span id="dcaptcha" class="f_red"></span></td>
+	</tr>
+	<tr>
+	<td></td>
+	<td class="f_grey">您还没有<a href="{$MODULE[2][linkurl]}{$DT[file_login]}" class="b">登录</a>，今日仅可留言1次</td>
+	</tr>
+	{/if}
+	<tr>
+	<td></td>
+	<td><input type="submit" name="submit" value="立即发送" class="btn-act"/></td>
+	</tr>
+	</table>
+	</form>
+	<script type="text/javascript">
+	function check() {
+		var l;
+		var f;
+		f = 'content';
+		l = Dd(f).value.length;
+		if(l < 5 || l > 5000) {
+			Dtoast('内容应为5-5000字，当前已输入'+l+'字');
+			Dd(f).focus();
+			return false;
+		}
+		f = 'mobile';
+		l = Dd(f).value.length;
+		if(l != 11) {
+			Dtoast('请填写手机号码');
+			Dd(f).focus();
+			return false;
+		}
+		{if $_userid < 1}
+		f = 'captcha';
+		if($('#c'+f).html().indexOf('ok.png') == -1) {
+			Dtoast('请填写正确的验证码');
+			Dd(f).focus();
+			return false;
+		}
+		{/if}
+	}
+	</script>
+</div>
+{if $api_map && $map && $could_contact}
+<div class="main_head"><div><span class="f_r"><a href="{DT_PATH}api/address.php?auth={$map_auth}" target="_blank"><img src="{DT_STATIC}home/image/more.gif" title="更多"/></a></span><strong>公司地图</strong><a name="map"></a></div></div>
+<div class="main_body">
+	{php $map_height = 300;}
+	{php include load('api/map/'.$api_map.'/show.inc');}
+</div>
+{/if}
+{template 'footer', $template}

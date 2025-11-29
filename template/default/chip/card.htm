@@ -1,0 +1,114 @@
+{if $job == 'message'}
+	{if $lists}
+	{loop $lists $k $v}	
+	<div class="card-list">
+	{if $v[fromuser]}
+	<a href="{userurl($v[fromuser], 'file=space')}"><img src="{useravatar($v[fromuser], 'large')}" width="48" height="48" class="avatar"/></a>
+	{else}
+	<img src="{useravatar('', 'large')}" width="48" height="48" class="avatar"/>
+	{/if}
+	<ul>
+	<li><a href="{$MODULE[2][linkurl]}message.php?action=show&itemid={$v[itemid]}"><strong title="{$v[title]}">{$v[title]}</strong></a></li>
+	<li><span class="f_r">{timetoread($v[addtime])}</span><span>{if $v[fpassport]}{$v[fpassport]}{else}系统消息{/if}</span></li>
+	</ul>
+	</div>
+	{/loop}
+	{if $_message > 5}<a href="{$MODULE[2][linkurl]}message.php"><div class="card-more">查看全部{$_message}条未读信件</div></a>{/if}
+	{else}
+	<div class="card-none">暂无未读站内信</div>
+	{/if}
+
+{elseif $job == 'chat'}
+	{if $lists}
+	{loop $lists $k $v}	
+	<a href="javascript:;" onclick="Dchat('{$MODULE[2][linkurl]}chat.php?chatid={$v[chatid]}');">
+	<div class="card-list">
+	<img src="{useravatar($v[username], 'large')}" width="48" height="48" class="avatar"/>
+	<ul>
+	<li><span class="f_r">{$v[last]}</span><strong>{$v[name]}</strong></li>
+	<li>{if $v[new]}<em>{$v[new]}</em>{/if}<span>{$v[lastmsg]}</span></li>
+	</ul>
+	</div>
+	</a>
+	{/loop}
+	{if $_chat > $new}<a href="{$MODULE[2][linkurl]}im.php"><div class="card-more">查看全部{$_chat}条未读消息</div></a>{/if}
+	{else}
+	<div class="card-none">暂无新的消息</div>
+	{/if}
+
+{elseif $job == 'cart'}
+	{if $lists}
+	{loop $lists $tags}
+	{loop $tags $i $t}
+	<div class="card-list">
+	<a href="{$t[linkurl]}" target="_blank"><img src="{$t[thumb]}" width="48" height="48"/></a>
+	<ul>
+	<li><span class="f_r">x {$t[a]}</span><a href="{$t[linkurl]}" target="_blank" title="{$t[alt]}">{$t[title]}</a></li>
+	<li><span class="f_r">{$DT[money_sign]}{$t[price]}</span><span>{if $t[m1]}{$t[n1]}:{$t[m1]}&nbsp;{/if}{if $t[m2]}{$t[n2]}:{$t[m2]}&nbsp;{/if}{if $t[m3]}{$t[n3]}:{$t[m3]}&nbsp;{/if}</span></li>
+	</ul>
+	</div>
+	{/loop}
+	{/loop}
+	<a href="{$MODULE[2][linkurl]}cart.php"><div class="card-more">打开购物车</div></a>
+	{else}
+	<div class="card-none">您的购物车还是空的<br/><br/><a href="{$MODULE[$mid][linkurl]}"><center><div class="btn-green">挑选商品</div></center></a></div>
+	{/if}
+
+{elseif $job == 'member'}
+	{if $lists}
+	<div class="card-list">	
+	<a href="{$MODULE[2][linkurl]}avatar.php"><img src="{useravatar($_username, 'large')}" width="48" height="48" class="avatar"/></a>
+	<ul>
+	<li><span class="f_r">{$MG[groupname]}</span><a href="{$MODULE[2][linkurl]}"><strong>{if $_truename}{$_truename}{elseif $_passport}{$_passport}{else}{$_username}{/if}</strong></a></li>
+	<li><span>{if $lists[sign]}{$lists[sign]}{else}没有留下签名~~{/if}</span></li>
+	</ul>
+	</div>
+	<div class="card-info">	
+	<ul>
+	<a href="{$MODULE[2][linkurl]}account.php?action=username"><li>会员名：{$_username}</li></a>
+	<a href="{$MODULE[2][linkurl]}account.php?action=passport"><li>昵称：{$_passport}</li></a>
+	<a href="{$MODULE[2][linkurl]}account.php"><li>会员ID：{$_userid}</li></a>
+	<a href="{$MODULE[2][linkurl]}edit.php"><li>姓名：{$_truename}</li></a>
+	<a href="{$MODULE[2][linkurl]}record.php"><li>余额：{$DT[money_sign]}{$_money}</li></a>
+	<a href="{$MODULE[2][linkurl]}credit.php?action=index"><li>{$DT[credit_name]}：{numtoread($_credit)} &nbsp; <img src="{DT_STATIC}image/grade-{$_gradeid}.png" width="24" alt=""/></li></a>
+	{if $DT[follow]}
+	<a href="{$MODULE[2][linkurl]}follow.php?action=index"><li>关注：{numtoread($_follows)}</li></a>
+	<a href="{$MODULE[2][linkurl]}follow.php?action=fans"><li><div>粉丝：{numtoread($_fans)}</li></a>
+	{/if}
+	</ul>
+	</div>
+	{else}
+	<div class="card-none">请先 <a href="{$MODULE[2][linkurl]}{$DT[file_login]}" class="b">登录</a> 或 <a href="{$MODULE[2][linkurl]}{$DT[file_register]}" class="b">注册</a></div>
+	{/if}
+
+{elseif $job == 'user'}
+	{if $lists}
+	<div class="usercard" id="card-{$username}">
+	<a href="{userurl($username, 'file=space&mid='.$moduleid)}" target="_blank"><img src="{useravatar($username, 'large')}"/></a><i class="userinfo-v{$lists[validate]}" title="{valid_name($lists[validate])}"></i>
+	<ul>
+	<li>
+	<a href="{userurl($username, 'file=space&mid='.$moduleid)}" target="_blank" title="{if $lists[passport]}{$lists[passport]}{else}{$lists[username]}{/if}的空间"><b>{if $lists[passport]}{dsubstr($lists[passport], 12, '..')}{else}{dsubstr($lists[username], 12, '..')}{/if}</b></a>
+	{if $DT[follow]}
+	{if followed($lists[userid])}
+	<div class="follow1" onclick="Dfollow('{$lists[username]}');" id="follow-{$lists[username]}" title="已关注，点击取消"><b>已关注</b><i>{numtoread($lists[fans])}</i></div>
+	{else}
+	<div class="follow0" onclick="Dfollow('{$lists[username]}');" id="follow-{$lists[username]}" title="未关注，点击关注"><b>加关注</b><i>{numtoread($lists[fans])}</i></div>
+	{/if}
+	{/if}
+	</li>
+	<li title="{$lists[sign]}"><s>{if $lists[sign]}{$lists[sign]}{else}没有留下签名~~{/if}</s></li>
+	</ul>
+	<div class="usercard-stats">
+		<ul>
+		<a href="{userurl($username, 'file=space&mid=2&typeid=3')}" target="_blank"><li><i>{numtoread($lists[fans])}</i><span>粉丝</span></li></a>
+		<a href="{userurl($username, 'file=space&mid=2&typeid=2')}" target="_blank"><li><div><i>{numtoread($lists[follows])}</i><span>关注</span></div></li></a>
+		{if isset($MODULE[20])}
+		<a href="{userurl($username, 'file=space&mid=20')}" target="_blank"><li><i>{numtoread($lists[moments])}</i><span>{$MODULE[20][name]}</span></li></a>
+		{else}
+		<a href="{userurl($username, 'file=space')}}" target="_blank"><li><i>{numtoread($lists[hits])}</i><span>访问</span></li></a>
+		{/if}
+		</ul>
+	</div>
+	</div>
+	{/if}
+{/if}

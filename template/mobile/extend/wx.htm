@@ -1,0 +1,37 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div class="content">
+	<br/><br/>
+	<center class="px16">
+	{if $wx || $wxqr}
+		<img src="{DT_STATIC}image/share-{if $gzh}gzh{else}wx{/if}.png"/>
+		<br/><br/><br/>
+		{if $wx}
+		{if $gzh}公众号{else}微信号{/if}：<b>{$wx}</b> <img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#copy-wx" onclick="Dtoast('{$js_pageid}', '帐号已复制');"/>
+		{/if}
+
+		{if $wxqr}
+		<br/><br/><br/><img src="{$wxqr}" onerror="this.src='{DT_STATIC}image/spacer.png';$('#tips').hide();"/>
+		<br/><span class="px12 f_gray" id="tips">{if $gzh}微信扫码关注{else}微信扫码，添加好友{/if}</span><br/>
+		{/if}
+	{else}
+		微信帐号不存在
+	{/if}
+	</center>
+	<br/><br/><br/>
+	<br/><br/><br/>
+</div>
+
+{if $wx}
+<div style="z-index:1000;position:absolute;top:-10000px;"><textarea id="copy-wx">{$wx}</textarea></div>
+{load('clipboard.min.js')}
+<script type="text/javascript">var clipboard = new Clipboard('[data-clipboard-action]');</script>
+{/if}
+{template 'footer'}

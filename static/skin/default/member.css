@@ -1,0 +1,57 @@
+/*
+	DESTOON Copyright (C)2008-2099 www.destoon.com
+	This is NOT a freeware,Use is subject to license.txt
+*/
+#msgs{z-index:1000;position:absolute;width:150px;margin:-42px auto 0 96px;background:#333333;border-radius:5px;height:32px;line-height:32px;color:#FFFFFF;text-align:center;display:none;}
+.login-show {width:400px;min-height:200px;float:left;}
+.login-main {width:360px;background:#FFFFFF;border:#E5E5E5 1px solid;margin:0 28px;border-radius:10px;float:left;}
+.login-head {height:50px;overflow:hidden;}
+.login-head ul {height:48px;border-bottom:#E5E5E5 2px solid;}
+.login-head li {float:left;width:120px;height:48px;line-height:48px;text-align:center;font-size:16px;border-bottom:#E5E5E5 2px solid;}
+.login-head a {display:block;width:100%;height:48px;}
+.login-head li:hover {border-bottom:#666666 2px solid;}
+.login-head .on,.login-head .on:hover {border-bottom:#2587F4 2px solid;font-weight:bold;}
+.login-body {padding-bottom:20px;}
+.login-body div {padding:30px 30px 0 30px;font-size:14px;}
+.login-oauth {border-top:#E5E5E5 1px solid;text-align:center;margin-top:20px;}
+.login-oauth img {width:24px;height:24px;margin:4px;border:#FFFFFF 6px solid;border-radius:50%;}
+.login-oauth img:hover {border:#E5E5E5 6px solid;}
+.login-btn {width:300px;height:42px;line-height:42px;font-size:16px;}
+
+.input-captcha,.input-question,.input-user,.input-pass,.input-mob,.input-mail,.input-text,.input-code,.input-qq,.input-wx {padding:10px 10px 10px 30px;height:22px;line-height:22px;border:#E5E5E5 1px solid;font-size:14px;}
+.input-captcha {background:url('input-captcha.png') no-repeat 8px center;width:100px;margin-right:10px;}
+.input-question {background:url('input-question.png') no-repeat 8px center;width:260px;}
+.input-user {background:url('input-username.png') no-repeat 8px center;width:260px;}
+.input-pass {background:url('input-password.png') no-repeat 8px center;width:260px;}
+.input-mob {background:url('input-mobile.png') no-repeat 8px center;width:260px;}
+.input-mail {background:url('input-mail.png') no-repeat 8px center;width:260px;}
+.input-text {background:url('input-text.png') no-repeat 8px center;width:260px;}
+.input-qq {background:url('input-qq.png') no-repeat 8px center;width:260px;}
+.input-wx {background:url('input-wx.png') no-repeat 8px center;width:260px;}
+.input-code {background:url('input-password.png') no-repeat 8px center;width:100px;}
+
+.reg-main {width:900px;margin:0 auto;}
+.reg-step ul {height:48px;border-bottom:#E5E5E5 2px solid;}
+.reg-step li {display:inline;float:left;width:240px;height:48px;line-height:48px;text-align:center;font-size:16px;font-weight:bold;border-bottom:#E5E5E5 2px solid;color:#9999B2;}
+.reg-step li i {width:24px;height:24px;line-height:24px;border-radius:50%;color:#FFFFFF;background:#CCCCCC;display:inline-block;margin:12px 6px 0 0;font-style:normal;font-size:14px;}
+.reg-step li b {width:24px;height:24px;line-height:24px;border-radius:50%;color:#FFFFFF;background:#CCCCCC url('reg-step.png') no-repeat center center;display:inline-block;margin:12px 6px 0 0;font-size:14px;}
+.reg-step .on {border-bottom:#2587F4 2px solid;color:#2587F4;color:#333333;}
+.reg-step .on i {background:#2587F4;}
+.reg-step .on b {background:#2587F4 url('reg-step.png') no-repeat center center;}
+.reg-tb {width:700px;margin:0 auto;}
+.reg-tb td {padding:10px;font-size:14px;}
+.reg-tb .tl {width:120px;text-align:right;}
+.reg-tb .tr {width:330px;}
+.reg-inp {width:280px;padding:10px;height:22px;line-height:22px;border:#E5E5E5 1px solid;font-size:14px;}
+.reg-btn {width:300px;height:42px;line-height:42px;font-size:16px;}
+
+.tips {position:absolute;z-index:100;width:300px;background:url('tips_bg.gif') no-repeat 0 bottom;overflow:hidden;margin:-6px 0 0 -10px;}
+.tips div{background:url('tips_top.gif') no-repeat;line-height:22px;padding:8px 10px 8px 36px;font-size:12px;}
+
+.member-v0,.member-v1,.member-v2 {position:absolute;display:block;width:24px;height:24px;background:#FFFFFF url('../../image/ico-v0-24.png') no-repeat center center;border-radius:50%;margin:-28px 0 0 72px;}
+.member-v1 {background:#FFFFFF url('../../image/ico-v1-24.png') no-repeat center center;}
+.member-v2 {background:#FFFFFF url('../../image/ico-v2-24.png') no-repeat center center;}
+
+.userinfo-v0,.userinfo-v1,.userinfo-v2 {position:absolute;display:block;width:16px;height:16px;background:#FFFFFF url('../../image/ico-v0.png') no-repeat center center;border-radius:50%;margin:-20px 0 0 48px;}
+.userinfo-v1 {background:#FFFFFF url('../../image/ico-v1.png') no-repeat center center;}
+.userinfo-v2 {background:#FFFFFF url('../../image/ico-v2.png') no-repeat center center;}

@@ -1,0 +1,5 @@
+# Robots For DESTOON
+User-agent: *
+Disallow: /api/
+Disallow: /member/
+Disallow: /static/

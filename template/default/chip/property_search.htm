@@ -1,0 +1,14 @@
+{loop $PP $v}
+<div class="sort">
+	<div class="sort-k">{$v[name]}</div>
+	<div class="sort-v">
+		<input type="hidden" name="pp{$v[oid]}" id="pp{$v[oid]}" value="{$v[select]}"/>
+		<ul>
+		<li{if $v[select]==''} class="on"{/if}><a href="javascript:;" onclick="Dq('pp{$v[oid]}','');">全部</a></li>
+		{loop $v[options] $o}
+		<li{if $v[select]==$o} class="on"{/if}><a href="javascript:;" onclick="Dq('pp{$v[oid]}','{$o}');">{$o}</a></li>
+		{/loop}
+		</ul>
+	</div>
+</div>
+{/loop}

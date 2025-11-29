@@ -1,0 +1,21 @@
+<?php exit;?>
+itemid,ID,
+typeid,类别ID,
+username,会员名,
+company,公司名,
+pusername,代理会员名,
+pcompany,代理公司名,
+areaid,地区ID,
+mobile,手机号码,
+discount,折扣,
+orders,订单数量,直接下单
+trades,分销订单,分销订单
+amount,总销售额,
+amounty,年销售额,
+amountm,月销售额,
+addtime,加入时间,
+edittime,更新时间,
+statstime,统计时间,
+status,状态,
+reason,原因,
+note,备注,

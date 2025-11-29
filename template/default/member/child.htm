@@ -1,0 +1,279 @@
+{template 'header', 'member'}
+<div class="menu">
+<table cellpadding="0" cellspacing="0">
+<tr>
+{if $_cid}
+<td class="tab" id="home"><a href="?action=home"><span>我的账户</span></a></td>
+<td class="tab" id="password"><a href="?action=password"><span>修改密码</span></a></td>
+<td class="tab"><a href="logout.php?forward="><span>退出登录</span></a></td>
+{else}
+<td class="tab" id="add"><a href="?action=add"><span>添加帐号</span></a></td>
+<td class="tab" id="index"><a href="?action=index"><span>子帐号管理</span></a></td>
+{/if}
+</tr>
+</table>
+</div>
+{if $action=='add' || $action == 'edit'}
+<form method="post" action="?" id="dform" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl"><span class="f_red">*</span> 户名</td>
+<td class="tr"><input name="post[username]" type="text" id="username" size="20" value="{$username}"/> <span class="f_gray">{$MOD[minusername]}-{$MOD[maxusername]}个字符，只能使用小写字母(a-z)、数字(0-9)、下划线(_)、中划线(-)，且以字母或数字开头和结尾</span> <span id="dusername" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 密码</td>
+<td class="tr"><input name="post[password]" type="password" id="password" size="20" autocomplete="new-password"/> <span class="f_gray">{$MOD[minpassword]}-{$MOD[maxpassword]}个字符，区分大小写，推荐使用数字、字母和特殊符号组合{if $action=='edit'}，如不修改请留空{/if}</span>  <span id="dpassword" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">昵称</td>
+<td class="tr"><input type="text" size="20" name="post[nickname]" id="nickname" value="{$nickname}"/> <span class="f_gray">在线交谈时显示</span></td>
+</tr>
+<tr>
+<td class="tl">角色</td>
+<td class="tr"><input type="text" size="20" name="post[role]" id="role" value="{$role}"/> <span class="f_gray">例如：财务、编辑、客服</span></td>
+</tr>
+<tr>
+<td class="tl">部门</td>
+<td class="tr"><input name="post[department]" type="text" id="department" size="30" value="{$department}"/></td>
+</tr>
+<tr>
+<td class="tl">姓名</td>
+<td class="tr"><input name="post[truename]" type="text" id="truename" size="10" value="{$truename}"/></td>
+</tr>
+<tr>
+<td class="tl">性别</td>
+<td class="tr">
+<label><input type="radio" name="post[gender]" value="1"{if $gender==1} checked="checked"{/if}/> 先生</label>&nbsp;&nbsp;
+<label><input type="radio" name="post[gender]" value="2"{if $gender==2} checked="checked"{/if}/> 女士</label>
+</td>
+</tr>
+<tr>
+<td class="tl">手机</td>
+<td class="tr"><input name="post[mobile]" type="text" id="mobile" size="20" value="{$mobile}"/></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 权限</td>
+<td class="tr">
+<style type="text/css">
+.permission {width:500px;}
+.permission li {float:left;width:120px;padding:6px 0;}
+</style>
+<ul class="permission">
+{loop $CHILD $k $v}
+<li><label><input type="checkbox" name="post[permission][]" value="{$k}" id="pm_{$k}"{if in_array($k, $permission)} checked="checked"{/if}/> {$v}</label></li>
+{/loop}
+{loop $MENUMODS $k $v}
+	<li><label><input type="checkbox" name="post[permission][]" value="{$v}" id="m_{$v}"{if in_array($v, $permission)} checked="checked"{/if}/> {$MODULE[$v][name]}管理</label></li>
+{/loop}
+</ul>
+<br style="clear:both;"/><span id="dpermission" class="f_red"></span>
+</td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 状态</td>
+<td class="tr">
+<label><input type="radio" name="post[status]" value="3"{if $status==3} checked="checked"{/if}/> 启用</label>&nbsp;&nbsp;
+<label><input type="radio" name="post[status]" value="2"{if $status==2} checked="checked"{/if}/> 禁用</label>
+</td>
+</tr>
+</table>
+<div class="sbt"><input type="submit" name="submit" value=" {if $action=='add'}添 加{else}修 改{/if} " class="btn_g"/></div>
+</form>
+<script type="text/javascript">
+function check() {
+	var l;
+	var f;
+	f = 'username';
+	l = Dd(f).value.length;
+	if(l < 2) {
+		Dmsg('请填写用户名', f);
+		return false;
+	}
+{if $action == 'add'}
+	f = 'password';
+	l = Dd(f).value.length;
+	if(l < 6) {
+		Dmsg('请填写密码', f);
+		return false;
+	}
+{/if}
+
+	f = 'password';
+	l = Dd(f).value.length;
+	if(l > 5 && l < 32) {
+		var a = Dpwd(Dd(f).value, '{$MOD[minpassword]}', '{$MOD[maxpassword]}', '{$MOD[mixpassword]}');
+		var s = '';
+		if(a[0] == 'mix') {
+			if(a[1] == '09') s = '密码必须包含数字';
+			if(a[1] == 'az') s = '密码必须包含小写字母';
+			if(a[1] == 'AZ') s = '密码必须包含大写字母';
+			if(a[1] == '..') s = '密码必须包含特殊符号';
+		} else if(a[0] == 'min') {
+			s = '密码最少'+a[1]+'字符';
+		} else if(a[0] == 'max') {
+			s = '密码最多'+a[1]+'字符';
+		}
+		if(s) {
+			Dmsg(s, f);
+			return false;
+		}
+		{if $DT[md5_pass]==2}
+		Dd(f).value = hex_md5(Dd(f).value);		
+		{/if}
+	}
+
+	l = $('.permission :checkbox:checked').length;
+	if(l < 1) {
+		Dmsg('请选择权限', 'permission');
+		return false;
+	}
+	return true;
+}
+</script>
+{if $DT[md5_pass]}{load('md5.js')}<script type="text/javascript">$(function(){cls_pwd();});</script>{/if}
+<script type="text/javascript">s('child');m({if $action=='add'}'add'{else}'index'{/if});</script>
+{elseif $action == 'password'}
+<form method="post" action="?" id="dform" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl">新登录密码</td>
+<td class="tr"><input type="password" size="20" name="post[npassword]" id="npassword" autocomplete="new-password"/> <span id="dnpassword" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">重复登录密码</td>
+<td class="tr"><input type="password" size="20" name="post[cpassword]" id="cpassword" autocomplete="new-password"/> <span id="dcpassword" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">现有登录密码</td>
+<td class="tr"><input type="password" size="20" name="post[opassword]" id="opassword" autocomplete="new-password"/> <span id="dopassword" class="f_red"></span></td>
+</tr>
+</table>
+<div class="sbt"><input type="submit" name="submit" value=" 修 改 " class="btn_g"/></div>
+</form>
+<script type="text/javascript">
+function check() {
+	var l;
+	var f;
+	if(Dd('npassword').value.length < 6) {
+		Dmsg('请输入新登录密码', 'npassword');
+		return false;
+	}
+	if(Dd('npassword').value != Dd('cpassword').value) {
+		Dmsg('两次输入的密码不一致', 'cpassword');
+		return false;
+	}
+	if(Dd('opassword').value.length < 6) {
+		Dmsg('请输入现有登录密码', 'opassword');
+		return false;
+	}
+
+	f = 'npassword';
+	l = Dd(f).value.length;
+	if(l > 5 && l < 32) {
+		var a = Dpwd(Dd(f).value, '{$MOD[minpassword]}', '{$MOD[maxpassword]}', '{$MOD[mixpassword]}');
+		var s = '';
+		if(a[0] == 'mix') {
+			if(a[1] == '09') s = '密码必须包含数字';
+			if(a[1] == 'az') s = '密码必须包含小写字母';
+			if(a[1] == 'AZ') s = '密码必须包含大写字母';
+			if(a[1] == '..') s = '密码必须包含特殊符号';
+		} else if(a[0] == 'min') {
+			s = '密码最少'+a[1]+'字符';
+		} else if(a[0] == 'max') {
+			s = '密码最多'+a[1]+'字符';
+		}
+		if(s) {
+			Dmsg(s, f);
+			return false;
+		}
+		{if $DT[md5_pass]==3}
+		Dd(f).value = hex_md5(Dd(f).value);		
+		Dd('cpassword').value = hex_md5(Dd('cpassword').value);		
+		Dd('opassword').value = hex_md5(Dd('opassword').value);		
+		{/if}
+	}
+
+	return true;
+}
+</script>
+{if $DT[md5_pass]}{load('md5.js')}<script type="text/javascript">$(function(){cls_pwd();});</script>{/if}
+<script type="text/javascript">m('{$action}');</script>
+{elseif $action == 'home'}
+<table cellpadding="16" cellspacing="1" class="tb">
+<tr>
+<td class="tl">会员</td>
+<td class="tr">{$username}</td>
+</tr>
+<tr>
+<td class="tl">昵称</td>
+<td class="tr">{$nickname}</td>
+</tr>
+<tr>
+<td class="tl">角色</td>
+<td class="tr">{$role}</td>
+</tr>
+<tr>
+<td class="tl">部门</td>
+<td class="tr">{$department}</td>
+</tr>
+<tr>
+<td class="tl">姓名</td>
+<td class="tr">{$truename}</td>
+</tr>
+<tr>
+<td class="tl">手机</td>
+<td class="tr">{$mobile}</td>
+</tr>
+<tr>
+<td class="tl">登录</td>
+<td class="tr">{$logintimes}次</td>
+</tr>
+</table>
+<script type="text/javascript">m('{$action}');</script>
+{else}
+<div class="ls">
+<table cellpadding="8" cellspacing="0" class="tb">
+<tr>
+<th>户名</th>
+<th>昵称</th>
+<th>角色</th>
+<th>部门</th>
+<th>姓名</th>
+<th>电话</th>
+<th>最后登录</th>
+<th>登录次数</th>
+<th data-hide-1200="1">登录IP</th>
+<th width="40">状态</th>
+<th width="40">修改</th>
+<th width="40">删除</th>
+</tr>
+{loop $lists $k $v}
+<tr onmouseover="this.className='on';" onmouseout="this.className='';" align="center">
+<td>{$v[username]}</td>
+<td>{$v[nickname]}</td>
+<td>{$v[role]}</td>
+<td>{$v[department]}</td>
+<td>{$v[truename]}</td>
+<td>{$v[mobile]}</td>
+<td>{$v[logindate]}</td>
+<td>{$v[logintimes]}</td>
+<td data-hide-1200="1">{$v[loginip]}</td>
+<td>{if $v[status] == 3}<span class="f_green">正常</span>{else}<span class="f_red">禁用</span>{/if}</td>
+<td><a href="?action=edit&itemid={$v[itemid]}"><img width="16" height="16" src="{DT_STATIC}member/edit.png" title="修改" alt=""/></a></td>
+<td><a href="?action=delete&itemid={$v[itemid]}" onclick="if(!confirm('确定要删除吗？此操作将不可撤销')) return false;"><img width="16" height="16" src="{DT_STATIC}member/delete.png" title="删除" alt=""/></a></td>
+</tr>
+{/loop}
+</table>
+</div>
+{if $MG[child_limit]}
+<div class="limit">总共可加 <span class="f_b f_red">{$MG[child_limit]}</span> 个&nbsp;&nbsp;&nbsp;当前已加 <span class="f_b">{$limit_used}</span> 个&nbsp;&nbsp;&nbsp;还可以加 <span class="f_b f_blue">{$limit_free}</span> 个</div>
+{/if}
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('child');m('index');</script>
+{/if}
+{template 'footer', 'member'}

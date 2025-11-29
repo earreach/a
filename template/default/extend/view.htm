@@ -1,0 +1,29 @@
+{template 'header'}
+<div class="m">	
+	<div class="nav"><div><a href="javascript:;" onclick="window.close();"><img src="{DT_SKIN}ico-close.png" width="16" height="16" title="关闭窗口" align="absmiddle" onmouseover="this.src='{DT_SKIN}ico-close-on.png';" onmouseout="this.src='{DT_SKIN}ico-close.png';"/></a></div><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> {$head_title}</div>
+</div>
+<div class="m">
+	{if $type == 'image'}
+	<center style="padding:10px;"><img src="{$src}" onerror="alert('图片不存在');try{window.close();}catch(e){Go(DTPath);}" onload="if(this.width>1200) this.width=1200;" ondblclick="window.close();" oncontextmenu="return false;" onmousewheel="return zoomimg(this);"/></center>
+	<script type="text/javascript">
+	function zoomimg(o) {
+		var zoom = parseInt(o.style.zoom, 10) || 100;
+		zoom += event.wheelDelta/12;
+		if(zoom > 100) zoom = 100;
+		if(zoom < 10) zoom = 10;
+		o.style.zoom = zoom+'%';
+		return false;
+	}
+	</script>
+	{elseif $type == 'doc' || $type == 'pdf'}
+	<iframe src="{$src}" width="1220" height="1220" frameborder="0"></iframe>
+	<script type="text/javascript">$(function(){$('#destoon-fixon').attr('id', 'destoon-fixon-disabled');});</script>
+	{elseif $type == 'video'}
+	{load('player.js')}
+	<script type="text/javascript">document.write(player('{$src}',1220,686,1));</script>
+	{elseif $type == 'audio'}
+	{load('player.js')}
+	<center style="padding:24px 0;"><script type="text/javascript">document.write(player('{$src}',0,0,1));</script></center>
+	{/if}
+</div>
+{template 'footer'}

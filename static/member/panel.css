@@ -1,0 +1,34 @@
+/*
+	DESTOON Copyright (C)2008-2099 www.destoon.com
+	This is NOT a freeware,Use is subject to license.txt
+*/
+.btn-c {background:#F7F7F7;border:#D7D7D7 1px solid;border-radius:6px;color:#333333;padding:6px 0;width:96px;text-align:center;letter-spacing:1px;cursor:pointer;outline:none;}
+.btn-c:hover{background:#DEDEDE;border:#CECECE 1px solid;}
+.btn-s {background:#0679D4;border:#0679D4 1px solid;border-radius:6px;color:#FFFFFF;padding:6px 0;width:96px;text-align:center;letter-spacing:1px;cursor:pointer;outline:none;}
+.btn-s:hover{background:#0065BD;}
+.pthumb {cursor:pointer;margin:10px 0 0 0;border:#DDDDDD 1px solid;}
+.thumbu {display:inline-block;}
+.thumbu div img {border:#DDDDDD 1px solid;cursor:pointer;max-height:100px;}
+.thumbu div i {display:block;width:18px;height:18px;background:#333333 url('../admin/dialog-close-on.png') no-repeat center center;position:absolute;margin:1px 0 0 1px;cursor:pointer;}
+.thumbu div i:hover {background:#C00000 url('../admin/dialog-close-on.png') no-repeat center center;}
+.thumbu p {height:16px;line-height:16px;padding:6px 0;margin:0;text-align:center;color:#A0A3A8;}
+.thumbu p img {padding:0 8px;cursor:pointer;}
+.thumbs {width:102px;height:128px;overflow:hidden;float:left;margin:0 16px 16px 0;}
+.thumbs div img {border:#DDDDDD 1px solid;width:100px;height:100px;cursor:pointer;}
+.thumbs p {height:16px;line-height:16px;padding:6px 0;margin:0;text-align:center;color:#A0A3A8;}
+.thumbs p img {padding:0 8px;cursor:pointer;}
+.upl img {width:11px;height:11px;cursor:pointer;padding:0 6px;}
+#Dtop{border:#E0E0E0 6px solid;border-radius:10px;}
+#Dtop .dbody{background:#FFFFFF;}
+#Dtop .dhead{background:#F0F0F0;border-bottom:#E7E7EB 1px solid;padding-left:16px;font-size:15px;line-height:32px;height:32px;font-weight:bold;cursor:move;-moz-user-select:none;-khtml-user-select:none;user-select:none;}
+#Dtop .dhead span{float:right;cursor:pointer;display:block;width:32px;height:32px;background:url('../admin/dialog-close.png') no-repeat center center;}
+#Dtop .dhead span:hover{background:#F45454 url('../admin/dialog-close-on.png') no-repeat center center;border-radius:0 3px 0 0;}
+#Dtop .dbox{overflow:hidden;line-height:180%;clear:both;}
+#Dtop .dbox table{margin-left:10px;}
+#Dtop .dsize{height:11px;font-size:1px;}
+#Dtop .dsize div{height:11px;width:11px;background:url('../admin/resize.png') no-repeat;cursor:se-resize;font-size:1px;float:right;}
+.webuploader-container {position:relative;}
+.webuploader-element-invisible {position:absolute !important;clip: rect(1px 1px 1px 1px);clip: rect(1px,1px,1px,1px);}
+.webuploader-pick {position:relative;display:inline-block;cursor:pointer;}
+.webuploader-pick-hover {}
+.webuploader-pick-disable {opacity:0.6;pointer-events:none;}

@@ -1,0 +1,118 @@
+{template 'header'}
+{load('moment.js')}
+{load('player.js')}
+<div class="m">	
+	<div class="nav"><div><a href="{$MOD[linkurl]}search.php"><img src="{DT_SKIN}ico-filter.png" width="16" height="16" title="高级搜索" align="absmiddle"/></a> &nbsp; </div><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MOD[linkurl]}">{$MOD[name]}</a>{if $catid} <i>&gt;</i> {cat_pos($CAT, ' <i>&gt;</i> ')}{/if} <i>&gt;</i> <a href="{$MOD[linkurl]}search.php">搜索</a>{if $DT_QST} <a href="{$MOD[linkurl]}search.php" title="重新搜索"><s></s></a>{/if}</div>
+</div>
+<div class="m m2">
+	<div class="m2l">
+		{if $DT_QST}
+			<form action="{$MOD[linkurl]}search.php" id="search">
+			<input type="hidden" name="kw" value="{$kw}"/>
+			<input type="hidden" name="catid" value="{$catid}"/>
+			<input type="hidden" name="areaid" value="{$areaid}"/>
+			<div class="sort-f">
+			{if $maincat}
+			<div class="sort">
+				<div class="sort-k">分类</div>
+				<div class="sort-v">
+					<ul>
+					<li{if $catid==0} class="on"{/if}><a href="javascript:;" onclick="Dq('catid',0);">全部</a></li>
+					{loop $maincat $k $v}
+					<li{if $v[catid]==$catid} class="on"{/if}><a href="javascript:;" onclick="Dq('catid', {$v[catid]});">{set_style($v[catname],$v[style])}</a></li>
+					{/loop}
+					</ul>
+				</div>
+			</div>
+			{/if}
+			{if $FD}{template 'fields_search', 'chip'}{/if}
+			{if $CP}{template 'property_search', 'chip'}{/if}
+			</div>
+			</form>
+
+			{if $page==1 && $kw}
+			{ad($moduleid,$catid,$kw,6)}
+			{load('m'.$moduleid.'_k'.urlencode($kw).'.htm')}
+			{/if}
+			{if $tags}
+			{template 'list-'.$module, 'tag'}
+			{else}
+			{template 'empty', 'chip'}
+			{/if}
+		{else}
+		<form action="{$MOD[linkurl]}search.php" id="search">
+		<div class="sf">
+			<div class="sf-k">类型</div>
+			<div class="sf-v">
+				{loop $sfields $k $v}
+				<label><input type="radio" name="fields" value="{$k}" id="fd_{$k}"{if $fields==$k} checked{/if}/> {$v}</label> &nbsp;
+				{/loop}
+			</div>
+		</div>
+		<div class="sf">
+			<div class="sf-k">关键词</div>
+			<div class="sf-v"><input type="text" name="kw" value="{$kw}" placeholder="请输入关键词" class="kw"/></div>
+		</div>
+		<div class="sf">
+			<div class="sf-k">分类</div>
+			<div class="sf-v">{$category_select}</div>
+		</div>
+		{if $FD}{template 'fields_form', 'chip'}{/if}
+		<div class="sf">
+			<div class="sf-k">日期</div>
+			<div class="sf-v">{dcalendar('fromdate', $fromdate, '')} 至 {dcalendar('todate', $todate, '')}</div>
+		</div>
+		{if $area_select}
+		<div class="sf">
+			<div class="sf-k">地区</div>
+			<div class="sf-v">{$area_select}</div>
+		</div>
+		{/if}
+		<div class="sf">
+			<div class="sf-k">排序</div>
+			<div class="sf-v">{$order_select}</div>
+		</div>
+		<div class="sf">
+			<div class="sf-k">&nbsp;</div>
+			<div class="sf-v"><input type="submit" value="搜 索" class="btn-blue"/></div>
+		</div>
+		</form>
+		{/if}
+	</div>
+	<div class="m2r">
+		{if $kw}
+		<div class="head-sub c_p" onclick="$('#mod-list').slideToggle(300);"><span><img src="{DT_SKIN}ico-sort.png" width="16" height="16" align="absmiddle" title="切换频道"/></span><strong>切换频道</strong></div>
+		<div class="list-txt dsn" id="mod-list">
+			<ul>
+			{loop $MODULE $mod}{if $mod[moduleid]>3 && $mod[moduleid]!=$moduleid && !$mod[islink]}<li><a href="{$mod[linkurl]}{rewrite('search.php?kw='.urlencode($kw))}">在 <span class="f_red">{$mod[name]}</span> 找 {$kw}</a></li>{/if}{/loop}
+			</ul>
+		</div>
+		<!--{tag("moduleid=$moduleid&table=keyword&condition=moduleid=$moduleid and status=3 and word<>'$kw' and keyword like '%$keyword%'&pagesize=10&order=total_search desc&template=list-search-relate", 0)}-->
+		{if $_username}
+		<!--{tag("moduleid=$moduleid&table=keyword_record&condition=moduleid=$moduleid and username='$_username'&pagesize=10&order=addtime desc&group=keyword&template=list-search-record", 0)}-->
+		{/if}
+		{/if}
+		<div class="sponsor">{ad($moduleid,$catid,$kw,7)}</div>
+		<div class="head-sub"><strong>今日排行</strong></div>
+		<div class="list-rank">
+			<!--{tag("moduleid=$moduleid&table=keyword&condition=moduleid=$moduleid and status=3 and updatetime>$DT_TODAY-86400&pagesize=9&order=today_search desc&key=today_search&template=list-search-rank")}-->
+		</div>
+		<div class="head-sub"><strong>本周排行</strong></div>
+		<div class="list-rank">
+			<!--{tag("moduleid=$moduleid&table=keyword&condition=moduleid=$moduleid and status=3 and updatetime>$DT_TODAY-86400*7&pagesize=9&order=week_search desc&key=week_search&template=list-search-rank")}-->
+		</div>
+		<div class="head-sub"><strong>本月排行</strong></div>
+		<div class="list-rank">
+			<!--{tag("moduleid=$moduleid&table=keyword&condition=moduleid=$moduleid and status=3 and updatetime>$DT_TODAY-86400*30&pagesize=9&order=week_search desc&key=week_search&template=list-search-rank")}-->
+		</div>
+	</div>
+	<div class="c_b"></div>
+</div>
+{if $DT_QST}
+<script type="text/javascript">
+$(function(){
+	$('.list-moment').first().css('border-top', 'none');
+});
+</script>
+{/if}
+{template 'footer'}

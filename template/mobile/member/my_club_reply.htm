@@ -1,0 +1,206 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a>{if $action=='index' || !$action}<a href="javascript:Dmenu('search-{$js_pageid}');"><img src="{DM_SKIN}icon-search{$wh}.png" width="24" height="24"/></a>{/if}</div>
+<div class="head-bar-title">{if $action=='add'}回复帖子{elseif $action=='edit'}修改回复{else}我的回复{/if}</div>
+<div class="head-bar-right">
+{if $action=='add' || $action=='edit'}
+<a href="?mid={$mid}&job={$job}"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{else}
+{/if}
+<a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a>
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?mid={$mid}&job=reply" data-transition="none">我的回复</a>
+<a href="?mid={$mid}&action=index" data-transition="none">我的帖子</a>
+<a href="?mid={$mid}&job=group" data-transition="none">我的商圈</a>
+<a href="?mid={$mid}&job=join" data-transition="none">加入商圈</a>
+<a href="?mid={$mid}&job=fans" data-transition="none">粉丝管理</a>
+<a href="?mid={$mid}&job=manage" data-transition="none">商圈管理</a>
+<a href="?action=index" data-direction="reverse">切换频道</a>
+</div>
+</div>
+
+{if $action=='add' || $action=='edit'}
+{load('webuploader.min.js')}
+<div class="ui-form">
+<iframe src="" name="send" id="send" style="display:none;"></iframe>
+<form method="post" action="?" id="dform" target="send" data-ajax="false" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="tid" value="{$tid}"/>
+<input type="hidden" name="rid" value="{$rid}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+{if $action=='add' && $R}
+<p>引用回复</p>
+<input type="hidden" name="rid" value="{$rid}"/>
+<div>{$R[quote]}</div>
+{/if}
+<p>回复帖子</p>
+<div><a href="{$MODULE[18][mobile]}{$T[linkurl]}" rel="external" class="b">{$T[title]}</a></div>
+<p>回复内容<i>*</i><b id="dcontent"></b></p>
+</div>
+<input type="hidden" name="post[content]" id="content"/>
+<ul class="ui-editor-toolbar">
+<li class="ui-editor-img"><div id="editor-picker"></div></li>
+<li class="ui-editor-bold"><input type="button" value=" " editor-action="bold"/>B</li>
+<li class="ui-editor-italic"><input type="button" value=" " editor-action="italic"/>I</li>
+<li class="ui-editor-underline"><input type="button" value=" " editor-action="underline"/>U</li>
+</ul>
+<div class="ui-editor-content" id="editor">{$content}</div>
+{load('editor.js')}
+<script type="text/javascript">
+$(function(){
+    $('#editor').DEditor({
+        editorid: 'editor',
+        textareaid: 'content',
+        server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=editor'
+    });
+});
+</script>
+<div class="ui-form">
+{if $need_question}
+<p>验证问题<i>*</i><b id="danswer"></b></p>
+<div>{template 'question', 'chip'}</div>
+{/if}
+{if $need_captcha}
+<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+<div>{template 'captcha', 'chip'}</div>
+{/if}
+{if $MOD[tip_reply]}
+<p>规则说明</p>
+<s>{$MOD[tip_reply]}</s>
+{/if}
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="提 交" class="btn-blue"/>
+<div class="blank-32"></div>
+</div>
+</form>
+{load('clear.js')}
+{else}
+{if $_userid}
+<script type="text/javascript">$(function(){Stabs('{$js_pageid}');});</script>
+<div class="list-menu" id="tabs-{$js_pageid}">
+	<ul>
+	<a href="?mid={$mid}&job=reply&status=3"><li{if $status==3} class="on"{/if} id="s3">已发布{if !$kw} <i>{$nums[3]}</i>{/if}</li></a>
+	<a href="?mid={$mid}&job=reply&status=2"><li{if $status==2} class="on"{/if} id="s2">审核中{if !$kw} <i>{$nums[2]}</i>{/if}</li></a>
+	<a href="?mid={$mid}&job=reply&status=1"><li{if $status==1} class="on"{/if} id="s1">未通过{if !$kw} <i>{$nums[1]}</i>{/if}</li></a>
+	</ul>
+</div>
+{/if}
+
+<div id="search-{$js_pageid}" class="main"{if !$kw} style="display:none;"{/if}>
+<div class="ui-form-search">
+<form action="?">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="status" value="{$status}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+</div>
+
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<input type="checkbox" name="itemid[]" value="{$v[itemid]}" class="dsn" id="checkbox-{$v[itemid]}"/>
+<ul>
+<li><em class="check" id="check-{$v[itemid]}"></em><a href="?mid={$mid}&job=reply&action=edit&itemid={$v[itemid]}"><strong>{$v[title]}</strong></a></li>
+<li><em class="sheet" id="sheet-{$v[itemid]}"></em><span>{$v[date]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+	<div class="list-none">{if $kw}未搜索到“{$kw}”相关结果{else}暂无记录{/if}</div>
+{/if}
+{if $reply_limit}
+<div class="limit">
+今日可回复 <span class="f_b f_red">{$reply_limit}</span> 次&nbsp;&nbsp;&nbsp;
+当前已回复 <span class="f_b">{$limit_used}</span> 次&nbsp;&nbsp;&nbsp;
+还可以回复 <span class="f_b f_blue">{$limit_free}</span> 次&nbsp;&nbsp;&nbsp;
+</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<div id="foot-bar" class="dsn">
+<div class="foot-bar-fix"></div>
+<div class="foot-bar btns">
+{if $MG[delete]}<input type="submit" name="submit" value="删除选中" class="btn-red" onclick="if(confirm('确定要删除选中{$MOD[name]}吗？')){this.form.action='?mid={$mid}&job=reply&status={$status}&action=delete'}else{return false;}"/>{/if}
+</div>
+</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	if($('#foot-bar input').length == 0) $('.check').hide();
+	$('.list-img em').click(function() {
+		if($(this).attr('class') == 'sheet') {
+			var id = $(this).attr('id').replace('sheet-', '');
+			Dsheet('{$js_pageid}','<a href="?mid={$mid}&job=reply&action=edit&itemid='+id+'"><span>修改</span></a>{if $MG[delete]}|<a href="?mid={$mid}&job=reply&action=delete&itemid='+id+'" onclick="return _delete();"><span style="color:red;">删除</span></a>{/if}', '取消');
+		} else {
+			var id = $(this).attr('id').replace('check-', '');
+			if($('#checkbox-'+id).attr('checked')) {
+				$('#checkbox-'+id).attr('checked', false);
+				$(this).attr('class', 'check');
+			} else {
+				$('#checkbox-'+id).attr('checked', true);
+				$(this).attr('class', 'checked');
+			}
+			if($('.checked').length > 0) {
+				$('#foot-bar').fadeIn(300);
+			} else {
+				$('#foot-bar').fadeOut(300);
+			}
+		}
+	});
+});
+</script>
+{/if}
+{if $action == 'add' || $action == 'edit'}
+<script type="text/javascript">
+function check() {
+	var l;
+	var f;
+	f = 'content';
+	l = EditorLen();
+	if(l < 5) {
+		Dmsg('内容最少5字，当前已输入'+l+'字', f);
+		return false;
+	}
+	{if $FD}{fields_js()}{/if}
+	{if $CP}{property_js()}{/if}
+{if $need_password}
+	f = 'password';
+	l = Dd(f).value.length;
+	if(l < 6) {
+		Dmsg('请填写支付密码', f);
+		return false;
+	}
+{/if}
+{if $need_question}
+	f = 'answer';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证问题', f);
+		return false;
+	}
+{/if}
+{if $need_captcha}
+	f = 'captcha';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', f);
+		return false;
+	}
+{/if}
+	return true;
+}
+</script>
+{/if}
+{template 'footer', 'member'}

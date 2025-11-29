@@ -1,0 +1,185 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right">{if $action == 'sms' || $action == 'child'}<a href="?action=login" data-direction="reverse"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>{else}<a href="{$DT[file_register]}" data-ajax="false"><span>注册</span></a>{/if}</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+{if $action == 'sms'}
+<form method="post" action="{$DT[file_login]}" onsubmit="return Scheck();">
+<input type="hidden" name="action" value="{$action}"/>
+{if $verfiy}<div class="list-inp"><div style="font-size:12px;color:#FF6600;">&nbsp;今回のログインには、SMS認証による本人確認が必要です。</div></div>{/if}
+<div class="list-inp"><div><input type="tel" name="mobile" id="mobile"{if $verfiy} value="{$mobile}" readonly{/if} placeholder="認証済みの携帯番号" onblur="window.scrollTo(0,0);"/></div></div>
+<div class="list-inp"><div>{template 'captcha', 'chip'}</div></div>
+<div class="list-inp"><div><input type="tel" name="code" id="code" placeholder="SMS認証コード" onblur="window.scrollTo(0,0);" style="width:128px;"/> &nbsp; <a href="javascript:;" class="b" onclick="Dsend();" id="send">SMS認証コードを取得</a></div></div>
+<div class="blank-20"></div>
+<div class="list-btn"><input type="submit" name="submit" value="ログイン" class="btn-blue"/></div>
+<div class="blank-20"></div>
+<div class="list-btn t_c" id="agree"></div>
+<div class="blank-20"></div>
+</form>
+{elseif $action == 'child'}
+<form method="post" action="{$DT[file_login]}" onsubmit="return Dcheck();">
+<input type="hidden" name="action" value="{$action}"/>
+<div class="list-inp"><div><input type="text" name="username" id="username" value="{$username}" placeholder="ユーザー名" onblur="window.scrollTo(0,0);"/></div></div>
+<div class="list-inp"><div><input type="password" name="password" id="password" placeholder="パスワード" onblur="window.scrollTo(0,0);"/></div></div>
+{if $MOD[captcha_login]}
+<div class="list-inp"><div>{template 'captcha', 'chip'}</div></div>
+{/if}
+<div class="blank-20"></div>
+<div class="list-btn"><input type="submit" name="submit" value="ログイン" class="btn-blue"/></div>
+<div class="blank-20"></div>
+<div class="list-btn t_c" id="agree"></div>
+<div class="blank-36"></div>
+</form>
+{else}
+<form method="post" action="{$DT[file_login]}" onsubmit="return Dcheck();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="auth" value="{$auth}"/>
+<div class="list-inp"><div><input type="text" name="username" id="username" value="{$username}" placeholder="ユーザー名 / ニックネーム / 携帯番号 / メールアドレス" autocapitalize="on" onblur="window.scrollTo(0,0);"/></div></div>
+<div class="list-inp"><div><input type="password" name="password" id="password" placeholder="パスワードを入力してください" onblur="window.scrollTo(0,0);"/></div></div>
+{if $MOD[captcha_login]}
+<div class="list-inp"><div>{template 'captcha', 'chip'}</div></div>
+{/if}
+<div class="blank-20"></div>
+<div class="list-btn"><input type="submit" name="submit" value="ログイン" class="btn-blue"/></div>
+<div class="blank-20"></div>
+<div class="list-btn t_c" id="agree"></div>
+{if $DT_MBS == 'wxmini' && $OAUTH[wxmini]}
+{php $OAUTH['wechat']['enable']=0;}
+	<script src="//res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+	<div class="blank-20"></div>
+	<div class="list-btn"><input type="button" value="微信一键登录" class="btn-green" onclick="wx.miniProgram.navigateTo({url:'/pages/phone/phone'});"/></div>
+{/if}
+{if $DT_MBS == 'weixin' && $OAUTH[wechat][enable]}
+{php $OAUTH['wechat']['enable']=0;}
+	<div class="blank-20"></div>
+	<div class="list-btn"><input type="button" value="微信一键登录" class="btn-green" onclick="Go('{DT_MOB}api/weixin.php?action=connect&url={urlencode($forward)}');"/></div>
+{/if}
+<div class="blank-36"></div>
+</form>
+{if $oa}
+<div id="oauth">
+<center>
+{loop $OAUTH $k $v}
+{if $v[enable]}<a href="{DT_PATH}api/oauth/{$k}/connect.php" rel="external" id="oauth-{$k}"><img src="{DT_PATH}api/oauth/{$k}/icon.png" alt="{$v[name]}" style="width:32px;height:32px;margin-right:16px;border-radius:50%;"/></a>{/if}
+{/loop}
+</center>
+<div class="blank-36"></div>
+</div>
+{load('oauth.js')}
+{/if}
+{/if}
+<div class="blank-36 main"></div>
+{if $action == 'child'}
+{elseif $action == 'sms'}
+<div class="list-set">
+<ul>
+<li><div><a href="?action=login" data-direction="reverse">アカウントでログイン</a></div></li>
+</ul>
+</div>
+{else}
+<div class="list-set">
+<ul>
+{if $could_sms}<li><div><a href="?action=sms">SMSログイン</a></div></li>{/if}
+{if $could_child}<li><div><a href="?action=child">サブアカウントでログイン</a></div></li>{/if}
+<li><div><a href="send.php?action=index" data-ajax="false">パスワードをお忘れの方</a></div></li>
+</ul>
+</div>
+{/if}
+<div class="blank-600 main"></div>
+<div class="ui-frame" id="frame-{$js_pageid}"><div></div></div>
+<script type="text/javascript">
+function Dcheck() {
+	if(Dd('username').value.length < 2) {
+		Dtoast('{$js_pageid}','ユーザー名を入力してください');
+		return false;
+	}
+	if(Dd('password').value.length < 6) {
+		Dtoast('{$js_pageid}','パスワードを入力してください');
+		return false;
+	}
+{if $DT[md5_pass]}
+	if(Dd('password').value.length < 32) Dd('password').value = hex_md5(Dd('password').value);
+{/if}
+{if $MOD[captcha_login]}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dtoast('{$js_pageid}','認証コードを入力してください');
+		return false;
+	}
+{/if}
+	return true;
+}
+function Scheck() {
+	if(Dd('mobile').value.length < 11) {
+		Dtoast('{$js_pageid}','携帯番号を入力してください');
+		return false;
+	}
+	if(Dd('code').value.length < 6) {
+		Dtoast('{$js_pageid}','SMS認証コードを入力してください');
+		return false;
+	}
+	return true;
+}
+function Dstop() {
+	var i = 60;
+	var interval=window.setInterval(
+		function() {
+			if(i < 1) {
+				$('#send').html('再取得');
+				clearInterval(interval);
+			} else {
+				$('#send').html(i+'秒後に再取得できます');
+				i--;
+			}
+		},
+	1000);
+}
+function Dsend() {
+	if($('#send').html().indexOf('秒') != -1) {
+		Dtoast('{$js_pageid}','しばらくしてから再取得してください');
+		return false;
+	}
+	if(Dd('mobile').value.length < 11) {
+		Dtoast('{$js_pageid}','携帯番号を入力してください');
+		return false;
+	}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dtoast('{$js_pageid}','認証コードが正しくありません');
+		return false;
+	}
+	Dtoast('{$js_pageid}','发送中..');
+	$.post('?', 'action=send&mobile='+Dd('mobile').value+'&captcha='+Dd('captcha').value, function(data) {
+		if(data == 'ok') {
+			Dtoast('{$js_pageid}','SMS認証コードを送信しました');
+			Dstop();return;
+		} else if(data == 'mobile') {
+			Dtoast('{$js_pageid}','携帯番号の形式が正しくありません');
+		} else if(data == 'captcha') {
+			Dtoast('{$js_pageid}','認証コードが正しくありません');
+		} else if(data == 'exist') {
+			Dtoast('{$js_pageid}','番号が存在しないか、未認証です');
+		} else if(data == 'max') {
+			Dtoast('{$js_pageid}','送信回数が多すぎます');
+		} else if(data == 'fast') {
+			Dtoast('{$js_pageid}','送信間隔が短すぎます。しばらくしてからお試しください。');
+		} else {
+			Dtoast('{$js_pageid}','送信に失敗しました'+data);
+		}
+		reloadcaptcha();
+	});
+}
+$(function(){
+	if($('#captcha')) $('#captcha').css({'width':'128px'});
+	{if $action == 'sms' && $MOD[login_sms] == 2}
+	$('#agree').html('<span class="px12 f_gray">未登録の携帯番号は自動的に登録されます。登録により、「利用規約」および「プライバシーポリシー」 に同意したものとみなされます <a href="{DT_MOB}about/agreement.html" class="b">利用規約</a> および <a href="{DT_MOB}about/privacy.html" class="b">プライバシーポリシー</a><br/></span>');
+	{else}
+	$('#agree').hide();
+	{/if}
+});
+</script>
+{if $DT[md5_pass]}{load('md5.js')}<script type="text/javascript">$(function(){md5_pwd();});</script>{/if}
+{template 'footer', 'member'}

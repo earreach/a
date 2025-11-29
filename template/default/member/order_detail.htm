@@ -1,0 +1,229 @@
+{if !in_array($O[status], array(8, 9))}
+<table cellpadding="0" cellspacing="0" align="center">
+<tr align="center" class="f_gray">
+<td>买家下单</td>
+<td id="pay_n">买家付款</td>
+<td>卖家发货</td>
+{if $O[status] == 5 || $O[status] == 6}
+<td>申请退款</td>
+<td>退款成功</td>
+{else}
+<td>交易成功</td>
+<td>双方互评</td>
+{/if}
+</tr>
+<tr height="64">
+<td><img src="{DT_STATIC}member/state_2.gif" id="state_1"/></td>
+<td id="pay_s"><img src="{DT_STATIC}member/state_1.gif" id="state_2"/></td>
+<td><img src="{DT_STATIC}member/state_1.gif" id="state_3"/></td>
+<td><img src="{DT_STATIC}member/state_1.gif" id="state_4"/></td>
+<td><img src="{DT_STATIC}member/state_1.gif" id="state_5"/></td>
+</tr>
+</table>
+<br/>
+<script type="text/javascript">
+var s1 = Dd('state_2').src;
+var s2 = Dd('state_1').src;
+function Dstate(n) {
+	for(var i = 2; i <= n; i++) {
+		Dd('state_'+i).src = s2;
+	}
+}
+{if $O[status] == 2}
+Dstate(2);
+{elseif $O[status] == 3}
+Dstate(3);
+{elseif $O[status] == 4}
+	{if $O[buyer_star] && $O[seller_star]}
+	Dstate(5);
+	{else}
+	Dstate(4);
+	{/if}
+{elseif $O[status] == 5}
+	Dstate(4);
+{elseif $O[status] == 6}
+	Dstate(5);
+{elseif $O[status] == 7}
+	{if $O[send_time]}Dstate(3);{/if}
+{/if}
+{if $O[status] == 5 || $O[status] == 6}
+	{if !$O[send_time]}Dd('state_3').src = s1;{/if}
+{/if}
+{if $O[cod]}Dh('pay_n');Dh('pay_s');{/if}
+</script>
+{/if}
+{template 'goods', 'chip'}
+<div class="t2">快递信息</div>
+<table cellspacing="1" cellpadding="10" class="tb">
+{if $DT[postcode]}
+<tr>
+<td class="tl">邮编</td>
+<td class="tr">{$O[buyer_postcode]}</td>
+</tr>
+{/if}
+<tr>
+<td class="tl">地址</td>
+<td class="tr">{$O[buyer_address]}{if $O[status] < 2} &nbsp; <a href="?action=update&step=edit&itemid={$itemid}" class="b">修改</a>{/if}</td>
+</tr>
+<tr>
+<td class="tl">姓名</td>
+<td class="tr">{$O[buyer_name]}</td>
+</tr>
+<tr>
+<td class="tl">手机</td>
+<td class="tr">{$O[buyer_mobile]}</td>
+</tr>
+{if $O[send_time]}
+<tr>
+<td class="tl">发货日期</td>
+<td class="tr">{$O[send_time]}</td>
+</tr>
+<tr>
+<td class="tl">快递类型</td>
+<td class="tr">{$O[send_type]}</td>
+</tr>
+<tr>
+<td class="tl">快递单号</td>
+<td class="tr">{$O[send_no]}{if $O[send_type] && $O[send_no] && strpos($DT_MBS, 'IE') === false}<img src="{DT_STATIC}image/ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#copy-no" onclick="Dtoast('快递单号已复制');"/> &nbsp;<a href="javascript:;" class="t" onclick="Ds('express_t');$('#express').load(AJPath+'?action=express&moduleid=2&auth={$auth}');">[快递追踪]</a>{/if}</td>
+</tr>
+<tr id="express_t" style="display:none;">
+<td class="tl">追踪结果</td>
+<td class="tr" style="line-height:200%;"><div id="express"><img src="{DT_STATIC}member/loading.gif" align="absmiddle"/> 正在查询...</div></td>
+</tr>
+<tr>
+<td class="tl">快递状态</td>
+<td class="tr">{$dsend_status[$O[send_status]]}</td>
+</tr>
+{/if}
+</table>
+
+{if $logs}
+<div class="t2">订单进程</div>
+<table cellspacing="1" cellpadding="10" class="tb">
+<tr>
+<td class="tl"></td>
+<td class="tr">
+<div style="line-height:24px;">
+{loop $logs $v}
+{$v[adddate]} - {$v[title]}<br/>
+{/loop}
+</div>
+</td>
+</tr>
+</table>
+{/if}
+
+<div class="t2">订单详情</div>
+<table cellspacing="1" cellpadding="10" class="tb">
+<tr>
+<td class="tl">卖家店铺</td>
+<td class="tr"><a href="{userurl($O[seller])}" target="_blank" class="t">{$O[shop]}</a> &nbsp; {if $DT[im_web]}{im_web($O[seller])}{else}<a href="javascript:;" onclick="Dwidget('message.php?action=send&touser={$O[seller]}', '发送信件', 1220);"><img src="{DT_STATIC}image/msg.gif" title="发送站内信" align="absmiddle"/></a>{/if}</td>
+</tr>
+<tr>
+<td class="tl">下单时间</td>
+<td class="tr">{$O[adddate]}</td>
+</tr>
+<tr>
+<td class="tl">最后更新</td>
+<td class="tr">{$O[updatedate]}</td>
+</tr>
+{if $O[send_time]}
+<tr>
+<td class="tl">发货时间</td>
+<td class="tr">{$O[send_time]}</td>
+</tr>
+{/if}
+<tr>
+<td class="tl">订单状态</td>
+<td class="tr">{$dstatus[$O[status]]}</td>
+</tr>
+{if $O[bill]}
+<tr>
+<td class="tl">付款凭证</td>
+<td class="tr"><a href="javascript:;" onclick="_preview('{$O[bill]}');" class="t">查看凭证</a></td>
+</tr>
+{/if}
+{if $O[buyer_reason]}
+<tr>
+<td class="tl">退款理由</td>
+<td class="tr">{$O[buyer_reason]}</td>
+</tr>
+{/if}
+{if $O[refund_reason]}
+<tr>
+<td class="tl">操作原因</td>
+<td class="tr">{$O[refund_reason]}</td>
+</tr>
+{/if}
+{if $MOD[contract] && $O[contract]}
+<tr>
+<td class="tl">合同状态</td>
+<td class="tr">
+	{if $O[contract] == 2}
+	<span class="f_green">已签署</span> &nbsp; <a href="?action=update&step=contract&itemid={$itemid}" class="t">详情</a>
+	{else}
+	<span class="f_blue">签署中</span> &nbsp; <a href="?action=update&step=contract&itemid={$itemid}" class="t">签署</a>
+	{/if}
+</td>
+</tr>
+{/if}
+{if $MOD[invoice_types] && $O[status] == 4 && $S[invoice]}
+<tr>
+<td class="tl">开票状态</td>
+<td class="tr">
+	{if $O[invoice] == 2}
+	<span class="f_green">已开票</span> &nbsp; <a href="?action=update&step=invoice&itemid={$itemid}" class="t">查看</a>
+	{elseif $O[invoice] == 1}
+	<span class="f_blue">已申请</span> &nbsp; <a href="?action=update&step=invoice&itemid={$itemid}" class="t">查看</a>
+	{else}
+	<span class="f_gray">待申请</span> &nbsp; <a href="?action=update&step=invoice&itemid={$itemid}" class="t">申请</a>
+	{/if}
+</td>
+</tr>
+{/if}
+{if $O[status] == 4 && $MODULE[$O[mid]][module] == 'mall'}
+<tr>
+<td class="tl">卖家评价</td>
+<td class="tr">
+	{if $O[seller_star]}
+	<span class="f_green">已评价</span> &nbsp; <a href="?action=update&step=comment_detail&itemid={$itemid}" class="t">详情</a>
+	{else}
+	<span class="f_blue">待评价</span>
+	{/if}
+</td>
+</tr>
+<tr>
+<td class="tl">我的评价</td>
+<td class="tr">
+	{if $O[buyer_star]}
+	<span class="f_green">已评价</span> &nbsp; <a href="?action=update&step=comment_detail&itemid={$itemid}" class="t">详情</a>
+	{else}
+	<span class="f_blue">待评价</span> &nbsp; <a href="?action=update&step=comment&itemid={$itemid}" class="t">评价</a>
+	{/if}
+</td>
+</tr>
+{/if}
+<tr>
+<td class="tl">售后服务</td>
+<td class="tr">
+	 <a href="?action=service&oid={$itemid}" class="t">服务记录</a> &nbsp; <a href="?action=update&step=refund&itemid={$itemid}" class="t">申请</a>
+</td>
+</tr>
+<tr>
+<td class="tl"> </td>
+<td class="tr">
+{if $O[status] == 1}
+<input type="button" value=" 付 款 " class="btn_g" onclick="Go('?action=update&step=pay&itemid={$O[itemid]}');"/> &nbsp; 
+{/if}
+<input type="button" value=" 返 回 " class="btn" onclick="Go('?action=index');"/>
+</td>
+</tr>
+</table>
+{if strpos($DT_MBS, 'IE') === false}
+<div style="z-index:1000;position:absolute;top:-10000px;"><textarea id="copy-no">{$O[send_no]}</textarea></div>
+{load('clipboard.min.js')}
+<script type="text/javascript">var clipboard = new Clipboard('[data-clipboard-action]');</script>
+{/if}
+<script type="text/javascript">
+s('order');m('action');
+</script>

@@ -1,0 +1,47 @@
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+{template 'goods', 'chip'}
+<div class="t2">同意退款</div>
+<table cellspacing="1" cellpadding="10" class="tb">
+<tr>
+<td class="tl">联系买家</td>
+<td class="tr">{if $DT[im_web]}{im_web($O[buyer])}&nbsp;{/if}<a href="{userurl($O[buyer], 'file=contact')}" target="_blank" class="t">{$O[buyer]}</a></td>
+</tr>
+<tr>
+<td class="tl">下单时间</td>
+<td class="tr">{$O[adddate]}</td>
+</tr>	
+<tr>
+<td class="tl">退款原因</td>
+<td class="tr">{$O[buyer_reason]}</td>
+</tr>
+<tr>
+<td class="tl">同意原因</td>
+<td class="tr"><textarea name="content" id="content" class="dsn"></textarea>
+{deditor($moduleid, 'content', 'Simple', '100%', 200)}<br/></td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 支付密码</td>
+<td class="tr">{template 'payword', 'chip'} <span id="dpassword" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl"> </td>
+<td class="tr">
+<input type="submit" name="submit" value=" 确 定 " class="btn_g"/>&nbsp;&nbsp;<input type="button" value=" 返 回 " class="btn" onclick="history.back(-1);"/>
+</td>
+</tr>
+</table>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('password').value.length < 6) {
+		Dmsg('请填写支付密码', 'password');
+		return false;
+	}
+	return confirm('您确认同意退款此订单吗？此操作将不可撤销');
+}
+</script>
+<script type="text/javascript">s('trade');m('action');</script>

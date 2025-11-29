@@ -1,0 +1,55 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">商圈管理</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?mid={$mid}&job=manage" data-transition="none">商圈管理</a>
+<a href="?mid={$mid}&action=index" data-transition="none">我的帖子</a>
+<a href="?mid={$mid}&job=reply" data-transition="none">我的回复</a>
+<a href="?mid={$mid}&job=group" data-transition="none">我的商圈</a>
+<a href="?mid={$mid}&job=join" data-transition="none">加入商圈</a>
+<a href="?mid={$mid}&job=fans" data-transition="none">粉丝管理</a>
+<a href="?action=index" data-direction="reverse">切换频道</a>
+</div>
+</div>
+
+<div class="ui-form-search">
+<form action="?">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="job" value="{$job}"/>
+<input type="hidden" name="status" value="{$status}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<ul>
+<li><a href="{$v[linkurl]}"><strong>{$v[title]}</strong></a></li>
+<li><span class="f_r">{if $v[rid]}回复{else}帖子{/if}{$MANAGE[$v[typeid]]}</span><span>{$v[date]}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+	<div class="list-none">{if $kw}未搜索到“{$kw}”相关结果{else}暂无记录{/if}</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<div id="foot-bar" class="dsn">
+<div class="foot-bar-fix"></div>
+<div class="foot-bar btns">
+{if $MG[delete]}<input type="submit" name="submit" value="删除选中" class="btn-red" onclick="if(confirm('确定要删除选中记录吗？')){this.form.action='?mid={$mid}&status={$status}&action=delete'}else{return false;}"/>{/if}
+</div>
+</div>
+</form>
+{template 'footer', 'member'}

@@ -1,0 +1,41 @@
+{template 'header'}
+<style type="text/css">
+.qrcode {height:300px;text-align:center;padding:20px 0;display:none;}
+.qrcode div {line-height:24px;font-size:12px;color:#666666;}
+.shares {height:120px;text-align:center;}
+.shares li {width:200px;float:left;padding:16px 0;cursor:pointer;}
+.shares li:hover {background:#F2F2F2;}
+.shares img {border-radius:16px;width:80px;height:80px;}
+.shares span {display:block;font-size:14px;padding-top:16px;}
+</style>
+<div class="m">	
+	<div class="nav"><div><a href="{$linkurl}"><img src="{DT_SKIN}ico-close.png" width="16" height="16" title="取消分享" align="absmiddle" onmouseover="this.src='{DT_SKIN}ico-close-on.png';" onmouseout="this.src='{DT_SKIN}ico-close.png';"/></a></div><a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$MODULE[$mid][linkurl]}">{$MODULE[$mid][name]}</a> <i>&gt;</i> <a href="{$linkurl}">{$title}</a> <i>&gt;</i> 分享好友</div>
+	<div class="b16"></div>
+</div>
+<div class="m">
+	<div class="qrcode">
+		<img src="{DT_PATH}api/qrcode.php?auth={$auth}&size=6"/>
+		<div></div>
+	</div>
+	<div class="shares">
+		<ul>
+			{if strpos($DT_MBS, 'IE') === false}<li onclick="Dtoast('网址已复制');" data-clipboard-action="copy" data-clipboard-target="#copy-url"><img src="{DT_STATIC}image/share-copy.png"/><span>复制网址</span></li>{/if}
+			<li onclick="$('.qrcode').hide();$('.qrcode div').html('请用微信扫一扫上面的二维码打开网址<br/>点右上方的分享按钮，选择发送给朋友');$('.qrcode').slideDown('fast');"><img src="{DT_STATIC}image/share-wx.png"/><span>微信好友</span></li>
+			<li onclick="$('.qrcode').hide();$('.qrcode div').html('请用微信扫一扫上面的二维码打开网址<br/>点右上方的分享按钮，选择分享到朋友圈');$('.qrcode').slideDown('fast');"><img src="{DT_STATIC}image/share-py.png"/><span>微信朋友圈</span></li>
+			<li onclick="$('.qrcode').hide();"><a href="https://connect.qq.com/widget/shareqq/index.html?url={$_linkurl}&title={$_title}&desc={urlencode('我在'.$DT['sitename'].'看到的')}" target="_blank" rel="external"><img src="{DT_STATIC}image/share-qq.png"/><span>QQ好友</span></a></li>
+			<li onclick="$('.qrcode').hide();"><a href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={$_linkurl}&title={$_title}&desc={urlencode('我在'.$DT['sitename'].'看到的')}" target="_blank" rel="external"><img src="{DT_STATIC}image/share-qzone.png"/><span>QQ空间</span></a></li>
+			<li onclick="$('.qrcode').hide();"><a href="https://service.weibo.com/share/share.php?title={$_title}&url={$_linkurl}&pic={urlencode($pic)}" target="_blank" rel="external"><img src="{DT_STATIC}image/share-weibo.png"/><span>新浪微博</span></a></li>
+			<li onclick="$('.qrcode').hide();"><a href="https://tieba.baidu.com/f/commit/share/openShareApi?title={$_title}&comment=&pic={urlencode($pic)}&url={$_linkurl}" target="_blank" rel="external"><img src="{DT_STATIC}image/share-tieba.png"/><span>百度贴吧</span></a></li>
+			<li onclick="$('.qrcode').hide();"><a href="https://www.facebook.com/sharer.php?u={$_linkurl}" target="_blank" rel="external"><img src="{DT_STATIC}image/share-facebook.png"/><span>Facebook</span></a></li>
+			<li onclick="$('.qrcode').hide();"><a href="https://twitter.com/share?url={$_linkurl}&title={$_title}" target="_blank" rel="external"><img src="{DT_STATIC}image/share-twitter.png"/><span>Twitter</span></a></li>
+			<li onclick="$('.qrcode').hide();"><a href="https://www.linkedin.com/shareArticle?mini=true&url={$_linkurl}" target="_blank" rel="external"><img src="{DT_STATIC}image/share-linkedin.png"/><span>Linkedin</span></a></li>
+			<li onclick="$('.qrcode').hide();"><a href="https://www.pinterest.com/pin/create/button/?url={$_linkurl}" target="_blank" rel="external"><img src="{DT_STATIC}image/share-pinterest.png"/><span>Pinterest</span></a></li>
+		</ul>
+	</div>
+</div>
+{if strpos($DT_MBS, 'IE') === false}
+<div style="z-index:1000;position:absolute;top:-10000px;"><textarea id="copy-url">{$linkurl}</textarea></div>
+{load('clipboard.min.js')}
+<script type="text/javascript">var clipboard = new Clipboard('[data-clipboard-action]');</script>
+{/if}
+{template 'footer'}

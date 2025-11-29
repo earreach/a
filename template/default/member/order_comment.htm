@@ -1,0 +1,246 @@
+<style type="text/css">	
+.stars {width:200px;height:16px;}
+.stars span {width:16px;height:16px;display:inline-block;float:left;cursor:pointer;}
+.stars b {height:16px;line-height:16px;display:inline-block;float:left;font-weight:normal;color:#666666;margin-left:16px;}
+</style>
+{load('player.js')}
+{load('url2video.js')}
+{load('webuploader.min.js')}
+<script type="text/javascript">
+var album_max = parseInt({$DT[thumb_max]});
+if(album_max < 5 || album_max > 99) album_max = 9;
+var oid = 0;
+function addAlbum(url, id) {
+	for(var i = 0; i < album_max; i++) {
+		if($('#thumb'+id+i).length) {
+			if($('#thumb'+id+i).val() == '') {
+				$('#thumb'+id+i).val(url);
+				$('#showthumb'+id+i).attr('src', url);
+				return;
+			}
+		} else {
+			$('#thumbs-'+id).append($('#thumbtpl-'+id).html().replace(/-99/g, i));
+			$('#thumb'+id+i).val(url);
+			$('#showthumb'+id+i).attr('src', url);
+			return;
+		}
+	}
+	Dmsg('最多上传'+album_max+'张图片', 'thumb-'+id);
+	$('#thumbmuti-'+id).hide();
+}
+function newAlbum(max, id) {
+	for(var i = 0; i < max; i++) {
+		if($('#thumb'+id+i).length < 1) {
+			$('#thumbs-'+id).append($('#thumbtpl-'+id).html().replace(/-99/g, i));
+			return;
+		}
+		if($('#thumb'+id+i).val() == '') return;
+	}
+}
+function getAlbum(v, i) {Dd('thumb'+i).value = v; Dd('showthumb'+i).src = v;newAlbum(album_max, oid);}
+function Dplay(id) {
+	UpdateURL(id);
+	if(Dd('video-'+id).value.length > 5) {
+		mkDialog('', '<div style="width:800px;height:450px;background:#000000;">'+player(Dd('video-'+id).value,800,450,1)+'</div>', '视频预览', 800);
+	} else {
+		Dmsg('视频地址为空', 'video-'+id);
+	}
+}
+function UpdateURL(id) {
+	var str = url2video(Dd('video-'+id).value);
+	if(str) Dd('video-'+id).value = str;
+}
+$(function(){
+	$('.stars span').mouseover(function() {
+		var id = $(this).data('id');
+		$(this).parent().css('background', "url('{DT_STATIC}image/star"+id+".png') no-repeat");
+		$(this).siblings('b').html($(this).attr('title'));
+	});
+	$('.stars span').mouseleave(function() {
+		var id = $(this).parent().siblings('input').val();
+		$(this).parent().css('background', "url('{DT_STATIC}image/star"+id+".png') no-repeat");			
+		$(this).siblings('b').html($(this).siblings('[data-id="'+id+'"]').attr('title'));
+	});
+	$('.stars span').click(function() {
+		var id = $(this).data('id');
+		$(this).parent().css('background', "url('{DT_STATIC}image/star"+id+".png') no-repeat");
+		$(this).siblings('b').html($(this).attr('title'));
+		$(this).parent().siblings('input').val(id);
+	});
+});
+</script>
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+{template 'goods', 'chip'}
+{loop $lists $k $v}
+<div class="t2">交易评价 - {$v[title]}</div>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl">商品评分</td>
+<td class="tr">
+<input type="hidden" name="stars[{$v[itemid]}]" value="5"/>
+<div class="stars" style="background:url('{DT_STATIC}image/star5.png') no-repeat;">
+<span title="非常差" data-id="1"></span>
+<span title="差" data-id="2"></span>
+<span title="一般" data-id="3"></span>
+<span title="好" data-id="4"></span>
+<span title="非常好" data-id="5"></span>
+<b>非常好</b>
+</div>
+</td>
+</tr>
+<tr>
+<td class="tl">物流服务</td>
+<td class="tr">	
+<input type="hidden" name="stars_express[{$v[itemid]}]" value="5"/>
+<div class="stars" style="background:url('{DT_STATIC}image/star5.png') no-repeat;">
+<span title="非常差" data-id="1"></span>
+<span title="差" data-id="2"></span>
+<span title="一般" data-id="3"></span>
+<span title="好" data-id="4"></span>
+<span title="非常好" data-id="5"></span>
+<b>非常好</b>
+</div>
+</td>
+</tr>
+<tr>
+<td class="tl">商家态度</td>
+<td class="tr">	
+<input type="hidden" name="stars_service[{$v[itemid]}]" value="5"/>
+<div class="stars" style="background:url('{DT_STATIC}image/star5.png') no-repeat;">
+<span title="非常差" data-id="1"></span>
+<span title="差" data-id="2"></span>
+<span title="一般" data-id="3"></span>
+<span title="好" data-id="4"></span>
+<span title="非常好" data-id="5"></span>
+<b>非常好</b>
+</div>
+</td>
+</tr>
+<tr>
+<td class="tl">详细评价</td>
+<td class="tr f_gray">
+<textarea onkeyup="S({$v[itemid]});" name="contents[{$v[itemid]}]" id="content_{$v[itemid]}" style="width:360px;height:60px;margin:0 0 6px 0;"></textarea><br/>
+请您对此次交易做出客观、公正的评价以帮助更多想买的人<br/>
+(内容限0至500字) 当前已经输入 <span style="color:red;" id="chars_{$v[itemid]}">0</span> 字
+</td>
+</tr>
+<tr>
+<td class="tl">上传图片</td>
+<td class="tr">
+<div id="thumbs-{$v[itemid]}"></div>
+<div class="dsn" id="thumbtpl-{$v[itemid]}">
+<div class="thumbs">
+<input type="hidden" name="thumbs[{$v[itemid]}][]" id="thumb{$v[itemid]}-99" value=""/>
+<div><img src="{DT_STATIC}image/upload-image.png" id="showthumb{$v[itemid]}-99" title="上传/预览图片" alt="" onclick="if(this.src.indexOf('upload-image.png') == -1){_preview(Dd('showthumb{$v[itemid]}-99').src, 1);}else{Dalbum({$v[itemid]}-99,{$moduleid},{$MOD[thumb_width]},{$MOD[thumb_height]}, Dd('thumb{$v[itemid]}-99').value, true);oid={$v[itemid]};}"/></div>
+<p><img src="{DT_STATIC}image/ico-upl.png" width="11" height="11" title="重新上传" onclick="Dalbum({$v[itemid]}-99,{$moduleid},{$MOD[thumb_width]},{$MOD[thumb_height]}, Dd('thumb{$v[itemid]}-99').value, true);oid={$v[itemid]};"/><img src="{DT_STATIC}image/ico-del.png" width="11" height="11" title="删除" onclick="delAlbum('{$v[itemid]}-99');"/></p>
+</div>
+</div>
+<div class="thumbs" id="thumbmuti-{$v[itemid]}" title="批量上传图片，按Ctrl键多选">
+<div id="file-picker-{$v[itemid]}"><img src="{DT_STATIC}image/upload-muti.png" alt=""/></div>
+<p>批量上传<span id="file-progress-{$v[itemid]}"></span></p>
+</div>
+<span id="dthumb-{$v[itemid]}" class="f_red"></span>
+<script type="text/javascript">
+{if strpos($DT_MBS, 'IE') === false}
+	var fileu{$v[itemid]} = WebUploader.create({
+		auto: true,
+		server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=album&width={$MOD[thumb_width]}&height={$MOD[thumb_height]}',
+		pick: '#file-picker-{$v[itemid]}',
+		accept: {
+			title: 'image',
+			extensions: 'jpg,jpeg,png,gif,bmp',
+			mimeTypes: 'image/*'
+		},
+		fileNumLimit: album_max,
+		resize: false
+	});
+	fileu{$v[itemid]}.on('beforeFileQueued', function(file) {
+		var exts = fileu{$v[itemid]}.options.accept[0].extensions;
+		if((','+exts).indexOf(','+ext(file.name)) == -1) {
+			alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+			return false;
+		}
+	});
+	fileu{$v[itemid]}.on('fileQueued', function(file) {
+		$('#file-progress-{$v[itemid]}').html('0%');
+	});
+	fileu{$v[itemid]}.on('uploadProgress-{$v[itemid]}', function(file, percentage) {
+		var p = parseInt(percentage * 100);
+		if(p >= 100) p = 100;
+		$('#file-progress-{$v[itemid]}').html(p+'%');
+	});
+	fileu{$v[itemid]}.on( 'uploadSuccess', function(file, data) {
+		if(data.error) {
+			Dmsg(data.message, 'thumb-{$v[itemid]}');
+		} else {
+			addAlbum(data.url, {$v[itemid]});
+			newAlbum(album_max, {$v[itemid]})
+		}
+	});
+	fileu{$v[itemid]}.on( 'uploadError', function(file, data) {
+		Dmsg(data.message, 'thumb-{$v[itemid]}');
+	});
+	fileu{$v[itemid]}.on('uploadFinished', function(file) {
+		$('#file-progress-{$v[itemid]}').html('');
+		if($("#thumbs-{$v[itemid]} input[value!='']").length >= album_max) $('#thumbmuti-{$v[itemid]}').hide();
+	});
+	$(function(){
+		if($("#thumbs-{$v[itemid]} input[value!='']").length >= album_max) window.setTimeout(function(){$('#thumbmuti-{$v[itemid]}').hide();}, 3000);
+		newAlbum(album_max, {$v[itemid]});
+	});
+{else}
+	$(function(){
+		$('#thumbmuti-{$v[itemid]}').hide();
+		newAlbum(album_max, {$v[itemid]})
+	});
+{/if}
+</script>
+</td>
+</tr>
+<tr>
+<td class="tl">上传视频</td>
+<td class="tr">
+<input name="videos[{$v[itemid]}]" type="text" id="video-{$v[itemid]}" size="60" onblur="UpdateURL({$v[itemid]});"/>
+<span class="upl">
+<img src="{DT_STATIC}image/ico-upl.png" title="上传" onclick="Dfile({$moduleid}, Dd('video-{$v[itemid]}').value, 'video-{$v[itemid]}', 'mp4|mov|3gp|mp3');"/>
+<img src="{DT_STATIC}image/ico-view.png" title="预览" onclick="Dplay({$v[itemid]});"/>
+<img src="{DT_STATIC}image/ico-del.png" title="删除" onclick="Dd('video-{$v[itemid]}').value='';"/>
+</span>
+<span id="dvideo-{$v[itemid]}" class="f_red"></span>
+</td>
+</tr>
+<tr>
+<td class="tl">匿名评价</td>
+<td><label><input type="checkbox" name="hiddens[{$v[itemid]}]" value="1"/> 不公开您的头像和昵称</label></td>
+</tr>
+</table>
+{/loop}
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl"> </td>
+<td class="tr">
+<input type="submit" name="submit" value=" 确 定 " class="btn_g"/>&nbsp;&nbsp;<input type="button" value=" 返 回 " class="btn" onclick="history.back(-1);"/>
+</td>
+</tr>
+</table>
+</form>
+{load('clear.js')}
+<script type="text/javascript">
+function check() {
+	{loop $lists $k $v}
+	if(Dd('content_{$v[itemid]}').value.length > 500) {
+		alert('评价内容不能超过500字');
+		return false;
+	}
+	{/loop}
+	return confirm('您确认提交此评价吗？提交后评价分数和内容将不可更改');
+}
+function S(id) {
+	Inner('chars_'+id, Dd('content_'+id).value.length);
+}
+s('order');m('action');
+</script>

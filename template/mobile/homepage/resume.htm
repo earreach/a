@@ -1,0 +1,128 @@
+{template 'header', $template}
+{if $itemid}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<form action="{$MODULE[4][mobile]}index.php" id="filter-{$js_pageid}" data-ajax="false">
+<input type="hidden" name="homepage" value="{$username}"/>
+<input type="hidden" name="file" value="{$file}"/>
+<input type="hidden" name="orderby" value="{$orderby}"/>
+<input type="hidden" name="elite" value="{$elite}"/>
+<div class="head-bar-title"><input type="search" name="kw" value="{$kw}" placeholder="{$MOD[name]}搜索"/></div>
+</form>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div class="ui-viewer" id="viewer-{$js_pageid}"></div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+{if $MOD[jid]}<a href="{$MOD[mobile]}{rewrite('talent.php?itemid='.$itemid)}" rel="external">添加人才</a>{/if}
+<a href="{DT_MOB}api/share.php?mid={$moduleid}&itemid={$itemid}" data-transition="slideup" rel="external">分享好友</a>
+<a href="{$MENU[$menuid][linkurl]}" data-direction="reverse">{$MENU[$menuid][name]}</a>
+<a href="{userurl($username, 'file=channel', $domain)}" data-direction="reverse">切换频道</a>
+<a href="{$COM[linkurl]}" data-direction="reverse">{$home_name}</a>
+</div>
+</div>
+
+<div class="title"><h1>{$title}</h1></div>
+<div class="info"><i class="ui-ico-time">{$editdate}</i>{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}{if $MOD[hits]}<i class="ui-ico-hits ui-fr" id="hits">{$hits}</i>{/if}</div>
+<div class="content">
+姓名：{$truename}<br/>
+性别：{if $gender == 1}男{else}女{/if}<br/>
+生日：{$birthday}<br/>
+婚姻状况：{if $marriage == 2}已婚{else}未婚{/if}<br/>
+身高：{$height} cm<br/>
+体重：{$weight} kg<br/>
+居住地：{area_pos($areaid, '')}<br/>
+学历：{$EDUCATION[$education]}<br/>
+毕业院校：{$school}<br/>
+专业：{$major}<br/>
+工作性质：{$TYPE[$type]}<br/>
+工作经验：{if $experience}{$experience}年{else}无{/if}<br/>
+行业意向：{$CATEGORY[$parentid][catname]}<br/>
+职位意向：{$CATEGORY[$catid][catname]}<br/>
+专业技能：{$skill}<br/>
+语言水平：{$language}<br/>
+期望薪资：
+{if $minsalary && $maxsalary}
+	{$DT[money_sign]}{$minsalary}-{$maxsalary}{$DT[money_unit]}/月
+{elseif $minsalary}
+	{$DT[money_sign]}{$minsalary}{$DT[money_unit]}/月以上
+{elseif $maxsalary}
+	{$DT[money_sign]}{$maxsalary}{$DT[money_unit]}/月以内
+{else}
+	面议
+{/if}<br/>
+求职状态：{$SITUATION[$situation]}<br/>
+</div>
+{if $content}
+<div class="ui-head"><i></i><b>自我鉴定</b></div>
+<div class="content">{$content}</div>
+{/if}
+<div class="tool">
+{if $MOD[show_like]}<div class="like" onclick="Dlike({$moduleid}, {$itemid}, 0);">点赞 <b id="like-{$moduleid}-{$itemid}-0">{$likes}</b></div>{/if}
+{if $MOD[show_hate]}<div class="hate" onclick="Dhate({$moduleid}, {$itemid}, 0);">反对 <b id="hate-{$moduleid}-{$itemid}-0">{$hates}</b></div>{/if}
+{if $MOD[show_report]}<div class="report" onclick="Dreport({$moduleid}, {$itemid}, 0);">举报</div>{/if}
+{if $MOD[show_favorite]}<div class="favorite" onclick="Dfavor({$moduleid}, {$itemid});">收藏 <b>{$favorites}</b></div>{/if}
+{if $MOD[fee_award]}<div class="award" onclick="Go('{$MODULE[2][mobile]}award.php?mid={$moduleid}&itemid={$itemid}');">打赏 <b>{$awards}</b></div>{/if}
+{if $could_comment}<div class="comment" onclick="Go('{$EXT[comment_mob]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}');">评论 <b>{$comments}</b></div>{/if}
+{if $MOD[show_share]}<div class="share" onclick="Go('{DT_MOB}api/share.php?mid={$moduleid}&itemid={$itemid}');">分享 <b>{$shares}</b></div>{/if}
+</div>
+<div class="ui-head"><i></i><b>联系方式</b></div>
+<div class="contact" data-contact="{$js_pageid}">{template 'content', 'chip'}</div>
+<div id="list-{$js_pageid}" class="main">
+	<div class="blank-10"></div>
+	{if $username}
+	<!--{tag("moduleid=$moduleid&condition=status=3 and username='$username'&order=addtime desc&pagesize=10&itemid=$itemid&template=list-resume")}-->
+	{else}
+	<!--{tag("moduleid=$moduleid&condition=status=3&catid=$catid&areaid=$cityid&order=addtime desc&pagesize=10&itemid=$itemid&template=list-resume")}-->
+	{/if}
+</div>
+{if $MOD[jid]}
+<div class="foot-bar-fix main"></div>
+<div class="foot-btn">
+<ul>
+<li></li>
+<li><a href="{$MOD[mobile]}{rewrite('talent.php?itemid='.$itemid)}" rel="external"><div class="btn-blue">添加人才</div></a></li>
+<li></li>
+</ul>
+</div>
+{/if}	
+{else}
+	<div id="head-bar">
+	<div class="head-bar">
+	<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+	<form action="{$MODULE[4][mobile]}index.php" id="filter-{$js_pageid}" data-ajax="false">
+	<input type="hidden" name="homepage" value="{$username}"/>
+	<input type="hidden" name="file" value="{$file}"/>
+	<input type="hidden" name="orderby" value="{$orderby}"/>
+	<input type="hidden" name="elite" value="{$elite}"/>
+	<div class="head-bar-title"><input type="search" name="kw" value="{$kw}" placeholder="{$MOD[name]}搜索"/></div>
+	</form>
+	<div class="head-bar-right"><a href="{userurl($username, 'file=channel', $domain)}"><img src="{DM_SKIN}icon-gird{$wh}.png" width="24" height="24"/></a></div>
+	</div>
+	<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+	<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+	</div>
+
+	<div class="ui-filter">
+	<i class="ui-filter-{if $elite}ckd{else}box{/if} ui-fr" onclick="Dfilter('elite', '{if $elite}0{else}1{/if}');">推荐</i>
+	<b {if $orderby == ''}class="on"{else}onclick="Dfilter('orderby', '');"{/if}>综合</b>
+	<b {if $orderby == 'dhits'}class="on"{else}onclick="Dfilter('orderby', 'dhits');"{/if}>人气</b>
+	<b {if $orderby == 'dcomments'}class="on"{else}onclick="Dfilter('orderby', 'dcomments');"{/if}>评论</b>
+	<i class="ui-filter-{if $orderby == 'dmaxsalary'}dsc{elseif $orderby == 'amaxsalary'}asc{else}ord{/if}" onclick="Dfilter('orderby', '{if $orderby == 'dmaxsalary'}amaxsalary{else}dmaxsalary{/if}');">月薪</i>
+	</div>
+
+	{if $tags}
+	<div id="list-{$js_pageid}" class="main">{template 'list-'.$module, 'tag'}</div>
+	<div id="load-{$js_pageid}" class="ui-load"></div>
+	{else}
+	{template 'empty', 'chip'}
+	{/if}
+	{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{/if}
+{template 'footer', $template}

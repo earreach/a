@@ -1,0 +1,42 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="{DT_MOB}api/search.php?mid={$moduleid}" data-transition="none">商品搜索</a>
+<a href="{DT_MOB}{rewrite('channel.php?mid='.$moduleid)}" data-transition="none">{$MOD[name]}分类</a>
+<a href="{$MOD[mobile]}" data-direction="reverse">{$MOD[name]}首页</a>
+<a href="{DT_MOB}channel.php" data-direction="reverse">切换频道</a>
+<a href="{$MOD[mobile]}sec.php">秒杀活动</a>
+<a href="{$MODULE[2][mobile]}cart.php" data-transition="none">购物车{if $_cart}<b>{$_cart}</b>{/if}</a>
+</div>
+</div>
+
+<div class="ui-filter">
+<a href="{$MOD[mobile]}search.php?elite=1&catid={$catid}&areaid={$areaid}"><i class="ui-filter-box ui-fr">推荐</i></a>
+<b class="on">综合</b>
+<a href="{$MOD[mobile]}search.php?orderby=dorders&catid={$catid}&areaid={$areaid}"><b>销量</b></a>
+<a href="{$MOD[mobile]}search.php?orderby=dcomments&catid={$catid}&areaid={$areaid}"><b>评论</b></a>
+<a href="{$MOD[mobile]}search.php?orderby=aprice&catid={$catid}&areaid={$areaid}"><i class="ui-filter-ord">价格</i></a>
+</div>
+
+<div id="list-{$js_pageid}" class="ui-main">
+{if $page == 1}{ad($moduleid,$catid,'',6)}{/if}
+{if $tags}
+{template 'list-'.$module, 'tag'}
+{else}
+{template 'empty', 'chip'}
+{/if}
+</div>
+<div id="load-{$js_pageid}" class="ui-load"></div>
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{template 'footer'}

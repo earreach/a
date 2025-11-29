@@ -1,0 +1,23 @@
+<div class="mm-member">
+	<div><a href="{userurl($_username, 'file=space&mid='.$moduleid)}"><img src="{useravatar($_username, 'large')}"/></a><a href="{$MODULE[2][linkurl]}validate.php" rel="nofollow"><i class="userinfo-v{$_validate}" title="{valid_name($_validate)}"></i></a></div>
+	<p>
+	{if $_userid}
+	<a href="{$MODULE[2][linkurl]}" rel="nofollow"><b>Hi,{if $_passport}{$_passport}{else}{$_username}{/if}</b></a>
+	{else}
+	<a href="{$MODULE[2][linkurl]}{$DT[file_login]}" rel="nofollow">Hi,请登录</a> / <a href="{$MODULE[2][linkurl]}{$DT[file_register]}" rel="nofollow">注册</a>
+	{/if}
+	</p>
+</div>
+{if $DT[follow]}
+<div class="mm-stats">
+	<ul>
+	<a href="{$MODULE[2][linkurl]}follow.php?action=index" rel="nofollow"><li><i>{numtoread($_follows)}</i><span>关注</span></li></a>
+	<a href="{$MODULE[2][linkurl]}follow.php?action=fans" rel="nofollow"><li><div><i>{numtoread($_fans)}</i><span>粉丝</span></div></li></a>
+	<a href="{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}" rel="nofollow"><li><i>{if $moduleid==20}{numtoread($_moments)}{else}{my_stats($_userid)}{/if}</i><span>{$MOD[name]}</span></li></a>
+	</ul>
+</div>
+<div class="mm-post">
+	<a href="javascript:;" onclick="Dwidget('{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&action=add', '发布{$MOD[name]}', 1220);"><div class="post0">发布{$MOD[name]}</div></a>
+	<a href="{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}" rel="nofollow"><div class="post1">管理{$MOD[name]}</div></a>
+</div>
+{/if}

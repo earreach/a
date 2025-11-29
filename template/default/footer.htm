@@ -1,0 +1,42 @@
+
+<div class="b10" id="footb"></div>
+<div class="m">
+	<div class="foot_page">
+	<a href="{$MODULE[1][linkurl]}">网站首页</a>
+	<!--{tag("table=webpage&condition=item=1&areaid=$cityid&order=listorder desc,itemid desc&template=list-webpage")}-->
+	{if $EXT[sitemap_enable]} &nbsp;|&nbsp; <a href="{$MODULE[1][linkurl]}sitemap/">网站地图</a>{/if}
+	{if $EXT[spread_enable]} &nbsp;|&nbsp; <a href="{$EXT[spread_url]}">排名推广</a>{/if}
+	{if $EXT[ad_enable]} &nbsp;|&nbsp; <a href="{$EXT[ad_url]}">广告服务</a>{/if}
+	{if $EXT[gift_enable]} &nbsp;|&nbsp; <a href="{$EXT[gift_url]}">积分换礼</a>{/if}
+	{if $EXT[guestbook_enable]} &nbsp;|&nbsp; <a href="{$EXT[guestbook_url]}">网站留言</a>{/if}
+	{if $EXT[feed_enable]} &nbsp;|&nbsp; <a href="{$EXT[feed_url]}">RSS订阅</a>{/if}
+	{if $EXT[guestbook_report]} &nbsp;|&nbsp; <a href="javascript:Dreport({$moduleid}, {$itemid}, 0);">违规举报</a>{/if}
+	{if $DT[icpno]} &nbsp;|&nbsp; <a href="https://beian.miit.gov.cn/" target="_blank">{$DT[icpno]}</a>{/if}
+	{if $DT[wano]} &nbsp;|&nbsp; <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode={$DT[gano]}" target="_blank">{$DT[wano]}</a>{/if}
+	</div>
+</div>
+<div class="m">
+	<div class="foot">
+		<div id="copyright">{$DT[copyright]}</div>
+		{if DT_DEBUG}<div>{debug()}</div>{/if}
+		<div id="powered"><a href="https://www.destoon.com/" target="_blank"><img src="{DT_STATIC}image/powered.gif" width="136" height="10" alt="Powered By DESTOON" title="Powered By DESTOON"/></a></div>
+	</div>
+</div>
+<!--[以下为系统关键代码，请勿删除]-->
+<div class="back2top"><a href="javascript:void(0);" title="返回顶部">&nbsp;</a></div>
+<script type="text/javascript">
+$(function(){
+{if $destoon_task}
+Dtask('{$destoon_task}', {$DT[stats]});
+{else}
+{php include load('api/task.inc');}
+{/if}
+{if $lazy}
+$('img').lazyload();
+{/if}
+Dhot();
+Dfixon();
+});
+</script>
+</body>
+</html>

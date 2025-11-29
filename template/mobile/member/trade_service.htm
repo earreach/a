@@ -1,0 +1,141 @@
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">服务详情</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=update&step=detail&itemid={if $O[pid]}{$O[pid]}{else}{$O[oid]}{/if}" data-transition="none">订单详情</a>
+<a href="?action=service" data-direction="reverse">售后服务</a>
+</div>
+</div>
+
+{template 'goods_service', 'chip'}
+{load('mall.css')}
+{load('mall.js')}
+{load('player.js')}
+<div class="ui-head"><i></i><b>服务详情</b></div>
+<div class="content">
+联系买家：<a href="{userurl($O[buyer], 'file=contact')}" class="b">{$O[buyer]}</a><br/>
+申请时间：{$O[adddate]}<br/>
+最后更新：{$O[updatedate]}<br/>
+服务类型：{$dservice[$O[typeid]]}<br/>
+申请原因：{$O[buyer_title]}<br/>
+{if $O[buyer_reason]}
+补充说明：<br/>
+{nl2br($O[buyer_reason])}<br/>
+{/if}
+
+{if $O[buyer_thumbs] || $O[buyer_video]}
+申请凭据：<br/>
+<div class="comment-r">
+<ul id="{$itemid}0">			
+{if $O[buyer_video]}<li><img src="{DT_STATIC}image/play.gif" onclick="comment_thumb_show({$itemid}0, this);" data-video="{$O[buyer_video]}"/></li>{/if}
+{loop $O[buyer_thumbs] $t}
+{if $t}<li><img src="{$t}" onclick="comment_thumb_show({$itemid}0, this);"/></li>{/if}
+{/loop}
+</ul>
+</div>
+<p id="thumbshow-{$itemid}0" onclick="comment_thumb_next({$itemid}0);"></p>
+{/if}
+服务状态：{$dservice_status[$O[status]]}<br/>
+{if $O[seller_title]}
+操作原因：{$O[seller_title]}<br/>
+{/if}
+{if $O[seller_reason]}
+补充说明：<br/>
+{nl2br($O[seller_reason])}<br/>
+{/if}
+
+{if $O[seller_thumbs] || $O[seller_video]}
+操作凭据：<br/>
+<div class="comment-r">
+<ul id="{$itemid}1">			
+{if $O[seller_video]}<li><img src="{DT_STATIC}image/play.gif" onclick="comment_thumb_show({$itemid}1, this);" data-video="{$O[seller_video]}"/></li>{/if}
+{loop $O[seller_thumbs] $t}
+{if $t}<li><img src="{$t}" onclick="comment_thumb_show({$itemid}1, this);"/></li>{/if}
+{/loop}
+</ul>
+</div>
+<p id="thumbshow-{$itemid}1" onclick="comment_thumb_next({$itemid}1);"></p>
+{/if}
+
+{if $O[seller_note]}
+备注事项：<br/>
+{nl2br($O[seller_note])}<br/>
+{/if}
+</div>
+
+{if $O[seller_address]}
+<div class="ui-head"><i></i><b>寄回地址</b></div>
+<div class="content">
+{if $DT[postcode]}
+邮政编码：{$O[seller_postcode]}{if $O[seller_postcode]}<img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#seller_postcode" onclick="Dtoast('{$js_pageid}', '邮编已复制');"/>{/if}<br/>
+{/if}
+收件地址：{$O[seller_address]}{if $O[seller_address]}<img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#seller_address" onclick="Dtoast('{$js_pageid}', '地址已复制');"/>{/if}<br/>
+收件姓名：{$O[seller_name]}{if $O[seller_name]}<img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#seller_name" onclick="Dtoast('{$js_pageid}', '姓名已复制');"/>{/if}<br/>
+收件手机：{$O[seller_mobile]}{if $O[seller_mobile]}<img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#seller_mobile" onclick="Dtoast('{$js_pageid}', '手机已复制');"/>{/if}<br/>
+{if $O[seller_send_time]}
+发货日期：{timetodate($O[seller_send_time], 3)}<br/>
+快递类型：{$O[seller_send_type]}<br/>
+快递单号：{$O[seller_send_no]}{if $O[seller_send_type] && $O[seller_send_no]}<img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#seller_send_no" onclick="Dtoast('{$js_pageid}', '快递单号已复制');"/> &nbsp; <a href="javascript:;" class="t" onclick="Ds('express_seller');$('#seller_express').load(AJPath+'?action=express&moduleid=2&auth={$seller_auth}');">[快递追踪]</a>{/if}<br/>
+<div id="express_seller" style="display:none;"><div id="seller_express" style="font-size:12px;">正在查询...</div></div>
+快递状态：{$dsend_status[$O[seller_send_status]]}<br/>
+{/if}
+</div>
+{/if}
+
+{if $O[buyer_address]}
+<div class="ui-head"><i></i><b>收货地址</b></div>
+<div class="content">
+{if $DT[postcode]}
+邮政编码：{$O[buyer_postcode]}{if $O[buyer_postcode]}<img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#buyer_postcode" onclick="Dtoast('{$js_pageid}', '邮编已复制');"/>{/if}<br/>
+{/if}
+收件地址：{$O[buyer_address]}{if $O[buyer_address]}<img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#buyer_address" onclick="Dtoast('{$js_pageid}', '地址已复制');"/>{/if}<br/>
+收件姓名：{$O[buyer_name]}{if $O[buyer_name]}<img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#buyer_name" onclick="Dtoast('{$js_pageid}', '姓名已复制');"/>{/if}<br/>
+收件手机：{$O[buyer_mobile]}{if $O[buyer_mobile]}<img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#buyer_mobile" onclick="Dtoast('{$js_pageid}', '手机已复制');"/>{/if}<br/>
+{if $O[buyer_send_time]}
+发货日期：{timetodate($O[buyer_send_time], 3)}<br/>
+快递类型：{$O[buyer_send_type]}<br/>
+快递单号：{$O[buyer_send_no]}{if $O[buyer_send_type] && $O[buyer_send_no]}<img src="{DM_SKIN}ico-copy.png" class="cp" title="复制" data-clipboard-action="copy" data-clipboard-target="#buyer_send_no" onclick="Dtoast('{$js_pageid}', '快递单号已复制');"/> &nbsp; <a href="javascript:;" class="t" onclick="Ds('express_buyer');$('#buyer_express').load(AJPath+'?action=express&moduleid=2&auth={$buyer_auth}');">[快递追踪]</a>{/if}<br/>
+<div id="express_buyer" style="display:none;"><div id="buyer_express" style="font-size:12px;">正在查询...</div></div>
+快递状态：{$dsend_status[$O[buyer_send_status]]}<br/>
+{/if}
+</div>
+{/if}
+<div class="blank-20"></div>
+{if $O[status] == 0}
+<div class="list-btn"><input type="button" value=" 受 理 " class="btn-green" onclick="Go('?action=process&step=check&itemid={$O[itemid]}');"/></div>
+{elseif $O[status] == 4}
+<div class="list-btn"><input type="button" value=" 验 收 " class="btn-green" onclick="Go('?action=process&step=receive&itemid={$O[itemid]}');"/></div>
+{elseif $O[status] == 5}
+<div class="list-btn"><input type="button" value=" 发 回 " class="btn-green" onclick="Go('?action=process&step=send&itemid={$O[itemid]}');"/></div>
+{/if}
+<div class="blank-20"></div>
+<div style="z-index:1000;position:absolute;top:-10000px;">
+<textarea id="seller_postcode">{$O[seller_postcode]}</textarea>
+<textarea id="seller_address">{$O[seller_address]}</textarea>
+<textarea id="seller_name">{$O[seller_name]}</textarea>
+<textarea id="seller_mobile">{$O[seller_mobile]}</textarea>
+<textarea id="seller_send_no">{$O[seller_send_no]}</textarea>
+<textarea id="buyer_postcode">{$O[buyer_postcode]}</textarea>
+<textarea id="buyer_address">{$O[buyer_address]}</textarea>
+<textarea id="buyer_name">{$O[buyer_name]}</textarea>
+<textarea id="buyer_mobile">{$O[buyer_mobile]}</textarea>
+<textarea id="buyer_send_no">{$O[buyer_send_no]}</textarea>
+</div>
+{load('clipboard.min.js')}
+<script type="text/javascript">
+var clipboard = new Clipboard('[data-clipboard-action]');
+</script>

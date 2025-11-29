@@ -1,0 +1,90 @@
+{template 'header'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{if $action == 'type'}{$head_title}{else}<input type="search" name="kw" value="{$kw}" placeholder="{$MOD[name]}搜索" readonly onclick="Go('{DT_MOB}api/search.php?mid={$moduleid}');"/>{/if}</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div class="ui-viewer" id="viewer-{$js_pageid}"></div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+{if $action == 'type'}
+<a href="{$linkurl}" data-transition="reverse">返回{$MOD[name]}</a>
+{else}
+<a href="{DT_MOB}api/share.php?mid={$moduleid}&itemid={$itemid}" data-transition="slideup">分享好友</a>
+{/if}
+<a href="{$MOD[mobile]}" data-direction="reverse">{$MOD[name]}首页</a>
+<a href="{DT_MOB}{rewrite('channel.php?mid='.$moduleid)}" data-transition="none">{$MOD[name]}分类</a>
+<a href="{DT_MOB}channel.php" data-direction="reverse">切换频道</a>
+</div>
+</div>
+
+{if $action == 'type'}
+	{if $tags}
+	<div id="list-{$js_pageid}" class="main">{template 'list-special-type', 'tag'}</div>
+	<div id="load-{$js_pageid}" class="ui-load"></div>
+	{else}
+	{template 'empty', 'chip'}
+	{/if}
+	{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+{else}
+	<div class="title"><h1>{$title}</h1></div>
+	{if $islink}
+	<div class="info"><i class="ui-ico-time">{$editdate}</i>{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}</div>
+	<div class="content"><a href="{$linkurl}" rel="external" class="b">{$linkurl}</a><br/></div>
+	{else}
+	<div class="info"><i class="ui-ico-time">{$editdate}</i>{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}{if $MOD[hits]}<i class="ui-ico-hits ui-fr" id="hits">{$hits}</i>{/if}<i class="ui-ico-comm ui-fr">{$comments}</i></div>
+	{if $banner}<img src="{$banner}" style="width:100%;"/>{/if}
+	<div class="content" data-content="{$js_pageid}">
+		{if $user_status == 3}
+		{$content}
+		{else}
+		{template 'content', 'chip'}
+		{/if}
+	</div>
+	{if $cfg_photo}
+	<div class="main">
+		<div class="ui-head"><i></i><b>图片报道</b></div>
+		<div class="ui-main">
+			<div class="blank-10"></div>
+			<!--{tag("moduleid=$moduleid&table=special_item_$moduleid&condition=specialid=$itemid and level=3 and thumb<>''&pagesize=$cfg_photo&order=addtime desc&datetype=0&template=list-thumb")}-->
+		</div>
+	</div>
+	{/if}
+	{if $cfg_video}
+	<div class="main">
+		<div class="ui-head"><i></i><b>视频报道</b></div>
+		<div class="ui-main">			
+			<div class="blank-10"></div>
+			<!--{tag("moduleid=$moduleid&table=special_item_$moduleid&condition=specialid=$itemid and level=6 and thumb<>''&pagesize=$cfg_video&order=addtime desc&datetype=0&template=list-thumb")}-->
+		</div>
+	</div>
+	{/if}
+	{if $cfg_type}
+	{loop $TYPE $k $v}
+	<div class="main">
+		<div class="ui-head"><a href="{$v[linkurl]}"><span>更多</span></a><i></i><b>{$v[typename]}</b></div>
+		<div class="ui-main">			
+			<div class="blank-10"></div>
+			<!--{tag("table=special_item_$moduleid&condition=specialid=$itemid and typeid=".$v[typeid]."&order=addtime desc&pagesize=$cfg_type&datetype=2&template=list-special-type")}-->
+		</div>
+	</div>
+	{/loop}
+	{/if}
+	{/if}
+	<div class="tool">
+	{if $MOD[show_like]}<div class="like" onclick="Dlike({$moduleid}, {$itemid}, 0);">点赞 <b id="like-{$moduleid}-{$itemid}-0">{$likes}</b></div>{/if}
+	{if $MOD[show_hate]}<div class="hate" onclick="Dhate({$moduleid}, {$itemid}, 0);">反对 <b id="hate-{$moduleid}-{$itemid}-0">{$hates}</b></div>{/if}
+	{if $MOD[show_report]}<div class="report" onclick="Dreport({$moduleid}, {$itemid}, 0);">举报</div>{/if}
+	{if $MOD[show_favorite]}<div class="favorite" onclick="Dfavor({$moduleid}, {$itemid});">收藏 <b>{$favorites}</b></div>{/if}
+	{if $MOD[fee_award]}<div class="award" onclick="Go('{$MODULE[2][mobile]}award.php?mid={$moduleid}&itemid={$itemid}');">打赏 <b>{$awards}</b></div>{/if}
+	{if $could_comment}<div class="comment" onclick="Go('{$EXT[comment_mob]}{rewrite('index.php?mid='.$moduleid.'&itemid='.$itemid)}');">评论 <b>{$comments}</b></div>{/if}
+	{if $MOD[show_share]}<div class="share" onclick="Go('{DT_MOB}api/share.php?mid={$moduleid}&itemid={$itemid}');">分享 <b>{$shares}</b></div>{/if}
+	</div>
+{/if}
+{template 'footer'}

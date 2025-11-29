@@ -1,0 +1,12 @@
+<?php exit;?>
+oid,ID,
+itemid,礼品ID,
+credit,兑换积分,
+username,会员名,
+ip,IP,
+addtime,下单时间,
+edittime,更新时间,
+express,快递,
+expressid,单号,
+status,状态,
+note,备注,

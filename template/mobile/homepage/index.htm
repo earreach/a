@@ -1,0 +1,111 @@
+{template 'header', $template}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right"><a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="{DT_MOB}api/share.php?mid={$moduleid}&itemid={$COM[userid]}">分享好友</a>
+<a href="{$MOD[mobile]}" data-direction="reverse" rel="external">{$MOD[name]}列表</a>
+<a href="{DT_MOB}" data-direction="reverse" rel="external">返回主站</a>
+</div>
+</div>
+
+<div class="userinfo">
+<img src="{$COM[thumb]}"/></a><i class="userinfo-v{$COM[validate]}"></i>
+<ul>
+<li>
+<a href="{$COM[linkurl]}" rel="external"><b>{if $COM[shop] && $COM[vshop]}{$COM[shop]}{else}{$COM[company]}{/if}</b></a>
+{if $DT[follow]}
+{if followed($COM[userid])}
+<div class="follow1" onclick="Dfollow('{$COM[username]}');" id="follow-{$COM[username]}" title="已关注，点击取消"><b>已关注</b><i>{numtoread($COM[fans])}</i></div>
+{else}
+<div class="follow0" onclick="Dfollow('{$COM[username]}');" id="follow-{$COM[username]}" title="未关注，点击关注"><b>加关注</b><i>{numtoread($COM[fans])}</i></div>
+{/if}
+{/if}
+</li>
+{if $UG[type]}
+<li><a href="{userurl($username, 'file=introduce', $domain)}"><s>{if $COM[business]}{$COM[business]}{else}没有填写主营业务~~{/if}</s></a></li>
+{else}
+<li><a href="{userurl($username, 'file=introduce', $domain)}"><s>{if $COM[sign]}{$COM[sign]}{else}没有留下签名~~{/if}</s></a></li>
+{/if}
+</ul>
+</div>
+
+{if $COM[vip]}
+<div class="contact-vip" style="margin:0"><b>{$UG[groupname]}</b><span>第{vip_year($COM[fromtime])}年</span></div>
+{else}
+<div class="contact-com" style="margin:0"><b>{$UG[groupname]}</b><span>第{vip_year($COM[regtime])}年</span></div>
+{/if}
+
+{if $bannert == 2}
+{if $banner1}
+{load('slide.js')}
+<div id="mobile-slide-{$js_pageid}">
+{if $banner1}{if $bannerlink1}<a href="{$bannerlink1}" target="_blank" rel="external">{else}<a href="{$COM[linkurl]}">{/if}<img src="{$banner1}" style="width:100%;"/></a>{/if}
+{if $banner2}{if $bannerlink2}<a href="{$bannerlink2}" target="_blank" rel="external">{else}<a href="{$COM[linkurl]}">{/if}<img src="{$banner2}" style="width:100%;"/></a>{/if}
+{if $banner3}{if $bannerlink3}<a href="{$bannerlink3}" target="_blank" rel="external">{else}<a href="{$COM[linkurl]}">{/if}<img src="{$banner3}" style="width:100%;"/></a>{/if}
+{if $banner4}{if $bannerlink4}<a href="{$bannerlink4}" target="_blank" rel="external">{else}<a href="{$COM[linkurl]}">{/if}<img src="{$banner4}" style="width:100%;"/></a>{/if}
+{if $banner5}{if $bannerlink5}<a href="{$bannerlink5}" target="_blank" rel="external">{else}<a href="{$COM[linkurl]}">{/if}<img src="{$banner5}" style="width:100%;"/></a>{/if}
+</div>
+<script type="text/javascript">
+$(function(){
+	new dslide('mobile-slide-{$js_pageid}');
+});
+</script>
+{/if}
+{elseif $bannert == 1}
+{if $bannerf}{DC::player($bannerf, '100%', 270, 1, 0, ' muted="muted"')}{/if}
+{else}
+{if $banner}<img src="{$banner}" width="100%"/>{/if}
+{/if}
+<div class="gird-4" style="padding:24px 0 0 0;">
+	<ul>
+		{loop $M $i $m}
+		{if $i < 7}<li><a href="{$m[linkurl]}"><img src="{$m[icon]}" width="24" height="24"/><span>{$m[name]}</span></a></li>{/if}
+		{if $i == 6}<li><a href="{userurl($username, 'file=channel', $domain)}"><img src="{DM_SKIN}mod-more.png" width="24" height="24"/><span>更多</span></a></li>{/if}
+		{/loop}
+	</ul>
+</div>
+{if $my_mall && isset($MODULE[$my_mall])}
+<div class="ui-head"><a href="{userurl($username, 'file='.$MODULE[$my_mall]['moduledir'], $domain)}"><span>更多</span></a><i></i><b>商品推荐</b></div>
+<div class="ui-main">
+	<!--{php $tags=tag("moduleid=$my_mall&condition=status=3 and username='$username' and elite=1&order=addtime desc&pagesize=10&template=null");}-->
+	{loop $tags $k $t}
+	<div class="ui-list-img">
+	<div>
+	<a href="{userurl($username, 'file='.$MODULE[$my_mall]['moduledir'].'&itemid='.$t[itemid], $domain)}"><img src="{if $t[thumb]}{$t[thumb]}{else}{DM_SKIN}80x60.png{/if}" alt=""/></a>
+	<p><i class="ui-ico-info ui-fr">{$t[orders]}成交</i><i class="ui-ico-price">{$DT[money_sign]}{$t[price]}</i></p>
+	<a href="{userurl($username, 'file='.$MODULE[$my_mall]['moduledir'].'&itemid='.$t[itemid], $domain)}"><strong>{$t[title]}</strong></a>
+	</div>
+	</div>
+	{/loop}
+</div>
+<div style="padding:32px;"><a href="{userurl($username, 'file='.$MODULE[$my_mall]['moduledir'], $domain)}"><div class="btn">更多推荐</div></a></div>
+{elseif $my_sell && isset($MODULE[$my_sell])}
+<div class="ui-head"><a href="{userurl($username, 'file='.$MODULE[$my_sell]['moduledir'], $domain)}"><span>更多</span></a><i></i><b>产品推荐</b></div>
+<div class="ui-main">
+	<!--{php $tags=tag("moduleid=$my_sell&condition=status=3 and thumb<>'' and username='$username' and elite=1&order=addtime desc&pagesize=10&template=null");}-->
+	{loop $tags $k $t}
+	<div class="ui-list-mix">
+	<a href="{userurl($username, 'file='.$MODULE[$my_sell]['moduledir'].'&itemid='.$t[itemid], $domain)}"><img src="{if $t[thumb]}{$t[thumb]}{else}{DM_SKIN}80x60.png{/if}" alt=""/></a>
+	<ul>
+	<li><a href="{userurl($username, 'file='.$MODULE[$my_sell]['moduledir'].'&itemid='.$t[itemid], $domain)}"><strong>{$t[title]}</strong></a></li>
+	{if $t[unit] && $t[price]>0}
+	<li><p><i class="ui-ico-info ui-fr">{$t[orders]}成交</i><i class="ui-ico-price">{$DT[money_sign]}{$t[price]}</i></p></li>
+	{else}
+	<li><p><i class="ui-ico-info ui-fr">{$t[messages]}询价</i><i class="ui-ico-time">面议</i></p></li>
+	{/if}
+	</ul>
+	</div>
+	{/loop}
+</div>
+<div style="padding:32px;"><a href="{userurl($username, 'file='.$MODULE[$my_sell]['moduledir'], $domain)}"><div class="btn">更多推荐</div></a></div>
+{/if}
+{template 'footer', $template}

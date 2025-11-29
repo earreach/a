@@ -1,0 +1,22 @@
+<div class="bd">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="80">图片</th>
+<th>商品信息</th>
+<th width="120">单价</th>
+<th width="100">数量</th>
+<th width="120">实付</th>
+<th width="120">类型</th>
+<th width="120">状态</th>
+</tr>
+<tr align="center">
+<td><a href="javascript:_preview('{$O[thumb]}');"><img src="{if $O[thumb]}{$O[thumb]}{else}{DT_STATIC}image/nopic60.png{/if}" width="60" height="60" onerror="this.src=errimg;"/></a></td>
+<td align="left" valign="top" class="f_gray lh18"><a href="{$O[linkurl]}" target="_blank" class="t">{$O[title]}</a><br/>{$O[par]}{if isset($O[sku]) && $O[sku]}<br/>仓储货位：{$O[sku][location]} 库存：{$O[sku][amount]}{/if}</td>
+<td>{$DT[money_sign]}{$O[price]}</td>
+<td>{$O[number]}</td>
+<td>{$DT[money_sign]}{$O[amount]}</td>
+<td>{$dservice[$O[typeid]]}</td>
+<td>{$dservice_status[$O[status]]}</td>
+</tr>
+</table>
+</div>

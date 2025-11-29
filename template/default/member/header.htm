@@ -1,0 +1,264 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="{DT_CHARSET}"/>
+<title>{if $head_title}{$head_title}{$DT[seo_delimiter]}{/if}会员中心{$DT[seo_delimiter]}{if $city_sitename}{$city_sitename}{else}{$DT[sitename]}{/if}{$DT[seo_delimiter]}Powered By DESTOON</title>
+<meta name="robots" content="nofollow"/>
+<meta name="generator" content="DESTOON - www.destoon.com"/>
+<meta http-equiv="x-ua-compatible" content="IE=8"/>
+<link rel="shortcut icon" href="{DT_PATH}favicon.ico"/>
+<link rel="bookmark" href="{DT_PATH}favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="{DT_STATIC}member/style.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<link rel="stylesheet" type="text/css" href="{DT_STATIC}member/panel.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<link rel="stylesheet" type="text/css" href="{DT_PATH}file/style/member.reset.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<script type="text/javascript" src="{DT_PATH}lang/{DT_LANG}/lang.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_PATH}file/script/config.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{if strpos($DT_MBS, 'IE') === false}
+<script type="text/javascript" src="{DT_STATIC}script/jquery-3.6.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{else}
+<script type="text/javascript" src="{DT_STATIC}script/jquery-1.12.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{/if}
+<script type="text/javascript" src="{DT_STATIC}script/common.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_STATIC}script/page.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_STATIC}script/panel.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_STATIC}script/reset.js?v=<?php echo DT_DEBUG ? DT_TIME : DT_REFRESH;?>"></script>
+<script type="text/javascript" src="{DT_STATIC}script/member.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{if $head_mobile && $EXT[mobile_goto]}<script type="text/javascript">GoMobile('{$head_mobile}');</script>{/if}
+<!--[以上为系统关键代码，请勿删除]-->
+</head>
+<body>
+<div id="msgbox" style="display:none;"></div>
+{dmsg()}
+<div class="head{if isset($widget)} dsn{/if}" id="head">
+	<div class="head_m">
+		<div class="head_logo"><a href="{DT_PATH}" title="网站首页"><img src="{DT_PATH}apple-touch-icon-precomposed.png"/></a></div>
+		<div class="head_text"><a href="{$MODULE[2][linkurl]}{if $_cid}child.php{/if}" title="会员中心">会员中心</a></div>
+		<div class="head_main">
+		<ul>
+		{if $_userid}
+		{if $_cid}
+		<a href="{$MODULE[2][linkurl]}child.php"><li class="menu_1">我的面板</li></a>
+		{else}
+		<a href="{$MODULE[2][linkurl]}"><li class="menu_{if $menu_id==0}1{else}2{/if}">会员首页</li></a>
+		<a href="{$MODULE[2][linkurl]}{$DT[file_my]}"><li class="menu_{if $menu_id==1}1{else}2{/if}">信息管理</li></a>
+		{if $MG[biz]}<a href="{$MODULE[2][linkurl]}biz.php"><li class="menu_{if $menu_id==2}1{else}2{/if}">商户后台</li></a>{/if}
+		{/if}
+		{/if}
+		<a href="{DT_PATH}"><li class="menu_{if $_userid}2{else}1{/if}">网站首页</li></a>
+		</ul>
+		</div>
+		<div class="head_user">
+			<ul>
+			{if $_userid}
+			{if $_cid}
+			<li><a href="child.php">{$_cname}</a></li>
+			{else}
+			<li id="my_profile"><a href="account.php" onmouseover="Dcard('member',this);"><img src="{useravatar($_username, 'small')}" width="24" height="24" id="myavatar"/></a></li>
+			<li id="destoon_message" onmouseover="Dcard('message',this);"><a href="message.php">信件</a>{if $_message}<em>{if $_message>99}99+{else}{$_message}{/if}</em>{/if}</li>
+			{if $DT[im_web]}<li id="destoon_chat" onmouseover="Dcard('chat',this);"><a href="im.php">交谈</a>{if $_chat}<em>{if $_chat>99}99+{else}{$_chat}{/if}</em>{/if}</li>{/if}
+			{if $DT[max_cart]}<li id="destoon_cart" onmouseover="Dcard('cart',this);"><a href="cart.php">购物车</a><em style="display:none;"></em></li>{/if}
+			{if $head_mobile}<li id="destoon_scan"><a href="account.php?action=scan&forward={urlencode($head_mobile)}">手机版</a></li>{/if}
+			{/if}
+			<li><a href="logout.php?forward=">退出</a></li>
+			{if $admin_user}<li><a href="index.php?action=logout">注销授权</a></li>{/if}
+			{else}
+			<li><a href="{$MODULE[2][linkurl]}{$DT[file_login]}" id="link_login">立即登录</a></li>
+			<li><a href="{$MODULE[2][linkurl]}{$DT[file_register]}" id="link_register">注册会员</a></li>
+			{/if}
+			</ul>		
+		</div>
+		<div class="c_b"></div>
+	</div>
+</div>
+<div class="head_s" id="destoon-space">&nbsp;</div>
+<div id="destoon-card"></div>
+<div class="main_tb">
+<table cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td valign="top" class="side{if isset($widget)} dsn{/if}" id="side">
+{if $_cid}
+<!--[子账号菜单]-->
+	<div class="side_head"><div><img src="{DT_STATIC}member/side-user.png" align="absmiddle"/>我的面板</div></div>
+	<div class="side_body">
+		<ul>
+		{loop $_child_menu $v}
+			<li class="side_a" onmouseover="v(this.id);" onmouseout="t(this.id);"  id="{$v[id]}"><a href="{$v[url]}" class="n">{$v[name]}{if $v[mid]}管理{/if}</a></li>
+		{/loop}
+		</ul>
+	</div>
+{else}
+<!--[会员菜单]-->
+{if $menu_id == 2}
+
+{if $_userid}
+	<div class="side_head"><div><img src="{DT_STATIC}member/side-biz.png" align="absmiddle"/>商户服务</div></div>
+	<div class="side_body">
+		<ul>
+			{if $MG[trade_order]}
+			<li class="side_a" id="trade"><span class="f_r"><a href="trade.php?action=service" class="m">售后</a></span><a href="trade.php" class="{if $_userid}n{else}f{/if}">订单管理</a></li>
+			{/if}
+			{if $MG[group_order]}
+			{loop $MODULE $m}
+			{if $m[module] == 'group'}
+			<li class="side_a" id="group-{$m[moduleid]}"><span class="f_r"><a href="group.php?mid={$m[moduleid]}&action=express" class="m">快递</a></span><a href="group.php?mid={$m[moduleid]}" class="{if $_userid}n{else}f{/if}">{$m[name]}订单</a></li>
+			{/if}
+			{/loop}
+			{/if}
+			{if $MG[agent]}
+			<li class="side_a" id="agent"><span class="f_r"><a href="agent.php?action=add" class="m">新增</a></span><a href="agent.php" class="{if $_userid}n{else}f{/if}">代理管理</a></li>
+			{/if}
+			{if $MG[stock_limit]>-1}
+			<li class="side_a" id="stock"><span class="f_r"><a href="stock.php?action=add" class="m">新增</a></span><a href="stock.php" class="{if $_userid}n{else}f{/if}">库存管理</a></li>
+			{/if}
+			{if $MG[promo_limit]>-1}
+			<li class="side_a" id="promo"><span class="f_r"><a href="promo.php?action=add" class="m">新增</a></span><a href="promo.php" class="{if $_userid}n{else}f{/if}">优惠促销</a></li>
+			{/if}
+			{if $MG[child_limit]>-1}
+			<li class="side_a" id="child"><span class="f_r"><a href="child.php?action=add" class="m">新增</a></span><a href="child.php" class="{if $_userid}n{else}f{/if}">子 账 号</a></li>
+			{/if}
+			{if $MG[vdeposit]}
+			<li class="side_a" id="deposit"><span class="f_r"><a href="deposit.php?action=add" class="m">增资</a></span><a href="deposit.php" class="{if $_userid}n{else}f{/if}">保 证 金</a></li>
+			{/if}
+			{if $MG[spread] && $EXT[spread_enable]}
+			<li class="side_a" id="spread"><span class="f_r"><a href="spread.php?action=list" class="m">购买</a></span><a href="spread.php" class="{if $MG[spread]}n{else}f{/if}">排名推广</a></li>
+			{/if}
+			{if $MG[ad] && $EXT[ad_enable]}
+			<li class="side_a" id="ad"><span class="f_r"><a href="ad.php?action=list" class="m">购买</a></span><a href="ad.php" class="{if $MG[ad]}n{else}f{/if}">广告预定</a></li>
+			{/if}
+			{if $MG[sms] && $DT[sms]}
+			<li class="side_a" id="sms"><span class="f_r"><a href="sms.php?action=buy" class="m">购买</a></span><a href="sms.php" class="{if $MG[sms]}n{else}f{/if}">手机短信</a></li>
+			{/if}
+			{if $MG[alert_limit]>-1}
+			<li class="side_a" id="alert"><span class="f_r"><a href="alert.php?action=list" class="m">添加</a></span><a href="alert.php" class="{if $MG[alert_limit]>-1}n{else}f{/if}">贸易提醒</a></li>
+			{/if}
+			{if $MG[mail]}
+			<li class="side_a" id="mail"><span class="f_r"><a href="mail.php?action=list" class="m">列表</a></span><a href="mail.php" class="{if $MG[mail]}n{else}f{/if}">邮件订阅</a></li>
+			{/if}
+
+		</ul>
+	</div>
+{/if}
+
+{if $MG[homepage]}
+	<div class="side_head side_btop"><div><img src="{DT_STATIC}member/side-home.png" align="absmiddle"/>商铺管理</div></div>
+	<div class="side_body">
+		<ul>
+			{if $MG[home]}
+			<li class="side_a" id="homepage"><span class="f_r"><a href="{DT_PATH}index.php?homepage={$_username}&update=1" class="m" target="_blank">预览</a></span><a href="home.php" class="{if $MG[home]}n{else}f{/if}">商铺设置</a></li>
+			{/if}
+			{if $MG[style]}
+			<li class="side_a" id="style"><span class="f_r"><a href="style.php?action=order" class="m">订单</a></span><a href="style.php" class="{if $MG[style]}n{else}f{/if}">模板设置</a></li>
+			{/if}
+			{if $MG[stats_view] && $DT[stats]}
+			<li class="side_a" id="stats"><span class="f_r"><a href="stats.php?action=report" class="m">报表</a></span><a href="stats.php" class="{if $MG[stats_view]>-1}n{else}f{/if}">流量统计</a></li>
+			{/if}
+			{if $MG[news_limit]>-1}
+			<li class="side_a" id="news"><span class="f_r"><a href="news.php?action=add" class="m">发布</a></span><a href="news.php" class="{if $MG[news_limit]>-1}n{else}f{/if}">公司新闻</a></li>
+			{/if}
+			{if $MG[page_limit]>-1}
+			<li class="side_a" id="page"><span class="f_r"><a href="page.php?action=add" class="m">添加</a></span><a href="page.php" class="{if $MG[page_limit]>-1}n{else}f{/if}">公司单页</a></li>
+			{/if}
+			{if $MG[honor_limit]>-1}
+			<li class="side_a" id="honor"><span class="f_r"><a href="honor.php?action=add" class="m">添加</a></span><a href="honor.php" class="{if $MG[honor_limit]>-1}n{else}f{/if}">荣誉资质</a></li>
+			{/if}
+			{if $MG[link_limit]>-1}
+			<li class="side_a" id="link"><span class="f_r"><a href="link.php?action=add" class="m">添加</a></span><a href="link.php" class="{if $MG[link_limit]>-1}n{else}f{/if}">友情链接</a></li>
+			{/if}
+		</ul>
+	</div>
+{/if}
+
+{elseif $menu_id == 1}
+
+{if $MYMODS}
+	<div class="side_head"><div><img src="{DT_STATIC}member/side-post.png" align="absmiddle"/>信息管理</div></div>
+	<div class="side_body">
+		<ul>
+		{loop $MENUMODS $k $v}
+			{if $MODULE[$v][module] == 'club'}
+			<li class="side_a"  id="mid_{$v}"><span class="f_r"><a href="{$DT[file_my]}?mid={$v}&job=group&action=add" class="m">创建</a></span><a href="{$DT[file_my]}?mid={$v}" class="{if in_array($v, $MYMODS)}n{else}f{/if}">{$MODULE[$v][name]}管理</a></li>
+			{else}
+			<li class="side_a"  id="mid_{$v}"><span class="f_r"><a href="{$DT[file_my]}?mid={$v}&action=add" class="m">发布</a></span><a href="{$DT[file_my]}?mid={$v}" class="{if in_array($v, $MYMODS)}n{else}f{/if}">{$MODULE[$v][name]}管理</a></li>
+			{/if}
+		{/loop}
+		</ul>
+	</div>
+{/if}
+
+{else}
+
+{if $_userid}
+	<div class="side_head"><div><img src="{DT_STATIC}member/side-user.png" align="absmiddle"/>会员服务</div></div>
+	<div class="side_body">
+		<ul>
+			{if $MG[inbox_limit]>-1}
+			<li class="side_a" id="message"><span class="f_r"><a href="message.php?action=send" class="m">发信</a></span><a href="message.php" class="{if $MG[inbox_limit]>-1}n{else}f{/if}">站内信件</a>{if $_message}<em>{if $_message>99}99+{else}{$_message}{/if}</em>{/if}</li>
+			{/if}
+			{if $MG[chat] && $DT[im_web]}
+			<li class="side_a" id="im"><span class="f_r"><a href="im.php?action=friend" class="m">好友</a></span><a href="im.php" class="{if $MG[inbox_limit]>-1}n{else}f{/if}">站内交谈</a>{if $_chat}<em>{if $_chat>99}99+{else}{$_chat}{/if}</em>{/if}</li>
+			{/if}
+			{if $MG[friend_limit]>-1}
+			<li class="side_a" id="friend"><span class="f_r"><a href="friend.php?action=find" class="m">添加</a></span><a href="friend.php" class="{if $MG[friend_limit]>-1}n{else}f{/if}">我的好友</a></li>
+			{/if}
+			{if $DT[follow]}
+			<li class="side_a" id="follow"><span class="f_r"><a href="follow.php?action=fans" class="m">粉丝</a></span><a href="follow.php" class="{if $_userid}n{else}f{/if}">我的关注</a></li>
+			{/if}
+			{if $MG[favorite_limit]>-1}
+			<li class="side_a" id="favorite"><span class="f_r"><a href="favorite.php?action=add" class="m">添加</a></span><a href="favorite.php" class="{if $MG[favorite_limit]>-1}n{else}f{/if}">我的收藏</a></li>
+			{/if}
+			{if $DT[history_module]}
+			<li class="side_a" id="history"><span class="f_r"><a href="history.php?action=visit" class="m">访客</a></span><a href="history.php" class="{if $_userid}n{else}f{/if}">浏览历史</a></li>
+			{/if}
+			{if $MG[comment]}
+			<li class="side_a" id="comment"><span class="f_r"><a href="comment.php?action=my" class="m">我的</a></span><a href="comment.php" class="{if $MG[comment]}n{else}f{/if}">评论管理</a></li>
+			{/if}
+			{if $show_oauth}
+			<li class="side_a" id="oauth"><span class="f_r"><a href="oauth.php?action=login" class="m">记录</a></span><a href="oauth.php" class="{if $_userid}n{else}f{/if}">一键登录</a></li>
+			{/if}
+			{if $MG[vweixin] && $EXT[weixin]}
+			<li class="side_a" id="weixin"><span class="f_r"><a href="weixin.php" class="m">绑定</a></span><a href="weixin.php" class="{if $_userid}n{else}f{/if}">微信关注</a></li>
+			{/if}
+			{if $MG[ask]}
+			<li class="side_a" id="ask"><span class="f_r"><a href="ask.php?action=add" class="m">提问</a></span><a href="ask.php" class="{if $_userid}n{else}f{/if}">客服中心</a></li>
+			{/if}
+			<li class="side_a" id="edit"><span class="f_r"><a href="edit.php?tab=1" class="m">密码</a></span><a href="edit.php" class="{if $_userid}n{else}f{/if}">修改资料</a></li>
+			<li class="side_a" id="account"><span class="f_r"><a href="account.php?action=setting" class="m">设置</a></span><a href="account.php" class="{if $_userid}n{else}f{/if}">账户详情</a></li>
+		</ul>
+	</div>
+{/if}
+
+{if $_userid}
+	<div class="side_head side_btop"><div><img src="{DT_STATIC}member/side-deal.png" align="absmiddle"/>交易管理</div></div>
+	<div class="side_body">
+		<ul>
+			<li class="side_a" id="order"><span class="f_r"><a href="order.php?action=service" class="m">售后</a></span><a href="order.php" class="{if $_userid}n{else}f{/if}">我的订单</a></li>
+			{loop $MODULE $m}
+			{if $m[module] == 'group'}
+			<li class="side_a" id="deal-{$m[moduleid]}"><span class="f_r"><a href="deal.php?mid={$m[moduleid]}&action=express" class="m">快递</a></span><a href="deal.php?mid={$m[moduleid]}" class="{if $_userid}n{else}f{/if}">团购订单</a></li>
+			{/if}
+			{/loop}
+			{if $MG[partner]}
+			<li class="side_a" id="partner"><span class="f_r"><a href="partner.php?action=add" class="m">申请</a></span><a href="partner.php" class="{if $_userid}n{else}f{/if}">代理分销</a></li>
+			{/if}
+			<li class="side_a" id="coupon"><span class="f_r"><a href="coupon.php?action=my" class="m">我的</a></span><a href="coupon.php" class="{if $_userid}n{else}f{/if}">领券中心</a></li>
+			<li class="side_a" id="record"><span class="f_r"><a href="record.php?action=pay" class="m">站内</a></span><a href="record.php" class="{if $_userid}n{else}f{/if}">{$DT[money_name]}流水</a></li>
+			<li class="side_a" id="charge"><span class="f_r"><a href="charge.php?action=pay" class="m">支付</a></span><a href="charge.php?action=record" class="{if $_userid}n{else}f{/if}">支付记录</a></li>
+			{if $MG[cash]}
+			<li class="side_a" id="cash"><span class="f_r"><a href="cash.php?action=add" class="m">提现</a></span><a href="cash.php" class="{if $_userid}n{else}f{/if}">{$DT[money_name]}提现</a></li>
+			{/if}
+			<li class="side_a" id="credit"><span class="f_r"><a href="credit.php?action=buy" class="m">购买</a></span><a href="credit.php" class="{if $_userid}n{else}f{/if}">{$DT[credit_name]}管理</a></li>
+			{if $MOD[credit_user]}
+			<li class="side_a" id="invite"><span class="f_r"><a href="invite.php?action=record" class="m">记录</a></span><a href="invite.php?action=code" class="{if $_userid}n{else}f{/if}">邀请注册</a></li>
+			{/if}
+			{if $MG[address_limit]>-1}
+			<li class="side_a" id="addr"><span class="f_r"><a href="address.php?action=add" class="m">添加</a></span><a href="address.php" class="{if $MG[address_limit]>-1}n{else}f{/if}">收货地址</a></li>
+			{/if}
+		</ul>
+	</div>
+{/if}
+
+{/if}
+{/if}
+</td>
+<td class="side_h{if isset($widget)} dsn{/if}" onclick="oh(this);" title="点击展开/隐藏侧栏" id="side_oh">&nbsp;</td>
+<td valign="top" class="main" id="main">

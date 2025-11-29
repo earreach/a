@@ -1,0 +1,11 @@
+{template 'header'}
+<div class="b10"></div>
+<div class="m">
+	<div style="height:480px;background:url('{DT_STATIC}image/msg-403.png') no-repeat right center;">
+		<div style="padding:148px 512px 0 248px;font-size:16px;">
+			<h1>主页待开通</h1>
+			<div class="f_gray">{if $username == $_username}请{if $COM[edittime]}<a href="{$MODULE[2][linkurl]}validate.php" class="b">认证资料</a>{else}<a href="{$MODULE[2][linkurl]}edit.php?tab=2" class="b">完善资料</a>{/if}，激活您的主页{else}所属用户{if $COM[edittime]}资料认证{else}资料完善{/if}后自动开通，请稍后访问{/if}</div>
+		</div>
+	</div>
+</div>
+{template 'footer'}

@@ -1,0 +1,323 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="{DT_CHARSET}"/>
+<title>{if $head_title}{$head_title}{$DT[seo_delimiter]}{/if}会员中心{$DT[seo_delimiter]}{if $city_sitename}{$city_sitename}{else}{$DT[sitename]}{/if}</title>
+<meta name="robots" content="nofollow"/>
+<meta name="generator" content="DESTOON - www.destoon.com"/>
+<meta http-equiv="x-ua-compatible" content="IE=8"/>
+<link rel="shortcut icon" href="{DT_PATH}favicon.ico"/>
+<link rel="bookmark" href="{DT_PATH}favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="{DT_STATIC}member/chat.css?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"/>
+<script type="text/javascript" src="{DT_PATH}lang/{DT_LANG}/lang.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_PATH}file/script/config.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{if strpos($DT_MBS, 'IE') === false}
+<script type="text/javascript" src="{DT_STATIC}script/jquery-3.6.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{else}
+<script type="text/javascript" src="{DT_STATIC}script/jquery-1.12.4.min.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{/if}
+<script type="text/javascript" src="{DT_STATIC}script/common.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_STATIC}script/panel.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+<script type="text/javascript" src="{DT_STATIC}script/page.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+{load('webuploader.min.js')}
+{if $head_mobile && $EXT[mobile_goto]}<script type="text/javascript">GoMobile('{$head_mobile}');</script>{/if}
+<!--[以上为系统关键代码，请勿删除]-->
+</head>
+<body>
+<div id="msgbox" style="display:none;"></div>
+<script type="text/javascript">
+var chat_mid = {$moduleid};
+var chat_gid = {$gid};
+var chat_ban = {$chat_ban};
+var chat_poll = {$chat_poll}*1000;
+var chat_maxlen = {$MOD[chat_maxlen]};
+var chat_mintime = {$MOD[chat_mintime]};
+var chat_type = 0;
+var chat_name = '{$_username}';
+var chat_last = {$DT_TIME};
+var chat_title = document.title;
+var chat_lang = {
+	ec1:'按Enter键发送消息，按Ctrl+Enter键换行',
+	ec2:'按Ctrl+Enter键发送消息，按Enter键换行',
+	tip:'提示：系统不长久保存您的交谈记录，关闭对话窗口将可能导致记录丢失，如果需要保存，请在交谈完毕之后点保存按钮',
+	last:'ok'
+};
+</script>
+<table cellspacing="1" cellpadding="0" width="100%" align="center" bgcolor="#ECECEC" id="chat_main">
+<tr>
+<td bgcolor="#FFFFFF">
+<div class="head0">
+	<table cellspacing="0" cellpadding="0" width="100%">
+	<tr>
+	<td><a href="{$MOD[linkurl]}{$GRP[linkurl]}" target="_blank">{$GRP[title]}{$MOD[seo_name]}群聊 ({$GRP[fans]})</a></td>
+	<td class="head_more">
+	<ul>
+	<a href="{$MOD[linkurl]}{$GRP[linkurl]}" target="_top"><li>主题</li></a>
+	<a href="{$MOD[linkurl]}{rewrite('fans.php?gid='.$gid)}" target="_top"><li>成员</li></a>
+	<li onclick="chat_report('{$MOD[name]}:{$GRP[title]}(ID:{$gid})\n群聊内容：\n'+$('#chat').html());">举报</li>
+	<a href="{$MODULE[2][linkurl]}{$DT[file_my]}?mid={$moduleid}&job=join&action=quit&gid={$gid}" target="_top" onclick="return confirm('确定要退出{$MOD[name]}吗？');"><li>退群</li></a>
+	</ul>
+	</td>
+	</tr>
+	</table>
+</div>
+</td>
+<td bgcolor="#F0F0F0">
+<div class="head1">
+	<table cellspacing="0" cellpadding="0" width="100%">
+	<tr>
+	<td><a href="{$MOD[linkurl]}{rewrite('fans.php?gid='.$gid)}" target="_top">成员列表({$GRP[fans]})</a></td>
+	<td align="right">
+	{if $EXT[mobile_enable]}<a href="javascript:;" onclick="$('#qrcode-box').slideToggle();$('#qrcode-img').attr('src', '{$MODULE[2][linkurl]}account.php?action=qrcode&job=group-{$moduleid}-{$gid}&reload='+RandStr());"><img src="{DT_STATIC}image/ico-qrcode.png" width="16" height="16" align="absmiddle" title="扫一扫，用手机交谈"/></a>{/if}
+	</td>
+	</tr>
+	</table>
+</div>
+</td>
+</tr>
+<tr bgcolor="#FFFFFF">
+<td valign="top">
+	<iframe src="" name="send" id="send" style="display:none;"></iframe>
+	<div id="chat"></div>
+	<div id="font" style="display:none;">
+		<table cellspacing="0" cellpadding="0" width="100%">
+		<tr>
+		<td width="8" height="38"></td>
+		<td width="120">
+		<select id="font_s" onchange="font_init();">
+			<option value="0">大小</option>
+			<option value="12">12</option>
+			<option value="13">13</option>
+			<option value="14">14</option>
+			<option value="16">16</option>
+			<option value="18">18</option>
+			<option value="20">20</option>
+			<option value="24">24</option>
+		</select>&nbsp;
+		<select id="font_c" onchange="font_init();">
+			<option value="0">颜色</option>
+			<option value="1" style="background:#000000;">黑</option>
+			<option value="2" style="background:#FF0000;">红</option>
+			<option value="3" style="background:#0000FF;">蓝</option>
+			<option value="4" style="background:#008040;">绿</option>
+			<option value="5" style="background:#FF6600;">橙</option>
+			<option value="6" style="background:#FF00FF;">粉</option>
+		</select>
+		</td>
+		<td class="tool_a" id="tool_font_b" onclick="this.className=this.className=='tool_a' ? 'tool_b' : 'tool_a';font_init();"><img src="{DT_STATIC}member/chat_font_b.gif" width="16" height="16" title="加粗"/></td>
+		<td class="tool_a" id="tool_font_i" onclick="this.className=this.className=='tool_a' ? 'tool_b' : 'tool_a';font_init();"><img src="{DT_STATIC}member/chat_font_i.gif" width="16" height="16" title="倾斜"/></td>
+		<td class="tool_a" id="tool_font_u" onclick="this.className=this.className=='tool_a' ? 'tool_b' : 'tool_a';font_init();"><img src="{DT_STATIC}member/chat_font_u.gif" width="16" height="16" title="下划线"/></td>
+		<td>&nbsp;</td>
+		<td width="18" valign="top" class="c_p" onclick="font_hide();" title="点击关闭"><span class="sc"></span></td>
+		<td width="10"></td>
+		</tr>
+		</table>
+	</div>
+	<div id="tool">
+		<table cellspacing="0" cellpadding="0" width="100%">
+		<tr>
+		<td width="4">
+			<div id="face" style="display:none;">
+				<div onclick="face_hide();" title="点击关闭"><span class="sc"></span><strong>选择表情</strong></div>	
+				{loop $faces $k $v}<img src="{DT_PATH}file/face/{$k}.png" onclick="face_into('{$k}', this.title);" title="{$v}"/>{/loop}
+			</div>
+		</td>
+		<td class="tool_a" onmouseover="this.className='tool_b';" onmouseout="if(Dd('font').style.display=='none')this.className='tool_a';" id="tool_font" onclick="font_show();face_hide();" title="设置文字颜色和格式"><div class="chat_font">&nbsp;</div></td>
+		<td class="tool_a" onmouseover="this.className='tool_b';" onmouseout="if(Dd('face').style.display=='none')this.className='tool_a';" id="tool_face" onclick="face_show();font_hide();" title="表情"><div class="chat_face">&nbsp;</div></td>
+		{if $MOD[chat_file] && $MG[upload]}
+		<td class="tools" id="tool_img" title="发送图片"><div class="chat_img"><div id="img-picker"></div></div></td>
+		<td class="tools" id="tool_file" title="发送文件"><div class="chat_file"><div id="file-picker"></div></div></td>
+		{/if}
+		<td id="upmsg">&nbsp;</td>
+		<td class="tools" id="tool_clear" onclick="Dd('chat').innerHTML='';" title="清屏"><div class="chat_clear">&nbsp;</div></td>
+		<td class="tools" id="tool_save" onclick="chat_save();" title="下载交谈记录"><div class="chat_save">&nbsp;</div></td>
+		<td class="tools" id="tool_log" title="交谈记录"><a href="{$MODULE[2][linkurl]}im.php?action=view&mid={$moduleid}&gid={$gid}" target="_blank"><div class="chat_log">&nbsp;</div></a></td>
+		</tr>
+		</table>
+	</div>
+	<div class="word"><textarea id="word" onkeydown="return chat_key(event);" onfocus="Dh('ec');font_hide();face_hide();new_tip_stop();" class="f_gray"></textarea>
+	</div>
+	<div id="btns">
+		<table cellspacing="0" cellpadding="0" width="100%">
+		<tr>
+		<td width="10"></td>
+		<td><div id="tip" style="display:none;"></div></td>
+		<td><div id="sd"></div></td>
+		<td width="62"><img src="{DT_STATIC}member/chat_c1.gif" width="69" height="21" onmouseover="this.src='{DT_STATIC}member/chat_c2.gif';" onmouseout="this.src='{DT_STATIC}member/chat_c1.gif';" onclick="chat_off();" id="chat_c"/></td>
+		<td width="8"> </td>
+		<td width="62"><img src="{DT_STATIC}member/chat_s1.gif" width="62" height="21" onmouseover="this.src='{DT_STATIC}member/chat_s2.gif';" onmouseout="this.src='{DT_STATIC}member/chat_s1.gif';" onclick="chat_send();" id="chat_s"/></td>
+		<td width="21"><div id="ec" style="display:none;" onmouseover="Ds('ec');" onmouseout="Dh('ec');">
+		<span id="ec1"><a href="javascript:ec_set(1);">按Enter键发送消息</a></span>
+		<span id="ec2"><a href="javascript:ec_set(2);">按Ctrl+Enter键发送消息</a></span>
+		</div><img src="{DT_STATIC}member/chat_e1.gif" width="21" height="21" onmouseover="this.src='{DT_STATIC}member/chat_e2.gif';" onmouseout="this.src='{DT_STATIC}member/chat_e1.gif';" onclick="Ds('ec');"/></td>
+		<td width="10"> </td>
+		</tr>
+		</table>
+	</div>
+	
+	<form method="post" action="?" id="chat_send" target="send">
+	<input type="hidden" name="action" value="send"/>
+	<input type="hidden" name="gid" value="{$gid}"/>
+	<input type="hidden" name="font_s" value="" id="font_s_id"/>
+	<input type="hidden" name="font_c" value="" id="font_c_id"/>
+	<input type="hidden" name="font_b" value="" id="font_b_id"/>
+	<input type="hidden" name="font_i" value="" id="font_i_id"/>
+	<input type="hidden" name="font_u" value="" id="font_u_id"/>
+	<input type="hidden" name="word" value="" id="word_id"/>
+	</form>
+	<form method="post" action="?" id="chat_down" target="send">
+	<input type="hidden" name="action" value="down"/>
+	<input type="hidden" name="gid" value="{$gid}"/>
+	<input type="hidden" name="data" value="" id="down_data"/>
+	</form>
+	<form method="post" action="{DT_PATH}api/report.php" id="chat_report" target="_blank">
+	<input type="hidden" name="forward" value="{$DT_URL}"/>
+	<input type="hidden" name="mid" value="{$moduleid}"/>
+	<textarea style="display:none;" name="content" id="chat_report_content"></textarea>
+	</form>
+	<script type="text/javascript" src="{DT_PATH}lang/{DT_LANG}/lang.chat.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+	<script type="text/javascript" src="{DT_STATIC}script/chat.group.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>
+	{if $MOD[chat_file] && $MG[upload]}<script type="text/javascript" src="{DT_STATIC}script/clear.js?v={if DT_DEBUG}{DT_TIME}{else}{DT_REFRESH}{/if}"></script>{/if}
+</td>
+<td width="300" valign="top" bgcolor="#F6F6F6">
+<div id="chat-side">
+<div style="text-align:center;padding:16px;border-bottom:#ECECEC 1px solid;display:none;" id="qrcode-box">
+	<img src="{DT_PATH}api/qrcode.php?auth={urlencode($head_mobile)}" width="188" height="188" id="qrcode-img"/>
+	<p style="margin:16px;color:#999999;">扫一扫，用手机交谈</p>
+</div>
+<div class="body3">
+{loop $lists $k $v}
+<div>
+<a href="{userurl($v[username], 'file=space')}" target="_blank"><img src="{useravatar($v[username], 'middle')}" width="48" height="48" alt="{$v[username]}"/></a>
+<p>{$v[passport]}</p>
+</div>
+{/loop}
+</div>
+</div>
+{if $GRP[fans] > 30}
+<div class="body0"><a href="{$MOD[linkurl]}{rewrite('fans.php?gid='.$gid)}" target="_top" class="t">更多成员</a></div>
+{/if}
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+{if $MOD[chat_file] && $MG[upload]}
+{php $DT['uploadtype'] = str_replace(array('jpg|', 'jpeg|', 'png|', 'gif|', 'bmp|'), array('', '', '', '', ''), $DT['uploadtype']);}
+{if strpos($DT_MBS, 'IE') === false}
+	var filei = WebUploader.create({
+		auto: true,
+		server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=file',
+		pick: '#img-picker',
+		accept: {
+			title: 'Images',
+			extensions: 'jpg,jpeg,png,gif,bmp',
+			mimeTypes: 'image/*'
+		},
+		resize: false
+	});
+	filei.on('beforeFileQueued', function(file) {
+		var exts = filei.options.accept[0].extensions;
+		if((','+exts).indexOf(','+ext(file.name)) == -1) {
+			alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+			return false;
+		}
+	});
+	filei.on('fileQueued', function(file) {
+		$('#upmsg').html(L['uploading']);
+		setTimeout(function() {
+			$('#upmsg').html('');
+		}, 30000);
+	});
+	filei.on('uploadProgress', function(file, percentage) {
+		var p = parseInt(percentage * 100);
+		$('#upmsg').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+	});
+	filei.on( 'uploadSuccess', function(file, data) {
+		if(data.error) {
+			alert(data.message);
+		} else {
+			chat_send(data.url);
+		}
+	});
+	filei.on( 'uploadError', function(file, data) {
+		alert(data.message);
+	});
+	filei.on('uploadComplete', function(file) {
+		$('#upmsg').html('');
+	});
+	var fileu = WebUploader.create({
+		auto: true,
+		server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=file',
+		pick: '#file-picker',
+		accept: {
+			title: 'Files',
+			extensions: '{str_replace('|', ',', $DT['uploadtype'])}', 
+			mimeTypes: '*/*'
+		},
+		resize: false
+	});
+	fileu.on('beforeFileQueued', function(file) {
+		var exts = fileu.options.accept[0].extensions;
+		if((','+exts).indexOf(','+ext(file.name)) == -1) {
+			alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+			return false;
+		}
+	});
+	fileu.on('beforeFileQueued', function(file) {
+		var exts = fileu.options.accept[0].extensions;
+		if((','+exts).indexOf(','+ext(file.name)) == -1) {
+			alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+			return false;
+		}
+	});
+	fileu.on('fileQueued', function(file) {
+		$('#upmsg').html(L['uploading']);
+		setTimeout(function() {
+			$('#upmsg').html('');
+		}, 30000);
+	});
+	fileu.on('uploadProgress', function(file, percentage) {
+		var p = parseInt(percentage * 100);
+		$('#upmsg').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+	});
+	fileu.on( 'uploadSuccess', function(file, data) {
+		if(data.error) {
+			alert(data.message);
+		} else {
+			chat_send(data.url);
+		}
+	});
+	fileu.on( 'uploadError', function(file, data) {
+		alert(data.message);
+	});
+	fileu.on('uploadComplete', function(file) {
+		$('#upmsg').html('');
+	});
+{else}
+	$(function(){
+		$('#tool_img').click(function() {
+			Dfile({$moduleid}, '', 'chat', 'jpg|jpeg|png|gif|bmp');
+		});
+		$('#tool_file').click(function() {
+			Dfile({$moduleid}, '', 'chat', '{$DT[uploadtype]}');
+		});
+	});
+{/if}
+{/if}
+function Dsize() {
+	$('#chat').css('height', ($(window).height() - 216)+'px');
+	$('#chat-side').css('height',($(window).height() - 46)+'px');
+}
+$(function(){
+	Dsize();
+	if(top != self) $('#chat_c').hide();
+	$(window).resize(function() {
+		Dsize();
+    });
+	{if $DT[stats]}
+	{php include load('api/stats.inc');}
+	{/if}
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{loop $tags $i $t}
+<div>
+<a href="{$t[linkurl]}"{if $target} target="{$target}"{/if}><img src="{$t[thumb]}" width="280" height="210" alt=""/></a>
+<ul>
+<li><a href="{$t[linkurl]}" title="{$t[alt]}"{if $target} target="{$target}"{/if}>{$t[title]}</a></li>
+</ul>
+<p>
+<a href="{$t[linkurl]}" title="{$t[alt]}"{if $target} target="{$target}"{/if}>{if $typeid==1}<i>即将开始</i>{else}<s>立即抢购</s>{/if}</a>
+{$DT[money_sign]}<b>{$t[sprice]}</b>
+</p>
+</div>
+{/loop}

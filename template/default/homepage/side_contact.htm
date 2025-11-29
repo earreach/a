@@ -1,0 +1,34 @@
+{if $file != 'contact'}
+<div class="side_head"><div><span class="f_r"><a href="{userurl($username, 'file=contact', $domain)}"><img src="{DT_STATIC}home/image/more.gif" title="更多"/></a></span><strong>{$sv[name]}</strong></div></div>
+<div class="side_body">
+{if $could_contact}
+<ul>
+<li>联系人：{$COM[truename]}</li>
+{if $COM[telephone]}
+<li title="{$COM[telephone]}">电话：{$COM[telephone]}</li>
+{/if}
+{if $COM[mail]}
+<li title="{$COM[mail]}">邮件：{$COM[mail]}</li>
+{/if}
+{if $COM[mobile] && $DT[im_mob]}
+<li title="{$COM[mobile]}">手机：{$COM[mobile]}</li>
+{/if}
+{if $COM[fax]}
+<li title="{$COM[fax]}">传真：{$COM[fax]}</li>
+{/if}
+{if $COM[wx] && $DT[im_wx]}
+<li title="{$COM[qq]}">微信：<a href="{DT_PATH}api/wx.php?wid={$COM[wx]}&username={$COM[username]}" target="_blank">{$COM[wx]}</a></li>
+{/if}
+{if $COM[qq] && $DT[im_qq]}
+<li title="{$COM[qq]}">QQ：<a href="http://wpa.qq.com/msgrd?v=3&uin={$COM[qq]}&site=qq&menu=yes" target="_blank">{$COM[qq]}</a></li>
+{/if}
+</ul>
+{else}
+	{if $_userid}
+	<br/><br/><center>请先 <a href="{$MODULE[2][linkurl]}grade.php" class="b">升级</a> 会员级别后查看</center><br/><br/>
+	{else}
+	<br/><br/><center>请先 <a href="{$MODULE[2][linkurl]}{$DT[file_login]}" class="b">登录</a> 或 <a href="{$MODULE[2][linkurl]}{$DT[file_register]}" class="b">注册</a> 后查看</center><br/><br/>
+	{/if}
+{/if}
+</div>
+{/if}

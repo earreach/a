@@ -1,0 +1,441 @@
+{template 'header', 'member'}
+<div class="menu">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="tab" id="add"><a href="?mid={$mid}&action=add"><span>添加{$MOD[name]}</span></a></td>
+{if $_userid}
+<td class="tab" id="s3"><a href="?mid={$mid}"><span>已发布({$nums[3]})</span></a></td>
+<td class="tab" id="s2"><a href="?mid={$mid}&status=2"><span>审核中({$nums[2]})</span></a></td>
+<td class="tab" id="s1"><a href="?mid={$mid}&status=1"><span>未通过({$nums[1]})</span></a></td>
+{/if}
+</tr>
+</table>
+</div>
+{if $action=='add' || $action=='edit'}
+<iframe src="" name="send" id="send" style="display:none;"></iframe>
+<form method="post" action="?" id="dform" target="send" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+{if $status==1 && $action=='edit' && $note}
+<tr>
+<td class="tl">未通过原因</td>
+<td class="tr f_blue">{$note}</td>
+</tr>
+{/if}
+<tr>
+<td class="tl"><span class="f_red">*</span> 所属分类</td>
+<td class="tr">{category_select('post[catid]', '选择分类', $catid, $moduleid)} <span id="dcatid" class="f_red"></span></td>
+</tr>
+{if $CP}
+<script type="text/javascript">
+var property_catid = {$catid};
+var property_itemid = {$itemid};
+var property_admin = 0;
+</script>
+{load('property.js')}
+<tbody id="load_property" style="display:none;">
+<tr><td></td><td></td></tr>
+</tbody>
+{/if}
+<tr>
+<td class="tl"><span class="f_red">*</span> {$MOD[name]}名称</td>
+<td class="tr"><input name="post[title]" type="text" id="title" size="70" value="{$title}"/> <span id="dtitle" class="f_red"></span></td>
+</tr>
+{if $action=='add' && $could_color}
+<tr>
+<td class="tl">标题颜色</td>
+<td class="tr">
+{dstyle('color')}&nbsp;
+设置信息标题颜色需消费 <strong class="f_red">{$MOD[credit_color]}</strong> {$DT[credit_name]}
+</td>
+</tr>
+{/if}
+<tr>
+<td class="tl"><span class="f_red">*</span> 封面图片</td>
+<td class="tr">
+<input type="hidden" name="post[thumb]" id="thumb" value="{$thumb}"/>
+<div class="thumbu">
+<div><img src="{if $thumb}{$thumb}{else}{DT_STATIC}image/upload-image.png{/if}" id="pthumb" onerror="this.src='{DT_STATIC}image/upload-image.png';Dd('thumb').value='';" onclick="if(this.src.indexOf('upload-image.png') == -1){_preview(this.src, 1);}else{Dthumb({$moduleid},{$MOD[thumb_width]},{$MOD[thumb_height]}, Dd('thumb').value,true);}"/></div>
+<p><img src="{DT_STATIC}image/ico-upl.png" width="11" height="11" title="上传" onclick="Dthumb({$moduleid},{$MOD[thumb_width]},{$MOD[thumb_height]}, Dd('thumb').value,true);"/><img src="{DT_STATIC}image/ico-del.png" width="11" height="11" title="删除" onclick="Dd('thumb').value='';Dd('pthumb').src='{DT_STATIC}image/upload-image.png';"/></p>
+</div><span id="dthumb" class="f_red"></span>
+</td>
+</tr>
+<tr>
+<td class="tl">{$MOD[name]}专辑</td>
+<td class="tr"><input name="post[album]" id="album" type="text" size="30" value="{$album}"/> <span id="dalbum" class="f_red"></span></td>
+</tr>
+{if $FD}{fields_html('<td class="tl">', '<td class="tr">', $item)}{/if}
+<tr>
+<td class="tl">{$MOD[name]}说明</td>
+<td class="tr"><textarea name="post[content]" id="content" class="dsn">{$content}</textarea>{deditor($moduleid, 'content', $group_editor, '100%', 350)}<br/><span id="dcontent" class="f_red"></span>
+</td>
+</tr>
+<tr title="提示：多个标签请用空格分隔">
+<td class="tl">标签(Tag)</td>
+<td class="tr"><input name="post[tag]" type="text" size="80" value="{$tag}" id="tag"/>{if $DT[split_appcode]} &nbsp; <a href="javascript:;" onclick="CloudSplit('title', 'tag');" class="t">[生成]</a>{/if}</td>
+</tr>
+<tr>
+<td class="tl">公开程度</td>
+<td class="tr">
+<label><input type="radio" name="post[open]" value="3"{if $open==3} checked{/if} id="o_3" onclick="Dh('op_2');Dh('op_1');"/> 开放</label>
+<label><input type="radio" name="post[open]" value="2"{if $open==2} checked{/if} id="o_2" onclick="Ds('op_2');Dh('op_1');"/> 密码验证</label>
+<label><input type="radio" name="post[open]" value="1"{if $open==1} checked{/if} id="o_1" onclick="Dh('op_2');Ds('op_1');"/> 问题验证</label>
+</td>
+</tr>
+<tr id="op_2" style="display:{if $open==2}{else}none{/if};">
+<td class="tl"><span class="f_red">*</span> 验证密码</td>
+<td class="tr"><input name="post[password]" type="text" id="pass" size="30" value="{$password}"/> <span id="dpass" class="f_red"></span></td>
+</tr>
+<tr id="op_1" style="display:{if $open==1}{else}none{/if};">
+<td class="tl"><span class="f_red">*</span> 验证问题</td>
+<td class="tr"><input name="post[question]" type="text" id="qa" size="30" value="{$question}"/> &nbsp; 答案 &nbsp; <input name="post[answer]" type="text" id="an" size="30" value="{$answer}"/> <span id="dqa" class="f_red"></span></td>
+</tr>
+{if $fee_add}
+<tr>
+<td class="tl">发布此信息需消费</td>
+<td class="tr"><span class="f_b f_red">{$fee_add}</span> {$fee_unit}</td>
+</tr>
+{if $fee_currency == 'money'}
+<tr>
+<td class="tl">{$DT[money_name]}余额</td>
+<td class="tr"><span class="f_blue f_b">{$_money}{$fee_unit}</span> <a href="charge.php?action=pay" target="_blank" class="t">[充值]</a></td>
+</tr>
+{else}
+<tr>
+<td class="tl">{$DT[credit_name]}余额</td>
+<td class="tr"><span class="f_blue f_b">{$_credit}{$fee_unit}</span> <a href="credit.php?action=buy" target="_blank" class="t">[购买]</a></td>
+</tr>
+{/if}
+{/if}
+{if $need_password}
+<tr>
+<td class="tl"><span class="f_red">*</span> 支付密码</td>
+<td class="tr">{template 'payword', 'chip'} <span id="dpassword" class="f_red"></span></td>
+</tr>
+{/if}
+{if $need_question}
+<tr>
+<td class="tl"><span class="f_red">*</span> 验证问题</td>
+<td class="tr">{template 'question', 'chip'} <span id="danswer" class="f_red"></span></td>
+</tr>
+{/if}
+{if $need_captcha}
+<tr>
+<td class="tl"><span class="f_red">*</span> 验证码</td>
+<td class="tr">{template 'captcha', 'chip'} <span id="dcaptcha" class="f_red"></span></td>
+</tr>
+{/if}
+{if $action=='add'}
+<tr style="display:none;" id="weibo_sync">
+<td class="tl">同步主题</td>
+<td class="tr" id="weibo_show"></td>
+</tr>
+{/if}
+{if $MOD[tip_add]}
+<tr>
+<td class="tl">规则说明</td>
+<td class="ts">{$MOD[tip_add]}</td>
+</tr>
+{/if}
+</table>
+<div class="sbt"><input type="submit" name="submit" value="{if $action=='add'}下一步{else} 提 交 {/if}" class="btn_g"/>{if $action=='edit'}&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value=" 上传图片 " class="btn_b" onclick="Go('?mid={$mid}&action=item&itemid={$itemid}');"/>{/if}&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value=" 返 回 " class="btn" onclick="history.back(-1);"/></div>
+</form>
+{load('clear.js')}
+{if $action=='add'}
+<script type="text/javascript">s('mid_{$mid}');m('{$action}');</script>
+{else}
+<script type="text/javascript">s('mid_{$mid}');m('s{$status}');</script>
+{/if}
+{elseif $action == 'item'}
+<form method="post" action="?" id="dform">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="update" value="1"/>
+<input type="hidden" name="muti_upload" id="muti_upload"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl">所属{$MOD[name]}</td>
+<td>
+<span class="f_r f_grey">
+已上传：{$items} / {$MOD[maxitem]} &nbsp; 
+</span>
+ &nbsp; <a href="{$MOD[linkurl]}{$item[linkurl]}" target="_blank" class="t">{$item[title]}</a></td>
+</tr>
+<tr>
+<td class="tl">图片列表</td>
+<td>
+{if $items < $MOD[maxitem]}
+<div style="width:130px;margin-bottom:16px;float:left;">
+	<input type="hidden" name="post[0][thumb]" id="thumb0"/>
+	<table width="120">
+	<tr align="center" height="110" class="c_p">
+	<td width="120"><img src="{DT_STATIC}image/upload-image.png" id="showthumb0" alt="" onclick="if(this.src.indexOf('upload-image.png') == -1){_preview(this.src, 1);}else{Dphoto(0,{$mid},100,100, Dd('thumb0').value, true);}" style="border:#DDDDDD 1px solid;"/></td>
+	</tr>
+	<tr align="center">
+	<td height="32" onclick="Dphoto(0,{$mid},100,100, Dd('thumb0').value, true);" class="jt"><img src="{DT_STATIC}image/ico-upl.png" width="11" height="11" title="上传"/></td>
+	</tr>
+	<tr align="center" title="简介">
+	<td><textarea name="post[0][introduce]" style="width:90px;height:40px;" placeholder="简介："></textarea></td>
+	</tr>
+	<tr align="center" title="排序">
+	<td><input type="text" style="width:90px;" name="post[0][listorder]" value="" placeholder="排序："/></td>
+	</tr>
+	</table>
+</div>
+{/if}
+{loop $lists $k $v}
+<div style="width:130px;margin-bottom:16px;float:left;">
+	<input type="hidden" name="post[{$v[itemid]}][thumb]" id="thumb{$v[itemid]}" value="{$v[thumb]}"/>
+	<table width="120">
+	<tr align="center" height="110" class="c_p">
+	<td width="120"><img src="{$v[thumb]}" width="100" height="100" id="showthumb{$v[itemid]}" title="预览图片" alt="" onclick="if(this.src.indexOf('upload-image.png') == -1){_preview(this.src, 1);}else{Dphoto({$v[itemid]},{$mid},100,100, Dd('thumb{$v[itemid]}').value, true);}" style="border:#DDDDDD 1px solid;"/></td>
+	</tr>
+	<tr align="center">
+	<td height="32">
+	<span onclick="Dphoto({$v[itemid]},{$mid},100,100, Dd('thumb{$v[itemid]}').value, true);" class="jt"><img src="{DT_STATIC}image/ico-upl.png" width="11" height="11" title="上传"/></span> &nbsp; 
+	<a href="?mid={$mid}&action=item_delete&itemid={$itemid}&id={$v[itemid]}" onclick="return _delete();" class="t" title="点击删除此图片"><img src="{DT_STATIC}image/ico-del.png" width="11" height="11" title="删除"/></a>
+	<input type="checkbox" name="id[]" value="{$v[itemid]}" title="选择并删除" style="margin:0 0 0 48px;"/>
+	</td>
+	</tr>
+	<tr align="center" title="{$v[introduce]}">
+	<td><textarea name="post[{$v[itemid]}][introduce]" style="width:90px;height:40px;" placeholder="简介：">{$v[introduce]}</textarea></td>
+	</tr>
+	<tr align="center" title="排序">
+	<td><input type="text" name="post[{$v[itemid]}][listorder]" value="{if $v[listorder]>0}{$v[listorder]}{/if}" style="width:90px;" placeholder="排序："/></td>
+	</tr>
+	</table>
+</div>
+{/loop}
+</td>
+</tr>
+{if $MOD[tip_add]}
+<tr>
+<td class="tl">规则说明</td>
+<td class="ts">{$MOD[tip_add]}</td>
+</tr>
+{/if}
+<tr>
+<td class="tl"><label><input type="checkbox" onclick="checkall(this.form);" title="全选/反选"/></label></td>
+<td height="48"> &nbsp; 
+<input type="submit" value="保存数据" class="btn_g" onclick="this.form.action='?job=update"/> &nbsp; &nbsp;
+<input type="submit" value="删除选中" class="btn_r" onclick="if($(':checkbox:checked').length){if(confirm('确定要删除'+$(':checkbox:checked').length+'张选中图片吗？此操作将不可撤销')) {this.form.action='?job=delete';}else{return false;}}else{confirm('请选择要删除的图片');return false;}"/> &nbsp; &nbsp;
+<input type="button" value="完成上传" class="btn" onclick="window.parent.cDialog();"/>
+</td>
+</tr>
+</table>
+</form>
+<div class="pages">{$pages}</div>
+{if $items < $MOD[maxitem]}
+{load('webuploader.min.js')}
+<table cellpadding="10" cellspacing="1" class="tb">
+<tr>
+<td class="tl">批量上传</td>
+<td class="tr">
+<div id="file-picker"><img src="{DT_STATIC}image/upload-image.png" title="批量上传图片" alt="" style="border:#DDDDDD 1px solid;"/></div>
+<script type="text/javascript">
+var muti_max = parseInt({$MOD[maxitem]}-{$items});
+if(muti_max < 1) muti_max = 0;
+var fileu = WebUploader.create({
+auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=photo&width=100&height=100',
+    pick: '#file-picker',
+    accept: {
+		title: 'image',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+		mimeTypes: 'image/*'
+    },
+    resize: false
+});
+fileu.on('beforeFileQueued', function(file) {
+	var exts = fileu.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+fileu.on('fileQueued', function(file) {
+    $('#file-progress').html('0%');
+});
+fileu.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	if(p >= 100) p = 100;
+	$('#file-progress').html(p+'%');
+});
+fileu.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dmsg(data.message, 'muti');
+	} else {
+		if(substr_count(Dd('muti_upload').value, '|') < muti_max) Dd('muti_upload').value += data.url+'|';
+	}
+});
+fileu.on( 'uploadError', function(file, data) {
+    Dmsg(data.message, 'muti');
+});
+fileu.on('uploadFinished', function(file) {
+    $('#file-progress').html('100%');
+	Dd('dform').submit();
+});
+</script>
+</td>
+</tr>
+<tr>
+<td class="tl">提示信息</td>
+<td class="tr f_gray">&nbsp;按Ctrl键或拖动鼠标可多选图片 <span id="file-progress"></span> <span id="dmuti" class="f_red"></span></td>
+</tr>
+</table>
+{/if}
+<script type="text/javascript">
+$(function(){
+	if(window.self != window.top) {
+		$('.menu').hide();
+	}
+});
+s('mid_{$mid}');m('s{$item[status]}');
+</script>
+{else}
+<div class="tt">
+<form action="?">
+<input type="hidden" name="mid" value="{$mid}"/>
+<input type="hidden" name="status" value="{$status}"/>
+&nbsp;{category_select('catid', '所有分类', $catid, $moduleid)}&nbsp;
+<input type="text" size="70" name="kw" value="{$kw}" title="关键词" placeholder="关键词"/>&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?mid={$mid}&status={$status}');"/>
+</form>
+</div>
+<div class="ls">
+<form method="post">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="20"><input type="checkbox" onclick="checkall(this.form);" title="全选/反选"/></th>
+<th width="90">封面</th>
+<th>标题</th>
+<th>分类</th>
+<th>{if $timetype=='add'}添加{else}更新{/if}时间</th>
+<th>图片</th>
+{if $MOD[hits]}<th>浏览</th>{/if}
+<th width="40">传图</th>
+<th width="40">修改</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><input type="checkbox" name="itemid[]" value="{$v[itemid]}"/></td>
+<td><a href="javascript:_preview('{$v[thumb]}');"><img src="{$v[thumb]}" width="50" class="thumb"/></a></td>
+<td align="left" title="{$v[alt]}">{if $v[open] < 3}<img src="{DT_STATIC}member/ico_lock.gif"/> {/if}{if $v[status]==3}<a href="{$v[linkurl]}" target="_blank" class="t">{else}<a href="?mid={$mid}&action=edit&itemid={$v[itemid]}" class="t">{/if}{$v[title]}</a>{if $v[status]==1 && $v[note]} <a href="javascript:" onclick="alert('{$v[note]}');"><img src="{DT_STATIC}member/why.gif" title="未通过原因"/></a>{/if}</td>
+<td> &nbsp; <a href="{$v[caturl]}" target="_blank">{$v[catname]}</a> &nbsp; </td>
+{if $timetype=='add'}
+<td class="f_gray" title="更新时间 {$v[editdate]}">{$v[adddate]}</td>
+{else}
+<td class="f_gray" title="添加时间 {$v[adddate]}">{$v[editdate]}</td>
+{/if}
+<td class="f_gray c_p" onclick="Dwidget('?mid={$mid}&action=item&itemid={$v[itemid]}', '管理图片');">{$v[items]}</td>
+{if $MOD[hits]}<td class="f_gray">{$v[hits]}</td>{/if}
+<td><a href="javascript:;" onclick="Dwidget('?mid={$mid}&action=item&itemid={$v[itemid]}', '管理图片');"><img width="16" height="16" src="{DT_STATIC}member/photo.png" title="管理图片" alt=""/></a></td>
+<td><a href="?mid={$mid}&action=edit&itemid={$v[itemid]}"><img width="16" height="16" src="{DT_STATIC}member/edit.png" title="修改" alt=""/></a></td>
+</tr>
+{/loop}
+</table>
+</div>
+{if $MG[delete]}
+<div class="btns">
+<label><input type="checkbox" onclick="checkall(this.form);" title="全选/反选"/></label>
+<input type="submit" value=" 删除选中 " class="btn_r" onclick="if(confirm('确定要删除选中{$MOD[name]}吗？')){this.form.action='?mid={$mid}&status={$status}&action=delete'}else{return false;}"/>
+</div>
+{/if}
+</form>
+{if $mod_limit || (!$MG['fee_mode'] && $MOD[fee_add])}
+<div class="limit">
+{if $mod_limit}
+总共可发 <span class="f_b f_red">{$mod_limit}</span> 条&nbsp;&nbsp;&nbsp;
+当前已发 <span class="f_b">{$limit_used}</span> 条&nbsp;&nbsp;&nbsp;
+还可以发 <span class="f_b f_blue">{$limit_free}</span> 条&nbsp;&nbsp;&nbsp;
+{/if}
+{if !$MG['fee_mode'] && $MOD[fee_add]}
+发布信息收费 <span class="f_b f_red">{$MOD[fee_add]}</span> {if $MOD[fee_currency] == 'money'}{$DT[money_unit]}{else}{$DT[credit_unit]}{/if}/条&nbsp;&nbsp;&nbsp;
+可免费发布 <span class="f_b">{if $mod_free_limit<0}无限{else}{$mod_free_limit}{/if}</span> 条&nbsp;&nbsp;&nbsp;
+{/if}
+</div>
+{/if}
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('mid_{$mid}');m('s{$status}');</script>
+{/if}
+{if $action == 'add' || $action == 'edit'}
+<script type="text/javascript">
+function check() {
+	var l;
+	var f;
+	f = 'catid_1';
+	if(Dd(f).value == 0) {
+		Dmsg('请选择所属分类', 'catid', 1);
+		return false;
+	}
+	f = 'title';
+	l = Dd(f).value.length;
+	if(l < 2) {
+		Dmsg('标题最少2字，当前已输入'+l+'字', f);
+		return false;
+	}
+	f = 'thumb';
+	l = Dd(f).value.length;
+	if(l < 10) {
+		Dmsg('请上传LOGO', f);
+		return false;
+	}
+	if(Dd('o_2').checked) {
+		f = 'pass';
+		l = Dd(f).value.length;
+		if(l < 1) {
+			Dmsg('请填写密码', f);
+			return false;
+		}
+	}
+	if(Dd('o_1').checked) {
+		f = 'qa';
+		l = Dd(f).value.length;
+		if(l < 1) {
+			Dmsg('请填写问题', 'qa');
+			return false;
+		}
+		f = 'an';
+		l = Dd(f).value.length;
+		if(l < 1) {
+			Dmsg('请填写答案', 'qa');
+			return false;
+		}
+	}
+	{if $FD}{fields_js()}{/if}
+	{if $CP}{property_js()}{/if}
+{if $need_password}
+	f = 'password';
+	l = Dd(f).value.length;
+	if(l < 6) {
+		Dmsg('请填写支付密码', f);
+		return false;
+	}
+{/if}
+{if $need_question}
+	f = 'answer';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证问题', f);
+		return false;
+	}
+{/if}
+{if $need_captcha}
+	f = 'captcha';
+	if($('#c'+f).html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', f);
+		return false;
+	}
+{/if}
+	return true;
+}
+var destoon_oauth = '{$EXT[oauth]}';
+</script>
+{/if}
+{if $action=='add' && strlen($EXT[oauth]) > 1}{load('weibo.js')}{/if}
+{template 'footer', 'member'}

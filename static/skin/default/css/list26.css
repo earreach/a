@@ -1,0 +1,169 @@
+.fb {
+    height: 15px;
+    width: 15px;
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+}
+/*.fc{
+    height: 15px;width: 50px;
+}*/
+
+
+/*.fb-apple{
+    background:url(http://b.com/static/skin/default/26/02.png) no-repeat ;
+    background-size: 50px 50px;
+}*/
+.fb-apple{
+    background:url( ../26/02.png)
+    no-repeat ;
+    background-size: 15px 15px;
+    height: 15px;
+    background-position: center;
+
+}
+.fb-ipad{
+    background:url( ../26/03.png)
+    no-repeat ;
+    background-size: 15px 15px;
+    height: 15px;
+    background-position: center;
+
+}
+.fb-watch{
+    background:url( ../26/08.png)
+    no-repeat ;
+    background-size: 15px 15px;
+    height: 15px;
+    background-position: center;
+
+}
+.fb-Xperia{
+    width: 50px;
+    height: 15px;
+    background:url( ../26/04.png)
+    no-repeat ;
+    /*background-size: 50px 15px;*/
+    background-position: center;
+
+}
+.fb-sx{
+    width: 50px;
+    height: 15px;
+    background:url( ../26/05.png)
+    no-repeat ;
+    background-position: center;
+    background-size: 50px 15px;
+
+
+}
+.fb-huawei{
+    background:url( ../26/06.png)
+    no-repeat ;
+    background-position: center;
+    background-size: 15px 15px;
+    height: 15px;
+
+}
+.fb-gg{
+    background-position: center;
+    background:url( ../26/07.png)
+    no-repeat ;
+    background-size: 15px 15px;
+    height: 15px;
+
+}
+
+.gzz li{
+    list-style: disc inside  ;
+
+    font-size:16px ;
+    color: #5a5a5a;
+    padding-top: 10px;
+}
+
+
+
+
+
+
+.device-selector-section {
+    margin: 20px 0;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
+
+.selector-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* 手机端：单列 */
+    gap: 15px;
+}
+
+/* 平板端：横排 */
+@media (min-width: 768px) {
+    .selector-grid {
+        grid-template-columns: 1fr 1fr; /* 平板端：两列 */
+        align-items: end;
+        gap: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .submit-btn-container {
+        grid-column: span 2;
+        text-align: center;
+        margin-top: 10px;
+    }
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    background: white;
+}
+
+.submit-btn {
+    padding: 12px 30px;
+    background: #007cba;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+}
+
+.submit-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+@media (min-width: 768px) {
+    .submit-btn {
+        width: auto;
+        min-width: 150px;
+    }
+}
+

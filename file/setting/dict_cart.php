@@ -1,0 +1,4 @@
+<?php exit;?>
+userid,会员ID,
+data,数据,
+edittime,更新时间,

@@ -1,0 +1,27 @@
+{template 'header', $template}
+<div class="dsn" id="pos_show"><a href="{$COM[linkurl]}">首页</a> <i>&gt;</i> <a href="{$MENU[$menuid][linkurl]}">{$MENU[$menuid][name]}</a>{if $itemid} <i>&gt;</i> {$title}{/if}</div>
+<div class="main_head"><div>{if $itemid}<span class="f_r"><a href="{$MENU[$menuid][linkurl]}"><img src="{DT_STATIC}image/ico-list-mix.png" width="16" height="16" title="返回列表" align="absmiddle"/></a></span>{/if}<strong>{$MENU[$menuid][name]}</strong></div></div>
+<div class="main_body">
+{if $itemid}
+	<div class="title">{$title}</div>
+	<div class="info"><i class="ui-ico-time">{timetodate($addtime, 3)}</i>{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}<i class="ui-ico-hits ui-fr">{$hits}</i></div>
+	<div class="content" id="content">{$content}</div>
+	<script type="text/javascript">var content_id = 'content';	var img_max_width = 900;</script>
+	{load('content.js')}
+{else}
+	{if $lists}
+	<div class="list-txt">
+	<ul>
+	{loop $lists $v}
+	<li>&middot; <a href="{$v[linkurl]}">{$v[title]}</a><i>{timetodate($v[edittime], 3)}</i></li>
+	{/loop}
+	</ul>
+	</div>
+	{else}
+	<div class="list-none">暂无记录</div>
+	{/if}
+	{if $pages}<div class="pages">{$pages}</div>{/if}
+{/if}
+</div>
+<script type="text/javascript">try {Dd('type_{$typeid}').style.backgroundColor = '#F6F6F6';}catch (e){}</script>
+{template 'footer', $template}

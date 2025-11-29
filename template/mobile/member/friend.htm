@@ -1,0 +1,339 @@
+{template 'header', 'member'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right">
+{if $action=='add' || $action=='edit' || $action=='show' || $action=='find' || $action=='apply' || $action=='refuse'}
+<a href="?action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a>
+{elseif $action=='list'}
+{else}
+<a href="?action=add"><img src="{DM_SKIN}icon-add{$wh}.png" width="24" height="24"/></a>
+{/if}
+<a href="javascript:Dpop('{$js_pageid}');"><img src="{DM_SKIN}icon-sheet{$wh}.png" width="24" height="24"/></a>
+</div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+
+<div class="ui-pop" id="pop-{$js_pageid}">
+<i></i>
+<div>
+<a href="?action=add" data-transition="none">添加好友</a>
+<a href="?action=index" data-transition="none">我的好友</a>
+<a href="?action=list" data-transition="none">黑名单</a>
+<a href="javascript:;" onclick="Dwidget('{$js_pageid}', 'type.php?item=friend', '好友分类');">好友分类</a>
+<a href="index.php" data-direction="reverse">会员中心</a>
+</div>
+</div>
+
+<div class="ui-widget" id="widget-{$js_pageid}"></div>
+
+{if $action == 'find'}
+<div class="ui-form-search">
+<form action="?" id="search">
+<input type="hidden" name="action" value="{$action}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="会员名/昵称/手机/邮箱"/></div>
+</form>
+</div>
+{if $lists}
+	{loop $lists $k $v}
+	<a href="?action=add&username={$v[username]}">
+	<div class="list-img">	
+	<img src="{useravatar($v[username], 'large')}" width="60" height="60" class="avatar"/><i class="userinfo-v{$v[validate]}"></i>
+	<ul>
+	<li>{if $DT[follow]}<span class="ui-fr">{numtoread($v[fans])}粉丝</span>{/if}<strong>{$v[passport]}</strong></li>
+	<li><span>{if $v[sign]}{$v[sign]}{else}没有留下签名~~{/if}</span></li>
+	</ul>
+	</div>
+	</a>
+	{/loop}
+{elseif $kw}
+	<div class="list-none">未找到相关用户</div>
+{/if}
+{elseif $action == 'apply'}
+<form method="post" action="?">
+<input type="hidden" name="action" value="add"/>
+<input type="hidden" name="username" value="{$username}"/>
+{if $user}
+<div class="list-img">
+<a href="{userurl($user[username], 'file=space')}" rel="external"><img src="{useravatar($user[username], 'large')}" width="60" height="60" class="avatar"/><i class="userinfo-v{$user[validate]}"></i></a>
+<ul>
+<li>{if $DT[follow]}<span class="ui-fr">{numtoread($user[fans])}粉丝</span>{/if}<a href="{userurl($user[username], 'file=space')}" rel="external"><strong>{$user[passport]}</strong></a></li>
+<li><span>{if $user[sign]}{$user[sign]}{else}没有留下签名~~{/if}</span></li>
+</ul>
+</div>
+{/if}
+<div class="ui-form">
+<p>申请原因</p>
+<div><textarea name="reason" id="reason" style="width:100%;height:80px;" maxlength="300" placeholder="">我是{$_passport}</textarea></div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="申 请" class="btn-green"/>
+<div class="blank-32"></div>
+</div>
+</form>
+{elseif $action == 'refuse'}
+<form method="post" action="?">
+<input type="hidden" name="action" value="add"/>
+<input type="hidden" name="auth" value="{$auth}"/>
+{if $user}
+<div class="list-img">
+<a href="{userurl($user[username], 'file=space')}" rel="external"><img src="{useravatar($user[username], 'large')}" width="60" height="60" class="avatar"/><i class="userinfo-v{$user[validate]}"></i></a>
+<ul>
+<li>{if $DT[follow]}<span class="ui-fr">{numtoread($user[fans])}粉丝</span>{/if}<a href="{userurl($user[username], 'file=space')}" rel="external"><strong>{$user[passport]}</strong></a></li>
+<li><span>{if $user[sign]}{$user[sign]}{else}没有留下签名~~{/if}</span></li>
+</ul>
+</div>
+{/if}
+<div class="ui-form">
+<p>拒绝理由</p>
+<div><textarea name="reason" id="reason" style="width:100%;height:80px;" maxlength="300" placeholder=""></textarea></div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="拒 绝" class="btn-green"/>
+<div class="blank-32"></div>
+</div>
+</form>
+{elseif $action=='edit'}
+{load('member.js')}
+<form method="post" action="?" id="dform" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="post[style]" value="{$style}"/>
+{if $user}
+<div class="list-img">
+<a href="{userurl($user[username], 'file=space')}" rel="external"><img src="{useravatar($user[username], 'large')}" width="60" height="60" class="avatar"/><i class="userinfo-v{$user[validate]}"></i></a>
+<ul>
+<li>{if $DT[follow]}<span class="ui-fr">{numtoread($user[fans])}粉丝</span>{/if}<a href="{userurl($user[username], 'file=space')}" rel="external"><strong>{$user[passport]}</strong></a></li>
+<li><span>{if $user[sign]}{$user[sign]}{else}没有留下签名~~{/if}</span></li>
+</ul>
+</div>
+{/if}
+<div class="ui-form">
+<p>分类</p>
+<div><span id="type_box">{$type_select}</span><a href="javascript:var type_item='friend-{$_userid}',type_name='post[typeid]',type_default='{$L[default_type]}',type_id={$typeid},type_interval=setInterval('type_reload()',500);Dwidget('{$js_pageid}','type.php?item=friend', '好友分类');"><img src="{DM_SKIN}icon-sort.png" style="width:16px;height:16px;padding:0 16px;opacity:0.5;"/></a></div>
+<p>别名<b id="dalias"></b></p>
+<div><input type="text" name="post[alias]" id="alias" value="{$alias}" style="width:200px;"/></div>
+<p>姓名<b id="dtruename"></b></p>
+<div><input type="text" name="post[truename]" id="truename" value="{$truename}" style="width:200px;"/></div>
+<p>公司</p>
+<div><input type="text" name="post[company]" id="company" value="{$company}"/></div>
+<p>职位</p>
+<div><input type="text" name="post[career]" id="career" value="{$career}" style="width:200px;"/></div>
+<p>手机</p>
+<div><input type="tel" name="post[mobile]" id="mobile" value="{$mobile}" style="width:200px;"/></div>
+<p>电话</p>
+<div><input type="tel" name="post[telephone]" id="telephone" value="{$telephone}" style="width:200px;"/></div>
+<p>邮箱</p>
+<div><input type="email" name="post[email]" id="email" value="{$email}"/></div>
+<p>主页</p>
+<div><input type="url" name="post[homepage]" id="homepage" value="{$homepage}"/></div>
+{if $DT[im_qq]}
+<p>QQ</p>
+<div><input type="tel" name="post[qq]" id="qq" value="{$qq}" style="width:200px;"/></div>
+{/if}
+{if $DT[im_wx]}
+<p>微信</p>
+<div><input type="tel" name="post[wx]" id="wx" value="{$wx}" style="width:200px;"/></div>
+{/if}
+{if $DT[im_ali]}
+<p>旺旺</p>
+<div><input type="text" name="post[ali]" id="ali" value="{$ali}" style="width:200px;"/></div>
+{/if}
+{if $DT[im_skype]}
+<p>Skype</p>
+<div><input type="text" name="post[skype]" id="skype" value="{$skype}" style="width:200px;"/></div>
+{/if}
+<p>备注</p>
+<div><input type="text" name="post[note]" id="note" value="{$note}"/></div>
+<p>排序</p>
+<div><input type="tel" name="post[listorder]" id="listorder" value="{$listorder}" style="width:100px;"/></div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="{if $action=='edit'}修改{else}添加{/if}" class="btn-blue"/>
+<div class="blank-32"></div>
+</div>
+</form>
+{elseif $action=='show'}
+{if $user}
+<div class="list-img">
+<a href="{userurl($user[username], 'file=space')}" rel="external"><img src="{useravatar($user[username], 'large')}" width="60" height="60" class="avatar"/><i class="userinfo-v{$user[validate]}"></i></a>
+<ul>
+<li>{if $DT[follow]}<span class="ui-fr">{numtoread($user[fans])}粉丝</span>{/if}<a href="{userurl($user[username], 'file=space')}" rel="external"><strong>{$user[passport]}</strong></a></li>
+<li><span>{if $user[sign]}{$user[sign]}{else}没有留下签名~~{/if}</span></li>
+</ul>
+</div>
+{/if}
+<div class="gird-4">
+	<ul>
+		{if $DT[im_web]}
+		<li><a href="{$MODULE[2][mobile]}chat.php?touser={$fusername}" rel="external"><img src="{DT_STATIC}image/share-chat.png" width="48" height="48"/><span>在线交谈</span></a></li>
+		{/if}
+		<li><a href="{$MODULE[2][mobile]}message.php?action=send&touser={$fusername}" rel="external"><img src="{DT_STATIC}image/share-message.png" width="48" height="48"/><span>发送私信</span></a></li>
+		{if $telephone}
+		<li><a href="tel:{$telephone}"><img src="{DT_STATIC}image/share-tel.png" width="48" height="48"/><span>拨打电话</span></a></li>
+		{elseif $mobile && $DT[im_mob]}
+		<li><a href="tel:{$mobile}"><img src="{DT_STATIC}image/share-tel.png" width="48" height="48"/><span>拨打电话</span></a></li>
+		{/if}
+		{if $mobile && $DT[im_mob]}
+		<li><a href="sms:{$mobile}"><img src="{DT_STATIC}image/share-sms.png" width="48" height="48"/><span>发送短信</span></a></li>
+		{/if}
+		{if $email}
+		<li><a href="mailto:{$email}"><img src="{DT_STATIC}image/share-email.png" width="48" height="48"/><span>发送邮件</span></a></li>
+		{/if}
+		{if $qq && $DT[im_qq]}
+		<li><a href="http://wpa.qq.com/msgrd?v=3&uin={$qq}&site=qq&menu=yes" target="_blank" rel="external"><img src="{DT_STATIC}image/share-qq.png" width="48" height="48"/><span>QQ交谈</span></a></li>
+		{/if}
+		{if $wx && $DT[im_wx]}
+		<li><a href="{DT_MOB}api/wx.php?wid={$$wx}&username={$fusername}" rel="external"><img src="{DT_STATIC}image/share-wx.png" width="48" height="48"/><span>微信交谈</span></a></li>
+		{/if}
+		{if $ali && $DT[im_ali]}
+		<li><a href="http://amos.alicdn.com/msg.aw?v=2&uid={$ali}&site=cnalichn&s=6&charset=UTF-8" target="_blank" rel="external"><img src="{DT_STATIC}image/share-ali.png" width="48" height="48"/><span>阿里旺旺</span></a></li>
+		{/if}
+		{if $skype && $DT[im_skype]}
+		<li><img src="{DT_STATIC}image/share-skype.png" width="48" height="48" onclick="prompt('长按号码可以复制', '{$skype}');"/><span>Skype通话</span></li>
+		{/if}
+		<li><a href="{userurl($fusername, 'file=contact')}" rel="external"><img src="{DT_STATIC}image/share-more.png" width="48" height="48"/><span>更多</span></a></li>
+	</ul>
+</div>
+<div class="content">
+{if $typeid}
+分类：{$TYPE[$typeid][typename]}<br/>
+{/if}
+别名：{$alias} &nbsp; <a href="?action=edit&itemid={$itemid}" class="b">修改</a><br/>
+{if $company} 
+公司：{$company}<br/>
+{/if}
+{if $truename} 
+姓名：{$truename} {if $career} ({$career}){/if}<br/>
+{/if}
+{if $mobile} 
+手机：<a href="tel:{$mobile}" class="b">{$mobile}</a><br/>
+{/if}
+{if $telephone} 
+电话：<a href="tel:{$telephone}" class="b">{$telephone}</a><br/>
+{/if}
+备注：{if $note}{$note}{else}暂无备注{/if}<br/>
+</div>
+<div class="blank-16"></div>
+<div class="list-btn2">
+	<div><input type="button" value="确 定" class="btn-green" onclick="Go('?action=index');"/></div>
+	<div><input type="button" value="修 改" class="btn" onclick="Go('?action=edit&itemid={$itemid}');"/></div>
+</div>
+<div class="blank-32"></div>
+{elseif $action=='list'}
+<div class="ui-form-search">
+<form action="?">
+<input type="hidden" name="action" value="{$action}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<input type="checkbox" name="itemid[]" value="{$v[itemid]}" class="dsn" id="checkbox-{$v[itemid]}"/>
+<a href="{userurl($v[busername], 'file=space')}" rel="external"><img src="{useravatar($v[busername], 'large')}" width="60" height="60" class="avatar"/></a><i class="userinfo-v{$v[member][validate]}"></i>
+<ul>
+<li><em class="check" id="check-{$v[itemid]}"></em><a href="{userurl($v[busername], 'file=space')}" rel="external"><strong>{$v[bpassport]}</strong></a></li>
+<li><span class="ui-fr">{$v[note]}</span><span>{if $v[member][sign]}{$v[member][sign]}{else}没有留下签名~~{/if}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无记录</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<div id="foot-bar" class="dsn">
+<div class="foot-bar-fix"></div>
+<div class="foot-bar btns">
+<input type="submit" name="submit" value="取消拉黑" class="btn" onclick="if(confirm('确定要将选中会员移出黑名单吗？')){this.form.action='?action=remove'}else{return false;}"/>
+</div>
+</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	if($('#foot-bar input').length == 0) $('.check').hide();
+	$('.list-img em').click(function() {
+		if($(this).attr('class') == 'sheet') {
+			var id = $(this).attr('id').replace('sheet-', '');
+			Dsheet('{$js_pageid}','<a href="?action=remove&itemid='+id+'" onclick="return _delete();"><span style="color:red;">取消拉黑</span></a>', '取消');
+		} else {
+			var id = $(this).attr('id').replace('check-', '');
+			if($('#checkbox-'+id).attr('checked')) {
+				$('#checkbox-'+id).attr('checked', false);
+				$(this).attr('class', 'check');
+			} else {
+				$('#checkbox-'+id).attr('checked', true);
+				$(this).attr('class', 'checked');
+			}
+			if($('.checked').length > 0) {
+				$('#foot-bar').fadeIn(300);
+			} else {
+				$('#foot-bar').fadeOut(300);
+			}
+		}
+	});
+});
+</script>
+{else}
+<div class="ui-form-search">
+<form action="?">
+<input type="hidden" name="action" value="{$action}"/>
+<div><input type="search" name="kw" value="{$kw}" placeholder="{$L[kw]}"/></div>
+</form>
+</div>
+<form method="post">
+{if $lists}
+{loop $lists $v}
+<div class="list-img">
+<input type="checkbox" name="itemid[]" value="{$v[itemid]}" class="dsn" id="checkbox-{$v[itemid]}"/>
+<a href="{userurl($v[fusername], 'file=space')}" rel="external"><img src="{useravatar($v[fusername], 'large')}" width="60" height="60" alt="" class="avatar"/></a><i class="userinfo-v{$v[member][validate]}"></i>
+<ul>
+<li><em class="check" id="check-{$v[itemid]}"></em><a href="?action=show&itemid={$v[itemid]}"><strong>{if $v[alias]}{$v[alias]}{else}{$v[fpassport]}{/if}</strong></a></li>
+<li><em class="sheet" id="sheet-{$v[itemid]}"></em><span>{if $v[member][sign]}{$v[member][sign]}{else}没有留下签名~~{/if}</span></li>
+</ul>
+</div>
+{/loop}
+{else}
+<div class="list-none">暂无好友</div>
+{/if}
+{if $MG[friend_limit]}
+<div class="limit">好友上限 <span class="f_b f_red">{$MG[friend_limit]}</span> 人&nbsp;&nbsp;&nbsp;当前已加 <span class="f_b">{$limit_used}</span> 人&nbsp;&nbsp;&nbsp;还可以加 <span class="f_b f_blue">{$limit_free}</span> 人</div>
+{/if}
+{if $pages}<div class="pages" id="pages-{$js_pageid}">{$pages}</div>{/if}
+<div id="foot-bar" class="dsn">
+<div class="foot-bar-fix"></div>
+<div class="foot-bar btns">
+<input type="submit" name="submit" value="拉黑好友" class="btn" onclick="if(confirm('确定要拉黑选中好友吗？')){this.form.action='?action=delete&job=black'}else{return false;}"/>
+<input type="submit" name="submit" value="删除好友" class="btn-red" onclick="if(confirm('确定要删除选中好友吗？')){this.form.action='?action=delete'}else{return false;}"/>
+</div>
+</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	if($('#foot-bar input').length == 0) $('.check').hide();
+	$('.list-img em').click(function() {
+		if($(this).attr('class') == 'sheet') {
+			var id = $(this).attr('id').replace('sheet-', '');
+			Dsheet('{$js_pageid}','<a href="?action=edit&itemid='+id+'"><span>修改</span></a>|<a href="?action=delete&itemid='+id+'" onclick="return _delete();"><span style="color:red;">删除</span></a>', '取消');
+		} else {
+			var id = $(this).attr('id').replace('check-', '');
+			if($('#checkbox-'+id).attr('checked')) {
+				$('#checkbox-'+id).attr('checked', false);
+				$(this).attr('class', 'check');
+			} else {
+				$('#checkbox-'+id).attr('checked', true);
+				$(this).attr('class', 'checked');
+			}
+			if($('.checked').length > 0) {
+				$('#foot-bar').fadeIn(300);
+			} else {
+				$('#foot-bar').fadeOut(300);
+			}
+		}
+	});
+});
+</script>
+{/if}
+{template 'footer', 'member'}

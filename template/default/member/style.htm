@@ -1,0 +1,276 @@
+{template 'header', 'member'}
+<div class="menu">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="tab" id="Tab0"><a href="?action=order"><span>我的模板</span></a></td>
+<td class="tab" id="Tab1"><a href="?action=index"><span>模板设置</span></a></td>
+</tr>
+</table>
+</div>
+{if $action == 'buy'}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+<table cellpadding="10" cellspacing="1" class="tb">
+<td class="tl">模板预览：</td>
+<td class="tr"><a href="{DT_PATH}index.php?homepage={$_username}&preview={$itemid}" target="_blank"><img src="{$thumb}" style="border:#EEEEEE 2px solid;padding:5px;margin:0 0 10px 0;" alt="预览"/></a></td>
+</tr>
+<tr>
+<td class="tl">模板价格</td>
+<td class="tr"><span class="f_red">{$fee}</span>{$unit}/月</td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 购买时长</td>
+<td class="tr f_gray">
+<select name="month" id="month" onchange="CA();">
+{loop $months $m}<option value="{$m}">{$m}月</option>{/loop}
+</select>
+(注:按30天/月计算)
+</td>
+</tr>
+<tr>
+<td class="tl">应付总额</td>
+<td class="tr"><span id="money" class="f_price px16">{$fee}</span>{$unit}</td>
+</tr>
+{if $currency == 'money'}
+<tr id="mymoney" style="display:none;">
+<td class="tl">账户余额</td>
+<td class="tr"><span class="f_blue">{$DT[money_sign]}{$_money}</span> {$DT[money_unit]}</td>
+</tr>
+<tr id="payword" style="display:none;">
+<td class="tl"><span class="f_red">*</span> 支付密码</td>
+<td class="tr">{template 'payword', 'chip'} <span id="dpassword" class="f_red"></span></td>
+</tr>
+<tr id="paytype" style="display:none;">
+<td class="tl"><span class="f_red">*</span> 支付方式</td>
+<td class="tr">{template 'paylist', 'chip'}</td>
+</tr>
+{else}
+<tr>
+<td class="tl">{$DT[credit_name]}余额</td>
+<td class="tr"><span class="f_blue">{$_credit}{$unit}</span>&nbsp;&nbsp;<a href="credit.php?action=buy" target="_blank" class="t">[购买]</a></td>
+</tr>
+{/if}
+</table>
+<div class="sbt"><input type="submit" name="submit" value=" 立即{if $currency == 'money'}购买{else}兑换{/if} " class="btn_g"/></div>
+</form>
+<script type="text/javascript">s('style');m('Tab1');</script>
+{elseif $action=='order'}
+<form action="?" id="search">
+<input type="hidden" name="action" id="action" value="{$action}"/>
+<div class="tt">&nbsp;
+<input type="text" size="30" name="kw" value="{$kw}" placeholder="关键词" title="关键词" placeholder="关键词"/>&nbsp;
+<select name="currency">
+<option value="">付费方式</option>
+<option value="money"{if $currency == 'money'} selected{/if}>{$DT[money_name]}</option>
+<option value="credit"{if $currency == 'credit'} selected{/if}>{$DT[credit_name]}</option>
+</select>&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?action=order');"/>&nbsp;
+</div>
+</form>
+<div class="ls">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="220">预览图</th>
+<th>模板</th>
+<th><a href="javascript:;" onclick="Dq('order','{if $order==1}2{else}1{/if}');">价格 <img src="{DT_STATIC}image/ico-{if $order==2}asc{elseif $order==1}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th><a href="javascript:;" onclick="Dq('order','{if $order==3}4{else}3{/if}');">时长(月) <img src="{DT_STATIC}image/ico-{if $order==4}asc{elseif $order==3}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th><a href="javascript:;" onclick="Dq('order','{if $order==5}6{else}5{/if}');">总额 <img src="{DT_STATIC}image/ico-{if $order==6}asc{elseif $order==5}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th><a href="javascript:;" onclick="Dq('order','{if $order==7}8{else}7{/if}');">购买时间 <img src="{DT_STATIC}image/ico-{if $order==8}asc{elseif $order==7}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th><a href="javascript:;" onclick="Dq('order','{if $order==9}10{else}9{/if}');">到期时间 <img src="{DT_STATIC}image/ico-{if $order==10}asc{elseif $order==9}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th><a href="javascript:;" onclick="Dq('order','{if $order==9}10{else}9{/if}');">剩余(天) <img src="{DT_STATIC}image/ico-{if $order==10}asc{elseif $order==9}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th width="60">启用</th>
+<th width="60">操作</th>
+</tr>
+<tr align="center" bgcolor="#F1F1F1">
+<td><a href="{DT_PATH}index.php?homepage={$_username}&update=1" target="_blank"><img src="{$c[thumb]}" width="200" class="thumb" title="预览"/></a></td>
+<td align="left">&nbsp;<a href="javascript:;" onclick="Dq('kw','='+this.innerHTML);" class="t">{$c[title]}</a></td>
+<td>
+{if $c[fee]}
+	{if $c[currency] == 'money'}
+		<span class="f_red">{$c[fee]}{$DT[money_unit]}/月</span>
+	{else}
+		<span class="f_blue">{$c[fee]}{$DT[credit_unit]}/月</span>
+	{/if}
+{else}
+<span class="f_green">免费</span>
+{/if}
+</td>
+<td>{$c[number]}</td>
+<td>
+{if $c[fee]}
+	{if $c[currency] == 'money'}
+		<span class="f_red">{$c[amount]}{$DT[money_unit]}</span>
+	{else}
+		<span class="f_blue">{$c[amount]}{$DT[credit_unit]}</span>
+	{/if}
+{else}
+N/A
+{/if}
+</td>
+<td>{$c[adddate]}</td>
+<td>{$c[todate]}</td>
+<td>{if $c[days]}{$c[days]}{else}<span class="f_red">过期</span>{/if}</td>
+<td class="f_green">使用中</td>
+<td><a href="?action=clear" class="t" onclick="return confirm('确定要删除此模板吗？公司模板将被设置为默认模板');">删除</a></td>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><a href="{DT_PATH}index.php?homepage={$_username}&preview={$v[styleid]}" target="_blank"><img src="{$v[thumb]}" width="200" class="thumb"/></a></td>
+<td align="left">&nbsp;<a href="javascript:;" onclick="Dq('kw','='+this.innerHTML);" class="t">{$v[title]}</a></td>
+<td>
+{if $v[fee]}
+	{if $v[currency] == 'money'}
+		<span class="f_red">{$DT[money_sign]}{$v[fee]}{$DT[money_unit]}/月</span>
+	{else}
+		<span class="f_blue">{$v[fee]}{$DT[credit_unit]}/月</span>
+	{/if}
+{else}
+<span class="f_green">免费</span>
+{/if}
+</td>
+<td>{$v[number]}</td>
+<td>
+{if $v[fee]}
+	{if $v[currency] == 'money'}
+		<span class="f_red">{$DT[money_sign]}{$v[amount]}{$DT[money_unit]}</span>
+	{else}
+		<span class="f_blue">{$v[amount]}{$DT[credit_unit]}</span>
+	{/if}
+{else}
+<span class="f_green">N/A</span>
+{/if}
+</td>
+<td>{$v[adddate]}</td>
+<td>{$v[todate]}</td>
+<td>{if $v[days]}{$v[days]}{else}<span class="f_red">过期</span>{/if}</td>
+<td><a href="?action=choose&itemid={$v[itemid]}" class="t">启用</a></td>
+<td><a href="?action=buy&itemid={$v[styleid]}" class="t">续费</a></td>
+</tr>
+{/loop}
+</table>
+</div>
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('style');m('Tab0');</script>
+{else}
+<form action="?" id="search">
+<input type="hidden" name="action" id="action" value="{$action}"/>
+<div class="tt">
+&nbsp;{$fields_select}&nbsp;
+<input type="text" size="30" name="kw" value="{$kw}" placeholder="关键词" title="关键词" placeholder="关键词"/>&nbsp;
+{$type_select}&nbsp;
+价格：<input type="text" size="3" name="minfee" value="{$minfee}"/> ~
+<input type="text" size="3" name="maxfee" value="{$maxfee}" />&nbsp;
+<select name="currency">
+<option value="">收费方式</option>
+<option value="free"{if $currency == 'free'} selected{/if}>免费模板</option>
+<option value="money"{if $currency == 'money'} selected{/if}>收费模板</option>
+<option value="credit"{if $currency == 'credit'} selected{/if}>积分兑换</option>
+</select>&nbsp;
+<select name="all">
+<option value="1"{if $all == 1} selected{/if}>显示全部</option>
+<option value="0"{if $all == 0} selected{/if}>显示可用</option>
+</select>&nbsp;
+{$order_select}&nbsp;
+<input type="submit" value=" 搜 索 " class="btn"/>&nbsp;
+<input type="button" value=" 重 置 " class="btn" onclick="Go('?action=index');"/>&nbsp;
+</div>
+</form>
+
+<div class="nav">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="{if !$currency}nav_2{else}nav_1{/if}"><a href="?action=index">全部模板</a></td>
+<td class="{if $currency=='free'}nav_2{else}nav_1{/if}"><a href="?currency=free">免费模板 <span>({$num0})</span></a></td>
+<td class="{if $currency=='money'}nav_2{else}nav_1{/if}"><a href="?currency=money">收费模板 <span>({$num1})</span></a></td>
+<td class="{if $currency=='credit'}nav_2{else}nav_1{/if}"><a href="?currency=credit">积分兑换 <span>({$num2})</span></a></td>
+<td>&nbsp;</td>
+</tr>
+</table>
+</div>
+
+<div class="ls">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="220">预览图</th>
+<th>模板</th>
+<th><a href="javascript:;" onclick="Dq('order','{if $order==1}2{else}1{/if}');">价格 <img src="{DT_STATIC}image/ico-{if $order==2}asc{elseif $order==1}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th><a href="javascript:;" onclick="Dq('order','{if $order==3}4{else}3{/if}');">人气 <img src="{DT_STATIC}image/ico-{if $order==4}asc{elseif $order==3}dsc{else}ord{/if}.png" width="11" height="11"/></a></th>
+<th width="60">预览</th>
+<th width="60">操作</th>
+</tr>
+{loop $lists $k $v}
+<tr align="center">
+<td><a href="javascript:_preview('{$v[thumb]}');"><img src="{$v[thumb]}" width="200" class="thumb"/></a></td>
+<td align="left">
+<ul>
+<li>&nbsp;<a href="{DT_PATH}index.php?homepage={$_username}&preview={$v[itemid]}" target="_blank" class="t" title="预览">{$v[title]}</a></li>
+<li class="f_grey">&nbsp;类别：<span class="c_p" onclick="Dq('typeid','{$v[typeid]}');">{if isset($TYPE[$v[typeid]])}{$TYPE[$v[typeid]][typename]}{else}未分类{/if}</span></li>
+<li class="f_grey">&nbsp;作者：<span class="c_p" onclick="Dq('fields',2,0);Dq('kw','{$v[author]}');">{$v[author]}</span></li>
+<li class="f_grey">&nbsp;权限：<span class="c_p" onclick="Dq('all',0);">{$v[group]}</span></li>
+</ul>
+</td>
+<td>
+{if $v[fee]}
+	{if $v[currency] == 'money'}
+		<span class="f_red">{$DT[money_sign]}{$v[fee]}{$DT[money_unit]}/月</span>
+	{else}
+		<span class="f_blue">{$v[fee]}{$DT[credit_unit]}/月</span>
+	{/if}
+{else}
+<span class="f_green">免费</span>
+{/if}
+</td>
+<td>{$v[hits]}</td>
+<td><a href="{DT_PATH}index.php?homepage={$_username}&preview={$v[itemid]}" target="_blank" class="t">预览</a></td>
+<td><a href="?action=buy&itemid={$v[itemid]}" class="t">{if $v[fee]}{if $v[currency] == 'money'}购买{else}兑换{/if}{else}选用{/if}</a></td>
+</tr>
+{/loop}
+</table>
+</div>
+<div class="pages">{$pages}</div>
+<script type="text/javascript">s('style');m('Tab1');</script>
+{/if}
+{if $action == 'buy'}
+<script type="text/javascript">
+function CA() {
+	Dd('money').innerHTML = {$fee}*Dd('month').value;
+}
+{if $currency == 'money'}
+function check() {
+	var money = {$fee}*Dd('month').value;
+	if({$fee}*Dd('month').value > {$_money}) {
+		Go('charge.php?action=pay&reason=style|{$itemid}|'+Dd('month').value+'&amount='+money+'&bank='+$('#bank').val());
+		return false;
+	}
+	if(money > {$DT[quick_pay]}){
+		if(Dd('password').value.length < 6) {
+			Dmsg('请填写支付密码', 'password');
+			return false;
+		}
+	}
+	return confirm('确定要购买'+Dd('month').value+'月吗？');
+}
+window.setInterval(
+	function() {
+		var money = {$fee}*Dd('month').value;
+		if(money > {$_money} || {$_money} < 0.01) {
+			$('#mymoney').hide();$('#paytype').show();$('#payword').hide();
+		} else {
+			$('#mymoney').show();$('#paytype').hide();if(money > {$DT[quick_pay]}){$('#payword').show();}else{$('#payword').hide();}
+		}
+	}, 
+500);
+{else}
+function check() {
+	if({$fee}*Dd('month').value > {$_credit}) {
+		alert('您的{$DT[credit_name]}不足，请先购买');
+		return false;
+	}
+	return confirm('确定要购买'+Dd('month').value+'月吗？');
+}
+{/if}
+</script>
+{/if}
+{template 'footer', 'member'}

@@ -1,0 +1,130 @@
+{template 'header', 'member'}
+<div class="menu">
+<table cellpadding="0" cellspacing="0">
+<tr>
+<td class="tab" id="action"><a href="?action=index"><span>信息管理</span></a></td>
+{if $spread}<td class="tab" id="action_spread"><a href="?action=spread"><span>信息推广</span></a></td>{/if}
+</tr>
+</table>
+</div>
+{if $action == 'spread'}
+{if $sid}
+	{if $pid || $rid}
+	<table cellpadding="10" cellspacing="1" class="tb">
+	<tr>
+	<td class="tl"><span class="f_red">*</span> 推广方式</td>
+	<td class="tr" id="type">
+		{if $rid}
+		<label class="px14"><input type="radio" name="typeid" value="1" id="typeid-1" onclick="tp(1);"/> 搜索竞价</label>
+		<div style="padding:6px 24px 24px 24px;color:#666666;">指定关键词，同一个月出价越高排名越靠前</div>
+		{/if}
+		{if $pid}
+		<label class="px14"><input type="radio" name="typeid" value="2" id="typeid-2" onclick="tp(2);"/> 排名广告</label>
+		<div style="padding:6px 24px;color:#666666;">指定关键词或分类，在搜索结果或列表页置顶</div>
+		{/if}
+	</td>
+	</tr>
+	<tr>
+	<td class="tl"><span class="f_red" id="star">*</span> 关键词</td>
+	<td class="tr"><input type="text" name="kw" size="20" id="kw"/> <span id="dkw" class="f_red"></span></td>
+	</tr>
+	<tr>
+	<td class="tl"></td>
+	<td class="tr"><input type="button" value="下一步" class="btn_g" onclick="tp(0);"/></td>
+	</tr>
+	</table>
+	<script type="text/javascript">
+	function tp(i) {
+		if(i == 1) {
+			$('#star').show();
+		} else if(i == 2) {
+			$('#star').hide();
+		} else {
+			var id = $('#type input:checked').val();
+			if(id == 1) {
+				if(Dd('kw').value.length < 2) {
+					Dmsg('请填写关键词', 'kw');
+					return false;
+				}
+				Go('spread.php?action=add&mid={$sid}&itemid={$itemid}&kw='+encodeURIComponent(Dd('kw').value));
+			} else {
+				Go('ad.php?action=add&pid={$pid}&itemid={$itemid}&kw='+encodeURIComponent(Dd('kw').value));
+			}
+		}
+	}
+	$(function(){
+		$('#type input:first').attr('checked', 'checked');
+		tp($('#type input:first').val());
+	});
+	</script>
+	{else}
+	<table cellpadding="10" cellspacing="1" class="tb">
+	<tr>
+	<td class="tl">提示信息</td>
+	<td class="tr f_red"><a href="{$MODULE[$sid][linkurl]}" target="_blank" class="b">{$MODULE[$sid][name]}</a> 暂无相应的推广位</td>
+	</tr>
+	<tr>
+	<td class="tl"></td>
+	<td class="tr"><input type="button" value="重新选择" class="btn_g" onclick="Go('?action={$action}');"/></td>
+	</tr>
+	</table>
+	{/if}
+
+{else}
+	<form action="?">
+	<input type="hidden" name="action" value="{$action}"/>
+	<table cellpadding="10" cellspacing="1" class="tb">
+	<tr>
+	<td class="tl"><span class="f_red">*</span> 选择模型</td>
+	<td class="tr">
+	<select name="sid">
+	<option value="4">{$MODULE[4][name]}</option>
+	{loop $MYMODS $v}
+	<option value="{$v}">{$MODULE[$v][name]}</option>
+	{/loop}
+	</select>
+	<span id="dsid" class="f_red"></span>
+	</td>
+	</tr>
+	<tr>
+	<td class="tl"></td>
+	<td class="tr"><input type="submit" value="下一步" class="btn_g"/></td>
+	</tr>
+	</table>
+	</form>
+{/if}
+<script type="text/javascript">{if $sid>4}s('mid_{$sid}');{/if}m('action_spread');</script>
+
+{else}
+{if $MYMODS}
+{if $_userid}
+{else}
+<div class="warn">您还没有登录，目前仅拥有以下栏目的发布权限，建议您 <a href="{$DT[file_login]}" class="t">立即登录</a> 或 <a href="{$DT[file_register]}" class="t">注册会员</a></div>
+{/if}
+<table cellspacing="1" cellpadding="10" class="tb">
+{loop $MYMODS $v}
+<tr>
+<td class="tl px14"><a href="{$MODULE[$v][linkurl]}" target="_blank">{$MODULE[$v][name]}</a></td>
+<td class="tr px14">
+{if $_userid}
+<a href="?mid={$v}" class="t">管理</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+{/if}
+{if $MODULE[$v][module] == 'club'}
+<a href="?mid={$v}&job=group&action=add" class="t">创建</a>
+{else}
+<a href="?mid={$v}&action=add" class="t">发布</a>
+{/if}
+</td>
+</tr>
+{/loop}
+</table>
+{else}
+	{if $_userid}
+	<div class="warn">尊敬的<strong>{$MG[groupname]}</strong>，您的会员组没有在本站发布信息的权限，请返回<a href="./" class="t"><div>点击返回</div></a></div>
+	{else}
+	<div class="warn">您还没有登录，目前没有信息发布权限，建议您 <a href="{$DT[file_login]}" class="t">立即登录</a> 或 <a href="{$DT[file_register]}" class="t">注册会员</a></div>
+	{/if}
+{/if}
+<script type="text/javascript">m('action');</script>
+{/if}
+{template 'footer', 'member'}

@@ -1,0 +1,7 @@
+<?php exit;?>
+itemid,ID,
+catid,分类ID,
+areaid,地区ID,
+content,关键词,
+status,状态,
+sorttime,排序,

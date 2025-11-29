@@ -1,0 +1,16 @@
+<?php exit;?>
+itemid,ID,
+username,会员名,
+passport,昵称,
+userid,会员ID,
+typeid,分类ID,
+note,备注,
+fusername,被关注会员名,
+fpassport,被关注昵称,
+fuserid,被关注会员ID,
+ftypeid,被关注分类ID,
+fnote,被关注备注,
+addtime,关注时间,
+visittime,访问时间,
+posttime,发表时间,
+status,状态,0默认1互关

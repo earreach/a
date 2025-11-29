@@ -1,0 +1,217 @@
+{template 'header'}
+<div class="m">
+	<div class="nav">
+	{if $MENU}
+	<div class="nvs"><form action="{$MODULE[4][linkurl]}index.php"><input type="hidden" name="homepage" value="{$username}"/><input type="hidden" name="file" value="{$file}"/><input type="hidden" name="mid" value="{$mid}"/>{if $typeid}<input type="hidden" name="typeid" value="{$typeid}"/>{/if}<input type="search" name="kw" value="{$kw}" placeholder="搜索{$name}" title="搜索{$name}"/><s onclick="$(this).parent().submit();">搜索</s></form></div>
+	{/if}
+	<a href="{$MODULE[1][linkurl]}">首页</a> <i>&gt;</i> <a href="{$member[space]}">{$passport}的个人空间</a></div>
+</div>
+<div class="m"><div class="space-cover"><a href="{$member[space]}"><img src="{$member[cover]}" onerror="this.src='{DT_STATIC}image/cover.png';"/></a></div></div>
+<div class="m m5">
+	<div class="m5l">
+		<div class="space-member">
+			<div><img src="{useravatar($username, 'large')}"/><i class="member-v{$member[validate]}" title="{valid_name($member[validate])}"></i></div>
+			<p><b>{$passport}</b> <a href="{$MODULE[2][linkurl]}grade.php?action=credit" target="_blank"><img src="{DT_STATIC}image/grade-{$member[gradeid]}.png" width="24" alt=""/></a></p>
+		</div>
+		{if $DT[follow]}
+		<div class="space-stats">
+			<ul>
+			<a href="{userurl($username, 'file=space&mid=2&typeid=3', $domain)}"><li><i>{numtoread($member[fans])}</i><span>粉丝</span></li></a>
+			<a href="{userurl($username, 'file=space&mid=2&typeid=2', $domain)}"><li><div><i>{numtoread($member[follows])}</i><span>关注</span></div></li></a>
+			{if isset($MODULE[20])}
+			<a href="{userurl($username, 'file=space&mid=20', $domain)}"><li><i>{numtoread($member[moments])}</i><span>{$MODULE[20][name]}</span></li></a>
+			{else}
+			<a href="{$member[space]}"><li><i>{numtoread($member[hits])}</i><span>访问</span></li></a>
+			{/if}
+			</ul>
+		</div>
+		{/if}
+		<div class="space-sign"{if !$DT[follow]} style="margin-top:96px;"{/if}>
+		个性签名：{if $member[sign]}{$member[sign]}{else}没有留下签名~~{/if}
+		</div>
+	</div>
+	<div class="m5m">
+	{if $MENU}
+	<div class="space-menu">
+		{loop $MENU $k $v}
+		<a href="{userurl($username, 'file=space&mid='.$k, $domain)}"><span{if $k==$mid} class="on"{/if}>{$v}</span></a>
+		{/loop}
+	</div>
+	{/if}
+	{if $SUBMENU}
+	<div class="space-submenu">
+		{loop $SUBMENU $k $v}
+		<a href="{userurl($username, 'file=space&mid='.$mid.($k ? '&typeid='.$k : ''), $domain)}"><span{if $k==$typeid} class="on"{/if}>{$v}</span></a>
+		{/loop}
+	</div>
+	{/if}
+	{if $tags}
+	{if $sub == 'about'}
+		{if $tags[0]}
+		<div class="space-text">{$tags[0]}</div>
+		{else}
+		<div class="list-none">暂未填写简介~~</div>
+		{/if}
+	{elseif $sub == 'comment'}
+		{loop $tags $k $t}
+		<div class="space-txt">
+		<a href="{gourl('?mid=3&itemid='.$t['itemid'])}" target="_blank"><strong>{$t[item_title]}</strong></a>
+		<div>{dsubstr(strip_tags($t[content]), 100, '...')}</div>
+		<p><i class="ui-ico-time">{timetodate($t[addtime], 3)}</i><i class="ui-ico-like">{$t[likes]}</i></p>
+		</div>
+		{/loop}
+	{elseif $sub == 'follow'}
+		{php $tags = list_user($tags, 'userid,fans,follows,sign,validate', 'fuserid');}
+		{loop $tags $k $t}
+		<div class="space-mix">
+		<a href="{userurl($t[fusername], 'file=space')}" target="_blank"><img src="{useravatar($t[fusername])}" alt="" style="width:64px;height:64px;" class="avatar"/></a><i class="userinfo-v{$t[member][validate]}" title="{valid_name($t[member][validate])}"></i>
+		<ul>
+		<li><i class="ui-ico-hits ui-fr">{$t[member][follows]}关注</i><i class="ui-ico-user ui-fr">{$t[member][fans]}粉丝 &nbsp; </i><a href="{userurl($t[fusername], 'file=space')}" target="_blank"><strong>{$t[fpassport]}</strong></a></li>
+		<li><div>{if $t[member][sign]}{$t[member][sign]}{else}没有留下签名~~{/if}</div></li>
+		</ul>
+		</div>
+		{/loop}
+	{elseif $sub == 'fans'}
+		{php $tags = list_user($tags, 'userid,fans,follows,sign,validate');}
+		{loop $tags $k $t}
+		<div class="space-mix">
+		<a href="{userurl($t[username], 'file=space')}" target="_blank"><img src="{useravatar($t[username])}" alt="" style="width:64px;height:64px;" class="avatar"/></a><i class="userinfo-v{$t[member][validate]}" title="{valid_name($t[member][validate])}"></i>
+		<ul>
+		<li><i class="ui-ico-hits ui-fr">{$t[member][follows]}关注</i><i class="ui-ico-user ui-fr">{$t[member][fans]}粉丝 &nbsp; </i><a href="{userurl($t[username], 'file=space')}" target="_blank"><strong>{$t[passport]}</strong></a></li>
+		<li><div>{if $t[member][sign]}{$t[member][sign]}{else}没有留下签名~~{/if}</div></li>
+		</ul>
+		</div>
+		{/loop}
+	{elseif $sub == 'reply'}
+		{loop $tags $k $t}
+		<div class="space-txt">
+		<a href="{$MOD[linkurl]}goto.php?itemid={$t[itemid]}" target="_blank"><strong>{dsubstr(strip_tags($t[content]), 36, '...')}</strong></a>
+		<div>{dsubstr(strip_tags($t[content]), 100, '...')}</div>
+		<p><i class="ui-ico-time">{timetodate($t[addtime], 3)}</i><i class="ui-ico-like">{$t[likes]}</i></p>
+		</div>
+		{/loop}
+	{elseif $sub == 'group'}
+		{php $tags = list_group($tags);}
+		{loop $tags $k $t}
+		<div class="space-mix">
+		<a href="{$t[linkurl]}" target="_blank"><img src="{$t[thumb]}" alt="" style="width:64px;height:64px;" class="avatar"/></a>
+		<ul>
+		<li><a href="{$t[linkurl]}" target="_blank"><strong>{$t[title]}</strong></a></li>
+		<li><p><i class="ui-ico-comm ui-fr">{$t[post]}主题</i><i class="ui-ico-user">{$t[fans]}粉丝</i></p></li>
+		</ul>
+		</div>
+		{/loop}
+	{elseif $sub == 'answer'}
+		{loop $tags $k $t}
+		<div class="space-txt">
+		<a href="{$MOD[linkurl]}goto.php?itemid={$t[itemid]}" target="_blank"><strong>{dsubstr(strip_tags($t[content]), 36, '...')}</strong></a>
+		<div>{dsubstr(strip_tags($t[content]), 100, '...')}</div>
+		<p><i class="ui-ico-time">{timetodate($t[addtime], 3)}</i><i class="ui-ico-like">{$t[likes]}</i></p>
+		</div>
+		{/loop}
+	{elseif $module == 'buy' && !$could_showbuy}
+		<div class="list-none">
+		{if $_userid}
+		<br/><br/><br/><br/><br/><br/><center>请先 <a href="{$MODULE[2][linkurl]}grade.php" class="b">升级</a> 会员级别后查看{$name}</center><br/><br/><br/><br/><br/><br/>
+		{else}
+		<br/><br/><br/><br/><br/><br/><center>请先 <a href="{$MODULE[2][linkurl]}{$DT[file_login]}" class="b">登录</a> 或 <a href="{$MODULE[2][linkurl]}{$DT[file_register]}" class="b">注册</a> 后查看{$name}</center><br/><br/><br/><br/><br/><br/>
+		{/if}
+		</div>
+		{php $pages = '';}
+	{else}
+		{template $tag, 'tag'}
+	{/if}
+	{else}
+	<div class="list-none">暂无相关信息</div>
+	{/if}
+	{if $pages}<div class="pages">{$pages}</div>{/if}
+	</div>
+	<div class="m5r">
+	<div class="contact-body">
+	{if $DT[follow]}
+	<div class="contact-fw">
+	<span>联系方式</span>
+	{if followed($member[userid])}
+	<div class="follow1" onclick="Dfollow('{$member[username]}');" id="follow-{$member[username]}" title="已关注，点击取消"><b>已关注</b><i>{numtoread($member[fans])}</i></div>
+	{else}
+	<div class="follow0" onclick="Dfollow('{$member[username]}');" id="follow-{$member[username]}" title="未关注，点击关注"><b>加关注</b><i>{numtoread($member[fans])}</i></div>
+	{/if}
+	</div>
+	{/if}
+	<h3>
+	{if $UG[type]}
+	<a href="{$member[linkurl]}" target="_blank">{if $member[shop] && $member[vshop]}{$member[shop]}{else}{$member[company]}{/if}</a>
+	{else}
+	<a href="{$member[space]}">{$passport}的个人空间</a>
+	{/if}
+	</h3>
+	{if $member[vip]}
+	<div class="contact-vip"><img src="{DT_SKIN}vip_{$member[vip]}.gif" alt="{VIP}" title="{VIP}:{$member[vip]}级" align="absmiddle"/> &nbsp; <b>{$member[groupname]}</b><span>第{vip_year($member[fromtime])}年</span></div>
+	{else}
+	<div class="contact-com"><b>{$member[groupname]}</b><span>第{vip_year($member[regtime])}年</span></div>
+	{/if}
+
+	{if $UG[type]}
+	<div class="contact-vd">
+		{if $member[validated]}
+		<div class="contact-v1">资料<b>通过{$member[validator]}认证</b></div>
+		{else}
+		<div class="contact-v0">资料<b>未认证</b></div>
+		{/if}
+		{if $member[deposit]>0.01}
+		<div class="contact-d1">保证金<b>{$DT[money_sign]}{$member[deposit]}</b></div>
+		{else}
+		<div class="contact-d0">保证金<b>未缴纳</b></div>
+		{/if}
+	</div>
+	{else}
+		{if $member[validated]}
+		<div class="space-v1">资料<b>通过{$member[validator]}认证</b></div>
+		{else}
+		<div class="space-v0">资料<b>未认证</b></div>
+		{/if}
+	{/if}
+
+	{if $could_contact}
+	<ul>
+		{if $member[areaid]}<li><a href="{DT_PATH}api/address.php?auth={encrypt($member[address].'|'.$member[company].'|'.$member[lng].','.$member[lat], DT_KEY.'MAP')}" target="_blank"><b class="ui-ico-area">{area_pos($member[areaid], '-')}</b></a></li>{/if}
+		<li>
+		<b class="ui-ico-time">上次登录 {timetoread($member[logintime], 3)}</b>
+		{if online($member[userid])==1}
+		<span class="contact-ol" title="当前在线">&bull;</span>
+		{else}
+		<span class="contact-fl" title="当前离线">&bull;</span>
+		{/if}
+		</li>
+		{if $member[mail]}<li><b class="ui-ico-mail">{if $DT[anti_spam]}</b>{anti_spam($member[mail])}{else}{$member[mail]}</b>{/if}</li>{/if}
+		{if $member[telephone]}<li><b class="ui-ico-tel">{if $DT[anti_spam]}</b>{anti_spam($member[telephone])}{else}{$member[telephone]}</b>{/if}</li>{/if}
+		{if $member[mobile] && $DT[im_mob]}<li><b class="ui-ico-mob">{if $DT[anti_spam]}</b>{anti_spam($member[mobile])}{else}{$member[mobile]}</b>{/if}</li>{/if}
+		{if $member[truename]}<li><b class="ui-ico-user">{$member[truename]} ({gender($member[gender])}) &nbsp; {$member[career]}</b></li>{/if}
+	</ul>
+
+	<div class="contact-im">
+		{if $member[username] && $DT[im_web]}{im_web($member[username].'&mid='.$moduleid.'&itemid='.$itemid)}{/if}
+		<a href="{$MODULE[2][linkurl]}friend.php?action=add&username={$member[username]}" target="_blank"><img src="{DT_STATIC}image/friend-add.gif" width="16" height="16" align="absmiddle" title="加为好友"/></a>
+		<a href="{$MODULE[2][linkurl]}message.php?action=send&touser={$member[username]}" target="_blank"><img src="{DT_STATIC}image/msg.gif" width="16" height="16" align="absmiddle" title="发送私信"/></a>
+		{if $member[qq] && $DT[im_qq]}{im_qq($member[qq])}{/if}
+		{if $member[wx] && $DT[im_wx]}{im_wx($member[wx], $member[username])}{/if}
+		{if $member[gzh] && $DT[im_wx]}{im_gzh($member[gzh], $member[username])}{/if}
+		{if $member[ali] && $DT[im_ali]}{im_ali($member[ali])}{/if}
+		{if $member[skype] && $DT[im_skype]}{im_skype($member[skype])}{/if}
+	</div>
+	<div class="contact-btn">
+		<a href="{$MODULE[2][linkurl]}friend.php?action=add&username={$member[username]}" target="_blank"><span>加为好友</span></a>
+		<a href="{$MODULE[2][linkurl]}message.php?action=send&touser={$member[username]}" target="_blank"><span>发送私信</span></a>
+	</div>
+	{else}
+		{if $_userid}
+		<br/><br/><center>请先 <a href="{$MODULE[2][linkurl]}grade.php" class="b">升级</a> 会员级别后查看联系方式</center><br/><br/>
+		{else}
+		<br/><br/><center>请先 <a href="{$MODULE[2][linkurl]}{$DT[file_login]}" class="b">登录</a> 或 <a href="{$MODULE[2][linkurl]}{$DT[file_register]}" class="b">注册</a> 后查看联系方式</center><br/><br/>
+		{/if}
+	{/if}
+	</div>
+	</div>
+	<div class="b10 c_b"></div>
+</div>
+{template 'footer'}

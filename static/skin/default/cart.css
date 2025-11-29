@@ -1,0 +1,33 @@
+.cart-foot {height:48px;line-height:48px;color:#666666;margin-top:16px;padding-left:16px;}
+.cart-foot p {height:48px;line-height:40px;text-align:right;margin:0 24px 0 0;}
+.cart-foot b {display:inline-block;height:24px;line-height:24px;font-weight:normal;border:#CCCCCC 1px solid;border-radius:16px;padding:2px 16px;margin:0 16px 0 0;}
+.cart-foot b:hover {border:#FF0036 1px solid;background:#FF0036;color:#FFFFFF;}
+.cart-foot input {width:96px;height:48px;line-height:48px;border:none;background:#FF6600;color:#FFFFFF;font-size:20px;text-align:center;padding:0;letter-spacing:2px;cursor:pointer;}
+.cart-foot input:hover {background:#F22D00;}
+
+.cart-msg {padding:96px;text-align:center;font-size:16px;color:#999999;}
+.cart-promo {line-height:22px;background:#FFDEDF;text-align:center;color:#DF3033;border-left:#DF3033 1px dotted;border-right:#DF3033 1px dotted;border-top:#DF3033 1px solid;border-bottom:#DF3033 1px solid;}
+.cart-promo:hover {background:#FFFFFF;}
+
+.cart-step {padding:24px;}
+.cart-step div {font-size:14px;font-weight:bold;line-height:20px;}
+.cart-step span {float:right;}
+.cart-step b {display:inline-block;width:20px;height:20px;text-align:center;border-radius:50%;background:#FF6600;color:#FFFFFF;margin-right:10px;}
+.cart-tip {color:#999999;padding:0 0 0 24px;}
+
+#cart_tip {width:350px;z-index:1000;position:absolute;margin:-40px 0 0 -15px;background:#FFFFFF;border:#A0BCCA 1px solid;padding:0 0 15px 0;}
+#cart_tip p {margin:0;background:#D2EDFF;padding:6px 4px 4px 6px;font-size:13px;font-weight:bold;}
+#cart_tip div {background:url('okay.gif') no-repeat 15px 10px;padding:15px 20px 10px 50px;font-size:13px;}
+#cart_tip span {color:#FF6600;font-weight:bold;}
+#cart_tip img {float:right;cursor:pointer;}
+
+.my-addr {padding:0 0 0 54px;max-height:40px;overflow:hidden;margin:0 16px 0 0;scrollbar-width:thin;}
+.my-addr li {height:32px;line-height:32px;overflow:hidden;color:#666666;margin:0 0 8px 0;background:url('ico-addr.png') no-repeat 10px center;padding:0 32px;cursor:pointer;}
+.my-addr li:hover,.my-addr .on {background:#F6F6F6 url('ico-addr-on.png') no-repeat 10px center;}
+.my-addr li:hover i {display:inline-block;}
+.my-addr b {display:inline-block;width:120px;text-align:center;}
+.my-addr s {display:inline-block;height:18px;line-height:18px;padding:0 10px;background:#999999;color:#FFFFFF;border-radius:10px;margin-left:10px;text-decoration:none;}
+.my-addr i {float:right;font-style:normal;display:none;}
+.my-addr-more {height:24px;line-height:24px;color:#666666;background:url('../../image/ico-down.png') no-repeat 116px center;padding:0 24px 0 64px;cursor:pointer;}
+.my-addr-fold {height:24px;line-height:24px;color:#666666;background:url('../../image/ico-fold.png') no-repeat 116px center;padding:0 24px 0 64px;cursor:pointer;display:none;}
+::-webkit-scrollbar{width:6px;height:6px;overflow:auto;}::-webkit-scrollbar-thumb{background-color:#CCCCCC;min-height:24px;min-width:24px;border:1px solid #E0E0E0;}::-webkit-scrollbar-track{background-color:#F7F7F7;border:1px solid #EFEFEF;}

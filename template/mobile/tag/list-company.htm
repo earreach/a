@@ -1,0 +1,10 @@
+{loop $tags $k $t}
+<div class="ui-list-mix">
+<a href="{$t[linkurl]}" rel="external"><img src="{if $t[thumb]}{$t[thumb]}{else}{DM_SKIN}80x60.png{/if}" alt=""/></a>
+<ul>
+<li><a href="{$t[linkurl]}" rel="external"><strong{if $t[vip]} class="vip"{/if}>{$t[company]}</strong></a></li>
+<li><div>{$t[business]}</div></li>
+<li><p><i class="ui-ico-area">{if $t[areaid]}{area_pos($t[areaid], '', 2)}{else}未填写{/if}</i></p></li>
+</ul>
+</div>
+{/loop}

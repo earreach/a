@@ -1,0 +1,5 @@
+{loop $tags $i $t}
+<div><b>#</b><a href="{$MODULE[$moduleid][linkurl]}{rewrite('topic.php?itemid='.$t['itemid'])}"{if $target} target="{$target}"{/if} title="{$t[alt]}">{$t[title]}</a></div>
+<p>{numtoread($t[item])}浏览 &nbsp; {numtoread($t[item])}讨论</p>
+{/loop}
+{if $showpage && $pages}</div><div class="pages">{$pages}{/if}

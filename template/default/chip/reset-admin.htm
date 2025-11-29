@@ -1,0 +1,30 @@
+<style>
+{if $css[admin_text]}
+body,a:link,a:visited,a:active,.tab a:hover{color:{$css[admin_text]};}
+{/if}
+{if $css[admin_link]}
+a.b:link,a.b:visited,a.b:active,a.t:link,a.t:visited,a.t:active,.jt{color:{$css[admin_link]};}
+{/if}
+{if $css[admin_hover]}
+a:hover,a.b:hover,a.t:hover{color:{$css[admin_hover]};}
+{/if}
+{if $css[admin_side_bar]}
+.bar{background:{$css[admin_side_bar]};}
+{/if}
+{if $css[admin_side_bg]}
+.barmain,.barfix div .on,.barfix div:hover,.barfix-on{background:{$css[admin_side_bg]};}
+{/if}
+{if $css[admin_side_menu]}
+dt:hover,.dt-d:hover{background-color:{$css[admin_side_menu]};}
+{/if}
+{if $css[admin_side_ov]}
+.barmain a:hover,.dd-on{background:{$css[admin_side_ov]};}
+.dt-o{border-left:{$css[admin_side_ov]} 2px solid;}
+{/if}
+{if $css[admin_tab]}
+.menu{border-bottom:{$css[admin_tab]} 2px solid;}
+.tab_on a:link,.tab_on a:visited,.tab_on a:active,.tab_on,.barfix div:hover span{background:{$css[admin_tab]};}
+.btn-b,.btn-s,.pages a:hover,.pages strong{background:{$css[admin_tab]};border:{$css[admin_tab]} 1px solid;}
+.btn-b:hover,.btn-s:hover{background:{$css[admin_tab]};}
+{/if}
+</style>

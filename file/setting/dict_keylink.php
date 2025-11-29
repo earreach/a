@@ -1,0 +1,6 @@
+<?php exit;?>
+itemid,ID,
+title,关键词,
+url,链接地址,
+item,类别,
+listorder,排序,

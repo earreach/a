@@ -1,0 +1,116 @@
+{template 'header'}
+<style type="text/css">
+.api-search {padding:16px;}
+.api-search select {width:100%;height:44px;margin-bottom:16px;color:#333333;background:#FFFFFF;border:#F0F0F0 1px solid;border-radius:4px;padding:0 10px;font-size:14px;-webkit-appearance:none;}
+.api-search input {box-sizing:border-box;width:100%;height:44px;margin-bottom:16px;line-height:24px;background:#FFFFFF;border:#F0F0F0 1px solid;border-radius:4px;padding:0 10px;font-size:14px;-webkit-appearance:none;}
+.api-search .api-search-kw {background:#FFFFFF url('{DM_SKIN}ico-search.png') no-repeat 10px center;background-size:16px 16px;padding:10px 10px 10px 32px;}
+.api-search-record {padding:16px 24px;display:none;}
+.api-search-record p {padding:0 0 16px 0;margin:0;}
+.api-search-record i {float:right;font-size:12px;font-style:normal;}
+.api-search-record span {display:inline-block;padding:6px 12px;margin:0 12px 12px 0;background:#F6F6F6;border-radius:10px;}
+.api-search-tips {display:none;margin:-16px 0 0 0;width:100%;min-height:10000px;box-sizing:border-box;}
+.api-search-tips li {height:44px;line-height:44px;overflow:hidden;background:#FFFFFF url('{DM_SKIN}ico-search.png') no-repeat 11px center;background-size:16px 16px;padding:0 16px 0 32px;}
+.api-search-tips li span {font-style:normal;font-size:12px;color:#999999;float:right;}
+
+.ui-search-rec {padding:0 16px;}
+.ui-search-rec p {padding:0 0 0 24px;margin:0;height:48px;line-height:48px;overflow:hidden;}
+.ui-search-rec .rec {background:url('{DM_SKIN}ico-time.png') no-repeat 0 center;background-size:16px 16px;}
+.ui-search-rec .hot {background:url('{DM_SKIN}ico-hot.png') no-repeat 0 center;background-size:16px 16px;}
+.ui-search-rec .sort {background:url('{DM_SKIN}ico-swc.png') no-repeat 0 center;background-size:16px 16px;height:32px;line-height:32px;}
+.ui-search-rec i {float:right;font-style:normal;}
+.ui-search-rec span {display:inline-block;padding:6px 12px;margin:0 12px 12px 0;background:#F6F6F6;border-radius:10px;font-size:12px;cursor:pointer;}
+.ui-search-rec span:hover {background:#0679D4;color:#FFFFFF;}
+</style>
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">{$head_name}</div>
+<div class="head-bar-right"><a href="{if $DT_MBS=='app'}javascript:api.closeWin();{else}{if $mid>3}{$MODULE[$mid][mobile]}{else}{DT_MOB}{/if}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div class="api-search">
+	<form action="{$MODULE[$sid][mobile]}search.php" id="destoon-search-{$js_pageid}" autocomplete="off" data-ajax="false">
+	<input type="search" name="kw" id="destoon-kw-{$js_pageid}" class="api-search-kw" value="{$kw}" placeholder="请输入关键词，搜索{if $MODULE[$sid][module]=='mall'}商品{else}{$MODULE[$sid][name]}{/if}" onblur="window.scrollTo(0,0);"{if $DT_MBS!='app'} autofocus="autofocus"{/if}{if $DT[search_tips]} onkeyup="Dtips(this.value);" autocomplete="off"{/if}/><img src="{DM_SKIN}ico-sort.png" width="16" height="16" style="position:absolute;margin:8px 0 0 -32px;padding:6px;cursor:pointer;" onclick="$('#module-{$js_pageid}').slideToggle();"/>
+	<div id="tips-{$js_pageid}" class="api-search-tips"></div>
+
+	<div class="ui-search-rec" id="module-{$js_pageid}" style="padding:0 0 16px 0;display:none;">
+	<p class="sort"><b>切换频道</b></p>
+	<div>
+	{loop $MOB_MODULE $i $m}
+	<a href="?mid={$m[moduleid]}" data-transition="none"><span{if $sid == $m[moduleid]} style="background:#0679D4;color:#FFFFFF;"{/if}>{$m[name]}</span></a>
+	{/loop}
+	</div>
+	</div>
+
+	{if $mid > 3}
+	{if in_array($mod, array('mall', 'sell', 'group'))}
+	<input type="number" name="minprice" value="{$minprice}" placeholder="最低价格" style="width:40%;"/> 至 
+	<input type="number" name="maxprice" value="{$maxprice}" placeholder="最高价格" style="width:40%;"/>
+	{elseif $mod=='club'}
+	<select name="action">
+	<option value="post"{if $action == 'post'} selected{/if}>帖子</option>
+	<option value="group"{if $action == 'group'} selected{/if}>商圈</option>
+	<option value="reply"{if $action == 'reply'} selected{/if}>回复</option>
+	</select>
+	{/if}
+	{ajax_category_select('catid', '选择分类', $catid, $mid, 'autocomplete="off"')}
+	{if $DT[city] || in_array($mod, array('company', 'mall', 'sell', 'buy', 'info', 'brand', 'group', 'job', 'resume'))}{ajax_area_select('areaid', '选择地区', $areaid, 'autocomplete="off"')}{/if}
+	{/if}
+	<div class="btn-blue" onclick="DSearch();">搜 索</div>
+	</form>
+</div>
+<div id="search-rec-{$js_pageid}"></div>
+<div class="api-search-record" id="word-{$js_pageid}"></div>
+<div class="api-search-record" id="hot-{$js_pageid}"></div>
+<script type="text/javascript">
+function DSearch() {
+	{if $mid > 3}
+	{else}
+	if(Dd('destoon-kw-{$js_pageid}').value.length < 1) {
+		Dtoast('{$js_pageid}','请输入关键词');
+		return false;
+	}
+	{/if}
+	Dd('destoon-search-{$js_pageid}').submit();
+}
+function Dtips(kw) {
+	if(kw.length < 1) {$('#tips-{$js_pageid}').hide();return;}
+	$.get(AJPath+'?action=search&job=tip&mid={$sid}&word='+encodeURIComponent(kw), function(data) {
+		if(data.length) {
+			$('#tips-{$js_pageid}').html(data);
+			$('#tips-{$js_pageid}').show();
+		} else {
+			$('#tips-{$js_pageid}').hide();
+		}
+	});
+}
+function Dmodule() {
+	$.get(AJPath+'?action=search&mid={$sid}', function(data) {
+		if(data.indexOf('onclick') != -1) {
+			$('#search-rec-{$js_pageid}').html('<div class="ui-search-rec">'+data+'</div>');
+		} else {
+			$('#search-rec-{$js_pageid}').html('');
+		}
+	});
+}
+function DsDel() {
+	Dsheet('{$js_pageid}',0);
+	$.post(AJPath, 'action=search&job=del&mid={$sid}', function(data) {
+		if(data == 'ok') {
+			Dtoast('{$js_pageid}','清理成功');
+			setTimeout(function() {
+				window.location.reload();
+			}, 1000);
+		} else {
+			Dtoast('{$js_pageid}','操作失败');
+		}
+	});
+}
+function DsKW(w) {$('#destoon-kw-{$js_pageid}').val(w); $('#destoon-search-{$js_pageid}').submit();}
+$(function(){
+	Dmodule();
+});
+</script>
+{template 'footer'}

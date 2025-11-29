@@ -1,0 +1,126 @@
+{template 'header', $template}
+<div class="dsn" id="pos_show"><a href="{$COM[linkurl]}">首页</a> <i>&gt;</i> <a href="{$MENU[$menuid][linkurl]}">{$MENU[$menuid][name]}</a>{if $itemid} <i>&gt;</i> {$title}{/if}</div>
+{if $could_showbuy}
+{if $itemid}
+{load('album.js')}
+<div class="main_head"><div><span class="f_r"><a href="{$MENU[$menuid][linkurl]}"><img src="{DT_STATIC}image/ico-list-mix.png" width="16" height="16" title="返回列表" align="absmiddle"/></a></span><strong class="px16">{$title}</strong></div></div>
+<div class="main_body">	
+		<table width="100%" align="center">
+		<tr>
+		<td width="414" valign="top">
+			<div id="mid_div" onmouseover="SAlbum();" onmouseout="HAlbum();" onclick="VAlbum();"><img src="{str_replace('.thumb.', '.middle.', $albums[0])}" width="400" height="300" id="mid_pic"/><span id="zoomer"></span><span class="ab_zoom"></span></div>
+			{if $video}<div class="ab_play" onclick="APlay('{$video}');"></div><div id="ab-video" class="ab_video"></div><div class="ab_hide" onclick="AHide();"></div>{/if}
+			<div class="tbs">
+				<div class="tbsl"><img src="{DT_SKIN}ab-prev-0.png" width="20" height="56" id="tbsp" onclick="PAlbum();"/></div>
+				<div class="tbsm">
+					<div id="thumbs" style="width:{$pics_width}px;height:56px;">{loop $albums $k $v}<img src="{$v}" onmouseover="if(this.src.indexOf('nopic.thumb.png')==-1)Album({$k});" class="{if $k}ab_im{else}ab_on{/if}" id="tbs_{$k}"/>{/loop}</div>
+				</div>
+				<div class="tbsr"><img src="{DT_SKIN}ab-next-{if $pics>5}1{else}0{/if}.png" width="20" height="56" id="tbsn" onclick="NAlbum();"/></div>
+			</div>			
+		</td>
+		<td width="16"></td>
+		<td valign="top">
+			<div id="big_div" style="display:none;"><img src="" id="big_pic"/></div>
+			<table width="100%" cellpadding="10" cellspacing="1">
+			<tr>
+			<td>价格</td>
+			<td class="f_price">{if $price}{$price}不限{/if}</td>
+			</tr>
+			<tr>
+			<td>数量</td>
+			<td>{if $amount}{$amount}{else}不限{/if}</td>
+			</tr>
+			<tr>
+			<td>包装</td>
+			<td>{if $pack}{$pack}{else}不限{/if}</td>
+			</tr>
+			<tr>
+			<td>报价</td>
+			<td>{if $messages>0}<span class="px16">{$messages}+</span>{else}<span class="f_grey">暂无</span>{/if}</td>
+			</tr>
+			{if $MOD[hits]}
+			<tr>
+			<td>浏览</td>
+			<td><span id="hits">{$hits}</span></td>
+			</tr>
+			{/if}
+			{if $n1 && $v1}
+			<tr>
+			<td>{$n1}</td>
+			<td>{$v1}</td>
+			</tr>
+			{/if}
+			{if $n2 && $v2}
+			<tr>
+			<td>{$n2}</td>
+			<td>{$v2}</td>
+			</tr>
+			{/if}
+			{if $n3 && $v3}
+			<tr>
+			<td>{$n3}</td>
+			<td>{$v3}</td>
+			</tr>
+			{/if}
+			<tr>
+			<td>地区</td>
+			<td>{area_pos($areaid, '')}</td>
+			</tr>
+			<tr>
+			<td>过期</td>
+			<td>{if $todate}{$todate}{else}长期有效{/if}{if $expired} <span class="f_red">已过期</span>{/if}</td>
+			</tr>
+			<tr>
+			<td width="60">更新</td>
+			<td>{$editdate}</td>
+			</tr>
+			{if $could_price}
+			<tr>
+			<td></td>
+			<td><input type="button" value="发送报价" class="btn-act" onclick="Go('{$MOD[linkurl]}{rewrite('price.php?itemid='.$itemid)}');"/></td>
+			</tr>
+			{/if}
+			</table>
+		</td>
+		</tr>
+		</table>
+	</div>
+
+	<div class="main_head"><div><strong>详细信息</strong>{if $MOD[ip]}<span class="ui-ico-area ui-fr" style="margin-top:12px;">IP属地 {ip2area($ip, $MOD[ip])}</span>{/if}</div></div>
+	<div class="main_body">
+		{if $CP}{template 'property_show', 'chip'}{/if}
+		<div class="content" id="content">{$content}</div>
+	</div>
+	<script type="text/javascript">var content_id = 'content';var img_max_width = 900;</script>
+	{if $video}{load('player.js')}{/if}
+	{if $content}{load('content.js')}{/if}
+{else}
+<div class="main_head"><div><strong>{$MENU[$menuid][name]}</strong></div></div>
+<div class="main_body">
+	{if $lists}
+	<div class="list-txt">
+	<ul>
+	{loop $lists $k $v}	
+	<li>&middot; <a href="{$v[linkurl]}">{$v[title]}</a><i>{timetodate($v[edittime], 3)}</i></li>
+	{/loop}
+	</ul>
+	</div>
+	{else}
+	<div class="list-none">暂无记录</div>
+	{/if}
+	{if $pages}<div class="pages">{$pages}</div>{/if}
+</div>
+{/if}
+{else}
+<div class="main_head"><div><strong>{$MENU[$menuid][name]}</strong></div></div>
+<div class="main_body">
+	<div class="list-none">
+	{if $_userid}
+	请先 <a href="{$MODULE[2][linkurl]}grade.php" class="b">升级</a> 会员级别后查看{$MENU[$menuid][name]}
+	{else}
+	请先 <a href="{$MODULE[2][linkurl]}{$DT[file_login]}" class="b">登录</a> 或 <a href="{$MODULE[2][linkurl]}{$DT[file_register]}" class="b">注册</a> 后查看{$MENU[$menuid][name]}
+	{/if}
+	</div>
+</div>
+{/if}
+{template 'footer', $template}

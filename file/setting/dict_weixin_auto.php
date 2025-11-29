@@ -1,0 +1,4 @@
+<?php exit;?>
+itemid,ID,
+keyword,关键词,
+reply,回复,

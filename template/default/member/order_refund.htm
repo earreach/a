@@ -1,0 +1,228 @@
+{load('webuploader.min.js')}
+{load('player.js')}
+{load('url2video.js')}
+<form method="post" action="?" onsubmit="return check();" id="dform">
+<input type="hidden" name="forward" value="{$forward}"/>
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="{$step}"/>
+<input type="hidden" name="itemid" value="{$itemid}"/>
+
+<div class="bd" id="goods">
+<table cellpadding="10" cellspacing="0" class="tb">
+<tr>
+<th width="20"><input type="checkbox" onclick="checkall(this.form);calculate();"/></th>
+<th width="80">图片</th>
+<th>商品信息</th>
+<th width="120">单价</th>
+<th width="120">购买数量</th>
+<th width="120">申请数量</th>
+<th width="120">订单状态</th>
+</tr>
+{loop $lists $k $v}	
+<tr align="center">
+<td><input type="checkbox" name="itemids[{$v[itemid]}]" value="1" id="check_{$v[itemid]}" {if in_array($v[status], array(2, 3, 4))}checked{else}disabled{/if}/></td>
+<td><a href="javascript:_preview('{$v[thumb]}');"><img src="{if $v[thumb]}{$v[thumb]}{else}{DT_STATIC}image/nopic60.png{/if}" width="60" height="60" onerror="this.src=errimg;"/></a></td>
+<td align="left" valign="top" class="f_gray lh18"><a href="{$v[linkurl]}" target="_blank" class="t">{$v[title]}</a><br/>{$v[par]}{if isset($v[sku]) && $v[sku]}<br/>仓储货位：{$v[sku][location]} 库存：{$v[sku][amount]}{/if}</td>
+<td>{$DT[money_sign]}{$v[price]}</td>
+<td>{$v[number]}</td>
+<td class="f_gray"><img src="{DT_SKIN}arrow_l.gif" width="16" height="8" alt="减少" class="c_p" onclick="alter('{$v[itemid]}', '{$v[number]}', '-');"/><input type="text" name="numbers[{$v[itemid]}]" value="{$v[number]}" id="number_{$v[itemid]}" size="3" style="text-align:center;" {if in_array($v[status], array(2, 3, 4))}{else}disabled{/if}/> <img src="{DT_SKIN}arrow_r.gif" width="16" height="8" alt="增加" class="c_p" onclick="alter('{$v[itemid]}', '{$v[number]}', '+');"/></td>
+<td>{$dstatus[$v[status]]}</td>
+</tr>
+{/loop}	
+</table>
+</div>
+
+
+<div class="t2">申请售后</div>
+<table cellspacing="1" cellpadding="10" class="tb">	
+<tr>
+<td class="tl">联系卖家</td>
+<td class="tr">{if $DT[im_web]}{im_web($O[seller])}&nbsp;{/if}<a href="{userurl($O[seller], 'file=contact')}" target="_blank" class="t">{$O[seller]}</a></td>
+</tr>
+<tr>
+<td class="tl">下单时间</td>
+<td class="tr">{$O[adddate]}</td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 服务类型</td>
+<td class="tr" id="typeid">
+{loop $dservice $k $v}
+<label><input type="radio" name="post[typeid]" value="{$k}" id="typeid-{$k}"{if $type==$k} checked{/if} onclick="TP({$k});"/> {$v}</label> &nbsp;&nbsp;  
+{/loop}
+</td>
+</tr>
+<tr>
+<td class="tl"><span class="f_red">*</span> 申请原因</td>
+<td class="tr">
+	<select name="post[reason][0]" class="dsn" id="reason-0">
+	<option value="">请选择常见原因</option>
+	<option value="拍错/不想要了">拍错/不想要了</option>
+	<option value="发货太慢">发货太慢</option>
+	<option value="商品价格变化">商品价格变化</option>
+	<option value="商品无货">商品无货</option>
+	<option value="地址有误">地址有误</option>
+	<option value="其他">其他</option>
+	</select>
+	<select name="post[reason][1]" class="dsn" id="reason-1">
+	<option value="">请选择常见原因</option>
+	<option value="拍错/不想要了">拍错/不想要了</option>
+	<option value="少件/发错货/未收到货">少件/发错货/未收到货</option>
+	<option value="商品价格变化">商品价格变化</option>
+	<option value="商品破损/包装问题">商品破损/包装问题</option>
+	<option value="商品与页面描述不符">商品与页面描述不符</option>
+	<option value="商品质量/故障">商品质量/故障</option>
+	<option value="型号/大小/颜色等不合适">型号/大小/颜色等不合适</option>
+	<option value="其他">其他</option>
+	</select>
+	<select name="post[reason][2]" class="dsn" id="reason-2">
+	<option value="">请选择常见原因</option>
+	<option value="商品破损/包装问题">商品破损/包装问题</option>
+	<option value="商品与页面描述不符">商品与页面描述不符</option>
+	<option value="商品质量/故障">商品质量/故障</option>
+	<option value="型号/大小/颜色等不合适">型号/大小/颜色等不合适</option>
+	<option value="其他">其他</option>
+	</select>
+	<select name="post[reason][3]" class="dsn" id="reason-3">
+	<option value="">请选择常见原因</option>
+	<option value="商品质量/故障">商品质量/故障</option>
+	<option value="其他">其他</option>
+	</select>
+	<span id="dreason" class="f_red"></span>
+</td>
+</tr>
+<tr>
+<td class="tl">补充说明</td>
+<td class="tr">
+<textarea rows="8" cols="80" name="post[content]" id="content"></textarea>
+<br/><span class="f_gray">请客观、如实填写，以便卖家更快处理 限1000字</span> <span id="dcontent" class="f_red"></span></td>
+</tr>
+<tr>
+<td class="tl">图片凭证</td>
+<td class="tr">
+<div id="thumbs">
+{loop $thumbs $k $v}
+<div class="thumbs">
+<input type="hidden" name="post[thumbs][]" id="thumb{$k}" value="{$v}"/>
+<div><img src="{if $v}{$v}{else}{DT_STATIC}image/upload-image.png{/if}" width="100" height="100" id="showthumb{$k}" title="上传/预览图片" alt="" onerror="this.src='{DT_STATIC}image/upload-image.png';" onclick="if(this.src.indexOf('upload-image.png') == -1){_preview(Dd('showthumb{$k}').src, 1);}else{Dalbum({$k},{$moduleid},{$MOD[thumb_width]},{$MOD[thumb_height]}, Dd('thumb{$k}').value, true);}"/></div>
+<p><img src="{DT_STATIC}image/ico-upl.png" width="11" height="11" title="上传" onclick="Dalbum({$k},{$moduleid},{$MOD[thumb_width]},{$MOD[thumb_height]}, Dd('thumb{$k}').value, true);"/><img src="{DT_STATIC}image/ico-del.png" width="11" height="11" title="删除" onclick="delAlbum({$k});"/></p>
+</div>
+{/loop}
+</div>
+<div class="dsn" id="thumbtpl">
+<div class="thumbs">
+<input type="hidden" name="post[thumbs][]" id="thumb-99" value="" autocomplete="off"/>
+<div><img src="{DT_STATIC}image/upload-image.png" id="showthumb-99" title="上传/预览图片" alt="" onclick="if(this.src.indexOf('upload-image.png') == -1){_preview(Dd('showthumb-99').src, 1);}else{Dalbum(-99,{$moduleid},{$MOD[thumb_width]},{$MOD[thumb_height]}, Dd('thumb-99').value, true);}"/></div>
+<p><img src="{DT_STATIC}image/ico-upl.png" width="11" height="11" title="上传" onclick="Dalbum(-99,{$moduleid},{$MOD[thumb_width]},{$MOD[thumb_height]}, Dd('thumb{if $thumbs}{$k}{else}0{/if}').value, true);"/><img src="{DT_STATIC}image/ico-del.png" width="11" height="11" title="删除" onclick="delAlbum(-99);"/></p>
+</div>
+</div>
+<div class="thumbs" id="thumbmuti" title="批量上传图片，按Ctrl键多选">
+<div id="file-picker"><img src="{DT_STATIC}image/upload-muti.png" alt=""/></div>
+<p>批量上传<span id="file-progress"></span></p>
+</div>
+<span id="dthumb" class="f_red"></span>
+<script type="text/javascript">
+var album_max = parseInt({$DT[thumb_max]});
+if(album_max < 5 || album_max > 99) album_max = 9;
+{if strpos($DT_MBS, 'IE') === false}
+	var fileu = WebUploader.create({
+		auto: true,
+		server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=album&width={$MOD[thumb_width]}&height={$MOD[thumb_height]}',
+		pick: '#file-picker',
+		accept: {
+			title: 'image',
+			extensions: 'jpg,jpeg,png,gif,bmp',
+			mimeTypes: 'image/*'
+		},
+		fileNumLimit: album_max,
+		resize: false
+	});
+	fileu.on('beforeFileQueued', function(file) {
+		var exts = fileu.options.accept[0].extensions;
+		if((','+exts).indexOf(','+ext(file.name)) == -1) {
+			alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+			return false;
+		}
+	});
+	fileu.on('fileQueued', function(file) {
+		$('#file-progress').html('0%');
+	});
+	fileu.on('uploadProgress', function(file, percentage) {
+		var p = parseInt(percentage * 100);
+		if(p >= 100) p = 100;
+		$('#file-progress').html(p+'%');
+	});
+	fileu.on( 'uploadSuccess', function(file, data) {
+		if(data.error) {
+			Dmsg(data.message, 'thumb');
+		} else {
+			addAlbum(data.url, album_max);
+			newAlbum(album_max);
+		}
+	});
+	fileu.on( 'uploadError', function(file, data) {
+		Dmsg(data.message, 'thumb');
+	});
+	fileu.on('uploadFinished', function(file) {
+		$('#file-progress').html('');
+		if($("#thumbs input[value!='']").length >= album_max) $('#thumbmuti').hide();
+	});
+	$(function(){
+		if($("#thumbs input[value!='']").length >= album_max) window.setTimeout(function(){$('#thumbmuti').hide();}, 3000);
+		newAlbum(album_max);
+	});
+{else}
+	$(function(){
+		$('#thumbmuti').hide();
+		newAlbum(album_max);
+	});
+{/if}
+</script>
+</td>
+</tr>
+<tr>
+<td class="tl">视频凭证</td>
+<td class="tr">{template 'upload-video', 'chip'}</td>
+</tr>
+<tr>
+<td class="tl"> </td>
+<td class="tr">
+<input type="submit" name="submit" value=" 确 定 " class="btn_g"/>&nbsp;&nbsp;<input type="button" value=" 返 回 " class="btn" onclick="history.back(-1);"/>
+</td>
+</tr>
+</table>
+</form>
+<script type="text/javascript">
+function check() {
+	if($('#goods :checked').length < 1) {
+		alert('请至少选择一件商品');
+		return false;
+	}
+	if($('#reason-'+$('#typeid :checked').val()).val() == '') {
+		Dmsg('请选择申请原因', 'reason');
+		return false;
+	}
+	var len = $('#content').val().length;
+	if(len > 1000) {
+		Dmsg('补充说明不能多于1000个字，当前已输入'+len+'个字', 'content');
+		return false;
+	}
+	return confirm('您确认您提供的资料无误，并申请售后吗？');
+}
+function alter(i, m, t) {
+	if(t == '+') {
+		if(Dd('number_'+i).value >= m) return;
+		Dd('number_'+i).value =  parseInt(Dd('number_'+i).value) + 1;
+	} else {
+		if(Dd('number_'+i).value <= 1) return;
+		Dd('number_'+i).value = parseInt(Dd('number_'+i).value) - 1;
+	}
+}
+function TP(i) {
+	$('#reason-'+i).show();
+	$('#reason-'+i).siblings('select').hide();
+}
+$(function(){
+	TP({$type});
+});
+s('order');m('action');
+</script>

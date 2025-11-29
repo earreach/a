@@ -1,0 +1,37 @@
+{template 'header', $template}
+<div class="dsn" id="pos_show"><a href="{$COM[linkurl]}">首页</a> <i>&gt;</i> <a href="{$MENU[$menuid][linkurl]}">{$MENU[$menuid][name]}</a>{if $itemid} <i>&gt;</i> {$title}{/if}</div>
+<div class="main_head"><div><strong>{$MENU[$menuid][name]}</strong></div></div>
+<div class="main_body">
+{if $itemid}
+	<div class="title">{$title}</div>
+	<div class="info"><i class="ui-ico-time">{$editdate}</i>{if $MOD[ip]}<i class="ui-ico-area">IP属地 {ip2area($ip, $MOD[ip])}</i>{/if}{if $MOD[hits]}<i class="ui-ico-hits ui-fr">{$hits}</i>{/if}{if $homepage}<a href="{gourl($homepage)}" target="_blank" rel="nofollow"><i class="ui-ico-link">官网</i></a>{/if}</div>
+	{if $CP}{template 'property_show', 'chip'}{/if}
+	<div class="content" id="content">
+	<div class="t_c"><img src="{$thumb}" style="border:#CCCCCC 1px solid;padding:2px;margin:8px 0 8px 0;" alt="" title="{$title}"/></div>
+	{$content}
+	<center><input type="button" value="我要加盟" class="btn-act" onclick="Go('{$MOD[linkurl]}{rewrite('message.php?itemid='.$itemid)}');"/></center>
+	</div>
+	<script type="text/javascript">var content_id = 'content';var img_max_width = 900;</script>
+	{load('content.js')}
+</div>
+{else}
+	{if $lists}
+	<table cellpadding="10" cellspacing="0" width="100%">
+	{loop $lists $k $v}
+	{if $k%4==0}<tr align="center">{/if}
+	<td valign="top" width="25%">
+	<div class="thumb">
+		<a href="{$v[linkurl]}"><img src="{$v[thumb]}" width="150" height="50" alt="{$v[alt]}" title="{$v[alt]}"/></a>
+		<div class="t_c"><a href="{$v[linkurl]}" title="{$v[alt]}">{$v[title]}</a></div>
+	</div>
+	</td>
+	{if $k%4==3}</tr>{/if}
+	{/loop}
+	</table>
+	{else}
+	<div class="list-none">暂无记录</div>
+	{/if}
+	{if $pages}<div class="pages">{$pages}</div>{/if}
+{/if}
+</div>
+{template 'footer', $template}

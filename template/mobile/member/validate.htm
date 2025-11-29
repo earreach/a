@@ -1,0 +1,1243 @@
+{template 'header', 'member'}
+{if $action == 'email'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">邮箱认证</div>
+<div class="head-bar-right"><a href="?action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+{if $status == 1}
+{if $step == 2}
+<div class="ui-ok">
+<p>邮箱认证成功</p>
+<input type="button" value="立即返回" class="btn-green" onclick="Go('?action=index');"/>
+</div>
+{elseif $step == 1}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="2"/>
+<div class="ui-form">
+<p>邮件验证码<i>*</i><b id="dcode"></b></p>
+<div><input type="tel" name="code" id="code" placeholder="已发送至邮箱"/></div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="立即认证" class="btn-blue"/>
+<div class="blank-16"></div>
+<input type="button" value="重新发送" class="btn" onclick="Go('?action={$action}&email={$email}');"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('code').value.length < 6) {
+		Dmsg('请填写邮件验证码', 'code');
+		return false;
+	}
+	return true;
+}
+</script>
+{else}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="1"/>
+<div class="ui-form">
+<p>电子邮件<i>*</i><b id="demail"></b></p>
+<div><input type="email" name="email" id="email" value="{$email}"/></div>
+<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+<div>{template 'captcha', 'chip'}</div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="下一步" class="btn-blue" id="send_code"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('email').value.length < 6) {
+		Dmsg('请填写电子邮件', 'email');
+		return false;
+	}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', 'captcha');
+		return false;
+	}
+	return true;
+}
+</script>
+{/if}
+{else}
+<div class="ui-ok"><p>已认证</p></div>
+<div class="list-set">
+<ul>
+<li><div><span>{hide_str($_email)}</span>邮件地址</div></li>
+{if $V}
+{if $V[addtime]}
+<li><div><span>{timetodate($V[addtime], 5)}</span>申请时间</div></li>
+{/if}
+{if $status == 3}
+<li><div><span>{timetodate($V[edittime], 5)}</span>审核时间</div></li>
+{/if}
+{/if}
+</ul>
+</div>
+{if $status == 3}
+<div class="blank-36"></div>
+<div class="list-btn"><input type="button" value="重新认证" class="btn" onclick="Dsheet('{$js_pageid}','<a href=&#34;?action={$action}&job=reset&#34; rel=&#34;external&#34;><span style=&#34;color:red&#34;>重新认证</span></a>', '取消', '确定要重新认证吗？当前已认证状态将被取消');"/></div>
+{/if}
+<div class="blank-36"></div>
+{/if}
+{elseif $action == 'mobile'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">手机认证</div>
+<div class="head-bar-right"><a href="?action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+{if $status == 1}
+{if $step == 2}
+<div class="ui-ok">
+<p>手机认证成功</p>
+<input type="button" value="立即返回" class="btn-green" onclick="Go('?action=index');"/>
+</div>
+{elseif $step == 1}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="2"/>
+<div class="ui-form">
+<p>短信验证码<i>*</i><b id="dcode"></b></p>
+<div><input type="tel" name="code" id="code" placeholder="已发送至手机"/></div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="立即认证" class="btn-blue"/>
+<div class="blank-16"></div>
+<input type="button" value="重新发送" class="btn" onclick="Go('?action={$action}&mobile={$mobile}');"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('code').value.length < 6) {
+		Dmsg('请填写短信验证码', 'code');
+		return false;
+	}
+	return true;
+}
+</script>
+{else}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<input type="hidden" name="step" value="1"/>
+<div class="ui-form">
+<p>手机号码<i>*</i><b id="dmobile"></b></p>
+<div><input type="tel" name="mobile" id="mobile" value="{$mobile}"/></div>
+<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+<div>{template 'captcha', 'chip'}</div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="下一步" class="btn-blue" id="send_code"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('mobile').value.length < 11) {
+		Dmsg('请填写手机号码', 'mobile');
+		return false;
+	}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', 'captcha');
+		return false;
+	}
+	return true;
+}
+</script>
+{/if}
+{else}
+<div class="ui-ok"><p>已认证</p></div>
+<div class="list-set">
+<ul>
+<li><div><span>{hide_str($_mobile)}</span>手机号码</div></li>
+{if $V}
+{if $V[addtime]}
+<li><div><span>{timetodate($V[addtime], 5)}</span>申请时间</div></li>
+{/if}
+{if $status == 3}
+<li><div><span>{timetodate($V[edittime], 5)}</span>审核时间</div></li>
+{/if}
+{/if}
+</ul>
+</div>
+{if $status == 3}
+<div class="blank-36"></div>
+<div class="list-btn"><input type="button" value="重新认证" class="btn" onclick="Dsheet('{$js_pageid}','<a href=&#34;?action={$action}&job=reset&#34; rel=&#34;external&#34;><span style=&#34;color:red&#34;>重新认证</span></a>', '取消', '确定要重新认证吗？当前已认证状态将被取消');"/></div>
+{/if}
+<div class="blank-36"></div>
+{/if}
+{elseif $action == 'truename'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">实名认证</div>
+<div class="head-bar-right"><a href="?action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+{if $status == 1}
+{load('webuploader.min.js')}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<div class="ui-form">
+<p>真实姓名<i>*</i><b id="dtruename"></b></p>
+<div><input type="text" name="truename" id="truename" value="{$user[truename]}"/></div>
+<p>证件类型<i>*</i><b id="didtype"></b></p>
+<div>
+<select name="idtype" id="idtype">
+{loop $types $v}
+<option value="{$v}"{if $v==$user[idtype]} selected{/if}>{$v}</option>
+{/loop}
+</select>
+</div>
+<p>证件号码<i>*</i><b id="didno"></b></p>
+<div><input type="text" name="idno" id="idno" value="{$user[idno]}"/></div>
+{if $MOD[vtruename_v1] && $MOD[vtruename_v1_name]}
+<p>{$MOD[vtruename_v1_name]}{if $MOD[vtruename_v1] == 2}<i>*</i>{/if}<b id="dthumb1"></b></p>
+<div><input type="url" name="thumb" id="thumb1" value=""/></div>
+<div class="ui-form-file-upload"><div id="thumb1-picker"></div></div>
+<script type="text/javascript">
+var file_thumb1 = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width=0&height=0',
+    pick: '#thumb1-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+file_thumb1.on('beforeFileQueued', function(file) {
+	var exts = file_thumb1.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_thumb1.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_thumb1.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_thumb1.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#thumb1').val(data.url);
+	}
+});
+file_thumb1.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_thumb1.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+{if $MOD[vtruename_v1_name] == '身份证正面'}
+<p>图片示例</p>
+<div><img src="{DT_STATIC}image/demo-id-1.png"/></div>
+{/if}
+{if $MOD[vtruename_e1]}
+<p>有效期至{if $MOD[vtruename_e1] == 2}<i>*</i>{/if}<b id="dtotime"></b></p>
+<div><input type="datetime-local" name="totime" id="totime" step="1"/></div>
+<s>不填代表长期</s>
+{/if}
+{/if}
+{if $MOD[vtruename_v2] && $MOD[vtruename_v2_name]}
+<p>{$MOD[vtruename_v2_name]}{if $MOD[vtruename_v2] == 2}<i>*</i>{/if}<b id="dthumb2"></b></p>
+<div><input type="url" name="thumb1" id="thumb2" value=""/></div>
+<div class="ui-form-file-upload"><div id="thumb2-picker"></div></div>
+<script type="text/javascript">
+var file_thumb2 = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width=0&height=0',
+    pick: '#thumb2-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+file_thumb2.on('beforeFileQueued', function(file) {
+	var exts = file_thumb2.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_thumb2.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_thumb2.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_thumb2.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#thumb2').val(data.url);
+	}
+});
+file_thumb2.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_thumb2.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+{if $MOD[vtruename_v2_name] == '身份证反面'}
+<p>图片示例</p>
+<div><img src="{DT_STATIC}image/demo-id-2.png"/></div>
+{/if}
+{if $MOD[vtruename_e2]}
+<p>有效期至{if $MOD[vtruename_e2] == 2}<i>*</i>{/if}<b id="dtotime1"></b></p>
+<div><input type="datetime-local" name="totime1" id="totime1" step="1"/></div>
+<s>不填代表长期</s>
+{/if}
+{/if}
+{if $MOD[vtruename_v3] && $MOD[vtruename_v3_name]}
+<p>{$MOD[vtruename_v3_name]}{if $MOD[vtruename_v3] == 2}<i>*</i>{/if}<b id="dthumb3"></b></p>
+<div><input type="url" name="thumb2" id="thumb3" value=""/></div>
+<div class="ui-form-file-upload"><div id="thumb3-picker"></div></div>
+<script type="text/javascript">
+var file_thumb3 = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width=0&height=0',
+    pick: '#thumb3-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+file_thumb3.on('beforeFileQueued', function(file) {
+	var exts = file_thumb3.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_thumb3.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_thumb3.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_thumb3.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#thumb3').val(data.url);
+	}
+});
+file_thumb3.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_thumb3.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+{if $MOD[vtruename_v3_name] == '手持身份证'}
+<p>图片示例</p>
+<div><img src="{DT_STATIC}image/demo-id-3.png"/></div>
+{/if}
+{if $MOD[vtruename_e3]}
+<p>有效期至{if $MOD[vtruename_e3] == 2}<i>*</i>{/if}<b id="dtotime2"></b></p>
+<div><input type="datetime-local" name="totime2" id="totime2" step="1"/></div>
+<s>不填代表长期</s>
+{/if}
+{/if}
+<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+<div>{template 'captcha', 'chip'}</div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="提交认证" class="btn-blue" id="send_code"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('truename').value.length < 2) {
+		Dmsg('请填写真实姓名', 'truename');
+		return false;
+	}
+	if(Dd('idno').value.length < 18) {
+		Dmsg('请填写证件号码', 'idno');
+		return false;
+	}
+	{if $MOD[vtruename_v1] == 2 && $MOD[vtruename_v1_name]}
+	if(Dd('thumb1').value.length < 15) {
+		Dmsg('请上传{$MOD[vtruename_v1_name]}', 'thumb1');
+		return false;
+	}
+	{/if}
+	{if $MOD[vtruename_v2] == 2 && $MOD[vtruename_v2_name]}
+	if(Dd('thumb2').value.length < 15) {
+		Dmsg('请上传{$MOD[vtruename_v2_name]}', 'thumb2');
+		return false;
+	}
+	{/if}
+	{if $MOD[vtruename_v3] == 2 && $MOD[vtruename_v3_name]}
+	if(Dd('thumb3').value.length < 15) {
+		Dmsg('请上传{$MOD[vtruename_v3_name]}', 'thumb3');
+		return false;
+	}
+	{/if}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', 'captcha');
+		return false;
+	}
+	return true;
+}
+</script>
+{load('clear.js')}
+{else}
+{if $status == 3}
+<div class="ui-ok"><p>已认证</p></div>
+{elseif $status == 2}
+<div class="ui-tm"><p>审核中</p></div>
+{/if}
+<div class="list-set">
+<ul>
+<li><div><span>{if $status==3}{$user[truename]}{else}{$V[title]}{/if}</span>真实姓名</div></li>
+<li><div><span>{if $status==3}{$user[idtype]}{else}{$V[title1]}{/if}</span>证件类型</div></li>
+<li><div><span>{if $status==3}{hide_str($user[idno])}{else}{hide_str($V[title2])}{/if}</span>证件号码</div></li>
+{if $V}
+{if $V[addtime]}
+<li><div><span>{timetodate($V[addtime], 5)}</span>申请时间</div></li>
+{/if}
+{if $status == 3}
+<li><div><span>{timetodate($V[edittime], 5)}</span>审核时间</div></li>
+{/if}
+{/if}
+</ul>
+</div>
+{if $status == 3}
+<div class="blank-36"></div>
+<div class="list-btn"><input type="button" value="重新认证" class="btn" onclick="Dsheet('{$js_pageid}','<a href=&#34;?action={$action}&job=reset&#34; rel=&#34;external&#34;><span style=&#34;color:red&#34;>重新认证</span></a>', '取消', '确定要重新认证吗？当前已认证状态将被取消');"/></div>
+{/if}
+<div class="blank-36"></div>
+{/if}
+{elseif $action == 'bank'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">银行认证</div>
+<div class="head-bar-right"><a href="?action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+{if $status == 1}
+{load('webuploader.min.js')}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<div class="ui-form">
+<p>开户银行<i>*</i><b id="dbank"></b></p>
+<div>
+<select name="bank" id="bank">
+<option value="">请选择</option>
+{loop $BANKS $v}
+<option value="{$v}"{if $v==$user[bank]} selected{/if}>{$v}</option>
+{/loop}
+</select>
+</div>
+<p>银行全称<i>*</i><b id="dbranch"></b></p>
+<div><input type="text" name="branch" id="branch" value="{$user[branch]}"/></div>
+<p>银行户名<i>*</i><b id="dname"></b></p>
+<div>{if $MG[type]}{$user[company]}{else}{$user[truename]}{/if}</div>
+<p>银行帐号<i>*</i><b id="daccount"></b></p>
+<div><input type="text" name="account" id="account" value="{$user[account]}"/></div>
+{if $MOD[vbank_v1] && $MOD[vbank_v1_name]}
+<p>{$MOD[vbank_v1_name]}{if $MOD[vbank_v1] == 2}<i>*</i>{/if}<b id="dthumb1"></b></p>
+<div><input type="url" name="thumb" id="thumb1" value=""/></div>
+<div class="ui-form-file-upload"><div id="thumb1-picker"></div></div>
+<script type="text/javascript">
+var file_thumb1 = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width=0&height=0',
+    pick: '#thumb1-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+file_thumb1.on('beforeFileQueued', function(file) {
+	var exts = file_thumb1.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_thumb1.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_thumb1.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_thumb1.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#thumb1').val(data.url);
+	}
+});
+file_thumb1.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_thumb1.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+{if $MOD[vbank_e1]}
+<p>有效期至{if $MOD[vbank_e1] == 2}<i>*</i>{/if}<b id="dtotime"></b></p>
+<div><input type="datetime-local" name="totime" id="totime" step="1"/></div>
+<s>不填代表长期</s>
+{/if}
+{/if}
+{if $MOD[vbank_v2] && $MOD[vbank_v2_name]}
+<p>{$MOD[vbank_v2_name]}{if $MOD[vbank_v2] == 2}<i>*</i>{/if}<b id="dthumb2"></b></p>
+<div><input type="url" name="thumb1" id="thumb2" value=""/></div>
+<div class="ui-form-file-upload"><div id="thumb2-picker"></div></div>
+<script type="text/javascript">
+var file_thumb2 = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width=0&height=0',
+    pick: '#thumb2-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+file_thumb2.on('beforeFileQueued', function(file) {
+	var exts = file_thumb2.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_thumb2.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_thumb2.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_thumb2.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#thumb2').val(data.url);
+	}
+});
+file_thumb2.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_thumb2.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+{if $MOD[vbank_e2]}
+<p>有效期至{if $MOD[vbank_e2] == 2}<i>*</i>{/if}<b id="dtotime1"></b></p>
+<div><input type="datetime-local" name="totime1" id="totime1" step="1"/></div>
+<s>不填代表长期</s>
+{/if}
+{/if}
+{if $MOD[vbank_v3] && $MOD[vbank_v3_name]}
+<p>{$MOD[vbank_v3_name]}{if $MOD[vbank_v3] == 2}<i>*</i>{/if}<b id="dthumb3"></b></p>
+<div><input type="url" name="thumb2" id="thumb3" value=""/></div>
+<div class="ui-form-file-upload"><div id="thumb3-picker"></div></div>
+<script type="text/javascript">
+var file_thumb3 = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width=0&height=0',
+    pick: '#thumb3-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+file_thumb3.on('beforeFileQueued', function(file) {
+	var exts = file_thumb3.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_thumb3.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_thumb3.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_thumb3.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#thumb3').val(data.url);
+	}
+});
+file_thumb3.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_thumb3.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+{if $MOD[vbank_e3]}
+<p>有效期至{if $MOD[vbank_e3] == 2}<i>*</i>{/if}<b id="dtotime2"></b></p>
+<div><input type="datetime-local" name="totime2" id="totime2" step="1"/></div>
+<s>不填代表长期</s>
+{/if}
+{/if}
+<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+<div>{template 'captcha', 'chip'}</div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="提交认证" class="btn-blue" id="send_code"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('bank').value.length < 2) {
+		Dmsg('请选择开户银行', 'bank');
+		return false;
+	}
+	if(Dd('branch').value.length < 4) {
+		Dmsg('请填写银行全称', 'branch');
+		return false;
+	}
+	var name = '{if $MG[type]}{$user[company]}{else}{$user[truename]}{/if}';
+	if(name.length < 2) {
+		Dmsg('{if $MG[type]}公司名称为空{else}真实姓名为空{/if}', 'name');
+		return false;
+	}
+	if(Dd('account').value.length < 8) {
+		Dmsg('请填写银行帐号', 'account');
+		return false;
+	}
+	{if $MOD[vbank_v1] == 2 && $MOD[vbank_v1_name]}
+	if(Dd('thumb1').value.length < 15) {
+		Dmsg('请上传{$MOD[vbank_v1_name]}', 'thumb1');
+		return false;
+	}
+	{/if}
+	{if $MOD[vbank_v2] == 2 && $MOD[vbank_v2_name]}
+	if(Dd('thumb2').value.length < 15) {
+		Dmsg('请上传{$MOD[vbank_v2_name]}', 'thumb2');
+		return false;
+	}
+	{/if}
+	{if $MOD[vbank_v3] == 2 && $MOD[vbank_v3_name]}
+	if(Dd('thumb3').value.length < 15) {
+		Dmsg('请上传{$MOD[vbank_v3_name]}', 'thumb3');
+		return false;
+	}
+	{/if}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', 'captcha');
+		return false;
+	}
+	return true;
+}
+$(function(){
+	{if $MG[type]}
+	$('#bank').find('option').each(function() {
+		if($(this).val() == '支付宝' || $(this).val() == '微信') {
+			$(this).remove();
+		}
+	});
+	{else}
+	$('#bank').change(function(){
+		var bank = $('#bank').val();
+		if(bank == '支付宝') {
+			$('#branch').val('支付宝（中国）网络技术有限公司');
+			$('#account').val('{$_mobile}');
+		} else if(bank == '微信') {
+			$('#branch').val('财付通支付科技有限公司');
+			$('#account').val('{$_mobile}');
+		}
+	});
+	{/if}
+});
+</script>
+{load('clear.js')}
+{else}
+{if $status == 3}
+<div class="ui-ok"><p>已认证</p></div>
+{elseif $status == 2}
+<div class="ui-tm"><p>审核中</p></div>
+{/if}
+<div class="list-set">
+<ul>
+<li><div><span>{if $status==3}{$user[bank]}{else}{$V[title]}{/if}</span>开户银行</div></li>
+<li><div><span>{if $status==3}{$user[branch]}{else}{$V[title2]}{/if}</span>银行全称</div></li>
+<li><div><span>{if $MG[type]}{$user[company]}{else}{$user[truename]}{/if}</span>银行户名</div></li>
+<li><div><span>{if $status==3}{hide_str($user[account])}{else}{hide_str($V[title1])}{/if}</span>银行帐号</div></li>
+{if $V}
+{if $V[addtime]}
+<li><div><span>{timetodate($V[addtime], 5)}</span>申请时间</div></li>
+{/if}
+{if $status == 3}
+<li><div><span>{timetodate($V[edittime], 5)}</span>审核时间</div></li>
+{/if}
+{/if}
+</ul>
+</div>
+{if $status == 3}
+<div class="blank-36"></div>
+<div class="list-btn"><input type="button" value="重新认证" class="btn" onclick="Dsheet('{$js_pageid}','<a href=&#34;?action={$action}&job=reset&#34; rel=&#34;external&#34;><span style=&#34;color:red&#34;>重新认证</span></a>', '取消', '确定要重新认证吗？当前已认证状态将被取消');"/></div>
+{/if}
+<div class="blank-36"></div>
+{/if}
+{elseif $action == 'company'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">公司认证</div>
+<div class="head-bar-right"><a href="?action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+{if $status == 1}
+{load('webuploader.min.js')}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<div class="ui-form">
+<p>公司名称<i>*</i><b id="dcompany"></b></p>
+<div><input type="text" name="company" id="company" value="{$user[company]}"/></div>
+<p>社会信用代码<i>*</i><b id="dtaxid"></b></p>
+<div><input type="text" name="taxid" id="taxid" value="{$user[taxid]}"/></div>
+{if $MOD[vcompany_v1] && $MOD[vcompany_v1_name]}
+<p>{$MOD[vcompany_v1_name]}{if $MOD[vcompany_v1] == 2}<i>*</i>{/if}<b id="dthumb1"></b></p>
+<div><input type="url" name="thumb" id="thumb1" value=""/></div>
+<div class="ui-form-file-upload"><div id="thumb1-picker"></div></div>
+<script type="text/javascript">
+var file_thumb1 = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width=0&height=0',
+    pick: '#thumb1-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+file_thumb1.on('beforeFileQueued', function(file) {
+	var exts = file_thumb1.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_thumb1.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_thumb1.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_thumb1.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#thumb1').val(data.url);
+	}
+});
+file_thumb1.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_thumb1.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+{if $MOD[vcompany_e1]}
+<p>有效期至{if $MOD[vcompany_e1] == 2}<i>*</i>{/if}<b id="dtotime"></b></p>
+<div><input type="datetime-local" name="totime" id="totime" step="1"/></div>
+<s>不填代表长期</s>
+{/if}
+{/if}
+{if $MOD[vcompany_v2] && $MOD[vcompany_v2_name]}
+<p>{$MOD[vcompany_v2_name]}{if $MOD[vcompany_v2] == 2}<i>*</i>{/if}<b id="dthumb2"></b></p>
+<div><input type="url" name="thumb1" id="thumb2" value=""/></div>
+<div class="ui-form-file-upload"><div id="thumb2-picker"></div></div>
+<script type="text/javascript">
+var file_thumb2 = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width=0&height=0',
+    pick: '#thumb2-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+file_thumb2.on('beforeFileQueued', function(file) {
+	var exts = file_thumb2.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_thumb2.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_thumb2.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_thumb2.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#thumb2').val(data.url);
+	}
+});
+file_thumb2.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_thumb2.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+{if $MOD[vcompany_e2]}
+<p>有效期至{if $MOD[vcompany_e2] == 2}<i>*</i>{/if}<b id="dtotime1"></b></p>
+<div><input type="datetime-local" name="totime1" id="totime1" step="1"/></div>
+<s>不填代表长期</s>
+{/if}
+{/if}
+{if $MOD[vcompany_v3] && $MOD[vcompany_v3_name]}
+<p>{$MOD[vcompany_v3_name]}{if $MOD[vcompany_v3] == 2}<i>*</i>{/if}<b id="dthumb3"></b></p>
+<div><input type="url" name="thumb2" id="thumb3" value=""/></div>
+<div class="ui-form-file-upload"><div id="thumb3-picker"></div></div>
+<script type="text/javascript">
+var file_thumb3 = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width=0&height=0',
+    pick: '#thumb3-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+file_thumb3.on('beforeFileQueued', function(file) {
+	var exts = file_thumb3.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_thumb3.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_thumb3.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_thumb3.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#thumb3').val(data.url);
+	}
+});
+file_thumb3.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_thumb3.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+{if $MOD[vcompany_e3]}
+<p>有效期至{if $MOD[vcompany_e3] == 2}<i>*</i>{/if}<b id="dtotime2"></b></p>
+<div><input type="datetime-local" name="totime2" id="totime2" step="1"/></div>
+<s>不填代表长期</s>
+{/if}
+{/if}
+<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+<div>{template 'captcha', 'chip'}</div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="提交认证" class="btn-blue" id="send_code"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('company').value.length < 2) {
+		Dmsg('请填写公司名称', 'company');
+		return false;
+	}
+	if(Dd('taxid').value.length < 12) {
+		Dmsg('请填写社会信用代码', 'taxid');
+		return false;
+	}
+	{if $MOD[vcompany_v1] == 2 && $MOD[vcompany_v1_name]}
+	if(Dd('thumb1').value.length < 15) {
+		Dmsg('请上传{$MOD[vcompany_v1_name]}', 'thumb1');
+		return false;
+	}
+	{/if}
+	{if $MOD[vcompany_v2] == 2 && $MOD[vcompany_v2_name]}
+	if(Dd('thumb2').value.length < 15) {
+		Dmsg('请上传{$MOD[vcompany_v2_name]}', 'thumb2');
+		return false;
+	}
+	{/if}
+	{if $MOD[vcompany_v3] == 2 && $MOD[vcompany_v3_name]}
+	if(Dd('thumb3').value.length < 15) {
+		Dmsg('请上传{$MOD[vcompany_v3_name]}', 'thumb3');
+		return false;
+	}
+	{/if}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', 'captcha');
+		return false;
+	}
+	return true;
+}
+</script>
+{load('clear.js')}
+{else}
+{if $status == 3}
+<div class="ui-ok"><p>已认证</p></div>
+{elseif $status == 2}
+<div class="ui-tm"><p>审核中</p></div>
+{/if}
+<div class="list-set">
+<ul>
+<li><div><span>{if $status==3}{$user[company]}{else}{$V[title]}{/if}</span>公司名称</div></li>
+<li><div><span>{if $status==3}{hide_str($user[taxid])}{else}{hide_str($V[title1])}{/if}</span>社会信用代码</div></li>
+{if $V}
+{if $V[addtime]}
+<li><div><span>{timetodate($V[addtime], 5)}</span>申请时间</div></li>
+{/if}
+{if $status == 3}
+<li><div><span>{timetodate($V[edittime], 5)}</span>审核时间</div></li>
+{/if}
+{/if}
+</ul>
+</div>
+{if $status == 3}
+<div class="blank-36"></div>
+<div class="list-btn"><input type="button" value="重新认证" class="btn" onclick="Dsheet('{$js_pageid}','<a href=&#34;?action={$action}&job=reset&#34; rel=&#34;external&#34;><span style=&#34;color:red&#34;>重新认证</span></a>', '取消', '确定要重新认证吗？当前已认证状态将被取消');"/></div>
+{/if}
+<div class="blank-36"></div>
+{/if}
+{elseif $action == 'shop'}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">商铺认证</div>
+<div class="head-bar-right"><a href="?action=index"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+{if $status == 1}
+{load('webuploader.min.js')}
+<form method="post" action="?" onsubmit="return check();">
+<input type="hidden" name="action" value="{$action}"/>
+<div class="ui-form">
+<p>商铺名称<i>*</i><b id="dshop"></b></p>
+<div><input type="text" name="shop" id="shop" value="{$user[shop]}"/></div>
+{if $MOD[vshop_v1] && $MOD[vshop_v1_name]}
+<p>{$MOD[vshop_v1_name]}{if $MOD[vshop_v1] == 2}<i>*</i>{/if}<b id="dthumb1"></b></p>
+<div><input type="url" name="thumb" id="thumb1" value=""/></div>
+<div class="ui-form-file-upload"><div id="thumb1-picker"></div></div>
+<script type="text/javascript">
+var file_thumb1 = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width=0&height=0',
+    pick: '#thumb1-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+file_thumb1.on('beforeFileQueued', function(file) {
+	var exts = file_thumb1.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_thumb1.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_thumb1.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_thumb1.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#thumb1').val(data.url);
+	}
+});
+file_thumb1.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_thumb1.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+{if $MOD[vshop_e1]}
+<p>有效期至{if $MOD[vshop_e1] == 2}<i>*</i>{/if}<b id="dtotime"></b></p>
+<div><input type="datetime-local" name="totime" id="totime" step="1"/></div>
+<s>不填代表长期</s>
+{/if}
+{/if}
+{if $MOD[vshop_v2] && $MOD[vshop_v2_name]}
+<p>{$MOD[vshop_v2_name]}{if $MOD[vshop_v2] == 2}<i>*</i>{/if}<b id="dthumb2"></b></p>
+<div><input type="url" name="thumb1" id="thumb2" value=""/></div>
+<div class="ui-form-file-upload"><div id="thumb2-picker"></div></div>
+<script type="text/javascript">
+var file_thumb2 = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width=0&height=0',
+    pick: '#thumb2-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+file_thumb2.on('beforeFileQueued', function(file) {
+	var exts = file_thumb2.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_thumb2.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_thumb2.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_thumb2.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#thumb2').val(data.url);
+	}
+});
+file_thumb2.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_thumb2.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+{if $MOD[vshop_e2]}
+<p>有效期至{if $MOD[vshop_e2] == 2}<i>*</i>{/if}<b id="dtotime1"></b></p>
+<div><input type="datetime-local" name="totime1" id="totime1" step="1"/></div>
+<s>不填代表长期</s>
+{/if}
+{/if}
+{if $MOD[vshop_v3] && $MOD[vshop_v3_name]}
+<p>{$MOD[vshop_v3_name]}{if $MOD[vshop_v3] == 2}<i>*</i>{/if}<b id="dthumb3"></b></p>
+<div><input type="url" name="thumb2" id="thumb3" value=""/></div>
+<div class="ui-form-file-upload"><div id="thumb3-picker"></div></div>
+<script type="text/javascript">
+var file_thumb3 = WebUploader.create({
+	auto: true,
+    server: UPPath+'?moduleid={$moduleid}&action=webuploader&from=thumb&width=0&height=0',
+    pick: '#thumb3-picker',
+    accept: {
+        title: 'Images',
+        extensions: 'jpg,jpeg,png,gif,bmp',
+        mimeTypes: 'image/*'
+    },
+    resize: false
+});
+file_thumb3.on('beforeFileQueued', function(file) {
+	var exts = file_thumb3.options.accept[0].extensions;
+	if((','+exts).indexOf(','+ext(file.name)) == -1) {
+		alert(L['upload_ext']+ext(file.name)+' '+L['upload_allow']+exts);
+		return false;
+	}
+});
+file_thumb3.on('fileQueued', function(file) {
+    Dtoast('{$js_pageid}',L['uploading'], '', 30);
+});
+file_thumb3.on('uploadProgress', function(file, percentage) {
+	var p = parseInt(percentage * 100);
+	$('#toast-{$js_pageid}').html(p > 99 ? L['processing'] : L['uploading']+p+'%');
+});
+file_thumb3.on( 'uploadSuccess', function(file, data) {
+	if(data.error) {
+		Dtoast('{$js_pageid}',data.message, '', 5);
+	} else {
+		$('#thumb3').val(data.url);
+	}
+});
+file_thumb3.on( 'uploadError', function(file, data) {
+    Dtoast('{$js_pageid}',data.message, '', 5);
+});
+file_thumb3.on('uploadComplete', function(file) {
+    $('#toast-{$js_pageid}').hide();
+});
+</script>
+{if $MOD[vshop_e3]}
+<p>有效期至{if $MOD[vshop_e3] == 2}<i>*</i>{/if}<b id="dtotime2"></b></p>
+<div><input type="datetime-local" name="totime2" id="totime2" step="1"/></div>
+<s>不填代表长期</s>
+{/if}
+{/if}
+<p>验证码<i>*</i><b id="dcaptcha"></b></p>
+<div>{template 'captcha', 'chip'}</div>
+<div class="blank-16"></div>
+<input type="submit" name="submit" value="提交认证" class="btn-blue" id="send_code"/>
+<div class="blank-32"></div>
+</div>
+</form>
+<script type="text/javascript">
+function check() {
+	if(Dd('shop').value.length < 2) {
+		Dmsg('请填写商铺名称', 'shop');
+		return false;
+	}
+	{if $MOD[vshop_v1] == 2 && $MOD[vshop_v1_name]}
+	if(Dd('thumb1').value.length < 15) {
+		Dmsg('请上传{$MOD[vshop_v1_name]}', 'thumb1');
+		return false;
+	}
+	{/if}
+	{if $MOD[vshop_v2] == 2 && $MOD[vshop_v2_name]}
+	if(Dd('thumb2').value.length < 15) {
+		Dmsg('请上传{$MOD[vshop_v2_name]}', 'thumb2');
+		return false;
+	}
+	{/if}
+	{if $MOD[vshop_v3] == 2 && $MOD[vshop_v3_name]}
+	if(Dd('thumb3').value.length < 15) {
+		Dmsg('请上传{$MOD[vshop_v3_name]}', 'thumb3');
+		return false;
+	}
+	{/if}
+	if($('#ccaptcha').html().indexOf('ok.png') == -1) {
+		Dmsg('请填写正确的验证码', 'captcha');
+		return false;
+	}
+	return true;
+}
+</script>
+{load('clear.js')}
+{else}
+{if $status == 3}
+<div class="ui-ok"><p>已认证</p></div>
+{elseif $status == 2}
+<div class="ui-tm"><p>审核中</p></div>
+{/if}
+<div class="list-set">
+<ul>
+<li><div><span>{if $status==3}{$user[shop]}{else}{$V[title]}{/if}</span>商铺名称</div></li>
+{if $V}
+{if $V[addtime]}
+<li><div><span>{timetodate($V[addtime], 5)}</span>申请时间</div></li>
+{/if}
+{if $status == 3}
+<li><div><span>{timetodate($V[edittime], 5)}</span>审核时间</div></li>
+{/if}
+{/if}
+</ul>
+</div>
+{if $status == 3}
+<div class="blank-36"></div>
+<div class="list-btn"><input type="button" value="重新认证" class="btn" onclick="Dsheet('{$js_pageid}','<a href=&#34;?action={$action}&job=reset&#34; rel=&#34;external&#34;><span style=&#34;color:red&#34;>重新认证</span></a>', '取消', '确定要重新认证吗？当前已认证状态将被取消');"/></div>
+{/if}
+<div class="blank-36"></div>
+{/if}
+{else}
+<div id="head-bar">
+<div class="head-bar">
+<div class="head-bar-back"><a href="{if $back_link}{$back_link}{else}javascript:Dback();" id="back-{$js_pageid}{/if}" data-direction="reverse"><img src="{DM_SKIN}icon-back{$wh}.png" width="24" height="24"/></a></div>
+<div class="head-bar-title">身份认证</div>
+<div class="head-bar-right"><a href="index.php"><img src="{DM_SKIN}icon-cancel{$wh}.png" width="24" height="24"/></a></div>
+</div>
+<div class="head-bar-fix" id="load-fix-{$js_pageid}" style="height:0;"></div>
+<div class="head-bar-fix" id="head-fix-{$js_pageid}"></div>
+</div>
+<div class="blank-36 main"></div>
+<div class="list-set list-set-img">
+<ul>
+{if $MOD[vemail] && $MG[vemail]}
+<li><div><a href="?action=email">{if $MG[vemail] == 2}<span style="color:#FF6600;">必选</span>{else}<span style="color:#999999;">可选</span>{/if}<img src="{DM_SKIN}icon-{if $vemail}ok{else}ko{/if}.png"/>邮件认证</a></div></li>
+{/if}
+{if $MOD[vmobile] && $MG[vmobile]}
+<li><div><a href="?action=mobile">{if $MG[vmobile] == 2}<span style="color:#FF6600;">必选</span>{else}<span style="color:#999999;">可选</span>{/if}<img src="{DM_SKIN}icon-{if $vmobile}ok{else}ko{/if}.png"/>手机认证</a></div></li>
+{/if}
+{if $MOD[vtruename] && $MG[vtruename]}
+{php $vcheck = vcheck('truename');}
+<li><div><a href="?action=truename">{if $MG[vtruename] == 2}<span style="color:#FF6600;">必选</span>{else}<span style="color:#999999;">可选</span>{/if}<img src="{DM_SKIN}icon-{if $vtruename}ok{elseif $vcheck}tm{else}ko{/if}.png"/>实名认证</a></div></li>
+{/if}
+{if $MOD[vbank] && $MG[vbank]}
+{php $vcheck = vcheck('bank');}
+<li><div><a href="?action=bank">{if $MG[vbank] == 2}<span style="color:#FF6600;">必选</span>{else}<span style="color:#999999;">可选</span>{/if}<img src="{DM_SKIN}icon-{if $vbank}ok{elseif $vcheck}tm{else}ko{/if}.png"/>银行认证</a></div></li>
+{/if}
+{if $MOD[vcompany] && $MG[vcompany] && $MG[type]}
+{php $vcheck = vcheck('company');}
+<li><div><a href="?action=company">{if $MG[vcompany] == 2}<span style="color:#FF6600;">必选</span>{else}<span style="color:#999999;">可选</span>{/if}<img src="{DM_SKIN}icon-{if $vcompany}ok{elseif $vcheck}tm{else}ko{/if}.png"/>公司认证</a></div></li>
+{/if}
+{if $MOD[vshop] && $MG[vshop] && $MG[homepage]}
+{php $vcheck = vcheck('shop');}
+<li><div><a href="?action=shop">{if $MG[vshop] == 2}<span style="color:#FF6600;">必选</span>{else}<span style="color:#999999;">可选</span>{/if}<img src="{DM_SKIN}icon-{if $vshop}ok{elseif $vcheck}tm{else}ko{/if}.png"/>商铺认证</a></div></li>
+{/if}
+</ul>
+</div>
+<div class="blank-20"></div>
+{/if}
+{if $seconds}
+<script type="text/javascript">
+Dd('send_code').disabled = true;
+var i = {$seconds};
+var interval=window.setInterval(
+	function() {
+		if(i < 1) {
+			Dd('send_code').value = '下一步';
+			Dd('send_code').disabled = false;
+			clearInterval(interval);
+		} else {
+			Dd('send_code').value = '下一步('+i+'秒)';
+			i--;
+		}
+	},
+1000);
+</script>
+{/if}
+{template 'footer', 'member'}

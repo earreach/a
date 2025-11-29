@@ -1,0 +1,28 @@
+<style>
+{if $css[home_text]}
+body,a:link,a:visited,a:active{color:{$css[home_text]};}
+{/if}
+{if $css[home_link]}
+a.b:link,a.b:visited,a.b:active,a.t:link,a.t:visited,a.t:active,.f_dblue{color:{$css[home_link]};}
+{/if}
+{if $css[home_hover]}
+a:hover,a.b:hover,a.t:hover,a.n:hover{color:{$css[home_hover]};}
+{/if}
+{if $css[home_menu]}
+.tab-head .on span{color:{$css[home_menu]};}
+.menu,.search-btn input,.search-rec span:hover,.im0l p{background:{$css[home_menu]};}
+.btn-blue,.pages a:hover,.pages strong{background:{$css[home_menu]};border:{$css[home_menu]} 1px solid;}
+.search-btn{background:{$css[home_menu]};border:{$css[home_menu]} 2px solid;}
+.tab-head .on{border-bottom:{$css[home_menu]} 3px solid;}
+.login-head .on,.login-step .on,.reg-step .on{border-bottom:{$css[home_menu]} 2px solid;}
+.reg-step .on i {background:{$css[home_menu]};}
+.reg-step .on b {background:{$css[home_menu]} url('{DT_SKIN}reg-step.png') no-repeat center center;}
+.im0l .cate-0:hover,.im0l .cate-1:hover,.im0l .cate-2:hover,.im0l .cate-3:hover,.im0l .cate-4:hover,.im0l .cate-5:hover,.im0l .cate-6:hover,.im0l .cate-7:hover,.im0l .cate-8:hover,.im0l .cate-9:hover,.im0l .cate-10:hover,.im0l .cate-11:hover,.im0l .cate-12:hover,.im0l .cate-13:hover,.im0l .cate-14:hover,.im0l .cate-15:hover{background-color:{$css[home_menu]};}
+{/if}
+{if $css[home_menu_on]}
+.menu .menuon{background:{$css[home_menu_on]};}
+{/if}
+{if $css[home_menu_ov]}
+.menu a:hover,.btn-blue:hover{background:{$css[home_menu_ov]};}
+{/if}
+</style>
